@@ -16,7 +16,8 @@ namespace MakerLib.MorphableModel
         private string name2;
         private double[,] distances1;
         private double[,] distances2;
-        private Vector3D[,] dirVectors;
+        private float[,,] dirVectors;
+
         public MorphableModelMaker(string n1, string n2)
         {
             Shape1 = n1;
@@ -47,9 +48,9 @@ namespace MakerLib.MorphableModel
                         return MorphablePrimitivesGenerator.GenerateCube();
                     }
 
-                case "cone":
+                case "star6":
                     {
-                        return MorphablePrimitivesGenerator.GenerateCone();
+                        return MorphablePrimitivesGenerator.GenerateStar6();
                     }
 
                 case "cylinder":
@@ -123,9 +124,7 @@ namespace MakerLib.MorphableModel
             double res = -1;
             if (distances != null)
             {
-
                 res = distances[(int)row, (int)col];
-
             }
             return res;
         }
@@ -201,7 +200,6 @@ namespace MakerLib.MorphableModel
                         int v4 = AddVerticeOctTree(p4);
                         AddFace(v1, v2, v3);
                         AddFace(v3, v2, v4);
-
                     }
                     //                    break;
                 }
@@ -210,7 +208,10 @@ namespace MakerLib.MorphableModel
 
         private Point3D ConvertVectorTo3D(int i, int j, double d)
         {
-            Vector3D v = dirVectors[i, j];
+            Vector3D v = new Vector3D();
+            v.X = dirVectors[i, j, 0];
+            v.Y = dirVectors[i, j, 1];
+            v.Z = dirVectors[i, j, 2];
             return new Point3D(
             v.X * d,
             v.Y * d,
@@ -296,8 +297,6 @@ namespace MakerLib.MorphableModel
                 //                    break;
             }
         }
-
-
 
         private Point3D ConvertPolarTo3D(double azimuth, double elevation, double distance)
         {

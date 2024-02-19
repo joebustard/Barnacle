@@ -76,7 +76,6 @@ namespace Barnacle.Object3DLib
             try
             {
                 surfaceMesh = new MeshGeometry3D();
-                //relativeObjectVertices = new Point3DCollection();
                 relativeObjectVertices = new List<P3D>();
                 absoluteObjectVertices = new Point3DCollection();
                 triangleIndices = new Int32Collection();
@@ -341,6 +340,14 @@ namespace Barnacle.Object3DLib
                     {
                         PrimitiveGenerator.GenerateSphere(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(pnts, indices, normals, Colors.CadetBlue);
+                        built = true;
+                    }
+                    break;
+
+                case "star6":
+                    {
+                        PrimitiveGenerator.GenerateStar6(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.LimeGreen);
                         built = true;
                     }
                     break;

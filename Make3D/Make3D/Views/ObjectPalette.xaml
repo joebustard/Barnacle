@@ -170,6 +170,14 @@
             </Button>
             <Button
                 Command="{Binding AddCommand}"
+                CommandParameter="Star6"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource ImageButton}"
+                ToolTip="Add a six point star">
+                <Image Source="/Barnacle;component/Images/Buttons/Star6.png" />
+            </Button>
+            <Button
+                Command="{Binding AddCommand}"
                 CommandParameter="Tube"
                 IsEnabled="{Binding EditingActive}"
                 Style="{StaticResource ImageButton}"

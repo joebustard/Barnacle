@@ -50,6 +50,7 @@
     <Compile Include="ExternalReference.cs" />
     <Compile Include="ExtraPrimitives\ButtonTop.cs" />
     <Compile Include="ExtraPrimitives\IBar.cs" />
+    <Compile Include="ExtraPrimitives\Star6.cs" />
     <Compile Include="ExtraPrimitives\XBar.cs" />
     <Compile Include="Group3D.cs" />
     <Compile Include="IcoSphereCreator.cs" />

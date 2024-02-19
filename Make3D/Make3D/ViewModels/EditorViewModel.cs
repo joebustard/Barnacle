@@ -2821,7 +2821,14 @@ namespace Barnacle.ViewModels
             else
             {
                 obj.BuildPrimitive(obType);
-                obj.ScaleMesh(20.0, 20.0, 20.0);
+                if (obType == "star6")
+                {
+                    obj.ScaleMesh(20.0, 5, 17.5);
+                }
+                else
+                {
+                    obj.ScaleMesh(20.0, 20.0, 20.0);
+                }
             }
             if (added)
             {

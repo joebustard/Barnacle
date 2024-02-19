@@ -100,6 +100,7 @@ namespace Barnacle.Dialogs
                 return $"ModelLength must be in the range {minmodelLength} to {maxmodelLength}";
             }
         }
+
         public double ModelWidth
         {
             get
@@ -127,6 +128,7 @@ namespace Barnacle.Dialogs
                 return $"ModelWidth must be in the range {minmodelWidth} to {maxmodelWidth}";
             }
         }
+
         public string Shape1
         {
             get { return shape1; }
@@ -278,6 +280,7 @@ namespace Barnacle.Dialogs
                 return $"WarpFactor must be in the range {minwarpFactor} to {maxwarpFactor}";
             }
         }
+
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             SaveEditorParmeters();
@@ -293,7 +296,7 @@ namespace Barnacle.Dialogs
             res.Add("Sphere");
             res.Add("Pyramid");
 
-            res.Add("Cone");
+            res.Add("Star6");
             res.Add("Cylinder");
             res.Add("Octahedron");
 
@@ -303,12 +306,13 @@ namespace Barnacle.Dialogs
 
             return res;
         }
+
         private void GenerateShape()
         {
             ClearShape();
 
             maker.Generate(warpFactor, Vertices, Faces);
-            ScaleVertices( modelLength, modelHeight, modelWidth);
+            ScaleVertices(modelLength, modelHeight, modelWidth);
             CentreVertices();
         }
 
@@ -325,7 +329,7 @@ namespace Barnacle.Dialogs
             WarpFactor = EditorParameters.GetDouble("WarpFactor", 0.5);
 
             Shape1 = EditorParameters.Get("Shape1");
-            if ( Shape1 == "")
+            if (Shape1 == "")
             {
                 Shape1 = "Cube";
             }

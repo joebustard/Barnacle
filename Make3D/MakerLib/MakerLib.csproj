@@ -94,6 +94,7 @@
     <Compile Include="MorphableModel\Primitives\MorphableRoof.cs" />
     <Compile Include="MorphableModel\Primitives\MorphableRoundRoof.cs" />
     <Compile Include="MorphableModel\Primitives\MorphableSphere.cs" />
+    <Compile Include="MorphableModel\Primitives\MorphableStar6.cs" />
     <Compile Include="PGramMaker.cs" />
     <Compile Include="PolyMaker.cs" />
     <Compile Include="SquaredStadiumMaker.cs" />

@@ -43,19 +43,20 @@ namespace MakerLib.MorphableModel
 {
     public partial class MorphableModelMaker : MakerBase
     {
-    public  Vector3D [,] vectors;
-        public static Vector3D [,] DirectionVectors()
+        public  float [,,] DirectionVectors()
         {
             // resolution !RES! degrees
-            vectors = new Vector3D[!ROWS!,!COLS!];
-!VALS!
+            float [,,] vectors =
+{
+!VALS!;
+}
            return vectors;
         }
     }
 }
 ";
 
-        private static double resDegrees = 2;
+        private static double resDegrees = 1.5;
 
         private static double FindInterceptionDistance(Object3D model, Vector3D origin, Vector3D dir)
         {
@@ -70,7 +71,7 @@ namespace MakerLib.MorphableModel
                 Vector3D v0 = new Vector3D(model.RelativeObjectVertices[f0].X, model.RelativeObjectVertices[f0].Y, model.RelativeObjectVertices[f0].Z);
                 Vector3D v1 = new Vector3D(model.RelativeObjectVertices[f1].X, model.RelativeObjectVertices[f1].Y, model.RelativeObjectVertices[f1].Z);
                 Vector3D v2 = new Vector3D(model.RelativeObjectVertices[f2].X, model.RelativeObjectVertices[f2].Y, model.RelativeObjectVertices[f2].Z);
-                
+
                 if (Utils.RayTriangleIntersect(origin, dir, v0, v1, v2, out distance))
                 {
                     res = true;
@@ -83,36 +84,37 @@ namespace MakerLib.MorphableModel
 
         private static void Main(string[] args)
         {
-            MakeVectorTable();    
+            MakeVectorTable();
             MakeMorphableShape("Cube");
 
-            MakeMorphableShape("Cone");
+            MakeMorphableShape("Star6", true);
             MakeMorphableShape("Cylinder");
             MakeMorphableShape("Octahedron");
-            MakeMorphableShape("Pyramid");
-            MakeMorphableShape("Pyramid2");
-            MakeMorphableShape("Roof",true);
-            MakeMorphableShape("RoundRoof",true);
+            MakeMorphableShape("Pyramid", true);
+            MakeMorphableShape("Pyramid2", true);
+            MakeMorphableShape("Roof", true);
+            MakeMorphableShape("RoundRoof", true);
             MakeMorphableSphere("Sphere");
-            
         }
 
         private static void MakeVectorTable()
         {
             Vector3D origin = new Vector3D(0, 0, 0);
-            string outline = "\t\t\t";
+            string outline = "";
             int rows = 0;
             int cols = 0;
             for (double theta = 0; theta < 360; theta += resDegrees)
             {
+                outline += "\t\t{ ";
+
                 cols = 0;
                 for (double phi = -90; phi < 90; phi += resDegrees)
                 {
-                    Vector3D dir = GetDirectionVector(theta, phi);                  
-                    outline += $" vectors[{rows},{cols}] = new Vector3D({dir.X},{dir.Y},{dir.Z});\r\n";
+                    Vector3D dir = GetDirectionVector(theta, phi);
+                    outline += "{" + $"{(float)dir.X}F,{(float)dir.Y}F,{(float)dir.Z}F" + "},";
                     cols++;
                 }
-                outline += "\r\n\t\t\t";
+                outline += " },\r\n";
                 rows++;
             }
             string b = vectorbody;
@@ -124,13 +126,13 @@ namespace MakerLib.MorphableModel
             File.WriteAllText("c:\\tmp\\DirVectors.cs", b);
         }
 
-        private static void MakeMorphableShape(string v, bool rotate=false)
+        private static void MakeMorphableShape(string v, bool rotate = false)
         {
             Object3D ob = new Object3D();
             ob.BuildPrimitive(v);
-            if ( rotate)
+            if (rotate)
             {
-                ob.Rotate(new Point3D(-90,0,0));
+                ob.Rotate(new Point3D(-90, 0, 0));
             }
             Vector3D origin = new Vector3D(0, 0, 0);
             string outline = "\t\t\t";
@@ -139,7 +141,6 @@ namespace MakerLib.MorphableModel
                 outline += "{ ";
                 for (double phi = -90; phi < 90; phi += resDegrees)
                 {
-                   
                     Vector3D dir = GetDirectionVector(theta, phi);
 
                     double dist = FindInterceptionDistance(ob, origin, dir);
@@ -157,15 +158,13 @@ namespace MakerLib.MorphableModel
 
         private static Vector3D GetDirectionVector(double azimuth, double elevation)
         {
-           
-
             double x = Math.Cos(Rad(elevation)) * Math.Cos(Rad(azimuth));
             double z = Math.Cos(Rad(elevation)) * Math.Sin(Rad(azimuth));
             double y = Math.Sin(Rad(elevation));
 
             Vector3D dir = new Vector3D(x, y, z);
             dir.Normalize();
-           
+
             return dir;
         }
 

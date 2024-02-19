@@ -1333,6 +1333,7 @@
     <Resource Include="Images\Buttons\IBar.png" />
     <Resource Include="Images\Buttons\XBar.png" />
     <Resource Include="Images\Buttons\ButtonTop.png" />
+    <Resource Include="Images\Buttons\Star6.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
