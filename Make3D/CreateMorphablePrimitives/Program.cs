@@ -63,6 +63,7 @@ namespace MakerLib.MorphableModel
             bool res = false;
             int faceIndex = 0;
             double distance = -1;
+            double d1;
             while (faceIndex < model.TriangleIndices.Count && res == false)
             {
                 int f0 = model.TriangleIndices[faceIndex];
@@ -72,9 +73,10 @@ namespace MakerLib.MorphableModel
                 Vector3D v1 = new Vector3D(model.RelativeObjectVertices[f1].X, model.RelativeObjectVertices[f1].Y, model.RelativeObjectVertices[f1].Z);
                 Vector3D v2 = new Vector3D(model.RelativeObjectVertices[f2].X, model.RelativeObjectVertices[f2].Y, model.RelativeObjectVertices[f2].Z);
 
-                if (Utils.RayTriangleIntersect(origin, dir, v0, v1, v2, out distance))
+                if (Utils.RayTriangleIntersect(origin, dir, v0, v1, v2, out d1))
                 {
                     res = true;
+                    distance = d1;
                 }
 
                 faceIndex += 3;
