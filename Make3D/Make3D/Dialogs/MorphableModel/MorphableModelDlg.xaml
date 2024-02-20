@@ -20,41 +20,41 @@
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="25" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="30" />
                 <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="30" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">ModelLength</Label>
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Height="25">
+                <Label VerticalAlignment="Center" Width="100">Length</Label>
                 <TextBox Margin="8,0,0,0" Text="{Binding ModelLength}" Width="150" ToolTip="{Binding ModelLengthToolTip}" />
 
                 <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameters to their defaults" Click="ResetDefaults" />
             </StackPanel>
-            <StackPanel Grid.Row="2" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">ModelHeight</Label>
+            <StackPanel Grid.Row="2" Orientation="Horizontal" Height="25">
+                <Label VerticalAlignment="Center" Width="100">Height</Label>
                 <TextBox Margin="8,0,0,0" Text="{Binding ModelHeight}" Width="150" ToolTip="{Binding ModelHeightToolTip}" />
             </StackPanel>
-            <StackPanel Grid.Row="3" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">ModelWidth</Label>
+            <StackPanel Grid.Row="3" Orientation="Horizontal" Height="25">
+                <Label VerticalAlignment="Center" Width="100">Width</Label>
                 <TextBox Margin="8,0,0,0" Text="{Binding ModelWidth}" Width="150" ToolTip="{Binding ModelWidthToolTip}" />
             </StackPanel>
-            <StackPanel Grid.Row="4" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">WarpFactor</Label>
+            <StackPanel Grid.Row="8" Orientation="Horizontal">
+                <Label VerticalAlignment="Center" Width="100">Warp Factor</Label>
                 <!--            <TextBox Margin="8,0,0,0" Text="{Binding WarpFactor}" Width="150" ToolTip="{Binding WarpFactorToolTip}" /> -->
-                <Slider  Margin="8,0,0,0"  Width="150" Value="{Binding WarpFactor}"  ToolTip="{Binding WarpFactorToolTip}" Minimum="0" Maximum="1" SmallChange="0.01" LargeChange="0.1" />
+                <Slider  x:Name="WarpSlider"  Margin="8,0,0,0"  Width="150" Value="{Binding WarpFactor}" ToolTipService.ToolTip="{Binding Path=WarpFactor}" Minimum="0" Maximum="1" SmallChange="0.01" LargeChange="0.1" />
             </StackPanel>
-            <StackPanel Grid.Row="5" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Shape1</Label>
+            <StackPanel Grid.Row="5" Orientation="Horizontal" Height="25">
+                <Label VerticalAlignment="Center" Width="100">Shape 1</Label>
                 <ComboBox Margin="8,0,0,0" SelectedItem="{Binding Shape1}" ItemsSource="{Binding Shape1Items}" Width="150" ToolTip="{Binding Shape1ToolTip}" />
             </StackPanel>
-            <StackPanel Grid.Row="6" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Shape2</Label>
+            <StackPanel Grid.Row="6" Orientation="Horizontal" Height="25">
+                <Label VerticalAlignment="Center" Width="100">Shape 2</Label>
                 <ComboBox Margin="8,0,0,0" SelectedItem="{Binding Shape2}" ItemsSource="{Binding Shape2Items}" Width="150" ToolTip="{Binding Shape2ToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="7" Orientation="Horizontal">

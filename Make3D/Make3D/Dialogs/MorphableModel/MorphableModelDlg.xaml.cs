@@ -291,6 +291,7 @@ namespace Barnacle.Dialogs
         private ObservableCollection<string> CreateShapeList()
         {
             ObservableCollection<string> res = new ObservableCollection<string>();
+            res.Add("Cone");
             res.Add("Cylinder");
             res.Add("Cube");
             res.Add("HexCone");
@@ -300,7 +301,7 @@ namespace Barnacle.Dialogs
             res.Add("Roof");
             res.Add("RoundRoof");
             res.Add("Sphere");
-            res.Add("Star6");         
+            res.Add("Star6");
             return res;
         }
 

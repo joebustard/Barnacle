@@ -42,6 +42,10 @@ namespace MakerLib.MorphableModel
         {
             switch (n.ToLower())
             {
+                case "cone":
+                    {
+                        return MorphablePrimitivesGenerator.GenerateCone();
+                    }
                 case "cube":
                 case "box":
                     {
@@ -134,16 +138,6 @@ namespace MakerLib.MorphableModel
             return res;
         }
 
-        private int GetOffset(double theta, double phi)
-        {
-            int columnWidth = (int)(180 / resolution) + 1;
-            int row = (int)(theta / resolution);
-            int col = (int)(phi / resolution) + (int)(90 / resolution);
-            return (row * columnWidth) + col;
-        }
-
-        private double resolution = 1;
-
         public void Generate(double warpfactor, Point3DCollection vertices, Int32Collection faces)
         {
             Vertices = vertices;
@@ -183,12 +177,10 @@ namespace MakerLib.MorphableModel
                     {
                         double phi = (dPhi * (double)j) - 90.0;
                         double ph2 = phi + dPhi;
-                        System.Diagnostics.Debug.WriteLine($"phi2={ph2}");
                         double d1 = MorphedDistance(i, j, warpfactor);
                         double d2 = MorphedDistance(i, j + 1, warpfactor);
                         double d3 = MorphedDistance(k, j, warpfactor);
                         double d4 = MorphedDistance(k, j + 1, warpfactor);
-                       
 
                         Point3D p1 = ConvertVectorTo3D(i, j, d1);
                         Point3D p2 = ConvertVectorTo3D(i, j + 1, d2);
@@ -202,7 +194,6 @@ namespace MakerLib.MorphableModel
                         AddFace(v1, v2, v3);
                         AddFace(v3, v2, v4);
                     }
-                    
                 }
             }
         }
@@ -248,54 +239,18 @@ namespace MakerLib.MorphableModel
                     double d2 = GetDistance(i, j + 1, distances);
                     double d3 = GetDistance(k, j, distances);
                     double d4 = GetDistance(k, j + 1, distances);
-                    /*
-                    Point3D p1 = ConvertPolarTo3D(theta, phi, d1);
-                    Point3D p2 = ConvertPolarTo3D(theta, ph2, d2);
-                    Point3D p3 = ConvertPolarTo3D(t2, phi, d3);
-                    Point3D p4 = ConvertPolarTo3D(t2, ph2, d4);
-                    */
 
                     Point3D p1 = ConvertVectorTo3D(i, j, d1);
                     Point3D p2 = ConvertVectorTo3D(i, j + 1, d2);
                     Point3D p3 = ConvertVectorTo3D(k, j, d3);
                     Point3D p4 = ConvertVectorTo3D(k, j + 1, d4);
-                    //   File.AppendAllText("C:\\tmp\\asdisplayed.txt", $"t={theta},phi={phi}, P ={p1.X},{p1.Y},{p1.Z}\r\n");
-                    /*
-                    if (phi < 0)
-                    {
-                        p1.X *= -1.0;
-                        p2.X *= -1.0;
-                        p3.X *= -1.0;
-                        p4.X *= -1.0;
-
-                        p1.Y *= -1.0;
-                        p2.Y *= -1.0;
-                        p3.Y *= -1.0;
-                        p4.Y *= -1.0;
-
-                        p1.Z *= -1.0;
-                        p2.Z *= -1.0;
-                        p3.Z *= -1.0;
-                        p4.Z *= -1.0;
-                        int v1 = AddVerticeOctTree(p1);
-                        int v2 = AddVerticeOctTree(p2);
-                        int v3 = AddVerticeOctTree(p3);
-                        int v4 = AddVerticeOctTree(p4);
-                        AddFace(v1, v3, v2);
-                        AddFace(v3, v4, v2);
-                    }
-                    else
-                    */
-                    {
-                        int v1 = AddVerticeOctTree(p1);
-                        int v2 = AddVerticeOctTree(p2);
-                        int v3 = AddVerticeOctTree(p3);
-                        int v4 = AddVerticeOctTree(p4);
-                        AddFace(v1, v2, v3);
-                        AddFace(v3, v2, v4);
-                    }
+                    int v1 = AddVerticeOctTree(p1);
+                    int v2 = AddVerticeOctTree(p2);
+                    int v3 = AddVerticeOctTree(p3);
+                    int v4 = AddVerticeOctTree(p4);
+                    AddFace(v1, v2, v3);
+                    AddFace(v3, v2, v4);
                 }
-                //                    break;
             }
         }
 
@@ -306,11 +261,7 @@ namespace MakerLib.MorphableModel
             double x = distance * Math.Cos(elevation) * Math.Cos(azimuth);
             double z = distance * Math.Cos(elevation) * Math.Sin(azimuth);
             double y = distance * Math.Sin(elevation);
-            /*
-                        double x = Math.Cos(Rad(elevation)) * Math.Cos(Rad(azimuth));
-                        double z = Math.Cos(Rad(elevation)) * Math.Sin(Rad(azimuth));
-                        double y = Math.Sin(Rad(elevation));
-                        */
+
             return new Point3D(x, y, z);
         }
     }
