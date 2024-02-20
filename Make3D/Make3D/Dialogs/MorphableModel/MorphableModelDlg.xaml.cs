@@ -39,7 +39,7 @@ namespace Barnacle.Dialogs
             shape1Items = CreateShapeList();
             shape2Items = CreateShapeList();
             maker = new MorphableModelMaker(shape1, shape2);
-            ToolName = "MorphableModel";
+            ToolName = "Morphable";
             DataContext = this;
             ModelGroup = MyModelGroup;
             loaded = false;
@@ -291,19 +291,16 @@ namespace Barnacle.Dialogs
         private ObservableCollection<string> CreateShapeList()
         {
             ObservableCollection<string> res = new ObservableCollection<string>();
-
-            res.Add("Cube");
-            res.Add("Sphere");
-            res.Add("Pyramid");
-
-            res.Add("Star6");
             res.Add("Cylinder");
+            res.Add("Cube");
+            res.Add("HexCone");
             res.Add("Octahedron");
-
+            res.Add("Pyramid");
             res.Add("Pyramid2");
             res.Add("Roof");
             res.Add("RoundRoof");
-
+            res.Add("Sphere");
+            res.Add("Star6");         
             return res;
         }
 
@@ -320,11 +317,11 @@ namespace Barnacle.Dialogs
         {
             // load back the tool specific parameters
 
-            ModelLength = EditorParameters.GetDouble("ModelLength", 100);
+            ModelLength = EditorParameters.GetDouble("ModelLength", 50);
 
-            ModelHeight = EditorParameters.GetDouble("ModelHeight", 100);
+            ModelHeight = EditorParameters.GetDouble("ModelHeight", 50);
 
-            ModelWidth = EditorParameters.GetDouble("ModelWidth", 100);
+            ModelWidth = EditorParameters.GetDouble("ModelWidth", 50);
 
             WarpFactor = EditorParameters.GetDouble("WarpFactor", 0.5);
 
@@ -358,9 +355,9 @@ namespace Barnacle.Dialogs
         private void SetDefaults()
         {
             loaded = false;
-            ModelLength = 100;
-            ModelHeight = 100;
-            ModelWidth = 100;
+            ModelLength = 50;
+            ModelHeight = 50;
+            ModelWidth = 50;
             WarpFactor = 0.5;
             Shape1 = "Cube";
             Shape2 = "Sphere";

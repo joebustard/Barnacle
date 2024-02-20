@@ -178,6 +178,15 @@
             </Button>
             <Button
                 Command="{Binding AddCommand}"
+                CommandParameter="HexCone"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource ImageButton}"
+                ToolTip="Add a hex cone">
+                <Image Source="/Barnacle;component/Images/Buttons/HexCone.png" />
+            </Button>
+
+            <Button
+                Command="{Binding AddCommand}"
                 CommandParameter="Tube"
                 IsEnabled="{Binding EditingActive}"
                 Style="{StaticResource ImageButton}"

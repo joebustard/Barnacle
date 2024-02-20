@@ -53,6 +53,11 @@ namespace MakerLib.MorphableModel
                         return MorphablePrimitivesGenerator.GenerateStar6();
                     }
 
+                case "hexcone":
+                    {
+                        return MorphablePrimitivesGenerator.GenerateHexCone();
+                    }
+
                 case "cylinder":
                     {
                         return MorphablePrimitivesGenerator.GenerateCylinder();
@@ -178,16 +183,12 @@ namespace MakerLib.MorphableModel
                     {
                         double phi = (dPhi * (double)j) - 90.0;
                         double ph2 = phi + dPhi;
+                        System.Diagnostics.Debug.WriteLine($"phi2={ph2}");
                         double d1 = MorphedDistance(i, j, warpfactor);
                         double d2 = MorphedDistance(i, j + 1, warpfactor);
                         double d3 = MorphedDistance(k, j, warpfactor);
                         double d4 = MorphedDistance(k, j + 1, warpfactor);
-                        /*
-                        Point3D p1 = ConvertPolarTo3D(theta, phi, d1);
-                        Point3D p2 = ConvertPolarTo3D(theta, ph2, d2);
-                        Point3D p3 = ConvertPolarTo3D(t2, phi, d3);
-                        Point3D p4 = ConvertPolarTo3D(t2, ph2, d4);
-                        */
+                       
 
                         Point3D p1 = ConvertVectorTo3D(i, j, d1);
                         Point3D p2 = ConvertVectorTo3D(i, j + 1, d2);
@@ -201,7 +202,7 @@ namespace MakerLib.MorphableModel
                         AddFace(v1, v2, v3);
                         AddFace(v3, v2, v4);
                     }
-                    //                    break;
+                    
                 }
             }
         }

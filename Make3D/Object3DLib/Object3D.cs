@@ -336,6 +336,13 @@ namespace Barnacle.Object3DLib
                     }
                     break;
 
+                case "hexcone":
+                    {
+                        PrimitiveGenerator.GenerateHexCone(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.Yellow);
+                        built = true;
+                    }
+                    break;
                 case "sphere":
                     {
                         PrimitiveGenerator.GenerateSphere(ref pnts, ref indices, ref normals);
