@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Barnacle.Dialogs"
         mc:Ignorable="d"
-        Title="" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
+        Title="Morphable Shapes" Height="500" Width="900" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -57,7 +57,8 @@
                 <Label VerticalAlignment="Center" Width="100">Shape 2</Label>
                 <ComboBox Margin="8,0,0,0" SelectedItem="{Binding Shape2}" ItemsSource="{Binding Shape2Items}" Width="150" ToolTip="{Binding Shape2ToolTip}" />
             </StackPanel>
-            <StackPanel Grid.Row="7" Orientation="Horizontal">
+            <StackPanel Grid.Row="9" Orientation="Horizontal">
+                <TextBox Margin="108,0,0,-0.333" IsReadOnly="true" Text="{Binding FactorText}" Width="150" HorizontalContentAlignment="Center" Height="27" VerticalAlignment="Bottom" />
             </StackPanel>
             <StackPanel Grid.Row="8" Orientation="Horizontal">
             </StackPanel>

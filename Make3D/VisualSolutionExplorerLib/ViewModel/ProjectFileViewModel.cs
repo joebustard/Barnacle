@@ -107,11 +107,6 @@ namespace VisualSolutionExplorer
             }
         }
 
-        public override void StopAllEditing()
-        {
-            IsEditing = false;
-        }
-
         public IconType IconToShow
         {
             get
@@ -159,6 +154,11 @@ namespace VisualSolutionExplorer
             {
                 SolutionChanged(e, p1, p2);
             }
+        }
+
+        public override void StopAllEditing()
+        {
+            IsEditing = false;
         }
 
         private void CopyFile()

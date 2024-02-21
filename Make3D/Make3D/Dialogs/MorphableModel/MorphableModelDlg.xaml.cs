@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Media3D;
+using System.Windows.Threading;
 
 namespace Barnacle.Dialogs
 {
@@ -43,6 +44,15 @@ namespace Barnacle.Dialogs
             DataContext = this;
             ModelGroup = MyModelGroup;
             loaded = false;
+            regenTimer = new DispatcherTimer();
+            regenTimer.Interval = new TimeSpan(0, 0, 1);
+            regenTimer.Tick += RegenTick;
+        }
+
+        private void RegenTick(object sender, EventArgs e)
+        {
+            regenTimer.Stop();
+            UpdateDisplay();
         }
 
         public double ModelHeight
@@ -58,6 +68,7 @@ namespace Barnacle.Dialogs
                     if (value >= minmodelHeight && value <= maxmodelHeight)
                     {
                         modelHeight = value;
+                        oldWarpFactor = -1;
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
@@ -86,6 +97,7 @@ namespace Barnacle.Dialogs
                     if (value >= minmodelLength && value <= maxmodelLength)
                     {
                         modelLength = value;
+                        oldWarpFactor = -1;
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
@@ -114,6 +126,7 @@ namespace Barnacle.Dialogs
                     if (value >= minmodelWidth && value <= maxmodelWidth)
                     {
                         modelWidth = value;
+                        oldWarpFactor = -1;
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
@@ -140,6 +153,7 @@ namespace Barnacle.Dialogs
                     if (maker != null)
                     {
                         maker.Shape1 = shape1;
+                        oldWarpFactor = -1;
                     }
                     NotifyPropertyChanged();
                     UpdateDisplay();
@@ -177,6 +191,7 @@ namespace Barnacle.Dialogs
                     if (maker != null)
                     {
                         maker.Shape2 = shape2;
+                        oldWarpFactor = -1;
                     }
                     NotifyPropertyChanged();
                     UpdateDisplay();
@@ -253,6 +268,9 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private bool regen;
+        private DispatcherTimer regenTimer;
+
         public double WarpFactor
         {
             get
@@ -266,11 +284,22 @@ namespace Barnacle.Dialogs
                     if (value >= minwarpFactor && value <= maxwarpFactor)
                     {
                         warpFactor = value;
+                        double v = warpFactor * 100;
+                        FactorText = v.ToString("F1");
+                        if (Math.Abs(oldWarpFactor - warpFactor) >= 0.1)
+                        {
+                            StartRegen();
+                        }
                         NotifyPropertyChanged();
-                        UpdateDisplay();
                     }
                 }
             }
+        }
+
+        private void StartRegen()
+        {
+            regenTimer.Stop();
+            regenTimer.Start();
         }
 
         public String WarpFactorToolTip
@@ -305,24 +334,46 @@ namespace Barnacle.Dialogs
             return res;
         }
 
+        private String factorText;
+
+        public String FactorText
+        {
+            get { return factorText; }
+            set
+            {
+                if (value != factorText)
+                {
+                    factorText = value;
+
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private double oldWarpFactor;
+
         private void GenerateShape()
         {
-            ClearShape();
+            if (Math.Abs(warpFactor - oldWarpFactor) > 0.01)
+            {
+                ClearShape();
 
-            maker.Generate(warpFactor, Vertices, Faces);
-            ScaleVertices(modelLength, modelHeight, modelWidth);
-            CentreVertices();
+                maker.Generate(warpFactor, Vertices, Faces);
+                ScaleVertices(modelLength, modelHeight, modelWidth);
+                CentreVertices();
+                oldWarpFactor = warpFactor;
+            }
         }
 
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
 
-            ModelLength = EditorParameters.GetDouble("ModelLength", 50);
+            ModelLength = EditorParameters.GetDouble("ModelLength", 40);
 
-            ModelHeight = EditorParameters.GetDouble("ModelHeight", 50);
+            ModelHeight = EditorParameters.GetDouble("ModelHeight", 40);
 
-            ModelWidth = EditorParameters.GetDouble("ModelWidth", 50);
+            ModelWidth = EditorParameters.GetDouble("ModelWidth", 40);
 
             WarpFactor = EditorParameters.GetDouble("WarpFactor", 0.5);
 
@@ -356,9 +407,9 @@ namespace Barnacle.Dialogs
         private void SetDefaults()
         {
             loaded = false;
-            ModelLength = 50;
-            ModelHeight = 50;
-            ModelWidth = 50;
+            ModelLength = 40;
+            ModelHeight = 40;
+            ModelWidth = 40;
             WarpFactor = 0.5;
             Shape1 = "Cube";
             Shape2 = "Sphere";
@@ -378,6 +429,7 @@ namespace Barnacle.Dialogs
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             WarningText = "";
+            oldWarpFactor = -1;
             LoadEditorParameters();
 
             UpdateCameraPos();
