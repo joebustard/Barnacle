@@ -767,6 +767,7 @@ namespace Barnacle.ViewModels
             }
 
             selectedItems.Clear();
+            selectedObjectAdorner = null;
             Overlay.Children.Clear();
             if (regen)
             {
@@ -933,6 +934,12 @@ namespace Barnacle.ViewModels
                         }
                         break;
 
+                    case Key.OemPlus:
+                        {
+                            CloseObjectDistances();
+                        }
+                        break;
+
                     case Key.A:
                         {
                             if (ctrl)
@@ -1095,6 +1102,24 @@ namespace Barnacle.ViewModels
                             holdKey = "L";
                         }
                         break;
+                }
+            }
+        }
+
+        private void CloseObjectDistances()
+        {
+            if (selectedObjectAdorner != null && selectedObjectAdorner is DimensionAdorner)
+            {
+                DimensionAdorner da = selectedObjectAdorner as DimensionAdorner;
+                if (da.TwoPoints)
+                {
+                    CheckPoint();
+                    Vector3D c = da.EndPoint - da.StartPoint;
+                    da.EndObject.Position -= c;
+                    da.EndObject.Remesh();
+                    da.Clear();
+                    da = null;
+                    RemoveSelections(true);
                 }
             }
         }
@@ -2346,11 +2371,11 @@ namespace Barnacle.ViewModels
                     // assume we are changing the second point
                     if (selectedObjectAdorner != null && selectedObjectAdorner is DimensionAdorner)
                     {
-                        (selectedObjectAdorner as DimensionAdorner).SecondPoint(hitPos);
+                        (selectedObjectAdorner as DimensionAdorner).SecondPoint(hitPos, object3D);
                     }
                     else
                     {
-                        selectedObjectAdorner = new DimensionAdorner(camera, document.Content, hitPos);
+                        selectedObjectAdorner = new DimensionAdorner(camera, document.Content, hitPos, object3D);
                         selectedObjectAdorner.ViewPort = ViewPort;
                         selectedObjectAdorner.Overlay = Overlay;
                     }

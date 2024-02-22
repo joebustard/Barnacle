@@ -19,7 +19,27 @@ namespace Barnacle.Models.Adorners
         private TextBox label;
         private Line line;
 
-        public DimensionAdorner(PolarCamera camera, List<Object3D> objects, Point3D hitPos)
+        public Point3D StartPoint
+        {
+            get { return startPoint; }
+        }
+
+        public Point3D EndPoint
+        {
+            get { return endPoint; }
+        }
+
+        public Object3D StartObject
+        {
+            get; set;
+        }
+
+        public Object3D EndObject
+        {
+            get; set;
+        }
+
+        public DimensionAdorner(PolarCamera camera, List<Object3D> objects, Point3D hitPos, Object3D object3D)
         {
             NotificationManager.ViewUnsubscribe("DimensionAdorner");
 
@@ -29,11 +49,14 @@ namespace Barnacle.Models.Adorners
 
             content = objects;
             startPoint = hitPos;
+            StartObject = object3D;
+            EndObject = null;
             startColour = Colors.CornflowerBlue;
             endColour = Colors.GreenYellow;
             CreateMarker(startPoint, 2, startColour);
             label = null;
             line = null;
+            TwoPoints = false;
             NotificationManager.Subscribe("DimensionAdorner", "CameraMoved", OnCameraMoved);
         }
 
@@ -70,13 +93,17 @@ namespace Barnacle.Models.Adorners
             GenerateAdornments();
         }
 
+        public bool TwoPoints { get; set; }
+
         public override void Clear()
         {
             Adornments.Clear();
             SelectedObjects.Clear();
+            Overlay.Children.Clear();
+            TwoPoints = false;
         }
 
-        internal void SecondPoint(Point3D hitPos)
+        internal void SecondPoint(Point3D hitPos, Object3D object3D)
         {
             Adornments.Clear();
             Overlay?.Children.Clear();
@@ -86,6 +113,8 @@ namespace Barnacle.Models.Adorners
             double dist = startPoint.Distance(endPoint);
             AddLine(startPoint, endPoint);
             AddLabel(startPoint.MidPoint(endPoint), dist.ToString("F3"));
+            TwoPoints = true;
+            EndObject = object3D;
         }
 
         private void AddLabel(Point3D lp, string v2)
@@ -99,7 +128,7 @@ namespace Barnacle.Models.Adorners
             label.MinWidth = 200;
             label.Height = 60;
             label.HorizontalAlignment = HorizontalAlignment.Center;
-
+            label.IsReadOnly = true;
             Point point = CameraUtils.Convert3DPoint(labelPos, ViewPort);
 
             Canvas.SetLeft(label, point.X);
