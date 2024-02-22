@@ -637,7 +637,7 @@ namespace Barnacle.Models
             return res;
         }
 
-        internal string ExportAllPartsSeperately(string v, Bounds3D bnds, string exportFolderPath)
+        internal string ExportAllPartsSeparately(string v, Bounds3D bnds, string exportFolderPath)
         {
             String pth = exportFolderPath;
             if (!Directory.Exists(pth))

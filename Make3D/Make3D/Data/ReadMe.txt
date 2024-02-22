@@ -16,13 +16,15 @@ Added
 	Cut all faces and vertices of object below a moveable horizontal plane
 	Subdivide
 	Basic dimensioning Ctrl +right click on two seperate object points to display the distance between them
-	Detect if a named smartcard is inserted while the slicing window is open and enable the copy to sd card button
+	Detect if a named memorycard is inserted while the slicing window is open and enable the copy to sd card button
 	Delete part from the parts library
+	First cut of a morphable object tool. i.e. Make a shape thats 50% sphere and 50% pyramid etc
 
 Fixed
 	Prevent preset names being loaded twice in flexipathcontrol 
 	Somehow lost ability to rename file in solution. Fixed.
 	Stop shaped Wing using general platelet preset path strings
+	Prevent exception if slicer log is empty.
 
 Changed
 	Make "Paste At" preserve the relative positions if there are multiple objects in the clipboard

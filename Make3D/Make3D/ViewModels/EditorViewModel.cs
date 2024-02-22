@@ -3274,7 +3274,7 @@ namespace Barnacle.ViewModels
         private void OnExportParts(object param)
         {
             String exportFolderPath = BaseViewModel.Project.BaseFolder + "\\export";
-            string exportedPath = Document.ExportAllPartsSeperately(param.ToString(), allBounds, exportFolderPath);
+            string exportedPath = Document.ExportAllPartsSeparately(param.ToString(), allBounds, exportFolderPath);
 
             STLExportedPartsConfirmation dlg = new STLExportedPartsConfirmation();
             dlg.Owner = Application.Current.MainWindow;

@@ -5,8 +5,6 @@ namespace Barnacle.Models
 {
     public static class MeshExtensions
     {
-        #region Transformation
-
         // Apply a transformation Matrix3D or transformation class.
         public static void ApplyTransformation(this MeshGeometry3D mesh, Matrix3D transformation)
         {
@@ -21,7 +19,5 @@ namespace Barnacle.Models
             transformation.Transform(points);
             mesh.Positions = new Point3DCollection(points);
         }
-
-        #endregion Transformation
     }
 }

@@ -25,7 +25,7 @@ $StartGcode
 $EndGcode
 -e0 ^
 -l ""$src"" ^
--o ""$trg"" 2>""$log""
+-o ""$trg"" >""$log"" 2>&1
 cd %fld%
 exit 0
     ";
@@ -81,7 +81,7 @@ exit 0
             }
             else
             {
-                txt = txt.Replace("$Printer\n", "");
+                txt = txt.Replace("$Extruder\n", "");
             }
 
             txt = txt.Replace("$SettingOverrides", settingoverrides);
@@ -125,7 +125,6 @@ exit 0
             res.Result = false;
             try
             {
-
                 // we need to construct a cmd file to run the slice
                 // Work  out where it should be.
                 // use different temp names, because we will have async tasks going
@@ -145,7 +144,7 @@ exit 0
                 }
 
                 // We need a slicer profile.
-                // The profile is based on the ones upplied with Cura BUT
+                // The profile is based on the ones supplied with Cura BUT
                 // it doesn't use Cura's ones directly
                 SlicerProfile userSettings = new SlicerProfile();
                 SlicerProfile defaultSettings = null;
@@ -164,9 +163,7 @@ exit 0
                         defaultSettings = new SlicerProfile();
                         defaultSettings.LoadOverrides(defProfile);
                     }
-
                 }
-
 
                 string settingoverrides = "";
                 foreach (SettingOverride ov in userSettings.Overrides)
@@ -178,7 +175,7 @@ exit 0
                         {
                             if (df.Key == ov.Key)
                             {
-                                if ( df.Value == ov.Value)
+                                if (df.Value == ov.Value)
                                 {
                                     add = false;
                                 }
@@ -224,23 +221,27 @@ exit 0
                 {
                     string[] logLines = File.ReadAllLines(logPath);
                     int i = logLines.GetLength(0);
-
-                    if (logLines[i - 1].Trim().ToLower().StartsWith("filament"))
+                    // if the log has something in it we can try extracting the print duration etc.
+                    // if its empty then we can't do anything with it
+                    if (i > 0)
                     {
-                        string[] words = logLines[i - 1].Split(':');
-                        words[1] = words[1].Trim();
-                        res.Filament = Convert.ToInt32(words[1]);
-                    }
-                    if (logLines[i - 3].Trim().ToLower().StartsWith("print time (s)"))
-                    {
-                        string[] words = logLines[i - 3].Split(':');
-                        words[1] = words[1].Trim();
-                        res.TotalSeconds = Convert.ToInt32(words[1]);
+                        if (logLines[i - 1].Trim().ToLower().StartsWith("filament"))
+                        {
+                            string[] words = logLines[i - 1].Split(':');
+                            words[1] = words[1].Trim();
+                            res.Filament = Convert.ToInt32(words[1]);
+                        }
+                        if (logLines[i - 3].Trim().ToLower().StartsWith("print time (s)"))
+                        {
+                            string[] words = logLines[i - 3].Split(':');
+                            words[1] = words[1].Trim();
+                            res.TotalSeconds = Convert.ToInt32(words[1]);
 
-                        TimeSpan ts = new TimeSpan(0, 0, res.TotalSeconds);
-                        res.Hours = ts.Hours;
-                        res.Minutes = ts.Minutes;
-                        res.Seconds = ts.Seconds;
+                            TimeSpan ts = new TimeSpan(0, 0, res.TotalSeconds);
+                            res.Hours = ts.Hours;
+                            res.Minutes = ts.Minutes;
+                            res.Seconds = ts.Seconds;
+                        }
                     }
                 }
             }
