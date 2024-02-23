@@ -328,6 +328,14 @@ namespace Barnacle.Object3DLib
                     }
                     break;
 
+                case "dice":
+                    {
+                        PrimitiveGenerator.GenerateDice(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.Pink);
+                        built = true;
+                    }
+                    break;
+
                 case "trispike":
                     {
                         PrimitiveGenerator.GenerateTriSpike(ref pnts, ref indices, ref normals);
@@ -343,6 +351,7 @@ namespace Barnacle.Object3DLib
                         built = true;
                     }
                     break;
+
                 case "sphere":
                     {
                         PrimitiveGenerator.GenerateSphere(ref pnts, ref indices, ref normals);

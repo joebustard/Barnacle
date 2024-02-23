@@ -49,6 +49,7 @@
     <Compile Include="Bounds3D.cs" />
     <Compile Include="ExternalReference.cs" />
     <Compile Include="ExtraPrimitives\ButtonTop.cs" />
+    <Compile Include="ExtraPrimitives\Dice.cs" />
     <Compile Include="ExtraPrimitives\HexCone.cs" />
     <Compile Include="ExtraPrimitives\IBar.cs" />
     <Compile Include="ExtraPrimitives\Star6.cs" />
