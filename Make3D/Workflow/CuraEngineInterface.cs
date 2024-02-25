@@ -10,6 +10,188 @@ namespace Workflow
 {
     public class CuraEngineInterface
     {
+        // Cura gets upset if you send too many parameters
+        // It also gets upset if you don't send these ones
+        // even if they still have their default values
+        private static string[] mustAlwaysSend =
+        {
+"roofing_monotonic",
+"cool_min_temperature",
+"acceleration_enabled",
+"acceleration_print",
+"acceleration_roofing",
+"acceleration_travel",
+"acceleration_travel_layer_0",
+"adaptive_layer_height_variation",
+"adaptive_layer_height_variation_step",
+"adhesion_type",
+"brim_replaces_support",
+"cool_fan_full_at_height",
+"cool_min_layer_time",
+"fill_outline_gaps",
+"infill_before_walls",
+"infill_overlap",
+"infill_pattern",
+"infill_wipe_dist",
+"jerk_enabled",
+"jerk_print",
+"jerk_travel",
+"jerk_travel_layer_0",
+"machine_acceleration",
+"machine_max_acceleration_e",
+"machine_max_acceleration_x",
+"machine_max_acceleration_y",
+"machine_max_acceleration_z",
+"machine_max_feedrate_e",
+"machine_max_feedrate_x",
+"machine_max_feedrate_y",
+"machine_max_feedrate_z",
+"machine_max_jerk_e",
+"machine_max_jerk_xy",
+"machine_max_jerk_z",
+"material_final_print_temperature",
+"material_initial_print_temperature",
+"meshfix_maximum_resolution",
+"meshfix_maximum_travel_resolution",
+"minimum_interface_area",
+"min_wall_line_width",
+"minimum_support_area",
+"optimize_wall_printing_order",
+"retraction_combing",
+"retraction_combing_max_distance",
+"retraction_count_max",
+"retraction_extrusion_window",
+"retraction_hop",
+"retraction_min_travel",
+"retraction_prime_speed",
+"retraction_retract_speed",
+"retraction_speed",
+"roofing_layer_count",
+"skin_overlap",
+"skirt_gap",
+"skirt_line_count",
+"speed_layer_0",
+"speed_prime_tower",
+"speed_print",
+"speed_roofing",
+"speed_support",
+"speed_support_interface",
+"speed_travel",
+"speed_travel_layer_0",
+"speed_wall_x",
+"speed_z_hop",
+"support_angle",
+"support_enable",
+"support_brim_enable",
+"support_brim_width",
+"support_infill_rate",
+"support_interface_density",
+"support_interface_enable",
+"support_interface_height",
+"support_interface_pattern",
+"support_pattern",
+"support_structure",
+"support_xy_distance",
+"support_xy_distance_overhang",
+"support_xy_overrides_z",
+"support_z_distance",
+"support_bottom_angles",
+"support_bottom_density",
+"support_bottom_distance",
+"support_bottom_enable",
+"support_bottom_extruder_nr",
+"support_bottom_height",
+"support_bottom_line_distance",
+"support_bottom_line_width",
+"support_bottom_material_flow",
+"support_bottom_offset",
+"support_bottom_pattern",
+"support_bottom_stair_step_height",
+"support_bottom_stair_step_min_slope",
+"support_bottom_stair_step_width",
+
+"support_brim_line_count",
+
+"support_conical_angle",
+"support_conical_enabled",
+"support_conical_min_width",
+"support_connect_zigzags",
+
+"support_extruder_nr_layer_0",
+"support_extruder_nr",
+"support_fan_enable",
+"support_infill_angles",
+"support_infill_extruder_nr",
+
+"support_infill_sparse_thickness",
+"support_initial_layer_line_distance",
+"support_interface_angles",
+
+
+"support_interface_extruder_nr",
+
+"support_interface_line_width",
+"support_interface_material_flow",
+"support_interface_offset",
+"support_interface_pattern",
+"support_interface_priority",
+"support_interface_skip_height",
+"support_interface_wall_count",
+"support_line_distance",
+"support_line_width",
+"support_material_flow",
+"support_mesh_drop_down",
+"support_mesh",
+"support_meshes_present",
+"support_offset",
+"support_roof_angles",
+"support_roof_density",
+"support_roof_enable",
+"support_roof_extruder_nr",
+"support_roof_height",
+"support_roof_line_distance",
+"support_roof_line_width",
+"support_roof_material_flow",
+"support_roof_offset",
+"support_roof_pattern",
+"support_skip_some_zags",
+"support_skip_zag_per_mm",
+"support_supported_skin_fan_speed",
+"support_top_distance",
+"support_tower_diameter",
+"support_tower_maximum_supported_diameter",
+"support_tower_roof_angle",
+"support_tree_angle_slow",
+"support_tree_angle",
+"support_tree_bp_diameter",
+"support_tree_branch_diameter_angle",
+"support_tree_branch_diameter",
+"support_tree_branch_reach_limit",
+"support_tree_limit_branch_reach",
+"support_tree_max_diameter_increase_by_merges_when_support_to_model",
+"support_tree_max_diameter",
+"support_tree_min_height_to_model",
+"support_tree_rest_preference",
+"support_tree_tip_diameter",
+"support_tree_top_rate",
+"support_type",
+"support_use_towers",
+"support_wall_count",
+"support_xy_distance_overhang",
+"support_xy_distance",
+"support_xy_overrides_z",
+"support_zag_skip_count",
+"support",
+"top_bottom_thickness",
+"travel_avoid_other_parts",
+"travel_avoid_supports",
+"travel_retract_before_outer_wall",
+"wall_0_wipe_dist",
+"wall_thickness",
+"z_seam_corner",
+"z_seam_type",
+"gantry_height",
+        };
         private static string slicecmdtemplate =
         @"
 set fld=%~dp0
@@ -165,6 +347,8 @@ exit 0
                     }
                 }
 
+                bool[] haveSentAlready = new bool[mustAlwaysSend.Length];
+
                 string settingoverrides = "";
                 foreach (SettingOverride ov in userSettings.Overrides)
                 {
@@ -173,7 +357,7 @@ exit 0
                     {
                         foreach (SettingOverride df in defaultSettings.Overrides)
                         {
-                            if (df.Key == ov.Key)
+                            if (df.Key == ov.Key && !mustAlwaysSend.Contains(ov.Key))
                             {
                                 if (df.Value == ov.Value)
                                 {
@@ -186,6 +370,27 @@ exit 0
                     if (add)
                     {
                         settingoverrides += $"-s {ov.Key}=\"{ov.Value}\" ^\n";
+                        for (int j = 0; j < mustAlwaysSend.Length; j++)
+                        {
+                            if (mustAlwaysSend[j].ToLower() == ov.Key.ToLower())
+                            {
+                                haveSentAlready[j] = true;
+                            }
+                        }
+                    }
+                }
+
+                for (int j = 0; j < mustAlwaysSend.Length; j++)
+                {
+                    if (haveSentAlready[j] == false)
+                    {
+                        foreach (SettingOverride ov in defaultSettings.Overrides)
+                        {
+                            if (ov.Key.ToLower() == mustAlwaysSend[j].ToLower())
+                            {
+                                settingoverrides += $"-s {ov.Key}=\"{ov.Value}\" ^\n";
+                            }
+                        }
                     }
                 }
                 settingoverrides = settingoverrides.Substring(0, settingoverrides.Length - 1);
@@ -206,6 +411,7 @@ exit 0
                                  tmpFile,
                                  logPath);
 
+
                 res.Result = await DoSlice(gcodePath, tmpCmdFile, tmpFile);
 
                 if (File.Exists(tmpCmdFile))
@@ -220,27 +426,30 @@ exit 0
                 if (res.Result && File.Exists(logPath))
                 {
                     string[] logLines = File.ReadAllLines(logPath);
-                    int i = logLines.GetLength(0);
+                    int len = logLines.GetLength(0);
                     // if the log has something in it we can try extracting the print duration etc.
                     // if its empty then we can't do anything with it
-                    if (i > 0)
+                    if (len > 0)
                     {
-                        if (logLines[i - 1].Trim().ToLower().StartsWith("filament"))
+                        for (int lineIndex = 0; lineIndex < len; lineIndex++)
                         {
-                            string[] words = logLines[i - 1].Split(':');
-                            words[1] = words[1].Trim();
-                            res.Filament = Convert.ToInt32(words[1]);
-                        }
-                        if (logLines[i - 3].Trim().ToLower().StartsWith("print time (s)"))
-                        {
-                            string[] words = logLines[i - 3].Split(':');
-                            words[1] = words[1].Trim();
-                            res.TotalSeconds = Convert.ToInt32(words[1]);
+                            int timeIndex = logLines[lineIndex].IndexOf("Print time (s):");
+                            if (timeIndex > -1)
+                            {
+                                string dummy = logLines[lineIndex].Substring(timeIndex + 16).Trim();
+                                res.TotalSeconds = Convert.ToInt32(dummy);
 
-                            TimeSpan ts = new TimeSpan(0, 0, res.TotalSeconds);
-                            res.Hours = ts.Hours;
-                            res.Minutes = ts.Minutes;
-                            res.Seconds = ts.Seconds;
+                                TimeSpan ts = new TimeSpan(0, 0, res.TotalSeconds);
+                                res.Hours = ts.Hours;
+                                res.Minutes = ts.Minutes;
+                                res.Seconds = ts.Seconds;
+                            }
+                            int filamentIndex = logLines[lineIndex].IndexOf("Filament (mm^3):");
+                            if (filamentIndex > -1)
+                            {
+                                string dummy = logLines[lineIndex].Substring(filamentIndex + 17).Trim();
+                                res.Filament = Convert.ToInt32(dummy);
+                            }
                         }
                     }
                 }

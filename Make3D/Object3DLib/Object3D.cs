@@ -331,7 +331,17 @@ namespace Barnacle.Object3DLib
                 case "dice":
                     {
                         PrimitiveGenerator.GenerateDice(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.Pink);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.YellowGreen);
+                        built = true;
+                    }
+                    break;
+
+                case "egg":
+                    {
+                        PrimitiveGenerator.GenerateEgg(ref pnts, ref indices, ref normals);
+
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.GreenYellow);
+                        Rotate(new Point3D(90, 0, 0));
                         built = true;
                     }
                     break;

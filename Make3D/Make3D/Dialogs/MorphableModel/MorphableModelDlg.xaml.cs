@@ -323,6 +323,7 @@ namespace Barnacle.Dialogs
             res.Add("Cone");
             res.Add("Cylinder");
             res.Add("Cube");
+            res.Add("Dice");
             res.Add("HexCone");
             res.Add("Octahedron");
             res.Add("Pyramid");

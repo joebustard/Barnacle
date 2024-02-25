@@ -52,6 +52,10 @@ namespace MakerLib.MorphableModel
                         return MorphablePrimitivesGenerator.GenerateCube();
                     }
 
+                case "dice":
+                    {
+                        return MorphablePrimitivesGenerator.GenerateDice();
+                    }
                 case "star6":
                     {
                         return MorphablePrimitivesGenerator.GenerateStar6();

@@ -21,7 +21,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="SlicerPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Program Files\Ultimaker Cura 5.3.1</Value>
+      <Value Profile="(Default)">C:\Program Files\Ultimaker Cura 5.6.0</Value>
     </Setting>
     <Setting Name="LastImportFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)" />

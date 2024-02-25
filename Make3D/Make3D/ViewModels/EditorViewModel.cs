@@ -2851,6 +2851,11 @@ namespace Barnacle.ViewModels
                     obj.ScaleMesh(20.0, 5, 17.5);
                 }
                 else
+                if (obType == "egg")
+                {
+                    obj.ScaleMesh(20, 25, 20);
+                }
+                else
                 {
                     obj.ScaleMesh(20.0, 20.0, 20.0);
                 }

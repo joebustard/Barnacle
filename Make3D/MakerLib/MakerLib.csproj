@@ -88,6 +88,7 @@
     <Compile Include="MorphableModel\Primitives\MorphableCone.cs" />
     <Compile Include="MorphableModel\Primitives\MorphableCube.cs" />
     <Compile Include="MorphableModel\Primitives\MorphableCylinder.cs" />
+    <Compile Include="MorphableModel\Primitives\MorphableDice.cs" />
     <Compile Include="MorphableModel\Primitives\MorphableHexCone.cs" />
     <Compile Include="MorphableModel\Primitives\MorphableOctahedron.cs" />
     <Compile Include="MorphableModel\Primitives\MorphablePyramid.cs" />

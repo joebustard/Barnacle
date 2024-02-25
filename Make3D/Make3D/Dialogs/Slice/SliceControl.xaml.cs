@@ -5,6 +5,7 @@ using Barnacle.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -24,6 +25,7 @@ namespace Barnacle.Dialogs.Slice
         private bool canClose;
         private bool canCopyToSD;
         private bool canSlice;
+        private bool canSeeLog;
         private Document exportDoc;
 
         private List<String> extruders;
@@ -40,14 +42,14 @@ namespace Barnacle.Dialogs.Slice
         public SliceControl()
         {
             InitializeComponent();
-            timer = new DispatcherTimer(new TimeSpan(0, 0, 20),DispatcherPriority.Normal,TimerTick,Dispatcher.CurrentDispatcher);
+            timer = new DispatcherTimer(new TimeSpan(0, 0, 20), DispatcherPriority.Normal, TimerTick, Dispatcher.CurrentDispatcher);
 
         }
 
         private void TimerTick(object sender, EventArgs e)
         {
             timer.Stop();
-            if ( canSlice)
+            if (canSlice)
             {
                 CheckIfSDCopyShouldBeEnabled();
             }
@@ -75,7 +77,15 @@ namespace Barnacle.Dialogs.Slice
                 NotifyPropertyChanged();
             }
         }
-
+        public bool CanSeeLog
+        {
+            get { return canSeeLog; }
+            set
+            {
+                canSeeLog = value;
+                NotifyPropertyChanged();
+            }
+        }
         public bool CanCopyToSD
         {
             get { return canCopyToSD; }
@@ -536,6 +546,7 @@ M84 ; Disable stepper motors
             }
             // Make the solution show the newly exported stl & g-code
             NotificationManager.Notify("ExportRefresh", null);
+            CanSeeLog = true;
 
             CanClose = true;
             CanSlice = true;
@@ -543,7 +554,7 @@ M84 ; Disable stepper motors
             CheckIfSDCopyShouldBeEnabled();
             AppendResults("Slice complete");
         }
-
+        private string lastLog;
         private async Task SliceSingleModel(string fullPath, string exportPath, string printerPath)
         {
             exportDoc = new Document();
@@ -560,6 +571,7 @@ M84 ; Disable stepper motors
             string gcodePath = Path.Combine(printerPath, modelName + ".gcode");
 
             string logPath = Path.GetTempPath() + modelName + "_slicelog.log";
+            lastLog = logPath;
             string prf = selectedUserProfile;
 
             AppendResults(modelName.PadRight(16) + ", ", false);
@@ -615,6 +627,7 @@ M84 ; Disable stepper motors
             }
 
             CanClose = true;
+            CanSeeLog = false;
             if (selectedPrinter != "")
             {
                 CanSlice = true;
@@ -624,6 +637,21 @@ M84 ; Disable stepper motors
                 CanSlice = false;
             }
             CheckIfSDCopyShouldBeEnabled();
+        }
+
+        private void SeeLogClicked(object sender, RoutedEventArgs e)
+        {
+            if (lastLog != "" && File.Exists(lastLog))
+            {
+                ProcessStartInfo pi = new ProcessStartInfo();
+                pi.UseShellExecute = true;
+                pi.FileName = "Notepad.exe";
+                pi.Arguments = lastLog;
+                //  pi.WindowStyle = ProcessWindowStyle.Normal;
+                pi.WindowStyle = ProcessWindowStyle.Normal;
+                pi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle";
+                Process runner = Process.Start(pi);               
+            }
         }
     }
 }

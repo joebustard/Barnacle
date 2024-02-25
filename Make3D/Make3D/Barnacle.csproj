@@ -1336,6 +1336,8 @@
     <Resource Include="Images\Buttons\Star6.png" />
     <Resource Include="Images\Buttons\HexCone.png" />
     <Resource Include="Images\Buttons\Morphable.png" />
+    <Resource Include="Images\Buttons\Dice.png" />
+    <Resource Include="Images\Buttons\Egg.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

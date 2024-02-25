@@ -190,7 +190,16 @@
                 IsEnabled="{Binding EditingActive}"
                 Style="{StaticResource ImageButton}"
                 ToolTip="Add a dice">
-                <Image Source="/Barnacle;component/Images/Buttons/HexCone.png" />
+                <Image Source="/Barnacle;component/Images/Buttons/Dice.png" />
+            </Button>
+
+            <Button
+                Command="{Binding AddCommand}"
+                CommandParameter="Egg"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource ImageButton}"
+                ToolTip="Add an egg object">
+                <Image Source="/Barnacle;component/Images/Buttons/Egg.png" />
             </Button>
             <Button
                 Command="{Binding AddCommand}"
@@ -200,6 +209,8 @@
                 ToolTip="Add a tube object">
                 <Image Source="/Barnacle;component/Images/Buttons/Tube.png" />
             </Button>
+
+            
             <Button
                 Command="{Binding AddCommand}"
                 CommandParameter="Torus"

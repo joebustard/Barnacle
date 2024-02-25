@@ -121,7 +121,8 @@ namespace MakerLib.MorphableModel
             MakeMorphableShape("Roof", true);
             MakeMorphableShape("RoundRoof", true);
             MakeMorphableSphere("Sphere");
-            
+            MakeMorphableShape("Dice");
+
         }
 
         private static void MakeVectorTable()

@@ -40,6 +40,7 @@
         <Label Grid.Column="1" Grid.Row="4" Margin="2,2,2,10" Content="Status" VerticalAlignment="Center" />
         <TextBox x:Name="ResultsBox" Grid.Column="2" Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="4" IsReadOnly="True" AcceptsReturn="True" Text="{Binding ResultsText}" VerticalContentAlignment="Top" FontFamily="Courier New" FontSize="16" FontWeight="Bold"></TextBox>
 
+        <Button Grid.Column="1" Grid.Row="6" IsEnabled="{Binding CanSeeLog}" Content="Log" Margin="2,4,0,0" Click="SeeLogClicked" />
         <Button Grid.Column="3" Grid.Row="6" IsEnabled="{Binding CanSlice}" Content="Slice" Margin="2,4,0,0" Click="SliceClicked" />
 
         <Button Grid.Column="4" Grid.Row="6" IsEnabled="{Binding CanCopyToSD}" Content="SD Card" Margin="2,4,0,0" Click="SDClicked" />
