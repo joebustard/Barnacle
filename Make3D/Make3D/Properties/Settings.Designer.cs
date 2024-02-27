@@ -101,7 +101,7 @@ namespace Barnacle.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files\\Ultimaker Cura 5.3.1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files\\Ultimaker Cura 5.6.0")]
         public string SlicerPath {
             get {
                 return ((string)(this["SlicerPath"]));
