@@ -213,6 +213,22 @@
             
             <Button
                 Command="{Binding AddCommand}"
+                CommandParameter="stellatedodec"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource ImageButton}"
+                ToolTip="Add a Stellate Dodecahedron">
+                <Image Source="/Barnacle;component/Images/Buttons/StellateDodec.png" />
+            </Button>
+            <Button
+                Command="{Binding AddCommand}"
+                CommandParameter="stellateocto"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource ImageButton}"
+                ToolTip="Add a Stellate Octahedron">
+                <Image Source="/Barnacle;component/Images/Buttons/StellateOcto.png" />
+            </Button>
+            <Button
+                Command="{Binding AddCommand}"
                 CommandParameter="Torus"
                 IsEnabled="{Binding EditingActive}"
                 Style="{StaticResource ImageButton}"

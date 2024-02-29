@@ -332,6 +332,7 @@ namespace Barnacle.Dialogs
             res.Add("RoundRoof");
             res.Add("Sphere");
             res.Add("Star6");
+            res.Add("StellateDoDec");
             return res;
         }
 

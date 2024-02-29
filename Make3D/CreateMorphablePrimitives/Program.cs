@@ -122,6 +122,7 @@ namespace MakerLib.MorphableModel
             MakeMorphableShape("RoundRoof", true);
             MakeMorphableSphere("Sphere");
             MakeMorphableShape("Dice");
+            MakeMorphableShape("StellateDoDec");
 
         }
 

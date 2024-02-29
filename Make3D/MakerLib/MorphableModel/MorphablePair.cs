@@ -100,6 +100,12 @@ namespace MakerLib.MorphableModel
                     {
                         return MorphablePrimitivesGenerator.GenerateSphere();
                     }
+
+                case "stellatedodec":
+                    {
+                        return MorphablePrimitivesGenerator.GenerateStellateDoDec();
+                    }
+
             }
             return null;
         }

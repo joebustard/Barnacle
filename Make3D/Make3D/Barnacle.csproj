@@ -1338,6 +1338,8 @@
     <Resource Include="Images\Buttons\Morphable.png" />
     <Resource Include="Images\Buttons\Dice.png" />
     <Resource Include="Images\Buttons\Egg.png" />
+    <Resource Include="Images\Buttons\Stellatedodec.png" />
+    <Resource Include="Images\Buttons\StellateOcto.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
