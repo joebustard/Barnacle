@@ -11,7 +11,7 @@ namespace Barnacle.Models
 {
     public static class WindowExtensions
     {
-        public static void SaveSizeAndLocation(this Window w)
+        public static void SaveSizeAndLocation(this Window w, bool dialog = false)
         {
             try
             {
@@ -23,19 +23,36 @@ namespace Barnacle.Models
                 s += GetNode("WindowState", w.WindowState);
                 s += "</W>";
 
-                Settings.Default.WindowXml = s;
+                if ( dialog )
+                {
+                    Settings.Default.DialogXml = s;
+                }
+                else
+                {
+                    Settings.Default.WindowXml = s;
+                }
+                
                 Settings.Default.Save();
+                
             }
             catch (Exception)
             {
             }
         }
 
-        public static void RestoreSizeAndLocation(this Window w)
+        public static void RestoreSizeAndLocation(this Window w, bool dialog =false)
         {
             try
             {
-                var xd = XDocument.Parse(Settings.Default.WindowXml);
+                XDocument xd;
+                if (dialog)
+                {
+                    xd = XDocument.Parse(Settings.Default.DialogXml);
+                }
+                else
+                {
+                    xd = XDocument.Parse(Settings.Default.WindowXml);
+                }
                 w.WindowState = (WindowState)Enum.Parse(typeof(WindowState), xd.Descendants("WindowState").FirstOrDefault().Value);
                 w.Top = Convert.ToDouble(xd.Descendants("Top").FirstOrDefault().Value);
                 w.Left = Convert.ToDouble(xd.Descendants("Left").FirstOrDefault().Value);

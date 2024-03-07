@@ -20,7 +20,19 @@ namespace Barnacle.LineLib
             closed = true;
             openEndedPath = false;
         }
-
+        public FlexiSegment FirstSelectedSegment()
+        {
+            FlexiSegment res = null;
+            foreach (FlexiSegment fl in segs)
+            {
+                if (fl.Selected)
+                {
+                    res = fl;
+                    break;
+                }
+            }
+            return res;
+        }
         private bool openEndedPath;
 
         public bool OpenEndedPath
@@ -183,7 +195,7 @@ namespace Barnacle.LineLib
         {
             double low = double.MaxValue;
             double high = double.MinValue;
-            for ( int i= 0; i <flexiPoints.Count; i ++)
+            for (int i = 0; i < flexiPoints.Count; i++)
             {
                 low = Math.Min(low, flexiPoints[i].X);
                 high = Math.Max(high, flexiPoints[i].X);

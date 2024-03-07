@@ -358,6 +358,7 @@
     <Compile Include="UserControls\FlexiPathEditorControl\GridSettingsDlg.xaml.cs">
       <DependentUpon>GridSettingsDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\FlexiPathEditorControl\LengthLabel.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\PathManager.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\PenSetting.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\PointGrid.cs" />

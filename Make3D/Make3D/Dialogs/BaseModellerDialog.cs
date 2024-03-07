@@ -62,6 +62,16 @@ namespace Barnacle.Dialogs
             showAxies = true;
             bounds = new Bounds3D();
             spaceTreeRoot = null;
+        
+        }
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            this.SaveSizeAndLocation(true);
+            base.OnClosing(e);
+        }
+        protected void RestoreSizeAndLocation()
+        {
+            this.RestoreSizeAndLocation(true);
         }
         protected void ScaleVertices(double x,double y,double z)
         {
@@ -72,6 +82,12 @@ namespace Barnacle.Dialogs
                 Vertices[i] = new Point3D(p.X * x, p.Y * y, p.Z * z);
             }
         }
+
+        internal void SaveSizeAndLocation()
+        {
+            this.SaveSizeAndLocation(true);
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Bounds3D Bounds

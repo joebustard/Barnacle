@@ -38,14 +38,11 @@ namespace Barnacle.LineLib
         public override void Deselect(ObservableCollection<FlexiPoint> points)
         {
             Selected = false;
-            points[P0].Selected = false;
-            points[P1].Selected = false;
-            points[P2].Selected = false;
-            points[P3].Selected = false;
-            points[P0].Visible = false;
-            points[P1].Visible = false;
-            points[P2].Visible = false;
-            points[P3].Visible = false;
+            DeselectHide(P0, points);
+            DeselectHide(P1, points);
+            DeselectHide(P2, points);
+            DeselectHide(P3, points);
+
         }
 
         public override void DisplayPoints(List<Point> res, ObservableCollection<FlexiPoint> pnts)
@@ -55,8 +52,7 @@ namespace Barnacle.LineLib
             for (double t = 0; t <= 1; t += dt)
             {
                 Point p = GetCoord(t, pnts);
-                AddDisplayPoint(res, p.X, p.Y);
-                //res.Add(GetCoord(t, pnts));
+                AddDisplayPoint(res, p.X, p.Y);                
             }
             AddDisplayPoint(res, pnts[P3].X, pnts[P3].Y);
         }

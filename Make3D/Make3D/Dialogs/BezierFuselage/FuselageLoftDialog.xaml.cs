@@ -27,6 +27,8 @@ namespace Barnacle.Dialogs
         public FuselageLoftDialog()
         {
             InitializeComponent();
+            base.RestoreSizeAndLocation();
+
             DataContext = this;
             BulkHeads = new ObservableCollection<BulkheadControl>();
             DataContext = this;
@@ -88,6 +90,7 @@ namespace Barnacle.Dialogs
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             RecordEditorParameters();
+            base.SaveSizeAndLocation();
             DialogResult = true;
             Close();
         }

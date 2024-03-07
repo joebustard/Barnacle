@@ -49,6 +49,7 @@ Brushes.Green
         public BezierRingDlg()
         {
             InitializeComponent();
+            
             DataContext = this;
 
             ToolName = "BezierRing";

@@ -285,6 +285,7 @@ namespace Barnacle.UserControls
                         DrawLine(i, i + 1, points);
                     }
                 }
+
             }
         }
 
@@ -503,12 +504,26 @@ namespace Barnacle.UserControls
             bool found = false;
             if (ln != null)
             {
+                lengthLabel = null;
                 switch (vm.SelectionMode)
                 {
                     case FlexiPathEditorControlViewModel.SelectionModeType.SelectSegmentAtPoint:
                         {
+                            lengthLabel = null;
                             bool shiftDown = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
                             found = vm.SelectLineFromPoint(position, shiftDown);
+                            if ( !shiftDown  && found)
+                            {
+                                string lengthText = "";
+                                Point labelPos;
+                                vm.GetSegmentLengthLabel(out lengthText, out labelPos);
+                                if ( labelPos.X != -1)
+                                {
+                                    lengthLabel = new LengthLabel();
+                                    lengthLabel.Content = lengthText;
+                                    lengthLabel.Position = labelPos;
+                                }
+                            }
                         }
                         break;
 
@@ -562,20 +577,52 @@ namespace Barnacle.UserControls
 
         private void MainCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            lengthLabel = null;
             System.Windows.Point position = e.GetPosition(MainCanvas);
             if (vm.MouseDown(e, position))
             {
+                CheckLengthLabel(e, position);
                 UpdateDisplay();
             }
         }
-
+        private LengthLabel lengthLabel = null;
         private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
         {
             System.Windows.Point position = e.GetPosition(MainCanvas);
             if (vm.MouseMove(e, position))
             {
+                CheckLengthLabel(e, position);
+
                 UpdateDisplay();
             }
+        }
+
+        private void CheckLengthLabel(MouseEventArgs e, Point position)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                if (vm.Points.Count > 1 && vm.SelectionMode == FlexiPathEditorControlViewModel.SelectionModeType.AppendPoint)
+                {
+                    double d = LastSegLength();
+                    lengthLabel = new LengthLabel();
+                    lengthLabel.Content = d.ToString("F3");
+                    lengthLabel.Position = new Point(position.X, position.Y);
+                }
+            }
+        }
+
+        private double LastSegLength()
+        {
+            double res = 0;
+            if (vm.Points.Count > 1)
+            {
+                FlexiPoint p1 = vm.Points[vm.Points.Count - 2];
+                FlexiPoint p2 = vm.Points[vm.Points.Count - 1];
+                double dx = p1.X - p2.X;
+                double dy = p1.Y - p2.Y;
+                res = Math.Sqrt(dx * dx + dy * dy);
+            }
+            return res;
         }
 
         private void MainCanvas_MouseUp(object sender, MouseButtonEventArgs e)
@@ -583,6 +630,7 @@ namespace Barnacle.UserControls
             System.Windows.Point position = e.GetPosition(MainCanvas);
             if (vm.MouseUp(e, position))
             {
+                CheckLengthLabel(e, position);
                 UpdateDisplay();
                 NotifyPathPointsChanged();
             }
@@ -847,6 +895,10 @@ namespace Barnacle.UserControls
                 }
                 DisplayLines();
                 DisplayPoints();
+                if (lengthLabel != null)
+                {
+                    MainCanvas.Children.Add(lengthLabel.TextBox);
+                }
             }
         }
 

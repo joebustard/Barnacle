@@ -151,6 +151,7 @@ namespace Barnacle.Dialogs
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             SaveEditorParmeters();
+            base.SaveSizeAndLocation();
             DialogResult = true;
             Close();
         }

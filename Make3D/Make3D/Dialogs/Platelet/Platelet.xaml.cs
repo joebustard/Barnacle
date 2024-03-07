@@ -59,7 +59,7 @@ namespace Barnacle.Dialogs
         public Platelet()
         {
             InitializeComponent();
-
+            
             ToolName = "Platelet";
             DataContext = this;
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
@@ -619,6 +619,7 @@ namespace Barnacle.Dialogs
         {
             SaveEditorParmeters();
             DialogResult = true;
+            this.SaveSizeAndLocation(true);
             Close();
         }
 

@@ -48,7 +48,10 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="WindowXml" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">"&lt;W&gt;&lt;Top&gt;208&lt;/Top&gt;&lt;Left&gt;208&lt;/Left&gt;&lt;Height&gt;729&lt;/Height&gt;&lt;Width&gt;1048&lt;/Width&gt;&lt;WindowState&gt;Maximized&lt;/WindowState&gt;&lt;/W&gt;"</Value>
+    </Setting>
+    <Setting Name="DialogXml" Type="System.String" Scope="User">
+      <Value Profile="(Default)">"&lt;W&gt;&lt;Top&gt;189&lt;/Top&gt;&lt;Left&gt;358&lt;/Left&gt;&lt;Height&gt;624&lt;/Height&gt;&lt;Width&gt;1315&lt;/Width&gt;&lt;WindowState&gt;Normal&lt;/WindowState&gt;&lt;/W&gt;"</Value>
     </Setting>
   </Settings>
 </SettingsFile>

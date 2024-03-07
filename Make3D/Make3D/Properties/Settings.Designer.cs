@@ -209,13 +209,27 @@ namespace Barnacle.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("\"<W><Top>208</Top><Left>208</Left><Height>729</Height><Width>1048</Width><WindowS" +
+            "tate>Maximized</WindowState></W>\"")]
         public string WindowXml {
             get {
                 return ((string)(this["WindowXml"]));
             }
             set {
                 this["WindowXml"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("\"<W><Top>189</Top><Left>358</Left><Height>624</Height><Width>1315</Width><WindowS" +
+            "tate>Normal</WindowState></W>\"")]
+        public string DialogXml {
+            get {
+                return ((string)(this["DialogXml"]));
+            }
+            set {
+                this["DialogXml"] = value;
             }
         }
     }

@@ -248,6 +248,7 @@ namespace Barnacle.Models
             if (res != null)
             {
                 res.Owner = Application.Current.MainWindow;
+                res.RestoreSizeAndLocation(true);
             }
             return res;
         }

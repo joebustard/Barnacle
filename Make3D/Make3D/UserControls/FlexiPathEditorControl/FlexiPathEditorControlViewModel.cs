@@ -570,6 +570,32 @@ namespace Barnacle.UserControls
             }
         }
 
+        internal void GetSegmentLengthLabel(out string lengthText, out Point labelPos)
+        {
+            lengthText = "";
+            labelPos = new Point(-1, -1);
+            FlexiSegment fs = FirstSelectedSegment();
+            if (fs != null)
+            {
+                FlexiPoint ps = selectedFlexiPath.FlexiPoints[fs.Start()];
+                FlexiPoint pe = selectedFlexiPath.FlexiPoints[fs.End()];
+
+                double dx = ps.X - pe.X;
+                double dy = ps.Y - pe.Y;
+
+                double d = Math.Sqrt(dx * dx + dy * dy);
+                lengthText = d.ToString("F3");
+                labelPos.X = ToPixelX((ps.X + pe.X) / 2);
+                labelPos.Y = ToPixelY((ps.Y + pe.Y) / 2);
+
+            }
+        }
+
+        internal FlexiSegment FirstSelectedSegment()
+        {
+            return selectedFlexiPath.FirstSelectedSegment();
+        }
+
         public Visibility ShowHoleControls
         {
             get { return showHoleControls; }

@@ -40,6 +40,7 @@ namespace Barnacle.Dialogs
             shape1Items = CreateShapeList();
             shape2Items = CreateShapeList();
             maker = new MorphableModelMaker(shape1, shape2);
+            
             ToolName = "Morphable";
             DataContext = this;
             ModelGroup = MyModelGroup;
@@ -313,6 +314,7 @@ namespace Barnacle.Dialogs
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             SaveEditorParmeters();
+            base.SaveSizeAndLocation();
             DialogResult = true;
             Close();
         }
