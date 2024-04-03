@@ -135,6 +135,8 @@ namespace Workflow
                     }
                 }
             } while (found == true);
+
+            InterpretValue(overrides);
         }
 
         private SettingOverride FindOveride(List<SettingOverride> overrides, string key)

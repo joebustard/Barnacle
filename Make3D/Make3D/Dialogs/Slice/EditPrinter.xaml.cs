@@ -138,8 +138,8 @@ namespace Barnacle.Dialogs.Slice
 
             if (SlicerPath != null && SlicerPath != "")
             {
-                CuraPrinters = CuraEngineInterface.GetAvailableCuraPrinterDefinitions(SlicerPath + @"\Resources\definitions");
-                CuraExtruders = CuraEngineInterface.GetAvailableCuraExtruders(SlicerPath + @"\Resources\extruders");
+                CuraPrinters = CuraEngineInterface.GetAvailableCuraPrinterDefinitions(SlicerPath + @"\share\cura\Resources\definitions");
+                CuraExtruders = CuraEngineInterface.GetAvailableCuraExtruders(SlicerPath + @"\share\cura\Resources\extruders");
             }
         }
     }

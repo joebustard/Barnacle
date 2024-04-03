@@ -39,15 +39,16 @@ namespace Barnacle.Dialogs.Slice
         private String selectedPrinter;
         private String selectedUserProfile;
         private DispatcherTimer timer;
+
         public SliceControl()
         {
             InitializeComponent();
             timer = new DispatcherTimer(new TimeSpan(0, 0, 20), DispatcherPriority.Normal, TimerTick, Dispatcher.CurrentDispatcher);
             CuraDefinitionFile df = new CuraDefinitionFile();
-            string fname = @"C:\Program Files\UltiMaker Cura 5.6.0\share\cura\resources\definitions\creality_ender3pro.def.json";
-            df.Load(fname);
-            df.Dump();
-            df.SaveSettings("c:\\tmp\\test.json.def");
+            //string fname = @"C:\Program Files\UltiMaker Cura 5.6.0\share\cura\resources\definitions\creality_ender3pro.def.json";
+            //df.Load(fname);
+            //  df.Dump();
+            //df.SaveSettings("c:\\tmp\\test.json.def");
         }
 
         private void TimerTick(object sender, EventArgs e)
@@ -81,6 +82,7 @@ namespace Barnacle.Dialogs.Slice
                 NotifyPropertyChanged();
             }
         }
+
         public bool CanSeeLog
         {
             get { return canSeeLog; }
@@ -90,6 +92,7 @@ namespace Barnacle.Dialogs.Slice
                 NotifyPropertyChanged();
             }
         }
+
         public bool CanCopyToSD
         {
             get { return canCopyToSD; }
@@ -462,11 +465,9 @@ M84 ; Disable stepper motors
 
         private async void SDClicked(object sender, RoutedEventArgs e)
         {
-
             string cardName = Properties.Settings.Default.SDCardLabel;
             if (!String.IsNullOrEmpty(cardName))
             {
-
                 string root = SDCardUtils.FindSDCard(cardName);
                 if (!String.IsNullOrEmpty(root))
                 {
@@ -558,7 +559,9 @@ M84 ; Disable stepper motors
             CheckIfSDCopyShouldBeEnabled();
             AppendResults("Slice complete");
         }
+
         private string lastLog;
+
         private async Task SliceSingleModel(string fullPath, string exportPath, string printerPath)
         {
             exportDoc = new Document();
@@ -604,7 +607,6 @@ M84 ; Disable stepper motors
                 {
                     if (obj.Exportable)
                     {
-
                         exportedParts++;
                     }
                 }
@@ -654,7 +656,7 @@ M84 ; Disable stepper motors
                 //  pi.WindowStyle = ProcessWindowStyle.Normal;
                 pi.WindowStyle = ProcessWindowStyle.Normal;
                 pi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle";
-                Process runner = Process.Start(pi);               
+                Process runner = Process.Start(pi);
             }
         }
     }
