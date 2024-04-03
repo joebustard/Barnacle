@@ -61,7 +61,7 @@ namespace CSGLib
         private Vector3D Center;
 
         /** face status relative to a solid  */
-        private static readonly double EqualityTolerance = 1e-8f;
+       // private static readonly double EqualityTolerance = 1e-5f;
 
         private enum Side
         { UP, DOWN, ON, NONE };
@@ -130,10 +130,18 @@ namespace CSGLib
         public bool Equals(Face face)
         {
             bool cond1 = V1.Equals(face.V1) && V2.Equals(face.V2) && V3.Equals(face.V3);
+            if ( cond1)
+            {
+                return true;
+            }
             bool cond2 = V1.Equals(face.V2) && V2.Equals(face.V3) && V3.Equals(face.V1);
+            if ( cond2)
+            {
+                return true;
+            }
             bool cond3 = V1.Equals(face.V3) && V2.Equals(face.V1) && V3.Equals(face.V2);
 
-            return cond1 || cond2 || cond3;
+            return cond3;
         }
 
         public double GetIntersectCost()
@@ -241,7 +249,7 @@ namespace CSGLib
                         distance = ray.ComputePointToPointDistance(intersectionPoint);
 
                         //if ray lies in plane...
-                        if (Math.Abs(distance) < EqualityTolerance && Math.Abs(dotProduct) < EqualityTolerance)
+                        if (Math.Abs(distance) < Vertex.EqualityTolerance && Math.Abs(dotProduct) < Vertex.EqualityTolerance)
                         {
                             //disturb the ray in order to not lie into another plane
                             ray.PerturbDirection();
@@ -250,7 +258,7 @@ namespace CSGLib
                         }
 
                         //if ray starts in plane...
-                        if (Math.Abs(distance) < EqualityTolerance && Math.Abs(dotProduct) > EqualityTolerance)
+                        if (Math.Abs(distance) < Vertex.EqualityTolerance && Math.Abs(dotProduct) > Vertex.EqualityTolerance)
                         {
                             //if ray intersects the face...
                             if (face.ContainsPoint(intersectionPoint))
@@ -263,7 +271,7 @@ namespace CSGLib
                         }
 
                         //if ray intersects plane...
-                        else if (Math.Abs(dotProduct) > EqualityTolerance && distance > EqualityTolerance)
+                        else if (Math.Abs(dotProduct) > Vertex.EqualityTolerance && distance > Vertex.EqualityTolerance)
                         {
                             if (distance < closestDistance)
                             {
@@ -290,23 +298,23 @@ namespace CSGLib
                 double dotProduct = Vector3D.DotProduct(closestFace.GetNormal(), ray.Direction);
 
                 //distance = 0: coplanar faces
-                if (Math.Abs(closestDistance) < EqualityTolerance)
+                if (Math.Abs(closestDistance) < Vertex.EqualityTolerance)
                 {
-                    if (dotProduct > EqualityTolerance)
+                    if (dotProduct > Vertex.EqualityTolerance)
                     {
                         Status = Status.SAME;
                     }
-                    else if (dotProduct < -EqualityTolerance)
+                    else if (dotProduct < -Vertex.EqualityTolerance)
                     {
                         Status = Status.OPPOSITE;
                     }
                 }
-                else if (dotProduct > EqualityTolerance)
+                else if (dotProduct > Vertex.EqualityTolerance)
                 {
                     //dot product > 0 (same direction): inside face
                     Status = Status.INSIDE;
                 }
-                else if (dotProduct < -EqualityTolerance)
+                else if (dotProduct < -Vertex.EqualityTolerance)
                 {
                     //dot product < 0 (opposite direction): outside face
                     Status = Status.OUTSIDE;
@@ -397,16 +405,16 @@ namespace CSGLib
         private static Side LinePositionInX(Vector3D point, Vector3D pointLine1, Vector3D pointLine2)
         {
             double a, b, z;
-            if ((Math.Abs(pointLine1.Y - pointLine2.Y) > EqualityTolerance) && (((point.Y >= pointLine1.Y) && (point.Y <= pointLine2.Y)) || ((point.Y <= pointLine1.Y) && (point.Y >= pointLine2.Y))))
+            if ((Math.Abs(pointLine1.Y - pointLine2.Y) > Vertex.EqualityTolerance) && (((point.Y >= pointLine1.Y) && (point.Y <= pointLine2.Y)) || ((point.Y <= pointLine1.Y) && (point.Y >= pointLine2.Y))))
             {
                 a = (pointLine2.Z - pointLine1.Z) / (pointLine2.Y - pointLine1.Y);
                 b = pointLine1.Z - a * pointLine1.Y;
                 z = a * point.Y + b;
-                if (z > point.Z + EqualityTolerance)
+                if (z > point.Z + Vertex.EqualityTolerance)
                 {
                     return Side.UP;
                 }
-                else if (z < point.Z - EqualityTolerance)
+                else if (z < point.Z - Vertex.EqualityTolerance)
                 {
                     return Side.DOWN;
                 }
@@ -431,16 +439,16 @@ namespace CSGLib
         private static Side LinePositionInY(Vector3D point, Vector3D pointLine1, Vector3D pointLine2)
         {
             double a, b, z;
-            if ((Math.Abs(pointLine1.X - pointLine2.X) > EqualityTolerance) && (((point.X >= pointLine1.X) && (point.X <= pointLine2.X)) || ((point.X <= pointLine1.X) && (point.X >= pointLine2.X))))
+            if ((Math.Abs(pointLine1.X - pointLine2.X) > Vertex.EqualityTolerance) && (((point.X >= pointLine1.X) && (point.X <= pointLine2.X)) || ((point.X <= pointLine1.X) && (point.X >= pointLine2.X))))
             {
                 a = (pointLine2.Z - pointLine1.Z) / (pointLine2.X - pointLine1.X);
                 b = pointLine1.Z - a * pointLine1.X;
                 z = a * point.X + b;
-                if (z > point.Z + EqualityTolerance)
+                if (z > point.Z + Vertex.EqualityTolerance)
                 {
                     return Side.UP;
                 }
-                else if (z < point.Z - EqualityTolerance)
+                else if (z < point.Z - Vertex.EqualityTolerance)
                 {
                     return Side.DOWN;
                 }
@@ -465,16 +473,16 @@ namespace CSGLib
         private static Side LinePositionInZ(Vector3D point, Vector3D pointLine1, Vector3D pointLine2)
         {
             double a, b, y;
-            if ((Math.Abs(pointLine1.X - pointLine2.X) > EqualityTolerance) && (((point.X >= pointLine1.X) && (point.X <= pointLine2.X)) || ((point.X <= pointLine1.X) && (point.X >= pointLine2.X))))
+            if ((Math.Abs(pointLine1.X - pointLine2.X) > Vertex.EqualityTolerance) && (((point.X >= pointLine1.X) && (point.X <= pointLine2.X)) || ((point.X <= pointLine1.X) && (point.X >= pointLine2.X))))
             {
                 a = (pointLine2.Y - pointLine1.Y) / (pointLine2.X - pointLine1.X);
                 b = pointLine1.Y - a * pointLine1.X;
                 y = a * point.X + b;
-                if (y > point.Y + EqualityTolerance)
+                if (y > point.Y + Vertex.EqualityTolerance)
                 {
                     return Side.UP;
                 }
-                else if (y < point.Y - EqualityTolerance)
+                else if (y < point.Y - Vertex.EqualityTolerance)
                 {
                     return Side.DOWN;
                 }
@@ -502,7 +510,7 @@ namespace CSGLib
             Vector3D normal = GetNormal();
 
             //if x is constant...
-            if (Math.Abs(normal.X) > EqualityTolerance)
+            if (Math.Abs(normal.X) > Vertex.EqualityTolerance)
             {
                 //tests on the x plane
                 result1 = LinePositionInX(point, V1.Position, V2.Position);
@@ -511,7 +519,7 @@ namespace CSGLib
             }
 
             //if y is constant...
-            else if (Math.Abs(normal.Y) > EqualityTolerance)
+            else if (Math.Abs(normal.Y) > Vertex.EqualityTolerance)
             {
                 //tests on the y plane
                 result1 = LinePositionInY(point, V1.Position, V2.Position);

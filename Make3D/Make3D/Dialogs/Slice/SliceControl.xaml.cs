@@ -43,7 +43,11 @@ namespace Barnacle.Dialogs.Slice
         {
             InitializeComponent();
             timer = new DispatcherTimer(new TimeSpan(0, 0, 20), DispatcherPriority.Normal, TimerTick, Dispatcher.CurrentDispatcher);
-
+            CuraDefinitionFile df = new CuraDefinitionFile();
+            string fname = @"C:\Program Files\UltiMaker Cura 5.6.0\share\cura\resources\definitions\creality_ender3pro.def.json";
+            df.Load(fname);
+            df.Dump();
+            df.SaveSettings("c:\\tmp\\test.json.def");
         }
 
         private void TimerTick(object sender, EventArgs e)

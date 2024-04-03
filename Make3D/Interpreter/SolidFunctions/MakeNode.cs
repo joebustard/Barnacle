@@ -13,33 +13,8 @@ namespace ScriptLanguage
             "roof","cone","pyramid","roundroof","cap","polygon","rightangle","pointy"
       };
 
-        private static string[] shapenames =
-               {
-                "box",
-                "sphere",
-                "cylinder",
-                "roof",
-                "roundroof",
-                "cone",
-                "pyramid",
-                "pyramid2",
-                "torus",
-                "cap",
-                "polygon",
-                "tube",
-                "rightangle",
-                "pointy",
-                "octahedron",
-                "trispike",
-                "ibar",
-                "xbar",
-                "buttontop",
-                "pentagoncell",
-                "trianglecell",
-                "boxcell",
-                "hexagoncell",
-                "octagoncell"
-        };
+        private  string[] shapenames;
+        
 
         private ExpressionNode typeExp;
         private ExpressionNode xExp;
@@ -62,6 +37,7 @@ namespace ScriptLanguage
             this.xSize = xSize;
             this.ySize = ySize;
             this.zSize = zSize;
+            this.shapenames = Object3D.PrimitiveNames().ToArray();
         }
 
         /// Execute this node

@@ -54,7 +54,7 @@ namespace CSGLib
         /// <summary>
         /// tolerance value to test equalities
         /// </summary>
-        private static readonly double EqualityTolerance = 1e-8f;
+    //    private static readonly double EqualityTolerance = 1e-5f;
 
         private readonly int maxSplitLevel = 300;
 
@@ -88,24 +88,24 @@ namespace CSGLib
             int[] indices = solid.GetIndices();
             var verticesTemp = new List<Vertex>();
 
-            // create vertices
+            // create vertices & faces             
+            Faces = new List<Face>();
             Vertices = new List<Vertex>();
             octTree = new OctTree(Vertices, solid.Minimum, solid.Maximum, 100);
-            for (int i = 0; i < verticesPoints.Length; i++)
+            for (int i = 0; i < indices.Length; i+= 3)
             {
-                vertex = AddVertex(octTree, verticesPoints[i], Status.UNKNOWN);
-                verticesTemp.Add(vertex);
-            }
-
-            //create faces
-            Faces = new List<Face>();
-            for (int i = 0; i < indices.Length; i = i + 3)
-            {
-                v1 = verticesTemp[indices[i]];
-                v2 = verticesTemp[indices[i + 1]];
-                v3 = verticesTemp[indices[i + 2]];
+                int f = indices[i];
+                v1 = AddVertex(octTree, verticesPoints[f], Status.UNKNOWN);
+                verticesTemp.Add(v1);
+                f = indices[i+1];
+                v2 = AddVertex(octTree, verticesPoints[f], Status.UNKNOWN);
+                verticesTemp.Add(v2);
+                f = indices[i + 2];
+                v3 = AddVertex(octTree, verticesPoints[f], Status.UNKNOWN);
+                verticesTemp.Add(v3);
                 AddFace(v1, v2, v3, 0);
             }
+            
 
             //create bound
             _Bound = new Bound(verticesPoints);
@@ -265,12 +265,12 @@ namespace CSGLib
             Segment segment2;
             double distFace1Vert1, distFace1Vert2, distFace1Vert3, distFace2Vert1, distFace2Vert2, distFace2Vert3;
             int signFace1Vert1, signFace1Vert2, signFace1Vert3, signFace2Vert1, signFace2Vert2, signFace2Vert3;
-            int numFacesBefore = NumFaces;
+
             int numFacesStart = NumFaces + obj.NumFaces;
             int facesLimit = 1000 * numFacesStart;
-            if (facesLimit > 1000000)
+            if (facesLimit > 2000000)
             {
-                facesLimit = 1000000;
+                facesLimit = 2000000;
             }
             //if the objects bounds overlap...
             if (_Bound.Overlap(obj._Bound))
@@ -303,9 +303,9 @@ namespace CSGLib
                                 distFace1Vert3 = ComputeDistance(face1.V3, face2);
 
                                 //distances signs from the face1 vertices to the face2 plane
-                                signFace1Vert1 = distFace1Vert1 > EqualityTolerance ? 1 : (distFace1Vert1 < -EqualityTolerance ? -1 : 0);
-                                signFace1Vert2 = distFace1Vert2 > EqualityTolerance ? 1 : (distFace1Vert2 < -EqualityTolerance ? -1 : 0);
-                                signFace1Vert3 = distFace1Vert3 > EqualityTolerance ? 1 : (distFace1Vert3 < -EqualityTolerance ? -1 : 0);
+                                signFace1Vert1 = distFace1Vert1 > Vertex.EqualityTolerance ? 1 : (distFace1Vert1 < -Vertex.EqualityTolerance ? -1 : 0);
+                                signFace1Vert2 = distFace1Vert2 > Vertex.EqualityTolerance ? 1 : (distFace1Vert2 < -Vertex.EqualityTolerance ? -1 : 0);
+                                signFace1Vert3 = distFace1Vert3 > Vertex.EqualityTolerance ? 1 : (distFace1Vert3 < -Vertex.EqualityTolerance ? -1 : 0);
 
                                 if (!(signFace1Vert1 == signFace1Vert2 && signFace1Vert2 == signFace1Vert3))
                                 {
@@ -315,9 +315,9 @@ namespace CSGLib
                                     distFace2Vert3 = ComputeDistance(face2.V3, face1);
 
                                     //distances signs from the face2 vertices to the face1 plane
-                                    signFace2Vert1 = distFace2Vert1 > EqualityTolerance ? 1 : (distFace2Vert1 < -EqualityTolerance ? -1 : 0);
-                                    signFace2Vert2 = distFace2Vert2 > EqualityTolerance ? 1 : (distFace2Vert2 < -EqualityTolerance ? -1 : 0);
-                                    signFace2Vert3 = distFace2Vert3 > EqualityTolerance ? 1 : (distFace2Vert3 < -EqualityTolerance ? -1 : 0);
+                                    signFace2Vert1 = distFace2Vert1 > Vertex.EqualityTolerance ? 1 : (distFace2Vert1 < -Vertex.EqualityTolerance ? -1 : 0);
+                                    signFace2Vert2 = distFace2Vert2 > Vertex.EqualityTolerance ? 1 : (distFace2Vert2 < -Vertex.EqualityTolerance ? -1 : 0);
+                                    signFace2Vert3 = distFace2Vert3 > Vertex.EqualityTolerance ? 1 : (distFace2Vert3 < -Vertex.EqualityTolerance ? -1 : 0);
 
                                     //if the signs are not equal...
                                     if (!(signFace2Vert1 == signFace2Vert2 && signFace2Vert2 == signFace2Vert3))
@@ -413,7 +413,23 @@ namespace CSGLib
             int i;
             //if already there is an equal vertex, it is not inserted
             Vertex vertex = new Vertex(pos, status);
-
+            
+            int vIndex = octTree.PointPresent(vertex);
+            if ( vIndex == -1)
+            {
+                octTree.AddPoint(Vertices.Count,vertex);
+                vertex.SetStatus(status);
+                //Vertices.Add(vertex);
+                return vertex;
+            }
+            else
+            {
+                vertex = Vertices[vIndex];
+                vertex.SetStatus(status);
+                return vertex;
+            }
+            
+            /*
             for (i = 0; i < Vertices.Count; i++)
             {
                 if (vertex.Equals(Vertices[i]))
@@ -430,6 +446,7 @@ namespace CSGLib
                 vertex.SetStatus(status);
                 return vertex;
             }
+            */
         }
 
         /// <summary>
@@ -743,7 +760,7 @@ namespace CSGLib
                 Vertex endVertex = segment1.EndVertex;
 
                 //starting point: deeper starting point
-                if (segment2.StartDist > segment1.StartDist + EqualityTolerance)
+                if (segment2.StartDist > segment1.StartDist + Vertex.EqualityTolerance)
                 {
                     startDist = segment2.StartDist;
                     startType = segment1.IntermediateType;
@@ -757,7 +774,7 @@ namespace CSGLib
                 }
 
                 //ending point: deepest ending point
-                if (segment2.EndDistance < segment1.EndDistance - EqualityTolerance)
+                if (segment2.EndDistance < segment1.EndDistance - Vertex.EqualityTolerance)
                 {
                     endDist = segment2.EndDistance;
                     endType = segment1.IntermediateType;
@@ -884,7 +901,7 @@ namespace CSGLib
                     Vector3D segmentVector = new Vector3D(startPos.X - endPos.X, startPos.Y - endPos.Y, startPos.Z - endPos.Z);
 
                     //if the intersection segment is a point only...
-                    if (Math.Abs(segmentVector.X) < EqualityTolerance && Math.Abs(segmentVector.Y) < EqualityTolerance && Math.Abs(segmentVector.Z) < EqualityTolerance)
+                    if (Math.Abs(segmentVector.X) < Vertex.EqualityTolerance && Math.Abs(segmentVector.Y) < Vertex.EqualityTolerance && Math.Abs(segmentVector.Z) < Vertex.EqualityTolerance)
                     {
                         BreakFaceInThree(facePos, startPos);
                         return;

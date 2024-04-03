@@ -6,7 +6,7 @@ namespace Barnacle.Object3DLib
 {
     public class PointUtils
     {
-        private const double tolerance = 1.0E-4;
+        private const double tolerance = 1.0E-7;
 
         public static bool equals(Point3D p, double x, double y, double z)
         {

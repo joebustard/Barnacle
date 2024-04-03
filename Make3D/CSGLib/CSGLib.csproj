@@ -62,7 +62,6 @@
     <Compile Include="Ray.cs" />
     <Compile Include="Segment.cs" />
     <Compile Include="Solid.cs" />
-    <Compile Include="Vector3.cs" />
     <Compile Include="Vector3dExtensions.cs" />
     <Compile Include="Vertex.cs" />
   </ItemGroup>

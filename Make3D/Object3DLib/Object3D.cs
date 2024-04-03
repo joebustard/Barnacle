@@ -309,7 +309,84 @@ namespace Barnacle.Object3DLib
                 Indices.Add(i);
             }
         }
+        internal delegate void GenPrim(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals);
+        internal struct PrimTableEntry
+        {
+            internal string PrimName;
+            internal GenPrim Generator;
+            internal Color Color;
+            internal PrimTableEntry(String s, GenPrim p, Color c)
+            {
+                PrimName = s;
+                Generator = p;
+                Color = c;
+            }
+        }
+        public static List<String> PrimitiveNames()
+        {
+            List<String> res = new List<String>();
+            foreach (PrimTableEntry pt in PrimitiveTable)
+            {
+                res.Add(pt.PrimName);
+            }
+                return res;
 
+        }
+        internal static PrimTableEntry[] PrimitiveTable =
+        {
+            new PrimTableEntry( "box",PrimitiveGenerator.GenerateCube,Colors.Pink),
+            new PrimTableEntry( "boxcell",PrimitiveGenerator.GenerateCell4, Colors.DeepPink),
+            new PrimTableEntry( "buttontop", PrimitiveGenerator.GenerateButtonTop, Colors.CornflowerBlue),
+            new PrimTableEntry( "cap",PrimitiveGenerator.GenerateCap, Colors.LimeGreen),
+            new PrimTableEntry( "cone",PrimitiveGenerator.GenerateCone, Colors.LightSeaGreen),
+            new PrimTableEntry( "cube",PrimitiveGenerator.GenerateCube,Colors.Pink),
+            new PrimTableEntry( "cylinder",PrimitiveGenerator.GenerateCylinder, Colors.Orange),
+            new PrimTableEntry( "dice",PrimitiveGenerator.GenerateDice,Colors.YellowGreen),
+            new PrimTableEntry( "egg",PrimitiveGenerator.GenerateEgg,Colors.GreenYellow),
+            new PrimTableEntry( "hexagoncell",PrimitiveGenerator.GenerateCell6, Colors.SpringGreen),
+            new PrimTableEntry( "hexcone",PrimitiveGenerator.GenerateHexCone, Colors.Yellow),
+            new PrimTableEntry( "ibar",PrimitiveGenerator.GenerateIBar, Colors.Purple),
+            new PrimTableEntry( "octahedron",PrimitiveGenerator.GenerateOctahedron, Colors.YellowGreen),
+            new PrimTableEntry( "octagoncell",PrimitiveGenerator.GenerateCell8, Color.FromRgb(0xEF, 0xAB, 0x00)),
+            new PrimTableEntry( "polygon",PrimitiveGenerator.GeneratePolygon, Colors.LightYellow),
+            new PrimTableEntry( "rightangle",PrimitiveGenerator.GenerateRightAngle, Color.FromRgb(0x00, 0xAB, 0xEF)),
+            new PrimTableEntry( "roof",PrimitiveGenerator.GenerateRoof, Colors.Lavender),
+            new PrimTableEntry( "roundroof",PrimitiveGenerator.GenerateRoundRoof, Colors.Aquamarine),
+            new PrimTableEntry( "pentagoncell",PrimitiveGenerator.GenerateCell5, Colors.Chartreuse),
+            new PrimTableEntry( "pointy",PrimitiveGenerator.GeneratePointy, Color.FromRgb(0xEF, 0xAB, 0x00)),
+            new PrimTableEntry( "pyramid",PrimitiveGenerator.GeneratePyramid, Colors.Yellow),
+            new PrimTableEntry( "pyramid2",PrimitiveGenerator.GeneratePyramid2, Colors.CadetBlue),
+            new PrimTableEntry( "sphere",PrimitiveGenerator.GenerateSphere, Colors.CadetBlue),
+            new PrimTableEntry( "star6",PrimitiveGenerator.GenerateStar6, Colors.LimeGreen),
+            new PrimTableEntry( "stellatedodec",PrimitiveGenerator.GenerateStellateDoDec,Colors.Teal),
+            new PrimTableEntry( "stellateocto",PrimitiveGenerator.GenerateStellateOcto,Colors.YellowGreen),
+            new PrimTableEntry( "torus",PrimitiveGenerator.GenerateTorus, Colors.MistyRose),
+            new PrimTableEntry( "trianglecell",PrimitiveGenerator.GenerateCell3, Colors.DarkOrchid),
+            new PrimTableEntry( "trispike",PrimitiveGenerator.GenerateTriSpike, Colors.CadetBlue),
+            new PrimTableEntry( "tube",PrimitiveGenerator.GenerateTube, Colors.Magenta),
+            new PrimTableEntry( "xbar",PrimitiveGenerator.GenerateXBar,Colors.IndianRed),
+
+        };
+
+        public bool LookupPrim(string s, ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+        {
+            bool res = false;
+            s = s.ToLower();
+
+            foreach (PrimTableEntry pt in PrimitiveTable)
+            {
+                if (pt.PrimName == s)
+                {
+                    pt.Generator(ref pnts, ref indices, ref normals);
+                    AddPrimitiveToObject(pnts, indices, normals, pt.Color);
+                    res = true;
+                    break;
+
+                }
+            }
+            return res;
+
+        }
         public bool BuildPrimitive(string obType)
         {
             bool built = false;
@@ -317,255 +394,7 @@ namespace Barnacle.Object3DLib
             Int32Collection indices = new Int32Collection();
             Vector3DCollection normals = new Vector3DCollection();
             PrimType = obType;
-            switch (obType.ToLower())
-            {
-                case "box":
-                case "cube":
-                    {
-                        PrimitiveGenerator.GenerateCube(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.Pink);
-                        built = true;
-                    }
-                    break;
-                case "stellatedodec":
-                {
-                        PrimitiveGenerator.GenerateStellateDoDec(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.Teal);
-                        built = true;
-                    }
-                    break;
-
-                case "stellateocto":
-                    {
-                        PrimitiveGenerator.GenerateStellateOcto(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.YellowGreen);
-                        built = true;
-                    }
-                    break;
-                case "dice":
-                    {
-                        PrimitiveGenerator.GenerateDice(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.YellowGreen);
-                        built = true;
-                    }
-                    break;
-
-                case "egg":
-                    {
-                        PrimitiveGenerator.GenerateEgg(ref pnts, ref indices, ref normals);
-
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.GreenYellow);
-                        Rotate(new Point3D(90, 0, 0));
-                        built = true;
-                    }
-                    break;
-
-                case "trispike":
-                    {
-                        PrimitiveGenerator.GenerateTriSpike(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.CadetBlue);
-                        built = true;
-                    }
-                    break;
-
-                case "hexcone":
-                    {
-                        PrimitiveGenerator.GenerateHexCone(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.Yellow);
-                        built = true;
-                    }
-                    break;
-
-                case "sphere":
-                    {
-                        PrimitiveGenerator.GenerateSphere(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.CadetBlue);
-                        built = true;
-                    }
-                    break;
-
-                case "star6":
-                    {
-                        PrimitiveGenerator.GenerateStar6(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.LimeGreen);
-                        built = true;
-                    }
-                    break;
-
-                case "cylinder":
-                    {
-                        PrimitiveGenerator.GenerateCylinder(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.Orange);
-                        built = true;
-                    }
-                    break;
-
-                case "octahedron":
-                    {
-                        PrimitiveGenerator.GenerateOctahedron(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.YellowGreen);
-                        built = true;
-                    }
-                    break;
-
-                case "roof":
-                    {
-                        PrimitiveGenerator.GenerateRoof(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.Lavender);
-                        built = true;
-                    }
-                    break;
-
-                case "roundroof":
-                    {
-                        PrimitiveGenerator.GenerateRoundRoof(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.Aquamarine);
-                        built = true;
-                    }
-                    break;
-
-                case "cone":
-                    {
-                        PrimitiveGenerator.GenerateCone(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.LightSeaGreen);
-                        built = true;
-                    }
-                    break;
-
-                case "pyramid":
-                    {
-                        PrimitiveGenerator.GeneratePyramid(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.Yellow);
-                        built = true;
-                    }
-                    break;
-
-                case "pyramid2":
-                    {
-                        PrimitiveGenerator.GeneratePyramid2(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.CadetBlue);
-                        built = true;
-                    }
-                    break;
-
-                case "torus":
-                    {
-                        PrimitiveGenerator.GenerateTorus(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.MistyRose);
-                        built = true;
-                    }
-                    break;
-
-                case "cap":
-                    {
-                        PrimitiveGenerator.GenerateCap(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.LimeGreen);
-                        built = true;
-                    }
-                    break;
-
-                case "polygon":
-                    {
-                        PrimitiveGenerator.GeneratePolygon(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.LightYellow);
-                        built = true;
-                    }
-                    break;
-
-                case "tube":
-                    {
-                        PrimitiveGenerator.GenerateTube(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.Magenta);
-                        built = true;
-                    }
-                    break;
-
-                case "rightangle":
-                    {
-                        PrimitiveGenerator.GenerateRightAngle(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Color.FromRgb(0x00, 0xAB, 0xEF));
-                        built = true;
-                    }
-                    break;
-
-                case "pointy":
-                    {
-                        PrimitiveGenerator.GeneratePointy(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Color.FromRgb(0xEF, 0xAB, 0x00));
-                        built = true;
-                    }
-                    break;
-
-                case "ibar":
-                    {
-                        PrimitiveGenerator.GenerateIBar(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.Purple);
-                        built = true;
-                    }
-                    break;
-
-                case "xbar":
-                    {
-                        PrimitiveGenerator.GenerateXBar(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.IndianRed);
-                        built = true;
-                    }
-                    break;
-
-                case "buttontop":
-                    {
-                        PrimitiveGenerator.GenerateButtonTop(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.CornflowerBlue);
-                        built = true;
-                    }
-                    break;
-
-                case "pentagoncell":
-                    {
-                        PrimitiveGenerator.GenerateCell(5, ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.Chartreuse);
-
-                        built = true;
-                    }
-                    break;
-
-                case "trianglecell":
-                    {
-                        PrimitiveGenerator.GenerateCell(3, ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.DarkOrchid);
-                        built = true;
-                    }
-                    break;
-
-                case "boxcell":
-                    {
-                        PrimitiveGenerator.GenerateCell(4, ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.DeepPink);
-                        built = true;
-                    }
-                    break;
-
-                case "hexagoncell":
-                    {
-                        PrimitiveGenerator.GenerateCell(6, ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.SpringGreen);
-                        built = true;
-                    }
-                    break;
-
-                case "octagoncell":
-                    {
-                        PrimitiveGenerator.GenerateCell(8, ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Color.FromRgb(0xEF, 0xAB, 0x00));
-                        built = true;
-                    }
-                    break;
-
-                default:
-                    {
-                    }
-                    break;
-            }
+            built = LookupPrim(obType.ToLower(), ref pnts, ref indices, ref normals);            
             return built;
         }
 
@@ -1194,9 +1023,9 @@ namespace Barnacle.Object3DLib
             foreach (P3D v in relativeObjectVertices)
             {
                 XmlElement vertEle = doc.CreateElement("v");
-                vertEle.SetAttribute("X", v.X.ToString("F5"));
-                vertEle.SetAttribute("Y", v.Y.ToString("F5"));
-                vertEle.SetAttribute("Z", v.Z.ToString("F5"));
+                vertEle.SetAttribute("X", v.X.ToString("F8"));
+                vertEle.SetAttribute("Y", v.Y.ToString("F8"));
+                vertEle.SetAttribute("Z", v.Z.ToString("F8"));
                 ele.AppendChild(vertEle);
             }
             for (int i = 0; i < triangleIndices.Count; i += 3)

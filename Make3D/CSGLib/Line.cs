@@ -50,7 +50,7 @@ namespace CSGLib
         /// <summary>
         /// tolerance value to test equalities
         /// </summary>
-        private static readonly double EqualityTolerance = 1e-8f;
+     //   private static readonly double EqualityTolerance = 1e-5f;
 
         private static Random Rnd = new Random();
         private Vector3D StartPoint;
@@ -69,20 +69,20 @@ namespace CSGLib
             Direction = Vector3D.CrossProduct(normalFace1, normalFace2);
 
             //if direction lenght is not zero (the planes aren't parallel )...
-            if (!(Direction.Length < EqualityTolerance))
+            if (!(Direction.Length < Vertex.EqualityTolerance))
             {
                 //getting a line point, zero is set to a coordinate whose direction
                 //component isn't zero (line intersecting its origin plan)
                 StartPoint = new Vector3D();
                 double d1 = -(normalFace1.X * face1.V1._Position.X + normalFace1.Y * face1.V1._Position.Y + normalFace1.Z * face1.V1._Position.Z);
                 double d2 = -(normalFace2.X * face2.V1._Position.X + normalFace2.Y * face2.V1._Position.Y + normalFace2.Z * face2.V1._Position.Z);
-                if (Math.Abs(Direction.X) > EqualityTolerance)
+                if (Math.Abs(Direction.X) > Vertex.EqualityTolerance)
                 {
                     StartPoint.X = 0;
                     StartPoint.Y = (d2 * normalFace1.Z - d1 * normalFace2.Z) / Direction.X;
                     StartPoint.Z = (d1 * normalFace2.Y - d2 * normalFace1.Y) / Direction.X;
                 }
-                else if (Math.Abs(Direction.Y) > EqualityTolerance)
+                else if (Math.Abs(Direction.Y) > Vertex.EqualityTolerance)
                 {
                     StartPoint.X = (d1 * normalFace2.Z - d2 * normalFace1.Z) / Direction.Y;
                     StartPoint.Y = 0;
@@ -143,15 +143,15 @@ namespace CSGLib
             Vector3D lineDirection = otherLine.Direction;
 
             double t;
-            if (Math.Abs(Direction.Y * lineDirection.X - Direction.X * lineDirection.Y) > EqualityTolerance)
+            if (Math.Abs(Direction.Y * lineDirection.X - Direction.X * lineDirection.Y) > Vertex.EqualityTolerance)
             {
                 t = (-StartPoint.Y * lineDirection.X + linePoint.Y * lineDirection.X + lineDirection.Y * StartPoint.X - lineDirection.Y * linePoint.X) / (Direction.Y * lineDirection.X - Direction.X * lineDirection.Y);
             }
-            else if (Math.Abs(-Direction.X * lineDirection.Z + Direction.Z * lineDirection.X) > EqualityTolerance)
+            else if (Math.Abs(-Direction.X * lineDirection.Z + Direction.Z * lineDirection.X) > Vertex.EqualityTolerance)
             {
                 t = -(-lineDirection.Z * StartPoint.X + lineDirection.Z * linePoint.X + lineDirection.X * StartPoint.Z - lineDirection.X * linePoint.Z) / (-Direction.X * lineDirection.Z + Direction.Z * lineDirection.X);
             }
-            else if (Math.Abs(-Direction.Z * lineDirection.Y + Direction.Y * lineDirection.Z) > EqualityTolerance)
+            else if (Math.Abs(-Direction.Z * lineDirection.Y + Direction.Y * lineDirection.Z) > Vertex.EqualityTolerance)
             {
                 t = (StartPoint.Z * lineDirection.Y - linePoint.Z * lineDirection.Y - lineDirection.Z * StartPoint.Y + lineDirection.Z * linePoint.Y) / (-Direction.Z * lineDirection.Y + Direction.Y * lineDirection.Z);
             }
@@ -184,10 +184,10 @@ namespace CSGLib
             double distanceFromPlane = distanceToStartFromOrigin - plane.DistanceToPlaneFromOrigin;
             double denominator = Vector3D.DotProduct(plane.PlaneNormal, Direction);
 
-            if (Math.Abs(denominator) < EqualityTolerance)
+            if (Math.Abs(denominator) < Vertex.EqualityTolerance)
             {
                 //if line is paralel to the plane...
-                if (Math.Abs(distanceFromPlane) < EqualityTolerance)
+                if (Math.Abs(distanceFromPlane) < Vertex.EqualityTolerance)
                 {
                     //if line is contained in the plane...
                     return StartPoint;

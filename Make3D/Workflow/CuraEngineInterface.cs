@@ -330,6 +330,11 @@ exit 0
                 // it doesn't use Cura's ones directly
                 SlicerProfile userSettings = new SlicerProfile();
                 SlicerProfile defaultSettings = null;
+                CuraDefinitionFile cdf = new CuraDefinitionFile();
+                string fname = @"C:\Program Files\UltiMaker Cura 5.6.0\share\cura\resources\definitions\creality_ender3pro.def.json";
+                cdf.Load(fname);
+                cdf.ProcessSettings();
+                /*
                 if (userProfile != "" && userProfile.ToLower() != "none")
                 {
                     string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -346,12 +351,14 @@ exit 0
                         defaultSettings.LoadOverrides(defProfile);
                     }
                 }
-
+                */
+                
                 bool[] haveSentAlready = new bool[mustAlwaysSend.Length];
 
                 string settingoverrides = "";
-                foreach (SettingOverride ov in userSettings.Overrides)
-                {
+                //foreach (SettingOverride ov in userSettings.Overrides)
+                    foreach (SettingOverride ov in cdf.Overrides)
+                    {
                     bool add = true;
                     if (defaultSettings != null)
                     {
@@ -379,16 +386,18 @@ exit 0
                         }
                     }
                 }
-
-                for (int j = 0; j < mustAlwaysSend.Length; j++)
+                if (defaultSettings != null)
                 {
-                    if (haveSentAlready[j] == false)
+                    for (int j = 0; j < mustAlwaysSend.Length; j++)
                     {
-                        foreach (SettingOverride ov in defaultSettings.Overrides)
+                        if (haveSentAlready[j] == false)
                         {
-                            if (ov.Key.ToLower() == mustAlwaysSend[j].ToLower())
+                            foreach (SettingOverride ov in defaultSettings.Overrides)
                             {
-                                settingoverrides += $"-s {ov.Key}=\"{ov.Value}\" ^\n";
+                                if (ov.Key.ToLower() == mustAlwaysSend[j].ToLower())
+                                {
+                                    settingoverrides += $"-s {ov.Key}=\"{ov.Value}\" ^\n";
+                                }
                             }
                         }
                     }

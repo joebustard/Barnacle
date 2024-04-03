@@ -4959,6 +4959,27 @@ namespace Barnacle.Object3DLib
             indices.Add(8);
             SwitchInsideOut(indices);
         }
+        public static void GenerateCell3( ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+        {
+            GenerateCell(3, ref pnts, ref indices, ref normals);
+        }
+        public static void GenerateCell4(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+        {
+            GenerateCell(4, ref pnts, ref indices, ref normals);
+        }
+        public static void GenerateCell5(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+        {
+            GenerateCell(5, ref pnts, ref indices, ref normals);
+        }
+        public static void GenerateCell6(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+        {
+            GenerateCell(6, ref pnts, ref indices, ref normals);
+        }
+        public static void GenerateCell8(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+        {
+            GenerateCell(8, ref pnts, ref indices, ref normals);
+        }
+
 
         public static void GenerateCell(int numsides, ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
         {

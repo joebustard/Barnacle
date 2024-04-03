@@ -19,6 +19,7 @@ Added
 	Detect if a named memorycard is inserted while the slicing window is open and enable the copy to sd card button
 	Delete part from the parts library
 	First cut of a morphable object tool. i.e. Make a shape thats 50% sphere and 50% pyramid etc
+	Show the top of the build volume for the selected printer (in addition to the existing floor marker)
 
 Fixed
 	Prevent preset names being loaded twice in flexipathcontrol 
@@ -32,9 +33,10 @@ Changed
 	Make Symbol use a simpler/faster algorithm and scale 
 	Delete key now does delete, not cut
 	Deleted the commands folder from the templates.
-	Switch from CuraEngine 4 to CuraEngine 5 for integrated slicing
+	Switch from CuraEngine 4 to CuraEngine 5 for integrated slicing (This still needs improving)
     Default slice Z Seam type to random
 	Allow Vase loft to use preset path strings
+	Tie the error reporting of unknown primitive types in the Limpet function Make() directly to the primitive factory.
 
 v1.0.4
 ===========

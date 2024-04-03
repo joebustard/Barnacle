@@ -61,7 +61,7 @@ namespace CSGLib
         private double ZMin;
 
         /** tolerance value to test equalities */
-        private static readonly double EqualityTolerance = 1e-8f;
+      //  private static readonly double EqualityTolerance = 1e-5f;
 
         //---------------------------------CONSTRUCTORS---------------------------------//
 
@@ -125,7 +125,7 @@ namespace CSGLib
 
         public bool Overlap(Bound bound)
         {
-            if ((XMin > bound.XMax + EqualityTolerance) || (XMax < bound.XMin - EqualityTolerance) || (YMin > bound.YMax + EqualityTolerance) || (YMax < bound.YMin - EqualityTolerance) || (ZMin > bound.ZMax + EqualityTolerance) || (ZMax < bound.ZMin - EqualityTolerance))
+            if ((XMin > bound.XMax + Vertex.EqualityTolerance) || (XMax < bound.XMin - Vertex.EqualityTolerance) || (YMin > bound.YMax + Vertex.EqualityTolerance) || (YMax < bound.YMin - Vertex.EqualityTolerance) || (ZMin > bound.ZMax + Vertex.EqualityTolerance) || (ZMax < bound.ZMin - Vertex.EqualityTolerance))
             {
                 return false;
             }
