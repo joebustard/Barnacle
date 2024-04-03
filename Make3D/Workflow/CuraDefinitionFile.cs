@@ -18,7 +18,8 @@ namespace Workflow
         public CuraDefinition definition;
 
         public CuraDefinitionFile BaseFile { get; set; }
-        List<SettingOverride> overrides;
+        private List<SettingOverride> overrides;
+
         public List<SettingOverride> Overrides
         {
             get
@@ -26,6 +27,7 @@ namespace Workflow
                 return overrides;
             }
         }
+
         public bool Load(String fileName)
         {
             bool res = false;
@@ -58,7 +60,6 @@ namespace Workflow
                             {
                                 System.Diagnostics.Debug.WriteLine($"=== {property.Name.ToLower()} ===");
                                 ReadSettings(settings, property);
-
                             }
                         }
                         if (o2["overrides"] != null)
@@ -74,8 +75,6 @@ namespace Workflow
                             BaseFile = new CuraDefinitionFile();
                             BaseFile.Load(baseName);
                         }
-
-
                     }
                 }
                 catch (Exception ex)
@@ -86,11 +85,12 @@ namespace Workflow
 
             return res;
         }
+
         public void ProcessSettings()
         {
             Dictionary<string, SettingDefinition> allsettings = new Dictionary<string, SettingDefinition>();
             AddSettings(allsettings);
-           
+
             overrides = new List<SettingOverride>();
             foreach (string s in allsettings.Keys)
             {
@@ -103,10 +103,18 @@ namespace Workflow
                 SettingOverride so = new SettingOverride(s, v);
                 overrides.Add(so);
             }
-            Reconscile(allsettings);
+            Reconcile(overrides);
         }
 
-        private void Reconscile(Dictionary<string, SettingDefinition> allsettings)
+        /// <summary>
+        ///  some settings directlty reference others e.g. something like
+        ///  "speed_layer_0" :"speed_layer"
+        ///  or similar. Make a pass over the settings.
+        ///  If the value of an entry is actually the key of another, replace it with the
+        ///  reconciled value
+        /// </summary>
+        /// <param name="allsettings"></param>
+        private void Reconcile(List<SettingOverride> overrides)
         {
             bool found = false;
             do
@@ -125,9 +133,76 @@ namespace Workflow
                             }
                         }
                     }
-
                 }
             } while (found == true);
+        }
+
+        private SettingOverride FindOveride(List<SettingOverride> overrides, string key)
+        {
+            SettingOverride res = null;
+            foreach (SettingOverride or in overrides)
+            {
+                if (or.Key == key)
+                {
+                    res = or;
+                    break;
+                }
+            }
+            return res;
+        }
+
+        private void InterpretValue(List<SettingOverride> overrides)
+        {
+            foreach (SettingOverride or in overrides)
+            {
+                if (IsCalculated(or.Value))
+                {
+                    System.Diagnostics.Debug.WriteLine($"Calculated slice setting: {or.Key} : {or.Value}");
+                }
+                String v = GetStdValue(or.Value);
+                switch (v)
+                {
+                    default:
+                        break;
+                }
+            }
+        }
+
+        private string[] calcTags =
+            {
+            "if ",
+            "(",
+            ")",
+            ">",
+            "<",
+            "=",
+            "!=",
+                "==",
+                "else ",
+                "*",
+                "/",
+                "+"
+        };
+
+        private bool IsCalculated(string value)
+        {
+            bool res = false;
+            foreach (string s in calcTags)
+            {
+                if (value.IndexOf(s) != -1)
+                {
+                    res = true;
+                    break;
+                }
+            }
+            return res;
+        }
+
+        private string GetStdValue(string value)
+        {
+            string res = value.ToLower();
+            res = res.Replace(" ", "");
+            return res;
         }
 
         public bool SaveSettings(String fileName)
@@ -139,11 +214,12 @@ namespace Workflow
 
             File.WriteAllText(fileName, fileContent.ToString());
             return res;
-
         }
+
         private string singleSettingContent =
  @"
  ";
+
         private string settingsContent =
  @"
  {
@@ -193,7 +269,6 @@ namespace Workflow
         {
             foreach (JProperty prop in children.Properties())
             {
-
                 JObject oneSetting = (JObject)children[prop.Name];
 
                 SettingDefinition cdf = new SettingDefinition();
@@ -229,14 +304,12 @@ namespace Workflow
                                 }
                                 break;
 
-
                             case "default_value":
                                 {
                                     if (cdf.Type == "polygon")
                                     {
                                         ReadPolygon(cdf, setProp);
                                     }
-
                                     else
                                         if (cdf.Type == "polygons")
                                     {
@@ -254,21 +327,25 @@ namespace Workflow
                                     cdf.Minimum_Value = (string)setProp.Value;
                                 }
                                 break;
+
                             case "minimum_value_warning":
                                 {
                                     cdf.Minimum_Value_Warning = (string)setProp.Value;
                                 }
                                 break;
+
                             case "maximum_value":
                                 {
                                     cdf.Maximum_Value = (string)setProp.Value;
                                 }
                                 break;
+
                             case "maximum_value_warning":
                                 {
                                     cdf.Maximum_Value_Warning = (string)setProp.Value;
                                 }
                                 break;
+
                             case "enabled":
                                 {
                                     cdf.Enabled = (string)setProp.Value;
@@ -286,6 +363,7 @@ namespace Workflow
                                     cdf.Type = (string)setProp.Value;
                                 }
                                 break;
+
                             case "settable_per_mesh":
                                 {
                                     cdf.Settable_per_mesh = (string)setProp.Value;
@@ -322,7 +400,6 @@ namespace Workflow
                                 }
                                 break;
 
-
                             case "options":
                                 {
                                     JObject opts = (JObject)oneSetting["options"];
@@ -339,6 +416,7 @@ namespace Workflow
                                     ReadChildren(subChildren);
                                 }
                                 break;
+
                             default:
                                 {
                                     System.Diagnostics.Debug.WriteLine($" unprocessed property:{setProp.Name}");
@@ -351,7 +429,6 @@ namespace Workflow
                         MessageBox.Show($"Property {prop.Name} :" + ex.Message);
                     }
                 }
-
             }
         }
 
@@ -373,7 +450,6 @@ namespace Workflow
                     {
                         String s = tk2.ToString();
                         cdf.DefaultValue += $"{s},";
-
                     }
                     cdf.DefaultValue = cdf.DefaultValue.Substring(0, cdf.DefaultValue.Length - 1);
                     cdf.DefaultValue += " ],";
