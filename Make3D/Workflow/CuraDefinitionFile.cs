@@ -137,6 +137,17 @@ namespace Workflow
             } while (found == true);
 
             InterpretValue(overrides);
+
+            // now finally read in the current user setting overrides as set in cura
+            // files at %USER%\AppData\Roaming\cura\5.6\user
+            // There is a pair associated with the printer
+            // note that these are ini files not json
+            // e.g.
+            // creality_base_extruder_0+%232_user.inst.cfg
+            // Creality+Ender-3+Pro_user.inst.cfg
+            // when you change any setting and exit or switch profile and exit
+            // these files are updated.
+            // Not quite true!
         }
 
         private SettingOverride FindOveride(List<SettingOverride> overrides, string key)
@@ -144,6 +155,7 @@ namespace Workflow
             SettingOverride res = null;
             foreach (SettingOverride or in overrides)
             {
+                or
                 if (or.Key == key)
                 {
                     res = or;
