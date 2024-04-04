@@ -75,6 +75,7 @@ namespace Workflow
                             BaseFile = new CuraDefinitionFile();
                             BaseFile.Load(baseName);
                         }
+                        res = true;
                     }
                 }
                 catch (Exception ex)
@@ -168,14 +169,81 @@ namespace Workflow
         {
             foreach (SettingOverride or in overrides)
             {
-                if (IsCalculated(or.Value))
-                {
-                    System.Diagnostics.Debug.WriteLine($"Calculated slice setting: {or.Key} : {or.Value}");
-                }
+                
                 String v = GetStdValue(or.Value);
                 switch (v)
                 {
+                    case "machine_gcode_flavor!=\"ultigcode\"":
+                        {
+                            String val = "True";
+                            SettingOverride so = FindOveride(overrides, "machine_gcode_flavor");
+                            if (so != null)
+                            {
+                                if (so.Value.ToLower() == "ultigcode")
+                                {
+                                    val = "False";
+                                }
+                            }
+                            or.Value = val;
+                        }
+                        break;
+
+                    case "machine_gcode_flavor=='reprap(volumetric)'ormachine_gcode_flavor=='ultigcode'ormachine_gcode_flavor=='bfb'":
+                    {
+                            String val = "False";
+                            SettingOverride so = FindOveride(overrides, "machine_gcode_flavor");
+                            if (so != null)
+                            {
+                                if (so.Value.ToLower() == "ultigcode" || so.Value.ToLower() == "reprap (volumetric)" || so.Value.ToLower() == "bfb")
+                                {
+                                    val = "True";
+                                }
+                            }
+                            or.Value = val;
+                        }
+                        break;
+
+                    case "line_width*2":
+                    {                            
+                            SettingOverride so = FindOveride(overrides, "line_width");
+                            if (so != null)
+                            {
+                                double val = Convert.ToDouble(so.Value);
+                                val = val * 2;
+                                or.Value = val.ToString();
+                            }                            
+                        }
+                        break;
+
+                    case "speed_print/2":
+                        {
+                            SettingOverride so = FindOveride(overrides, "speed_print");
+                            if (so != null)
+                            {
+                                double val = Convert.ToDouble(so.Value);
+                                val = val / 2;
+                                or.Value = val.ToString();
+                            }
+                        }
+                        break;
+
+                    case "machine_nozzle_size*.85":
+                        {
+                            SettingOverride so = FindOveride(overrides, "machine_nozzle_size");
+                            if (so != null)
+                            {
+                                double val = Convert.ToDouble(so.Value);
+                                val = val *0.85;
+                                or.Value = val.ToString();
+                            }
+                        }
+                        break;
                     default:
+                        if (IsCalculated(or.Value))
+                        {
+
+                            System.Diagnostics.Debug.WriteLine($"Calculated slice setting: {or.Key} : {or.Value}");
+                        }
                         break;
                 }
             }
@@ -283,10 +351,19 @@ namespace Workflow
             foreach (JProperty prop in children.Properties())
             {
                 JObject oneSetting = (JObject)children[prop.Name];
-
-                SettingDefinition cdf = new SettingDefinition();
-                cdf.Name = prop.Name;
-                definition.definitionSettings[cdf.Name] = cdf;
+                // if this property is a new one then create a new setting definition
+                // if its old, then override the values in the existing one
+                SettingDefinition cdf = null;
+                if (!definition.definitionSettings.Keys.Contains(prop.Name))
+                {
+                    cdf = new SettingDefinition();
+                    cdf.Name = prop.Name;
+                    definition.definitionSettings[cdf.Name] = cdf;
+                }
+                else
+                {
+                    cdf = definition.definitionSettings[cdf.Name];
+                }
                 foreach (JProperty setProp in oneSetting.Properties())
                 {
                     try
