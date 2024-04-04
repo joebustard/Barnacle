@@ -127,7 +127,8 @@ namespace Barnacle.Dialogs.Slice
         {
             // We use a dictionary to read in the profile.
             // This means if there are duplicate values, its only the last one thats taken.
-            Dictionary<string, string> tmp = new Dictionary<string, string>();
+            Dictionary<string, string> profileValues = new Dictionary<string, string>();
+            Dictionary<string, string> profileDescription = new Dictionary<string, string>();
 
             Settings = new ObservableCollection<ProfileEntry>();
             if (File.Exists(fileName))
@@ -138,20 +139,21 @@ namespace Barnacle.Dialogs.Slice
                     lines[i] = lines[i].Trim();
                     if (lines[i] != "")
                     {
-                        string[] words = lines[i].Split('=');
-                        if (words.GetLength(0) == 2)
+                        string[] words = lines[i].Split('$');
+                        if (words.GetLength(0) == 3)
                         {
-                            words[1] = words[1].Replace("\"", "");
+                            words[2] = words[2].Replace("\"", "");
                         }
-                        tmp[words[0]] = words[1];
+                        profileDescription[words[0]] = words[1];
+                        profileValues[words[0]] = words[2];
                     }
                 }
 
                 // convert the dictionary back to a list.
-                string[] keys = tmp.Keys.ToArray();
-                for (int i = 0; i < tmp.Count; i++)
+                string[] keys = profileValues.Keys.ToArray();
+                for (int i = 0; i < profileValues.Count; i++)
                 {
-                    Settings.Add(new ProfileEntry(keys[i], tmp[keys[i]]));
+                    Settings.Add(new ProfileEntry(keys[i], profileValues[keys[i]], profileDescription[keys[i]]));
                 }
             }
         }

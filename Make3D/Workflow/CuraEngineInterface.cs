@@ -127,7 +127,6 @@ namespace Workflow
 "support_initial_layer_line_distance",
 "support_interface_angles",
 
-
 "support_interface_extruder_nr",
 
 "support_interface_line_width",
@@ -192,6 +191,7 @@ namespace Workflow
 "z_seam_type",
 "gantry_height",
         };
+
         private static string slicecmdtemplate =
         @"
 set fld=%~dp0
@@ -328,13 +328,10 @@ exit 0
                 // We need a slicer profile.
                 // The profile is based on the ones supplied with Cura BUT
                 // it doesn't use Cura's ones directly
-                SlicerProfile userSettings = new SlicerProfile();
+                string fileName = AppDomain.CurrentDomain.BaseDirectory + @"Data\DefaultPrinter.profile";
+                SlicerProfile userSettings = new SlicerProfile(fileName);
                 SlicerProfile defaultSettings = null;
-                CuraDefinitionFile cdf = new CuraDefinitionFile();
-                string fname = @"C:\Program Files\UltiMaker Cura 5.6.0\share\cura\resources\definitions\creality_ender3pro.def.json";
-                cdf.Load(fname);
-                cdf.ProcessSettings();
-                /*
+
                 if (userProfile != "" && userProfile.ToLower() != "none")
                 {
                     string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -351,14 +348,12 @@ exit 0
                         defaultSettings.LoadOverrides(defProfile);
                     }
                 }
-                */
-                
+
                 bool[] haveSentAlready = new bool[mustAlwaysSend.Length];
 
                 string settingoverrides = "";
-                //foreach (SettingOverride ov in userSettings.Overrides)
-                    foreach (SettingOverride ov in cdf.Overrides)
-                    {
+                foreach (SettingOverride ov in userSettings.Overrides)
+                {
                     bool add = true;
                     if (defaultSettings != null)
                     {
@@ -419,7 +414,6 @@ exit 0
                                   stlPath,
                                  tmpFile,
                                  logPath);
-
 
                 res.Result = await DoSlice(gcodePath, tmpCmdFile, tmpFile);
 

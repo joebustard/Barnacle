@@ -427,16 +427,30 @@ M84 ; Disable stepper motors
                 printerManager.Save();
                 BarnaclePrinterNames = printerManager.GetPrinterNames();
                 SelectedPrinter = dlg.PrinterName;
-                CuraDefinitionFile df = new CuraDefinitionFile();
-                string fname = @"C:\Program Files\UltiMaker Cura 5.6.0\share\cura\resources\definitions\creality_ender3pro.def.json";
-                df.Load(fname);
+                String SlicerPath = Properties.Settings.Default.SlicerPath;
+
+                if (SlicerPath != null && SlicerPath != "")
+                {
+                    CuraDefinitionFile df = new CuraDefinitionFile();
+                    string fname = $"{SlicerPath}\\share\\cura\\resources\\definitions\\{SelectedPrinter}.def.json";
+                    df.Load(fname);
+                    df.ProcessSettings();
+                    SlicerProfile baseSlicerProfile = new SlicerProfile();
+                    baseSlicerProfile.Overrides = df.Overrides;
+                    string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                    folder += "\\Barnacle\\PrinterProfiles\\";
+                    string baseFile = folder + SelectedPrinter + ".profile";
+                    baseSlicerProfile.SaveOverrides(baseFile);
+                }
             }
         }
 
         private void NewProfileClicked(object sender, RoutedEventArgs e)
         {
             EditProfile dlg = new EditProfile();
-            String defProfile = AppDomain.CurrentDomain.BaseDirectory + "\\Data\\DefaultPrinter.profile";
+            string defProfile = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            defProfile += "\\Barnacle\\PrinterProfiles\\";
+            defProfile = defProfile + SelectedPrinter + ".profile";
             dlg.LoadFile(defProfile);
             dlg.ProfileName = "New Profile";
             dlg.CreatingNewProfile = true;

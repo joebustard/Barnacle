@@ -10,10 +10,13 @@ namespace Workflow
     {
         public List<SettingOverride> Overrides { get; set; }
 
+        public SlicerProfile(string fileName)
+        {
+            LoadOverrides(fileName);
+        }
+
         public SlicerProfile()
         {
-            string fileName = AppDomain.CurrentDomain.BaseDirectory + @"Data\DefaultPrinter.profile";
-            LoadOverrides(fileName);
         }
 
         public void SaveAsXml(string fileName)
@@ -64,7 +67,7 @@ namespace Workflow
                 string[] keys = valueTmp.Keys.ToArray();
                 for (int i = 0; i < valueTmp.Count; i++)
                 {
-                    Overrides.Add(new SettingOverride(keys[i], valueTmp[keys[i]], descriptionTmp[keys[i]]);
+                    Overrides.Add(new SettingOverride(keys[i], valueTmp[keys[i]], descriptionTmp[keys[i]]));
                 }
             }
         }
