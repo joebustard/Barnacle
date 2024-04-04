@@ -27,6 +27,7 @@ namespace Workflow
                 XmlElement ovr = doc.CreateElement("Ovr");
                 ovr.SetAttribute("n", so.Key);
                 ovr.SetAttribute("v", so.Value);
+                ovr.SetAttribute("d", so.Description);
                 docNode.AppendChild(ovr);
             }
             doc.AppendChild(docNode);
@@ -37,7 +38,8 @@ namespace Workflow
         {
             // We use a dictionary to read in the profile.
             // This means if there are duplicate values, its only the last one thats taken.
-            Dictionary<string, string> tmp = new Dictionary<string, string>();
+            Dictionary<string, string> valueTmp = new Dictionary<string, string>();
+            Dictionary<string, string> descriptionTmp = new Dictionary<string, string>();
 
             Overrides = new List<SettingOverride>();
             if (File.Exists(fileName))
@@ -48,20 +50,21 @@ namespace Workflow
                     lines[i] = lines[i].Trim();
                     if (lines[i] != "")
                     {
-                        string[] words = lines[i].Split('=');
-                        if (words.GetLength(0) == 2)
+                        string[] words = lines[i].Split('$');
+                        if (words.GetLength(0) == 3)
                         {
-                            words[1] = words[1].Replace("\"", "");
+                            words[2] = words[1].Replace("\"", "");
                         }
-                        tmp[words[0]] = words[1];
+                        descriptionTmp[words[0]] = words[1];
+                        valueTmp[words[0]] = words[2];
                     }
                 }
 
                 // convert the dictionary back to a list.
-                string[] keys = tmp.Keys.ToArray();
-                for (int i = 0; i < tmp.Count; i++)
+                string[] keys = valueTmp.Keys.ToArray();
+                for (int i = 0; i < valueTmp.Count; i++)
                 {
-                    Overrides.Add(new SettingOverride(keys[i], tmp[keys[i]]));
+                    Overrides.Add(new SettingOverride(keys[i], valueTmp[keys[i]], descriptionTmp[keys[i]]);
                 }
             }
         }
@@ -77,7 +80,7 @@ namespace Workflow
                 StreamWriter sw = File.AppendText(fName);
                 foreach (SettingOverride so in Overrides)
                 {
-                    sw.WriteLine($"{so.Key}=\"{so.Value}\"");
+                    sw.WriteLine($"{so.Key}${so.Description}$\"{so.Value}\"$");
                 }
                 sw.Close();
             }

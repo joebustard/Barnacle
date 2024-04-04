@@ -100,7 +100,7 @@ namespace Workflow
                 {
                     v = sd.OverideValue;
                 }
-                SettingOverride so = new SettingOverride(s, v);
+                SettingOverride so = new SettingOverride(s, v, sd.Description);
                 overrides.Add(so);
             }
             Reconcile(overrides);
@@ -155,7 +155,6 @@ namespace Workflow
             SettingOverride res = null;
             foreach (SettingOverride or in overrides)
             {
-                or
                 if (or.Key == key)
                 {
                     res = or;
