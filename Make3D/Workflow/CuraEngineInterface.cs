@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LoggerLib;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -460,6 +461,7 @@ exit 0
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                Logger.LogException(ex);
             }
             return res;
         }
@@ -485,8 +487,9 @@ exit 0
                 {
                     Directory.CreateDirectory(folder);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Logger.LogException(ex);
                 }
             }
             List<string> res = new List<string>();

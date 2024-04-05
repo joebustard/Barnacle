@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using LoggerLib;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using static Workflow.CuraDefinition;
@@ -81,6 +82,8 @@ namespace Workflow
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
+
+                    Logger.LogException(ex);
                 }
             }
 
@@ -154,6 +157,7 @@ namespace Workflow
             return res;
         }
 
+        // tmp code. remove after interpretvalue is complete
         private String entry =
 @"
 
@@ -363,7 +367,8 @@ namespace Workflow
                 // if this property is a new one then create a new setting definition
                 // if its old, then override the values in the existing one
                 SettingDefinition cdf = new SettingDefinition();
-                cdf.Name = prop.Name; cdf.Section = section;
+                cdf.Name = prop.Name;
+                cdf.Section = section;
                 definition.definitionSettings[cdf.Name] = cdf;
 
                 foreach (JProperty setProp in oneSetting.Properties())
@@ -519,6 +524,7 @@ namespace Workflow
                     catch (Exception ex)
                     {
                         MessageBox.Show($"Property {prop.Name} :" + ex.Message);
+                        Logger.LogException(ex);
                     }
                 }
             }

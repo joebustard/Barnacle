@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LoggerLib;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -114,46 +115,26 @@ namespace Barnacle.Dialogs.Slice
                 StreamWriter sw = File.AppendText(fName);
                 foreach (ProfileEntry pe in Settings)
                 {
-                    sw.WriteLine($"{pe.SettingName}=\"{pe.SettingValue}\"");
+                    pe.Write(sw);
                 }
                 sw.Close();
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.LogException(ex);
             }
         }
 
         public void LoadFile(string fileName)
         {
-            // We use a dictionary to read in the profile.
-            // This means if there are duplicate values, its only the last one thats taken.
-            Dictionary<string, string> profileValues = new Dictionary<string, string>();
-            Dictionary<string, string> profileDescription = new Dictionary<string, string>();
-
             Settings = new ObservableCollection<ProfileEntry>();
             if (File.Exists(fileName))
             {
                 string[] lines = System.IO.File.ReadAllLines(fileName);
                 for (int i = 0; i < lines.GetLength(0); i++)
                 {
-                    lines[i] = lines[i].Trim();
-                    if (lines[i] != "")
-                    {
-                        string[] words = lines[i].Split('$');
-                        if (words.GetLength(0) == 3)
-                        {
-                            words[2] = words[2].Replace("\"", "");
-                        }
-                        profileDescription[words[0]] = words[1];
-                        profileValues[words[0]] = words[2];
-                    }
-                }
-
-                // convert the dictionary back to a list.
-                string[] keys = profileValues.Keys.ToArray();
-                for (int i = 0; i < profileValues.Count; i++)
-                {
-                    Settings.Add(new ProfileEntry(keys[i], profileValues[keys[i]], profileDescription[keys[i]]));
+                    ProfileEntry pe = new ProfileEntry();
+                    Settings.Add(pe);
                 }
             }
         }
