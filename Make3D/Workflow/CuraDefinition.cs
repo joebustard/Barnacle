@@ -13,6 +13,7 @@ namespace Workflow
         public int version { get; set; }
         public String inherits { get; set; }
         public Dictionary<string, SettingDefinition> definitionSettings { get; set; }
+
         public void Dump()
         {
             System.Diagnostics.Debug.WriteLine("Name:" + name);
@@ -24,10 +25,10 @@ namespace Workflow
                 foreach (string k in definitionSettings.Keys)
                 {
                     System.Diagnostics.Debug.WriteLine("override: " + k + " " + definitionSettings[k].DefaultValue + " " + definitionSettings[k].OverideValue);
-
                 }
             }
         }
+
         public CuraDefinition()
         {
             definitionSettings = new Dictionary<string, SettingDefinition>();
@@ -37,9 +38,28 @@ namespace Workflow
         {
             foreach (string k in definitionSettings.Keys)
             {
-                allsettings[k] = definitionSettings[k];
+                // if this settings hasn't aleady been added by a base file
+                // then add it
+                if (!allsettings.Keys.Contains(k))
+                {
+                    allsettings[k] = definitionSettings[k];
+                }
+                else
+                {
+                    // already exists so we are overriding it
+                    // just up date the the value/default_value
+                    if (definitionSettings[k].DefaultValue != "")
+                    {
+                        allsettings[k].DefaultValue = definitionSettings[k].DefaultValue;
+                    }
+                    if (definitionSettings[k].OverideValue != "")
+                    {
+                        allsettings[k].OverideValue = definitionSettings[k].OverideValue;
+                    }
+                }
             }
         }
+
         public class SettingDefinition
         {
             public string Name { get; set; }
@@ -62,6 +82,11 @@ namespace Workflow
             public string Resolve { get; set; }
             public string WarningValue { get; set; }
             public Dictionary<string, string> Options { get; set; }
+
+            // the section the setting was read from.
+            // used by gui to group together related settings
+            public string Section { get; set; }
+
             public SettingDefinition()
             {
                 OverideValue = "";
@@ -77,6 +102,7 @@ namespace Workflow
                 Limit_To_Extruder = "";
                 Resolve = "";
                 WarningValue = "";
+                Section = "";
             }
         }
     }

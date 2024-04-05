@@ -361,7 +361,10 @@ namespace Barnacle.Dialogs.Slice
                         bp.EndGCode = dlg.EndGCode;
                         printerManager.Save();
                         BarnaclePrinterNames = printerManager.GetPrinterNames();
+
                         SelectedPrinter = dlg.PrinterName;
+                        string srcPrinter = dlg.SelectedPrinter;
+                        CreateBaseProfile(SelectedPrinter, srcPrinter);
                     }
                 }
             }
@@ -427,21 +430,27 @@ M84 ; Disable stepper motors
                 printerManager.Save();
                 BarnaclePrinterNames = printerManager.GetPrinterNames();
                 SelectedPrinter = dlg.PrinterName;
-                String SlicerPath = Properties.Settings.Default.SlicerPath;
+                string srcPrinter = dlg.SelectedPrinter;
 
-                if (SlicerPath != null && SlicerPath != "")
-                {
-                    CuraDefinitionFile df = new CuraDefinitionFile();
-                    string fname = $"{SlicerPath}\\share\\cura\\resources\\definitions\\{dlg.SelectedPrinter}.def.json";
-                    df.Load(fname);
-                    df.ProcessSettings();
-                    SlicerProfile baseSlicerProfile = new SlicerProfile();
-                    baseSlicerProfile.Overrides = df.Overrides;
-                    string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                    folder += "\\Barnacle\\PrinterProfiles\\";
-                    string baseFile = folder + SelectedPrinter + ".profile";
-                    baseSlicerProfile.SaveOverrides(baseFile);
-                }
+                CreateBaseProfile(SelectedPrinter, srcPrinter);
+            }
+        }
+
+        private void CreateBaseProfile(string selectedPrinter, string srcPrinter)
+        {
+            String SlicerPath = Properties.Settings.Default.SlicerPath;
+            if (SlicerPath != null && SlicerPath != "")
+            {
+                CuraDefinitionFile df = new CuraDefinitionFile();
+                string fname = $"{SlicerPath}\\s;hare\\cura\\resources\\definitions\\{srcPrinter}.def.json";
+                df.Load(fname);
+                df.ProcessSettings();
+                SlicerProfile baseSlicerProfile = new SlicerProfile();
+                baseSlicerProfile.Overrides = df.Overrides;
+                string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                folder += "\\Barnacle\\PrinterProfiles\\";
+                string baseFile = folder + selectedPrinter + ".profile";
+                baseSlicerProfile.SaveOverrides(baseFile);
             }
         }
 

@@ -65,7 +65,7 @@ namespace Workflow
                         if (o2["overrides"] != null)
                         {
                             JObject overrides = (JObject)o2["overrides"];
-                            ReadChildren(overrides);
+                            ReadChildren(overrides, "");
                         }
 
                         if (definition.inherits != null && definition.inherits != "")
@@ -138,17 +138,6 @@ namespace Workflow
             } while (found == true);
 
             InterpretValue(overrides);
-
-            // now finally read in the current user setting overrides as set in cura
-            // files at %USER%\AppData\Roaming\cura\5.6\user
-            // There is a pair associated with the printer
-            // note that these are ini files not json
-            // e.g.
-            // creality_base_extruder_0+%232_user.inst.cfg
-            // Creality+Ender-3+Pro_user.inst.cfg
-            // when you change any setting and exit or switch profile and exit
-            // these files are updated.
-            // Not quite true!
         }
 
         private SettingOverride FindOveride(List<SettingOverride> overrides, string key)
@@ -165,11 +154,28 @@ namespace Workflow
             return res;
         }
 
+        private String entry =
+@"
+
+            case ""<STDVALUE>"":
+                    {
+                            // <ORIGINALVALUE>
+                            SettingOverride so = FindOveride(overrides, ""line_width"");
+                            if (so != null)
+                            {
+                                double val = Convert.ToDouble(so.Value);
+                                val = val* 2;
+                                or.Value = val.ToString();
+                            }
+                    }
+                    break;
+
+";
+
         private void InterpretValue(List<SettingOverride> overrides)
         {
             foreach (SettingOverride or in overrides)
             {
-                
                 String v = GetStdValue(or.Value);
                 switch (v)
                 {
@@ -189,7 +195,7 @@ namespace Workflow
                         break;
 
                     case "machine_gcode_flavor=='reprap(volumetric)'ormachine_gcode_flavor=='ultigcode'ormachine_gcode_flavor=='bfb'":
-                    {
+                        {
                             String val = "False";
                             SettingOverride so = FindOveride(overrides, "machine_gcode_flavor");
                             if (so != null)
@@ -204,14 +210,14 @@ namespace Workflow
                         break;
 
                     case "line_width*2":
-                    {                            
+                        {
                             SettingOverride so = FindOveride(overrides, "line_width");
                             if (so != null)
                             {
                                 double val = Convert.ToDouble(so.Value);
                                 val = val * 2;
                                 or.Value = val.ToString();
-                            }                            
+                            }
                         }
                         break;
 
@@ -233,15 +239,18 @@ namespace Workflow
                             if (so != null)
                             {
                                 double val = Convert.ToDouble(so.Value);
-                                val = val *0.85;
+                                val = val * 0.85;
                                 or.Value = val.ToString();
                             }
                         }
                         break;
+
                     default:
                         if (IsCalculated(or.Value))
                         {
-
+                            String l = entry;
+                            entry = entry.Replace("<ORIGINALVALUE>", or.Value);
+                            entry = entry.Replace("<STDVALUE>", v);
                             System.Diagnostics.Debug.WriteLine($"Calculated slice setting: {or.Key} : {or.Value}");
                         }
                         break;
@@ -343,27 +352,20 @@ namespace Workflow
         {
             JObject machine_settings = (JObject)settings[property.Name.ToLower()];
             JObject children = (JObject)machine_settings["children"];
-            ReadChildren(children);
+            ReadChildren(children, property.Name);
         }
 
-        private void ReadChildren(JObject children)
+        private void ReadChildren(JObject children, string section)
         {
             foreach (JProperty prop in children.Properties())
             {
                 JObject oneSetting = (JObject)children[prop.Name];
                 // if this property is a new one then create a new setting definition
                 // if its old, then override the values in the existing one
-                SettingDefinition cdf = null;
-                if (!definition.definitionSettings.Keys.Contains(prop.Name))
-                {
-                    cdf = new SettingDefinition();
-                    cdf.Name = prop.Name;
-                    definition.definitionSettings[cdf.Name] = cdf;
-                }
-                else
-                {
-                    cdf = definition.definitionSettings[cdf.Name];
-                }
+                SettingDefinition cdf = new SettingDefinition();
+                cdf.Name = prop.Name; cdf.Section = section;
+                definition.definitionSettings[cdf.Name] = cdf;
+
                 foreach (JProperty setProp in oneSetting.Properties())
                 {
                     try
@@ -503,7 +505,7 @@ namespace Workflow
                             case "children":
                                 {
                                     JObject subChildren = (JObject)oneSetting["children"];
-                                    ReadChildren(subChildren);
+                                    ReadChildren(subChildren, section);
                                 }
                                 break;
 
