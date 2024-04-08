@@ -907,7 +907,7 @@
                                              Label="Aircraft"
                                              x:Name="AircraftTools" SmallImageSource="/Barnacle;component/Images/Buttons/Aircraft.png">
                     </Custom:RibbonMenuButton>
-                    <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
+                    <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyleWithIcon}"
                                              ItemsSource="{Binding BuildingToolsToShow}"
                                              Label="Buildings"
                                              x:Name="BuildingsTools"  SmallImageSource="/Barnacle;component/Images/Buttons/Buildings.png">
@@ -922,13 +922,13 @@
                                              Label="Grille"
                                              x:Name="GrilleTools"  SmallImageSource="/Barnacle;component/Images/Buttons/Grille.png">
                     </Custom:RibbonMenuButton>
-                    <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
+                    <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyleWithIcon}"
                                              ItemsSource="{Binding LoftedToolsToShow}"
                                              Label="Lofted"
                                              x:Name="LoftTools"  SmallImageSource="/Barnacle;component/Images/Buttons/Lofted.png">
                     </Custom:RibbonMenuButton>
 
-                    <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
+                    <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyleWithIcon}"
                                              ItemsSource="{Binding MechanicalToolsToShow}"
                                              Label="Mechanical"
                                              x:Name="MechanicalTools"  SmallImageSource="/Barnacle;component/Images/Buttons/Mechanical.png">

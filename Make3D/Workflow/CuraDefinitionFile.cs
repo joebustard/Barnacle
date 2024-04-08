@@ -204,14 +204,12 @@ namespace Workflow
                                 }
                                 break;
 
-
                             case "extrudervalue(support_roof_extruder_nr,'support_interface_line_width')":
                                 {
                                     // extruderValue(support_roof_extruder_nr, 'support_interface_line_width')
                                     SettingOverride so = FindOveride(overrides, "support_interface_line_width");
                                     if (so != null)
                                     {
-
                                         or.Value = so.Value;
                                     }
                                 }
@@ -270,6 +268,7 @@ namespace Workflow
                                     Multiply(or, "machine_nozzle_size", 0.85);
                                 }
                                 break;
+
                             case "small_hole_max_size*math.pi":
                                 {
                                     // small_hole_max_size * math.pi
@@ -375,7 +374,6 @@ namespace Workflow
                                 {
                                     // raft_base_line_width * 2
                                     Multiply(or, "raft_base_line_width", 2);
-
                                 }
                                 break;
 
@@ -495,7 +493,6 @@ namespace Workflow
                                 }
                                 break;
 
-
                             case "0.75*raft_speed":
                                 {
                                     // 0.75 * raft_speed
@@ -599,7 +596,6 @@ namespace Workflow
                                         {
                                             val = 3;
                                         }
-
                                     }
                                     or.Value = val.ToString();
                                 }
@@ -755,7 +751,6 @@ namespace Workflow
 
                                                             */
 
-
                             case "1ifmagic_spiralizeelsemax(1,round((wall_thickness-wall_line_width_0)/wall_line_width_x)+1)ifwall_thickness!=0else0":
                                 {
                                     // wall_line_count
@@ -779,7 +774,6 @@ namespace Workflow
                                     // wall_0_inset
                                     // (machine_nozzle_size - wall_line_width_0) / 2 if (wall_line_width_0 < machine_nozzle_size and inset_direction != "outside_in") else 0
                                     or.Value = "0";
-
                                 }
                                 break;
 
@@ -815,7 +809,6 @@ namespace Workflow
                                             bool machinecentreiszero = false;
                                             if ( FetchValue("z_seam_relative",ref zseamrelative) && FetchValue("machine_center_is_zero", ref machinecentreiszero))
                                             {
-
                                             }
                                         }
                                     }
@@ -836,7 +829,6 @@ namespace Workflow
                                     }
                                 }
                                 break;
-
 
                             case "skin_line_width*2":
                                 {
@@ -864,10 +856,8 @@ namespace Workflow
                                         }
                                     }
                                     or.Value = val.ToString();
-
                                 }
                                 break;
-
 
                             case "support_pattern=='cross'orsupport_pattern=='gyroid'":
                                 {
@@ -890,13 +880,12 @@ namespace Workflow
                                     // support_bottom_wall_count
                                     // 1 if (support_interface_pattern == 'zigzag') else 0
                                     or.Value = "0";
-                                    if (Match("support_interface_pattern","zigzag"))
+                                    if (Match("support_interface_pattern", "zigzag"))
                                     {
                                         or.Value = "1";
                                     }
                                 }
                                 break;
-
 
                             case "math.floor(math.degrees(math.atan(line_width/2.0/layer_height)))":
                                 {
@@ -920,7 +909,7 @@ namespace Workflow
                                     // support_tree_rest_preference
                                     // 'buildplate' if support_type == 'buildplate' else 'graceful'
                                     or.Value = "graceful";
-                                    if ( Match("support_type","buildplate"))
+                                    if (Match("support_type", "buildplate"))
                                     {
                                         or.Value = "buildplate";
                                     }
@@ -940,14 +929,12 @@ namespace Workflow
                                     // support_tree_top_rate
                                     // 30 if support_roof_enable else 10
                                     or.Value = "10";
-                                    if ( Match("support_roof_enable","true"))
+                                    if (Match("support_roof_enable", "true"))
                                     {
                                         or.Value = "30";
                                     }
-                                    
                                 }
                                 break;
-
 
                             case "support_tree_angle*2/3":
                                 {
@@ -962,7 +949,7 @@ namespace Workflow
                                     // support_tree_angle
                                     // max(min(support_angle, 85), 20)
                                     double sa = 0;
-                                    if ( FetchValue("support_angle", ref sa))
+                                    if (FetchValue("support_angle", ref sa))
                                     {
                                         double val = Math.Min(sa, 85);
                                         val = Math.Max(val, 20);
@@ -992,7 +979,7 @@ namespace Workflow
                                     // cool_fan_speed_max
                                     // 100.0 if cool_fan_enabled else 0.0
                                     or.Value = "0.0";
-                                    if ( Match("cool_fan_enabled","true"))
+                                    if (Match("cool_fan_enabled", "true"))
                                     {
                                         or.Value = "100.0";
                                     }
@@ -1022,7 +1009,6 @@ namespace Workflow
                     }
                     catch (Exception ex)
                     {
-
                     }
                 }
                 runcount--;
@@ -1034,7 +1020,7 @@ namespace Workflow
         {
             bool res = false;
             string entryVal = "";
-            if ( FetchValue(key,ref entryVal))
+            if (FetchValue(key, ref entryVal))
             {
                 res = (entryVal.ToLower() == val.ToLower());
             }
@@ -1057,6 +1043,7 @@ namespace Workflow
             }
             return res; ;
         }
+
         private bool FetchValue(string v, ref string value)
         {
             bool res = false;
@@ -1080,6 +1067,7 @@ namespace Workflow
             }
             return res; ;
         }
+
         private void Multiply(SettingOverride or, string v1, double v2)
         {
             SettingOverride so = FindOveride(overrides, v1);
@@ -1106,6 +1094,7 @@ namespace Workflow
             res = val.ToString();
             return res;
         }
+
         private string[] calcTags =
             {
             "if ",

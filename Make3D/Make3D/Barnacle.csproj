@@ -1134,7 +1134,7 @@
     <Resource Include="Images\Buttons\ObjectEye.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Buttons\Vase.png" />
+    <Resource Include="Images\Buttons\VaseLoft.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Buttons\PanEye.png" />
@@ -1341,6 +1341,14 @@
     <Resource Include="Images\Buttons\Egg.png" />
     <Resource Include="Images\Buttons\Stellatedodec.png" />
     <Resource Include="Images\Buttons\StellateOcto.png" />
+    <Resource Include="Images\Buttons\PathLoft.png" />
+    <Resource Include="Images\Buttons\BezierRing.png" />
+    <Resource Include="Images\Buttons\TwoShape.png" />
+    <Resource Include="Images\Buttons\ConstructionStrip.png" />
+    <Resource Include="Images\Buttons\SpurGear.png" />
+    <Resource Include="Images\Buttons\BrickWall.png" />
+    <Resource Include="Images\Buttons\ShapedBrickWall.png" />
+    <Resource Include="Images\Buttons\PlankWall.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

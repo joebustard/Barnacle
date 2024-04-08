@@ -149,7 +149,7 @@ namespace Barnacle.ViewModels
 
             FillColor = Brushes.White;
             SelectedObjectName = "";
-            LoadSystemFonts();
+
             SelectedFont = "Arial";
             FontSize = "14";
             snapMarginChecked = true;
@@ -193,23 +193,10 @@ namespace Barnacle.ViewModels
             LoadPartLibrary();
         }
 
-        private void OnMeshSubdivide(object obj)
-        {
-            NotificationManager.Notify("MeshSubdivide", obj);
-        }
-
-        private object RelayCommand(object onMeshSubdivide)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void OnCutPlane(object obj)
-        {
-            NotificationManager.Notify("CutPlane", obj);
-        }
-
         public ICommand AboutCommand { get; set; }
+
         public ICommand AddCommand { get; set; }
+
         public ICommand AddPageCommand { get; set; }
 
         public List<ToolDef> AircraftToolsToShow
@@ -229,7 +216,9 @@ namespace Barnacle.ViewModels
         }
 
         public ICommand AlignCommand { get; set; }
+
         public RelayCommand AutoFixCommand { get; set; }
+
         public ICommand BendCommand { get; set; }
 
         public bool BezierRingEnabled
@@ -343,8 +332,11 @@ namespace Barnacle.ViewModels
         }
 
         public ICommand CircularPasteCommand { get; set; }
+
         public ICommand CloneInPlaceCommand { get; set; }
+
         public ICommand CopyCommand { get; set; }
+
         public ICommand CutCommand { get; set; }
 
         public List<ToolDef> DecorativeToolsToShow
@@ -364,7 +356,9 @@ namespace Barnacle.ViewModels
         }
 
         public ICommand DistributeCommand { get; set; }
+
         public ICommand DoNothingCommand { get; set; }
+
         public ICommand DoughnutCommand { get; set; }
 
         public bool DoughnutEnabled
@@ -402,10 +396,15 @@ namespace Barnacle.ViewModels
         }
 
         public ICommand ExitCommand { get; set; }
+
         public ICommand ExportCommand { get; set; }
+
         public ICommand ExportPartsCommand { get; set; }
+
         public ICommand FixHolesCommand { get; set; }
+
         public ICommand FlipCommand { get; set; }
+
         public ICommand FoldCommand { get; set; }
 
         public String FontSize
@@ -460,7 +459,9 @@ namespace Barnacle.ViewModels
         }
 
         public ICommand GroupCommand { get; set; }
+
         public ICommand ImportCommand { get; set; }
+
         public ICommand InsertCommand { get; set; }
 
         public bool IrregularEnabled
@@ -593,6 +594,7 @@ namespace Barnacle.ViewModels
         }
 
         public ICommand ManifoldCommand { get; set; }
+
         public ICommand MarkerCommand { get; set; }
 
         public List<ToolDef> MechanicalToolsToShow
@@ -611,10 +613,18 @@ namespace Barnacle.ViewModels
             }
         }
 
+        public ICommand MeshCutCommand { get; set; }
+
         public ICommand MeshEditCommand { get; set; }
+
         public ICommand MeshHullCommand { get; set; }
+
         public ICommand MeshSmoothCommand { get; set; }
+
+        public ICommand MeshSubdivideCommand { get; set; }
+
         public RelayCommand MirrorCommand { get; private set; }
+
         public ICommand MultiPasteCommand { get; set; }
 
         public ICommand NewCommand { get; set; }
@@ -1026,7 +1036,7 @@ namespace Barnacle.ViewModels
         }
 
         public ICommand TextAlignmentCommand { get; set; }
-        public ICommand MeshCutCommand { get; set; }
+
         public ICommand ToolCommand { get; set; }
 
         public Visibility ToolPaletteVisible
@@ -1120,7 +1130,6 @@ namespace Barnacle.ViewModels
         }
 
         public ICommand ViewCommand { get; set; }
-        public ICommand MeshSubdivideCommand { get; set; }
 
         public bool WingEnabled
         {
@@ -1144,16 +1153,6 @@ namespace Barnacle.ViewModels
 
         public ICommand ZoomOutCommand { get; set; }
 
-        public void LoadSystemFonts()
-        {
-            _systemFonts.Clear();
-
-            var fonts = Fonts.SystemFontFamilies.OrderBy(f => f.ToString());
-
-            foreach (var f in fonts)
-                _systemFonts.Add(f);
-        }
-
         internal void SetRibbonMenu(Ribbon mainRibbon)
         {
             MainRibbon = mainRibbon;
@@ -1172,6 +1171,10 @@ namespace Barnacle.ViewModels
             }
         }
 
+        /// <summary>
+        /// The slice menu options should only be shown if we have access to CuraEngine
+        /// So check if its there
+        /// </summary>
         private void CheckIfCanSlice()
         {
             CanSlice = false;
@@ -1224,7 +1227,7 @@ namespace Barnacle.ViewModels
             decorativeToolsToShow.Add(new ToolDef("Pill", true, "Pill", "Create Pill."));
             decorativeToolsToShow.Add(new ToolDef("Morphable", true, "Morphable", "Create a morphable shape."));
             decorativeToolsToShow.Add(new ToolDef("Image Plaque", true, "ImagePlaque", "Create a plaque from a black and white image."));
-            decorativeToolsToShow.Add(new ToolDef("Clay", true, "ClaySculpt", "Sculpt a simple organic shape in clay."));
+            //  decorativeToolsToShow.Add(new ToolDef("Clay", true, "ClaySculpt", "Sculpt a simple organic shape in clay."));
             SortMenu(decorativeToolsToShow);
             NotifyPropertyChanged("DecorativeToolsToShow");
         }
@@ -1253,7 +1256,6 @@ namespace Barnacle.ViewModels
         {
             mechanicalToolsToShow = new List<ToolDef>();
             mechanicalToolsToShow.Add(new ToolDef("Spur Gear", true, "SpurGear", "Create a spur gear with a variable number of teeth."));
-
             mechanicalToolsToShow.Add(new ToolDef("Construction Strip", true, "ConstructionStrip", "Create a strip with holes and round ends."));
             SortMenu(mechanicalToolsToShow);
             NotifyPropertyChanged("MechanicalToolsToShow");
@@ -1473,6 +1475,11 @@ namespace Barnacle.ViewModels
             NotificationManager.Notify("Cut", null);
         }
 
+        private void OnCutPlane(object obj)
+        {
+            NotificationManager.Notify("CutPlane", obj);
+        }
+
         private void OnDistribute(object obj)
         {
             string s = obj.ToString();
@@ -1571,6 +1578,11 @@ namespace Barnacle.ViewModels
         private void OnMeshEdit(object obj)
         {
             NotificationManager.Notify("MeshEdit", null);
+        }
+
+        private void OnMeshSubdivide(object obj)
+        {
+            NotificationManager.Notify("MeshSubdivide", obj);
         }
 
         private void OnMirror(object obj)
@@ -1754,6 +1766,11 @@ namespace Barnacle.ViewModels
         {
             NotificationManager.Notify("ZoomReset", null);
             NotificationManager.Notify("UpdateDisplay", null);
+        }
+
+        private object RelayCommand(object onMeshSubdivide)
+        {
+            throw new NotImplementedException();
         }
 
         private void SaveShowSettings()
