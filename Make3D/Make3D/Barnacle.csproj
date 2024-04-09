@@ -1349,6 +1349,8 @@
     <Resource Include="Images\Buttons\BrickWall.png" />
     <Resource Include="Images\Buttons\ShapedBrickWall.png" />
     <Resource Include="Images\Buttons\PlankWall.png" />
+    <Resource Include="Images\Buttons\Subdivide.png" />
+    <Resource Include="Images\Buttons\CutHPlane.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

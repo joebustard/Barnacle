@@ -154,6 +154,12 @@
                                                       ToolTip="Open an existing project"
                                                       x:Name="OpenProjectMenu" IsEnabled="{Binding EditingActive}" />
                     <Custom:RibbonSeparator />
+                    <Custom:RibbonApplicationMenuItem Command="{Binding ZipProjectCommand}"
+                                                      Header="Backup Project"
+                                                      ImageSource="/images/buttons/new_file.png"
+                                                      ToolTip="Zip the main files of the current project and store in the backup folder"
+                                                      x:Name="ZipProjectMenu" IsEnabled="{Binding EditingActive}" />
+                    <Custom:RibbonSeparator />
                     <Custom:RibbonApplicationMenuItem Command="{Binding ExitCommand}"
                                                       Header="Exit"
                                                       ImageSource="/images/buttons/exit.png" />
@@ -984,7 +990,7 @@
                                              HorizontalAlignment="Stretch"
                                              IsEnabled="{Binding MeshEditEnabled}"
                                              Header="Cut H Plane"
-                                             ImageSource="/Barnacle;component/Images/Buttons/smooth.png"
+                                             ImageSource="/Barnacle;component/Images/Buttons/CutHPlane.png"
                                              ToolTip="Cut all faces below a horizontal plane."
                                              VerticalAlignment="Top"
                                              x:Name="MeshCutHButton" />
@@ -994,7 +1000,7 @@
                                              HorizontalAlignment="Stretch"
                                              IsEnabled="{Binding MeshEditEnabled}"
                                              Header="Subdivide"
-                                             ImageSource="/Barnacle;component/Images/Buttons/smooth.png"
+                                             ImageSource="/Barnacle;component/Images/Buttons/Subdivide.png"
                                              ToolTip="Subdivide all triangles into four smaller ones."
                                              VerticalAlignment="Top"
                                              x:Name="MeshSubdivideButton" />

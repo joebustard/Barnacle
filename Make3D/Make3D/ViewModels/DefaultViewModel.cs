@@ -1,4 +1,5 @@
 ﻿using Barnacle.Dialogs;
+using Barnacle.Models;
 using Barnacle.Models.Mru;
 using Barnacle.ViewModel.BuildPlates;
 using System;
@@ -144,7 +145,7 @@ namespace Barnacle.ViewModels
             showFloorChecked = false;
 
             ExitCommand = new RelayCommand(OnExit);
-
+            ZipProjectCommand = new RelayCommand(OnZipProject);
             Caption = BaseViewModel.Document.Caption;
 
             FillColor = Brushes.White;
@@ -191,6 +192,59 @@ namespace Barnacle.ViewModels
 
             LoadShowSettings();
             LoadPartLibrary();
+        }
+
+        private void OnZipProject(object obj)
+        {
+            if (Document.Dirty)
+            {
+                MessageBox.Show("Document must be saved first");
+            }
+            else
+            {
+                String projRoot = Project.BaseFolder;
+                String projName = Project.ProjectName.Replace(" ", "_");
+                if (Directory.Exists(projRoot + "\\Backup"))
+                {
+                    string zipPath = projRoot + "\\Backup\\" + projName + "_" + DateTime.Now.Year.ToString() + "_"
+                                                            + DateTime.Now.Month.ToString() + "_"
+                                                            + DateTime.Now.Day.ToString() + "_"
+                                                            + DateTime.Now.Hour.ToString() + "_"
+                                                            + DateTime.Now.Minute.ToString()
+                                                            + ".zip";
+                    List<String> fileNames = new List<string>();
+
+                    AddTargetNamesForProject(projRoot, fileNames);
+                    ZipUtils.CreateZipFromFiles(zipPath, fileNames, projRoot);
+                    MessageBox.Show("Project Zipped to file: " + zipPath);
+                }
+            }
+        }
+
+        private void AddTargetNamesForProject(string root, List<string> targetFiles)
+        {
+            AddTargetFileNamesForFolder(root, targetFiles, "bmf");
+            AddTargetFileNamesForFolder(root, targetFiles, "txt");
+            AddTargetFileNamesForFolder(root, targetFiles, "lmp");
+            AddTargetFileNamesForFolder(root, targetFiles, "png");
+            AddTargetFileNamesForFolder(root, targetFiles, "jpg");
+            AddTargetFileNamesForFolder(root, targetFiles, "jpeg");
+            AddTargetFileNamesForFolder(root, targetFiles, "docx");
+            AddTargetFileNamesForFolder(root, targetFiles, "xlsx");
+            AddTargetFileNamesForFolder(root, targetFiles, "stl");
+            AddTargetFileNamesForFolder(root, targetFiles, "gcode");
+            String[] folders = Directory.GetDirectories(root);
+            foreach (string folder in folders)
+            {
+                AddTargetNamesForProject(folder, targetFiles);
+            }
+        }
+
+        private void AddTargetFileNamesForFolder(string root, List<string> targetFiles, string ext)
+        {
+            string[] names = Directory.GetFiles(root, "*." + ext);
+            targetFiles.AddRange(names.ToList())
+;
         }
 
         public ICommand AboutCommand { get; set; }
@@ -396,6 +450,8 @@ namespace Barnacle.ViewModels
         }
 
         public ICommand ExitCommand { get; set; }
+
+        public ICommand ZipProjectCommand { get; set; }
 
         public ICommand ExportCommand { get; set; }
 

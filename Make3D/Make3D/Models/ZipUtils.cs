@@ -38,8 +38,6 @@ namespace Barnacle.Models
             return res;
         }
 
-
-
         public static bool ExtractFileFromZip(string zipPath, string fileName, string targetFile)
         {
             bool res = false;
@@ -48,7 +46,6 @@ namespace Barnacle.Models
                 fileName = fileName.ToLower();
                 if (File.Exists(zipPath))
                 {
-
                     ZipArchive zipArchive = ZipFile.OpenRead(zipPath);
                     var ets = zipArchive.Entries;
                     foreach (ZipArchiveEntry et in ets)
@@ -59,6 +56,37 @@ namespace Barnacle.Models
                             res = true;
                             break;
                         }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            return res;
+        }
+
+        public static bool CreateZipFromFiles(string zipPath, List<String> filePathsToAdd, string filePathRoot)
+        {
+            bool res = false;
+            try
+            {
+                // delete the zip if it already exists
+                if (File.Exists(zipPath))
+                {
+                    File.Delete(zipPath);
+                }
+                using (var archive = ZipFile.Open(zipPath, ZipArchiveMode.Create))
+                {
+                    foreach (var fPath in filePathsToAdd)
+                    {
+                        string entryName = Path.GetFileName(fPath);
+                        if (fPath.StartsWith(filePathRoot))
+                        {
+                            // remove the root and the slash
+                            entryName = fPath.Substring(filePathRoot.Length + 1);
+                        }
+                        archive.CreateEntryFromFile(fPath, entryName);
                     }
                 }
             }
