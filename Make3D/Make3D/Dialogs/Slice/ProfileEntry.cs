@@ -32,7 +32,7 @@ namespace Barnacle.Dialogs.Slice
             {
                 try
                 {
-                    sw.WriteLine($"{SettingName}$SettingDescription${SettingSection}$\"{SettingValue}\"");
+                    sw.WriteLine($"{SettingSection}${SettingName}${SettingDescription}$\"{SettingValue}\"");
                 }
                 catch (Exception ex)
                 {
@@ -47,13 +47,12 @@ namespace Barnacle.Dialogs.Slice
             {
                 string[] words = line.Split('$');
                 if (words.GetLength(0) == 4)
-                {
-                    words[3] = words[3].Replace("\"", "");
+                {                    
+                    SettingSection = words[0];
+                    SettingName = words[1];
+                    SettingDescription = words[2];
+                    SettingValue = words[3].Replace("\"", "");
                 }
-                SettingName = words[0];
-                SettingDescription = words[1];
-                SettingSection = words[2];
-                SettingValue = words[3];
             }
         }
     }

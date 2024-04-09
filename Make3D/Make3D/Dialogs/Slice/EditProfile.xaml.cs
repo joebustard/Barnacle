@@ -134,6 +134,7 @@ namespace Barnacle.Dialogs.Slice
                 for (int i = 0; i < lines.GetLength(0); i++)
                 {
                     ProfileEntry pe = new ProfileEntry();
+                    pe.Load(lines[i]);
                     Settings.Add(pe);
                 }
             }

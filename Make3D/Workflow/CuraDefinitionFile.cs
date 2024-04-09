@@ -104,7 +104,7 @@ namespace Workflow
                 {
                     v = sd.OverideValue;
                 }
-                SettingOverride so = new SettingOverride(s, v, sd.Description);
+                SettingOverride so = new SettingOverride(sd.Section,s, v, sd.Description);
                 overrides.Add(so);
             }
             Reconcile(overrides);
@@ -165,13 +165,8 @@ namespace Workflow
                     {
                             // <KEY>
                             // <ORIGINALVALUE>
-                            SettingOverride so = FindOveride(overrides, ""line_width"");
-                            if (so != null)
-                            {
-                                double val = Convert.ToDouble(so.Value);
-                                val = val* 2;
-                                or.Value = val.ToString();
-                            }
+                            // This is the value given in the log <LOGGEDVALUE>
+                            or.Value = <LOGGEDVALUE>;
                     }
                     break;
 
@@ -360,11 +355,11 @@ namespace Workflow
                                     SettingOverride so = FindOveride(overrides, "extruders_enabled_count");
                                     if (so != null)
                                     {
-                                        or.Value = "false";
+                                        or.Value = "False";
                                         double val = Convert.ToDouble(so.Value);
                                         if (val > 1.0)
                                         {
-                                            or.Value = "true";
+                                            or.Value = "True";
                                         }
                                     }
                                 }
@@ -383,10 +378,10 @@ namespace Workflow
                                     SettingOverride so = FindOveride(overrides, "adhesion_type");
                                     if (so != null)
                                     {
-                                        or.Value = "false";
+                                        or.Value = "False";
                                         if (so.Value.ToLower() == "raft" || so.Value.ToLower() == "brim")
                                         {
-                                            or.Value = "true";
+                                            or.Value = "True";
                                         }
                                     }
                                 }
@@ -424,13 +419,13 @@ namespace Workflow
                             case "magic_mesh_surface_mode!='surface'":
                                 {
                                     // magic_mesh_surface_mode != 'surface'
-                                    or.Value = "true";
+                                    or.Value = "True";
                                     SettingOverride so = FindOveride(overrides, "magic_mesh_surface_mode");
                                     if (so != null)
                                     {
                                         if (so.Value.ToLower() == "surface")
                                         {
-                                            or.Value = "false";
+                                            or.Value = "False";
                                         }
                                     }
                                 }
@@ -439,14 +434,14 @@ namespace Workflow
                             case "machine_gcode_flavor==\"reprap(reprap)\"":
                                 {
                                     // machine_gcode_flavor=="RepRap (RepRap)"
-                                    or.Value = "false";
+                                    or.Value = "False";
                                     SettingOverride so = FindOveride(overrides, "machine_gcode_flavor");
                                     if (so != null)
                                     {
                                         string tmp = GetStdValue(so.Value);
                                         if (tmp == "reprap(reprap)" || tmp == "\"reprap(reprap)\"")
                                         {
-                                            or.Value = "true";
+                                            or.Value = "True";
                                         }
                                     }
                                 }
@@ -522,7 +517,7 @@ namespace Workflow
                             case "extrudervalue(support_roof_extruder_nr,'support_interface_enable')":
                                 {
                                     // extruderValue(support_roof_extruder_nr, 'support_interface_enable')
-                                    or.Value = "false";
+                                    or.Value = "False";
                                     SettingOverride so = FindOveride(overrides, "support_interface_enable");
                                     if (so != null)
                                     {
@@ -541,7 +536,7 @@ namespace Workflow
                             case "extrudervalue(support_bottom_extruder_nr,'support_interface_enable')":
                                 {
                                     // extruderValue(support_bottom_extruder_nr, 'support_interface_enable')
-                                    or.Value = "false";
+                                    or.Value = "False";
                                     SettingOverride so = FindOveride(overrides, "support_interface_enable");
                                     if (so != null)
                                     {
@@ -863,13 +858,13 @@ namespace Workflow
                                 {
                                     // zig_zaggify_support
                                     // support_pattern == 'cross' or support_pattern == 'gyroid'
-                                    or.Value = "false";
+                                    or.Value = "False";
                                     string sp = "";
                                     if (FetchValue("support_patten", ref sp))
                                     {
                                         if (sp == "cross" || sp == "gyroid")
                                         {
-                                            or.Value = "true";
+                                            or.Value = "True";
                                         }
                                     }
                                 }
@@ -994,6 +989,526 @@ namespace Workflow
                                 }
                                 break;
 
+
+                            case "(0if(z_seam_position=='frontleft'orz_seam_position=='front'orz_seam_position=='frontright')elsemachine_depth/2if(z_seam_position=='left'orz_seam_position=='right')elsemachine_depth)-(machine_depth/2ifz_seam_relativeormachine_center_is_zeroelse0)":
+                                {
+                                    // z_seam_y
+                                    // (0 if (z_seam_position == 'frontleft' or z_seam_position == 'front' or z_seam_position == 'frontright') else machine_depth / 2 if (z_seam_position == 'left' or z_seam_position == 'right') else machine_depth) - (machine_depth / 2 if z_seam_relative or machine_center_is_zero else 0)
+                                    // This is the value given in the log "220"
+                                    or.Value = "220";
+                                }
+                                break;
+                           
+
+            case "0ifinfill_sparse_density==100elsemath.ceil(round(top_thickness/resolveorvalue('layer_height'),4))":
+                                {
+                                    // top_layers
+                                    // 0 if infill_sparse_density == 100 else math.ceil(round(top_thickness / resolveOrValue('layer_height'), 4))
+                                    // This is the value given in the log "6"
+                                    or.Value = "6";
+                                }
+                                break;
+
+
+
+
+                            case "999999ifinfill_sparse_density==100andnotmagic_spiralizeelsemath.ceil(round(bottom_thickness/resolveorvalue('layer_height'),4))":
+                                {
+                                    // bottom_layers
+                                    // 999999 if infill_sparse_density == 100 and not magic_spiralize else math.ceil(round(bottom_thickness / resolveOrValue('layer_height'), 4))
+                                    // This is the value given in the log "6"
+                                    or.Value = "6";
+                                }
+                                break;
+
+
+                            case "0iftop_bottom_pattern=='concentric'andtop_bottom_pattern_0=='concentric'androofing_layer_count<=0else1":
+                                {
+                                    // skin_outline_count
+                                    // 0 if top_bottom_pattern == 'concentric' and top_bottom_pattern_0 == 'concentric' and roofing_layer_count <= 0 else 1
+                                    // This is the value given in the log "1"
+                                    or.Value = "1";
+                                }
+                                break;
+
+
+                            case "wall_line_width_0/2+(ironing_line_spacing-skin_line_width*(1.0+ironing_flow/100)/2ifironing_pattern=='concentric'elseskin_line_width*(1.0-ironing_flow/100)/2)":
+                                {
+                                    // ironing_inset
+                                    // wall_line_width_0 / 2 + (ironing_line_spacing - skin_line_width * (1.0 + ironing_flow / 100) / 2 if ironing_pattern == 'concentric' else skin_line_width * (1.0 - ironing_flow / 100) / 2)
+                                    // This is the value given in the log "0.38"
+                                    or.Value = "0.38";
+                                }
+                                break;
+
+
+
+
+                            case "speed_topbottom*20/30":
+                                {
+                                    // speed_ironing
+                                    // speed_topbottom * 20 / 30
+                                    // This is the value given in the log "16.666666666666668"
+                                    or.Value = "16.666666666666668";
+                                }
+                                break;
+
+
+
+
+                            case "0.5*(skin_line_width+(wall_line_width_xifwall_line_count>1elsewall_line_width_0))*skin_overlap/100iftop_bottom_pattern!='concentric'else0":
+                                {
+                                    // skin_overlap_mm
+                                    // 0.5 * (skin_line_width + (wall_line_width_x if wall_line_count > 1 else wall_line_width_0)) * skin_overlap / 100 if top_bottom_pattern != 'concentric' else 0
+                                    // This is the value given in the log "0.04"
+                                    or.Value = "0.04";
+                                }
+                                break;
+
+
+
+
+                            case "wall_line_width_0+(wall_line_count-1)*wall_line_width_x":
+                                {
+                                    // skin_preshrink
+                                    // wall_line_width_0 + (wall_line_count - 1) * wall_line_width_x
+                                    // This is the value given in the log "1.2000000000000002" 
+                                    or.Value = "1.2000000000000002";
+                                }
+                                break;
+                          
+
+                            case "top_layers*layer_height/math.tan(math.radians(max_skin_angle_for_expansion))":
+                                {
+                                    // min_skin_width_for_expansion
+                                    // top_layers * layer_height / math.tan(math.radians(max_skin_angle_for_expansion))
+                                    // This is the value given in the log "5.878304635907295e-17"
+                                    or.Value = "5.878304635907295e-17";
+                                }
+                                break;
+
+
+
+
+                            case "0ifinfill_sparse_density==0else(infill_line_width*100)/infill_sparse_density*(2ifinfill_pattern=='grid'else(3ifinfill_pattern=='triangles'orinfill_pattern=='trihexagon'orinfill_pattern=='cubic'orinfill_pattern=='cubicsubdiv'else(2ifinfill_pattern=='tetrahedral'orinfill_pattern=='quarter_cubic'else(1ifinfill_pattern=='cross'orinfill_pattern=='cross_3d'else(1.6ifinfill_pattern=='lightning'else1)))))":
+                                {
+                                    // infill_line_distance
+                                    // 0 if infill_sparse_density == 0 else (infill_line_width * 100) / infill_sparse_density * (2 if infill_pattern == 'grid' else (3 if infill_pattern == 'triangles' or infill_pattern == 'trihexagon' or infill_pattern == 'cubic' or infill_pattern == 'cubicsubdiv' else (2 if infill_pattern == 'tetrahedral' or infill_pattern == 'quarter_cubic' else (1 if infill_pattern == 'cross' or infill_pattern == 'cross_3d' else (1.6 if infill_pattern == 'lightning' else 1)))))
+                                    // This is the value given in the log "6.0"
+                                    or.Value = "6.0";
+                                }
+                                break;
+
+
+
+
+                            case "'lines'ifinfill_sparse_density>50else'cubic'":
+                                {
+                                    // infill_pattern
+                                    // 'lines' if infill_sparse_density > 50 else 'cubic'
+                                    // This is the value given in the log "cubic"
+                                    or.Value = "cubic";
+                                }
+                                break;
+
+
+
+
+                            case "infill_pattern=='cross'orinfill_pattern=='cross_3d'":
+                                {
+                                    // zig_zaggify_infill
+                                    // infill_pattern == 'cross' or infill_pattern == 'cross_3d'
+                                    // This is the value given in the log "False"
+                                    or.Value = "False";
+                                }
+                                break;
+
+
+
+
+                            case "(infill_pattern=='cross'orinfill_pattern=='cross_3d'orinfill_multiplier%2==0)andinfill_wall_line_count>0":
+                                {
+                                    // connect_infill_polygons
+                                    // (infill_pattern == 'cross' or infill_pattern == 'cross_3d' or infill_multiplier % 2 == 0) and infill_wall_line_count > 0
+                                    // This is the value given in the log "False"
+                                    or.Value = "False";
+                                }
+                                break;
+
+
+
+
+                            case "0.5*(infill_line_width+(wall_line_width_xifwall_line_count>1elsewall_line_width_0))*infill_overlap/100ifinfill_sparse_density<95andinfill_pattern!='concentric'else0":
+                                {
+                                    // infill_overlap_mm
+                                    // 0.5 * (infill_line_width + (wall_line_width_x if wall_line_count > 1 else wall_line_width_0)) * infill_overlap / 100 if infill_sparse_density < 95 and infill_pattern != 'concentric' else 0
+                                    // This is the value given in the log "0.12"
+                                    or.Value = "0.12";
+                                }
+                                break;
+
+
+
+
+                            case "math.ceil(round(skin_edge_support_thickness/resolveorvalue('infill_sparse_thickness'),4))":
+                                {
+                                    // skin_edge_support_layers
+                                    // math.ceil(round(skin_edge_support_thickness / resolveOrValue('infill_sparse_thickness'), 4))
+                                    // This is the value given in the log "0"
+                                    or.Value = "0";
+                                }
+                                break;
+
+
+
+
+                            case "resolveorvalue('material_bed_temperature')":
+                                {
+                                    // material_bed_temperature_layer_0
+                                    // resolveOrValue('material_bed_temperature')
+                                    // This is the value given in the log "65"
+                                    or.Value = "65";
+                                }
+                                break;
+
+
+
+
+                            case "extrudervalue(support_roof_extruder_nr,'support_interface_material_flow')":
+                                {
+                                    // support_roof_material_flow
+                                    // extruderValue(support_roof_extruder_nr, 'support_interface_material_flow')
+                                    // This is the value given in the log "100"
+                                    or.Value = "100";
+                                }
+                                break;
+
+
+
+
+                            case "extrudervalue(support_bottom_extruder_nr,'support_interface_material_flow')":
+                                {
+                                    // support_bottom_material_flow
+                                    // extruderValue(support_bottom_extruder_nr, 'support_interface_material_flow')
+                                    // This is the value given in the log "100"
+                                    or.Value = "100";
+                                }
+                                break;
+
+
+
+
+                            case "extrudervalue(support_roof_extruder_nr,'speed_support_interface')":
+                                {
+                                    // speed_support_roof
+                                    // extruderValue(support_roof_extruder_nr, 'speed_support_interface')
+                                    // This is the value given in the log "25.0"
+                                    or.Value = "25.0";
+                                }
+                                break;
+
+
+
+
+                            case "extrudervalue(support_bottom_extruder_nr,'speed_support_interface')":
+                                {
+                                    // speed_support_bottom
+                                    // extruderValue(support_bottom_extruder_nr, 'speed_support_interface')
+                                    // This is the value given in the log "25.0"
+                                    or.Value = "25.0";
+                                }
+                                break;
+
+
+
+
+                            case "150.0ifspeed_print<60else250.0ifspeed_print>100elsespeed_print*2.5":
+                                {
+                                    // speed_travel
+                                    // 150.0 if speed_print < 60 else 250.0 if speed_print > 100 else speed_print * 2.5
+                                    // This is the value given in the log "150.0"
+                                    or.Value = "150.0";
+                                }
+                                break;
+
+
+
+
+                            case "100ifspeed_layer_0<20else150ifspeed_layer_0>30elsespeed_layer_0*5":
+                                {
+                                    // speed_travel_layer_0
+                                    // 100 if speed_layer_0 < 20 else 150 if speed_layer_0 > 30 else speed_layer_0 * 5
+                                    // This is the value given in the log "100.0"
+                                    or.Value = "100.0";
+                                }
+                                break;
+
+
+
+
+                            case "extrudervalue(support_roof_extruder_nr,'acceleration_support_interface')":
+                                {
+                                    // acceleration_support_roof
+                                    // extruderValue(support_roof_extruder_nr, 'acceleration_support_interface')
+                                    // This is the value given in the log "500"
+                                    or.Value = "500";
+                                }
+                                break;
+
+
+
+
+                            case "extrudervalue(support_bottom_extruder_nr,'acceleration_support_interface')":
+                                {
+                                    // acceleration_support_bottom
+                                    // extruderValue(support_bottom_extruder_nr, 'acceleration_support_interface')
+                                    // This is the value given in the log "500"
+                                    or.Value = "500";
+                                }
+                                break;
+
+
+
+
+                            case "extrudervalue(support_roof_extruder_nr,'jerk_support_interface')":
+                                {
+                                    // jerk_support_roof
+                                    // extruderValue(support_roof_extruder_nr, 'jerk_support_interface')
+                                    // This is the value given in the log "8"
+                                    or.Value = "8";
+                                }
+                                break;
+
+
+
+
+
+
+
+                            case "'off'ifretraction_hop_enabledelse'noskin'":
+                                {
+                                    // retraction_combing
+                                    // 'off' if retraction_hop_enabled else 'noskin'
+                                    // This is the value given in the log "noskin"
+                                    or.Value = "noskin";
+                                }
+                                break;
+
+
+
+
+                            case "max(1,int(math.floor((cool_fan_full_at_height-resolveorvalue('layer_height_0'))/resolveorvalue('layer_height'))+2))":
+                                {
+                                    // cool_fan_full_layer
+                                    // max(1, int(math.floor((cool_fan_full_at_height - resolveOrValue('layer_height_0')) / resolveOrValue('layer_height')) + 2))
+                                    // This is the value given in the log "4"
+                                    or.Value = "4";
+                                }
+                                break;
+
+
+
+
+                            case "int(anyextruderwithmaterial('material_is_support_material'))":
+                                {
+                                    // support_extruder_nr
+                                    // int(anyExtruderWithMaterial('material_is_support_material'))
+                                    // This is the value given in the log "0"
+                                    or.Value = "0";
+                                }
+                                break;
+
+            case "1ifsupport_enableandsupport_structure=='tree'else(1if(support_pattern=='grid'orsupport_pattern=='triangles'orsupport_pattern=='concentric')else0)":
+                                {
+                                    // support_wall_count
+                                    // 1 if support_enable and support_structure == 'tree' else (1 if (support_pattern == 'grid' or support_pattern == 'triangles' or support_pattern == 'concentric') else 0)
+                                    // This is the value given in the log "1"
+                                    or.Value = "1";
+                                }
+                                break;
+
+
+
+
+                            case "0ifsupport_infill_rate==0else(support_line_width*100)/support_infill_rate*(2ifsupport_pattern=='grid'else(3ifsupport_pattern=='triangles'else1))":
+                                {
+                                    // support_line_distance
+                                    // 0 if support_infill_rate == 0 else (support_line_width * 100) / support_infill_rate * (2 if support_pattern == 'grid' else (3 if support_pattern == 'triangles' else 1))
+                                    // This is the value given in the log "2.0"
+                                    or.Value = "2.0";
+                                }
+                                break;
+
+
+
+
+
+                            case "round(support_brim_width/(skirt_brim_line_width*initial_layer_line_width_factor/100.0))":
+                                {
+                                    // support_brim_line_count
+                                    // round(support_brim_width / (skirt_brim_line_width * initial_layer_line_width_factor / 100.0))
+                                    // This is the value given in the log "10"
+                                    or.Value = "10";
+                                }
+                                break;
+
+
+
+
+                            case "extrudervalue(support_roof_extruder_nrifsupport_roof_enableelsesupport_infill_extruder_nr,'support_z_distance')":
+                                {
+                                    // support_top_distance
+                                    // extruderValue(support_roof_extruder_nr if support_roof_enable else support_infill_extruder_nr, 'support_z_distance')
+                                    // This is the value given in the log "0.16"
+                                    or.Value = "0.16";
+                                }
+                                break;
+
+
+
+
+                            case "extrudervalue(support_bottom_extruder_nrifsupport_bottom_enableelsesupport_infill_extruder_nr,'support_z_distance')ifsupport_type=='everywhere'else0":
+                                {
+                                    // support_bottom_distance
+                                    // extruderValue(support_bottom_extruder_nr if support_bottom_enable else support_infill_extruder_nr, 'support_z_distance') if support_type == 'everywhere' else 0
+                                    // This is the value given in the log "0.16"
+                                    or.Value = "0.16";
+                                }
+                                break;
+
+
+
+
+                            case "extrudervalue(support_bottom_extruder_nr,'support_interface_height')":
+                                {
+                                    // support_bottom_height
+                                    // extruderValue(support_bottom_extruder_nr, 'support_interface_height')
+                                    // This is the value given in the log "0.96"
+                                    or.Value = "0.96";
+                                }
+                                break;
+
+
+
+
+                            case "extrudervalue(support_roof_extruder_nr,'support_interface_density')":
+                                {
+                                    // support_roof_density
+                                    // extruderValue(support_roof_extruder_nr, 'support_interface_density')
+                                    // This is the value given in the log "33.333"
+                                    or.Value = "33.333";
+                                }
+                                break;
+
+
+
+
+                            case "0ifsupport_roof_density==0else(support_roof_line_width*100)/support_roof_density*(2ifsupport_roof_pattern=='grid'else(3ifsupport_roof_pattern=='triangles'else1))":
+                                {
+                                    // support_roof_line_distance
+                                    // 0 if support_roof_density == 0 else (support_roof_line_width * 100) / support_roof_density * (2 if support_roof_pattern == 'grid' else (3 if support_roof_pattern == 'triangles' else 1))
+                                    // This is the value given in the log "2.4000240002400024"
+                                    or.Value = "2.4000240002400024";
+                                }
+                                break;
+
+
+
+
+                            case "extrudervalue(support_bottom_extruder_nr,'support_interface_density')":
+                                {
+                                    // support_bottom_density
+                                    // extruderValue(support_bottom_extruder_nr, 'support_interface_density')
+                                    // This is the value given in the log "33.333"
+                                    or.Value = "33.333";
+                                }
+                                break;
+
+
+
+
+                            case "0ifsupport_bottom_density==0else(support_bottom_line_width*100)/support_bottom_density*(2ifsupport_bottom_pattern=='grid'else(3ifsupport_bottom_pattern=='triangles'else1))":
+                                {
+                                    // support_bottom_line_distance
+                                    // 0 if support_bottom_density == 0 else (support_bottom_line_width * 100) / support_bottom_density * (2 if support_bottom_pattern == 'grid' else (3 if support_bottom_pattern == 'triangles' else 1))
+                                    // This is the value given in the log "2.4000240002400024"
+                                    or.Value = "2.4000240002400024";
+                                }
+                                break;
+
+
+
+
+                            case "extrudervalue(support_roof_extruder_nr,'support_interface_pattern')":
+                                {
+                                    // support_roof_pattern
+                                    // extruderValue(support_roof_extruder_nr, 'support_interface_pattern')
+                                    // This is the value given in the log "grid"
+                                    or.Value = "grid";
+                                }
+                                break;
+
+
+
+
+                            case "extrudervalue(support_bottom_extruder_nr,'support_interface_pattern')":
+                                {
+                                    // support_bottom_pattern
+                                    // extruderValue(support_bottom_extruder_nr, 'support_interface_pattern')
+                                    // This is the value given in the log "grid"
+                                    or.Value = "grid";
+                                }
+                                break;
+
+
+
+
+                            case "extrudervalue(support_roof_extruder_nr,'minimum_interface_area')":
+                                {
+                                    // minimum_roof_area
+                                    // extruderValue(support_roof_extruder_nr, 'minimum_interface_area')
+                                    // This is the value given in the log "10"
+                                    or.Value = "10";
+                                }
+                                break;
+
+
+
+
+                            case "(resolveorvalue('machine_width')/2+resolveorvalue('prime_tower_size')/2)ifresolveorvalue('machine_shape')=='elliptic'else(resolveorvalue('machine_width')-(resolveorvalue('prime_tower_base_size')if(resolveorvalue('adhesion_type')=='raft'orresolveorvalue('prime_tower_brim_enable'))else0)-max(max(extrudervalues('travel_avoid_distance'))+max(extrudervalues('machine_nozzle_offset_x'))+max(extrudervalues('support_offset'))+(extrudervalue(skirt_brim_extruder_nr,'skirt_brim_line_width')*extrudervalue(skirt_brim_extruder_nr,'skirt_line_count')*extrudervalue(skirt_brim_extruder_nr,'initial_layer_line_width_factor')/100+extrudervalue(skirt_brim_extruder_nr,'skirt_gap')ifresolveorvalue('adhesion_type')=='skirt'else0)+(resolveorvalue('draft_shield_dist')ifresolveorvalue('draft_shield_enabled')else0),max(map(abs,extrudervalues('machine_nozzle_offset_x'))),1))-(resolveorvalue('machine_width')/2ifresolveorvalue('machine_center_is_zero')else0)":
+                                {
+                                    // prime_tower_position_x
+                                    // (resolveOrValue('machine_width') / 2 + resolveOrValue('prime_tower_size') / 2) if resolveOrValue('machine_shape') == 'elliptic' else (resolveOrValue('machine_width') - (resolveOrValue('prime_tower_base_size') if (resolveOrValue('adhesion_type') == 'raft' or resolveOrValue('prime_tower_brim_enable')) else 0) - max(max(extruderValues('travel_avoid_distance')) + max(extruderValues('machine_nozzle_offset_x')) + max(extruderValues('support_offset')) + (extruderValue(skirt_brim_extruder_nr, 'skirt_brim_line_width') * extruderValue(skirt_brim_extruder_nr, 'skirt_line_count') * extruderValue(skirt_brim_extruder_nr, 'initial_layer_line_width_factor') / 100 + extruderValue(skirt_brim_extruder_nr, 'skirt_gap') if resolveOrValue('adhesion_type') == 'skirt' else 0) + (resolveOrValue('draft_shield_dist') if resolveOrValue('draft_shield_enabled') else 0), max(map(abs, extruderValues('machine_nozzle_offset_x'))), 1)) - (resolveOrValue('machine_width') / 2 if resolveOrValue('machine_center_is_zero') else 0)
+                                    // This is the value given in the log "203.575" 
+                                    or.Value = "203.575";
+                                }
+                                break;
+
+
+
+
+                            case "machine_depth-prime_tower_size-(resolveorvalue('prime_tower_base_size')if(resolveorvalue('adhesion_type')=='raft'orresolveorvalue('prime_tower_brim_enable'))else0)-max(max(extrudervalues('travel_avoid_distance'))+max(extrudervalues('machine_nozzle_offset_y'))+max(extrudervalues('support_offset'))+(extrudervalue(skirt_brim_extruder_nr,'skirt_brim_line_width')*extrudervalue(skirt_brim_extruder_nr,'skirt_line_count')*extrudervalue(skirt_brim_extruder_nr,'initial_layer_line_width_factor')/100+extrudervalue(skirt_brim_extruder_nr,'skirt_gap')ifresolveorvalue('adhesion_type')=='skirt'else0)+(resolveorvalue('draft_shield_dist')ifresolveorvalue('draft_shield_enabled')else0),max(map(abs,extrudervalues('machine_nozzle_offset_y'))),1)-(resolveorvalue('machine_depth')/2ifresolveorvalue('machine_center_is_zero')else0)":
+                                {
+                                    // prime_tower_position_y
+                                    // machine_depth - prime_tower_size - (resolveOrValue('prime_tower_base_size') if (resolveOrValue('adhesion_type') == 'raft' or resolveOrValue('prime_tower_brim_enable')) else 0) - max(max(extruderValues('travel_avoid_distance')) + max(extruderValues('machine_nozzle_offset_y')) + max(extruderValues('support_offset')) + (extruderValue(skirt_brim_extruder_nr, 'skirt_brim_line_width') * extruderValue(skirt_brim_extruder_nr, 'skirt_line_count') * extruderValue(skirt_brim_extruder_nr, 'initial_layer_line_width_factor') / 100 + extruderValue(skirt_brim_extruder_nr, 'skirt_gap') if resolveOrValue('adhesion_type') == 'skirt' else 0) + (resolveOrValue('draft_shield_dist') if resolveOrValue('draft_shield_enabled') else 0), max(map(abs, extruderValues('machine_nozzle_offset_y'))), 1) - (resolveOrValue('machine_depth') / 2 if resolveOrValue('machine_center_is_zero') else 0)
+                                    // This is the value given in the log "183.575" 
+                                    or.Value = "183.575";
+                                }
+                                break;
+
+
+
+
+                            case "0ifsupport_line_distance==0elseround(support_skip_zag_per_mm/support_line_distance)":
+                                {
+                                    // support_zag_skip_count
+                                    // 0 if support_line_distance == 0 else round(support_skip_zag_per_mm / support_line_distance)
+                                    // This is the value given in the log "10"
+                                    or.Value = "10";
+                                }
+                                break;
+
+
                             default:
                                 if (IsCalculated(or.Value))
                                 {
@@ -1002,6 +1517,8 @@ namespace Workflow
                                     l = l.Replace("<KEY>", or.Key);
                                     l = l.Replace("<ORIGINALVALUE>", or.Value);
                                     l = l.Replace("<STDVALUE>", v);
+                                    l = l.Replace("<LOGGEDVALUE>", FetchLoggedValue(or.Key));
+
                                     System.Diagnostics.Debug.WriteLine(l);
                                 }
                                 break;
@@ -1014,6 +1531,29 @@ namespace Workflow
                 runcount--;
             } while (runcount >= 0);
             System.Diagnostics.Debug.WriteLine($"count of calculated entries={count}");
+        }
+
+        private String FetchLoggedValue(string key)
+        {
+            string res = "";
+            string pth = @"C:\Users\joe Bustard\source\repos\Barnacle\Make3D\Make3D\Data\DefaultPrinter.profile";
+            if (File.Exists(pth))
+            {
+                string[] lines = File.ReadAllLines(pth);
+                for (int i = 0; i < lines.Count(); i++)
+                {
+                    string[] words = lines[i].Split('=');
+                    if (words.GetLength(0) == 2)
+                    {
+                        if (words[0] == key)
+                        {
+                            res = words[1];
+                            break;
+                        }
+                    }
+                }
+            }
+            return res;
         }
 
         private bool Match(string key, string val)

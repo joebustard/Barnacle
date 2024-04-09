@@ -449,7 +449,7 @@ M84 ; Disable stepper motors
                 baseSlicerProfile.Overrides = df.Overrides;
                 string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                 folder += "\\Barnacle\\PrinterProfiles\\";
-                string baseFile = folder + selectedPrinter + ".profile";
+                string baseFile = folder + selectedPrinter + ".baseprofile";
                 baseSlicerProfile.SaveOverrides(baseFile);
             }
         }
@@ -459,7 +459,7 @@ M84 ; Disable stepper motors
             EditProfile dlg = new EditProfile();
             string defProfile = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             defProfile += "\\Barnacle\\PrinterProfiles\\";
-            defProfile = defProfile + SelectedPrinter + ".profile";
+            defProfile = defProfile + SelectedPrinter + ".baseprofile";
             dlg.LoadFile(defProfile);
             dlg.ProfileName = "New Profile";
             dlg.CreatingNewProfile = true;
