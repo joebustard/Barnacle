@@ -66,7 +66,7 @@ namespace Barnacle.Models
             return res;
         }
 
-        public static bool CreateZipFromFiles(string zipPath, List<String> filePathsToAdd, string filePathRoot)
+        public static bool CreateZipFromFiles(string zipPath, List<String> filePathsToAdd, List<String> emptyFoldersToAdd, string filePathRoot)
         {
             bool res = false;
             try
@@ -87,6 +87,17 @@ namespace Barnacle.Models
                             entryName = fPath.Substring(filePathRoot.Length + 1);
                         }
                         archive.CreateEntryFromFile(fPath, entryName);
+                    }
+
+                    foreach (var fPath in emptyFoldersToAdd)
+                    {
+                        string entryName = fPath;
+                        if (fPath.StartsWith(filePathRoot))
+                        {
+                            // remove the root and the slash
+                            entryName = fPath.Substring(filePathRoot.Length + 1);
+                        }
+                        archive.CreateEntry(entryName + "\\");
                     }
                 }
             }

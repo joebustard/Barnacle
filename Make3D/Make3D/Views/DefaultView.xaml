@@ -145,18 +145,18 @@
                     <Custom:RibbonSeparator />
                     <Custom:RibbonApplicationMenuItem Command="{Binding NewProjectCommand}"
                                                       Header="New Project"
-                                                      ImageSource="/images/buttons/new_file.png"
+                                                      ImageSource="/images/buttons/AddPage.png"
                                                       ToolTip="Create a  new project"
                                                       x:Name="NewProjectMenu" IsEnabled="{Binding EditingActive}" />
                     <Custom:RibbonApplicationMenuItem Command="{Binding OpenProjectCommand}"
                                                       Header="Open Project"
-                                                      ImageSource="/images/buttons/new_file.png"
+                                                      ImageSource="/images/buttons/age.png"
                                                       ToolTip="Open an existing project"
                                                       x:Name="OpenProjectMenu" IsEnabled="{Binding EditingActive}" />
                     <Custom:RibbonSeparator />
                     <Custom:RibbonApplicationMenuItem Command="{Binding ZipProjectCommand}"
                                                       Header="Backup Project"
-                                                      ImageSource="/images/buttons/new_file.png"
+                                                      ImageSource="/images/buttons/BackUp.png"
                                                       ToolTip="Zip the main files of the current project and store in the backup folder"
                                                       x:Name="ZipProjectMenu" IsEnabled="{Binding EditingActive}" />
                     <Custom:RibbonSeparator />

@@ -1351,6 +1351,7 @@
     <Resource Include="Images\Buttons\PlankWall.png" />
     <Resource Include="Images\Buttons\Subdivide.png" />
     <Resource Include="Images\Buttons\CutHPlane.png" />
+    <Resource Include="Images\Buttons\BackUp.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

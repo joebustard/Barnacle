@@ -213,38 +213,55 @@ namespace Barnacle.ViewModels
                                                             + DateTime.Now.Minute.ToString()
                                                             + ".zip";
                     List<String> fileNames = new List<string>();
+                    List<String> emptyFolderNames = new List<string>();
+                    AddTargetNamesForProject(projRoot, fileNames, emptyFolderNames);
 
-                    AddTargetNamesForProject(projRoot, fileNames);
-                    ZipUtils.CreateZipFromFiles(zipPath, fileNames, projRoot);
+
+                    ZipUtils.CreateZipFromFiles(zipPath, fileNames, emptyFolderNames, projRoot);
                     MessageBox.Show("Project Zipped to file: " + zipPath);
                 }
             }
         }
 
-        private void AddTargetNamesForProject(string root, List<string> targetFiles)
+        private void AddTargetNamesForProject(string root, List<string> targetFiles, List<string> emptyFolderNames)
         {
-            AddTargetFileNamesForFolder(root, targetFiles, "bmf");
-            AddTargetFileNamesForFolder(root, targetFiles, "txt");
-            AddTargetFileNamesForFolder(root, targetFiles, "lmp");
-            AddTargetFileNamesForFolder(root, targetFiles, "png");
-            AddTargetFileNamesForFolder(root, targetFiles, "jpg");
-            AddTargetFileNamesForFolder(root, targetFiles, "jpeg");
-            AddTargetFileNamesForFolder(root, targetFiles, "docx");
-            AddTargetFileNamesForFolder(root, targetFiles, "xlsx");
-            AddTargetFileNamesForFolder(root, targetFiles, "stl");
-            AddTargetFileNamesForFolder(root, targetFiles, "gcode");
+            int fileCount = 0;
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "bmf");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "txt");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "lmp");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "png");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "jpg");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "jpeg");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "docx");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "xlsx");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "stl");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "gcode");
             String[] folders = Directory.GetDirectories(root);
             foreach (string folder in folders)
             {
-                AddTargetNamesForProject(folder, targetFiles);
+                if (!folder.EndsWith("Backup"))
+                {
+                    AddTargetNamesForProject(folder, targetFiles, emptyFolderNames);
+                }
+                else
+                {
+                // pretend backup folder is an empty one
+                    emptyFolderNames.Add(folder);
+                }
+            }
+
+            // if this is leaf folder and it does not have any relevant files
+            if (folders.Length == 0 && fileCount == 0)
+            {
+                emptyFolderNames.Add(root);
             }
         }
 
-        private void AddTargetFileNamesForFolder(string root, List<string> targetFiles, string ext)
+        private int AddTargetFileNamesForFolder(string root, List<string> targetFiles, string ext)
         {
             string[] names = Directory.GetFiles(root, "*." + ext);
-            targetFiles.AddRange(names.ToList())
-;
+            targetFiles.AddRange(names.ToList());
+            return names.Length;
         }
 
         public ICommand AboutCommand { get; set; }
