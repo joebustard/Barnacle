@@ -1352,6 +1352,30 @@
     <Resource Include="Images\Buttons\Subdivide.png" />
     <Resource Include="Images\Buttons\CutHPlane.png" />
     <Resource Include="Images\Buttons\BackUp.png" />
+    <Resource Include="Images\Buttons\Box.png" />
+    <Resource Include="Images\Buttons\CurvedFunnel.png" />
+    <Resource Include="Images\Buttons\dual.png" />
+    <Resource Include="Images\Buttons\Eye.png" />
+    <Resource Include="Images\Buttons\LightEye.png" />
+    <Resource Include="Images\Buttons\parabolicdish.png" />
+    <Resource Include="Images\Buttons\parallelogram.png" />
+    <Resource Include="Images\Buttons\Pie.png" />
+    <Resource Include="Images\Buttons\platelet.png" />
+    <Resource Include="Images\Buttons\Pulley.png" />
+    <Resource Include="Images\Buttons\RailWheel.png" />
+    <Resource Include="Images\Buttons\reuleaux.png" />
+    <Resource Include="Images\Buttons\Script.png" />
+    <Resource Include="Images\Buttons\Spring.png" />
+    <Resource Include="Images\Buttons\squaredstadium.png" />
+    <Resource Include="Images\Buttons\stadium.png" />
+    <Resource Include="Images\Buttons\star.png" />
+    <Resource Include="Images\Buttons\TankTrack.png" />
+    <Resource Include="Images\Buttons\TexturedTube.png" />
+    <Resource Include="Images\Buttons\thread.png" />
+    <Resource Include="Images\Buttons\Trapezoid.png" />
+    <Resource Include="Images\Buttons\Untitled.png" />
+    <Resource Include="Images\Buttons\wagonwheel.png" />
+    <Resource Include="Images\Buttons\Wheel.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

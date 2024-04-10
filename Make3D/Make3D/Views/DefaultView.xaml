@@ -936,16 +936,16 @@
 
                     <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyleWithIcon}"
                                              ItemsSource="{Binding MechanicalToolsToShow}"
-                                             Label="Mechanical"
+                                             Label="Mech"
                                              x:Name="MechanicalTools"  SmallImageSource="/Barnacle;component/Images/Buttons/Mechanical.png">
                     </Custom:RibbonMenuButton>
 
-                    <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
+                    <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyleWithIcon}"
                                              ItemsSource="{Binding ParametricToolsToShow}"
                                              Label="Parametric"
                                              x:Name="ParametricTools"  SmallImageSource="/Barnacle;component/Images/Buttons/Parametric.png">
                     </Custom:RibbonMenuButton>
-                    <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
+                    <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyleWithIcon}"
                                              ItemsSource="{Binding VehicleToolsToShow}"
                                              Label="Vehicles"
                                              x:Name="VehicleTools"  SmallImageSource="/Barnacle;component/Images/Buttons/Vehicles.png">

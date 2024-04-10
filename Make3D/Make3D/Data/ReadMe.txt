@@ -20,6 +20,7 @@ Added
 	Delete part from the parts library
 	First cut of a morphable object tool. i.e. Make a shape thats 50% sphere and 50% pyramid etc
 	Show the top of the build volume for the selected printer (in addition to the existing floor marker)
+	Backup menu option on File Menu. If the project has a Backup folder, then the main project files are zipped into Backup/<projname>_<date>_<time>.zip
 
 Fixed
 	Prevent preset names being loaded twice in flexipathcontrol 

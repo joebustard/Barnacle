@@ -1,0 +1,22 @@
+copy CurvedFunnel.png reuleaux.png
+copy CurvedFunnel.png parabolicdish.png
+copy CurvedFunnel.png parallelogram.png
+copy CurvedFunnel.png platelet.png
+copy CurvedFunnel.png dual.png
+copy CurvedFunnel.png squaredstadium.png
+copy CurvedFunnel.png stadium.png
+copy CurvedFunnel.png star.png
+copy CurvedFunnel.png thread.png
+copy CurvedFunnel.png Torus.png
+copy CurvedFunnel.png wagonwheel.png
+copy CurvedFunnel.png Pulley.png
+copy CurvedFunnel.png Trapezoid.png
+copy CurvedFunnel.png Tube.png
+copy CurvedFunnel.png Spring.png
+copy CurvedFunnel.png Pie.png
+copy CurvedFunnel.png TexturedTube.png
+copy CurvedFunnel.png Box.png
+copy CurvedFunnel.png TankTrack.png
+copy CurvedFunnel.png Wheel.png
+copy CurvedFunnel.png RailWheel.png
+
