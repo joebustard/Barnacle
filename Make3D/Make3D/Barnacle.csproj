@@ -1376,6 +1376,8 @@
     <Resource Include="Images\Buttons\Untitled.png" />
     <Resource Include="Images\Buttons\wagonwheel.png" />
     <Resource Include="Images\Buttons\Wheel.png" />
+    <Resource Include="Images\TiledRoof.png" />
+    <Resource Include="Images\Buttons\TiledRoof.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
