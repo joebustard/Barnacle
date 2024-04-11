@@ -110,6 +110,9 @@ namespace Workflow
         {
             if (Printers != null)
             {
+                startGCode = startGCode.Replace("\r\n", @"\n");
+                endGCode = endGCode.Replace("\r\n", @"\n");
+
                 BarnaclePrinter bp = new BarnaclePrinter();
                 bp.Name = printerName;
                 bp.CuraPrinterFile = curaPrinter;

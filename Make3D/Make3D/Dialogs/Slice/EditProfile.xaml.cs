@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using Workflow;
 
 namespace Barnacle.Dialogs.Slice
 {
@@ -16,25 +17,11 @@ namespace Barnacle.Dialogs.Slice
     public partial class EditProfile : Window, INotifyPropertyChanged
     {
         public bool CreatingNewProfile { get; set; }
-        private ObservableCollection<ProfileEntry> settings;
+       
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ObservableCollection<ProfileEntry> Settings
-        {
-            get
-            {
-                return settings;
-            }
-            set
-            {
-                if (value != settings)
-                {
-                    settings = value;
-                }
-                NotifyPropertyChanged();
-            }
-        }
+       
 
         private string profileName;
 
@@ -54,11 +41,11 @@ namespace Barnacle.Dialogs.Slice
                 }
             }
         }
-
+        private CuraDefinitionFile profile;
         public EditProfile()
         {
             InitializeComponent();
-            Settings = new ObservableCollection<ProfileEntry>();
+            
         }
 
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
@@ -112,12 +99,8 @@ namespace Barnacle.Dialogs.Slice
                 {
                     File.Delete(fName);
                 }
-                StreamWriter sw = File.AppendText(fName);
-                foreach (ProfileEntry pe in Settings)
-                {
-                    pe.Write(sw);
-                }
-                sw.Close();
+                profile.Save(fName);
+                
             }
             catch (Exception ex)
             {
@@ -127,17 +110,8 @@ namespace Barnacle.Dialogs.Slice
 
         public void LoadFile(string fileName)
         {
-            Settings = new ObservableCollection<ProfileEntry>();
-            if (File.Exists(fileName))
-            {
-                string[] lines = System.IO.File.ReadAllLines(fileName);
-                for (int i = 0; i < lines.GetLength(0); i++)
-                {
-                    ProfileEntry pe = new ProfileEntry();
-                    pe.Load(lines[i]);
-                    Settings.Add(pe);
-                }
-            }
+            profile = new CuraDefinitionFile();
+            profile.Load(fileName);
         }
     }
 }

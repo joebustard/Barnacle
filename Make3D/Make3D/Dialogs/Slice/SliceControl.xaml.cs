@@ -436,6 +436,7 @@ M84 ; Disable stepper motors
                     {
                         update = false;
                     }
+                    printerManager.RemovePrinter(dlg.PrinterName);
                 }
                 if (update)
                 {

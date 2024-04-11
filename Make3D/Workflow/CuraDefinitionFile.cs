@@ -73,7 +73,171 @@ namespace Workflow
     },
     ""settings"":
     {
-    <ALLSETTINGS>
+      ""machine_settings"":
+        {
+            ""label"": ""Machine"",
+            ""type"": ""category"",
+            ""description"": ""Machine specific settings"",
+            ""icon"": ""Printer"",
+            ""children"":
+            {
+               <MACHINESETTINGS>
+            }
+        },
+        ""resolution"":
+        {
+            ""label"": ""Quality"",
+            ""type"": ""category"",
+            ""icon"": ""PrintQuality"",
+            ""description"": ""All settings that influence the resolution of the print. These settings have a large impact on the quality (and print time)"",
+            ""children"":
+            {            
+               <RESOLUTION>
+            }
+        },
+        ""shell"":
+        {
+            ""label"": ""Walls"",
+            ""icon"": ""PrintShell"",
+            ""description"": ""Shell"",
+            ""type"": ""category"",
+            ""children"":
+            {
+                <SHELL>
+            }
+         },
+         ""top_bottom"":
+        {
+            ""label"": ""Top/Bottom"",
+            ""icon"": ""PrintTopBottom"",
+            ""description"": ""Top/Bottom"",
+            ""type"": ""category"",
+            ""children"":
+            {
+                <TOPBOTTOM>
+            }
+        },
+         ""infill"":
+        {
+            ""label"": ""Infill"",
+            ""icon"": ""Infill1"",
+            ""description"": ""Infill"",
+            ""type"": ""category"",
+            ""children"":
+            {
+                <INFILL>
+            }
+         },
+          ""material"":
+         {
+            ""label"": ""Material"",
+            ""icon"": ""Spool"",
+            ""description"": ""Material"",
+            ""type"": ""category"",
+            ""children"":
+            {
+                <MATERIAL>
+            }
+         },
+         ""speed"":
+        {
+            ""label"": ""Speed"",
+            ""icon"": ""SpeedOMeter"",
+            ""description"": ""Speed"",
+            ""type"": ""category"",
+            ""children"":
+            {
+                <SPEED>
+            }
+         },
+         ""travel"":
+         {
+            ""label"": ""Travel"",
+            ""icon"": ""PrintTravel"",
+            ""description"": ""travel"",
+            ""type"": ""category"",
+            ""children"":
+            {
+                <TRAVEL>
+            }
+         },
+         ""cooling"":
+         {
+            ""label"": ""Cooling"",
+            ""icon"": ""Fan"",
+            ""description"": ""Cooling"",
+            ""type"": ""category"",
+            ""children"":
+            {
+                <COOLING>
+            }
+          },
+          ""support"":
+          {
+            ""label"": ""Support"",
+            ""type"": ""category"",
+            ""icon"": ""Support"",
+            ""description"": ""Support"",
+            ""children"":
+            {
+                <SUPPORT>
+            }
+          },
+          ""platform_adhesion"":
+          {
+            ""label"": ""Build Plate Adhesion"",
+            ""type"": ""category"",
+            ""icon"": ""Adhesion"",
+            ""description"": ""Adhesion"",
+            ""children"":
+            {
+                   <ADHESION>
+            }
+          },
+          ""dual"":
+          {
+            ""label"": ""Dual Extrusion"",
+            ""type"": ""category"",
+            ""icon"": ""DualExtrusion"",
+            ""description"": ""Settings used for printing with multiple extruders."",
+            ""children"":
+            {
+                <DUAL>
+            }
+           },
+           ""meshfix"":
+           {
+            ""label"": ""Mesh Fixes"",
+            ""type"": ""category"",
+            ""icon"": ""Bandage"",
+            ""description"": ""Make the meshes more suited for 3D printing."",
+            ""children"":
+            {
+                <MESHFIX>
+            }
+           },
+           ""blackmagic"":
+           {
+            ""label"": ""Special Modes"",
+            ""type"": ""category"",
+            ""icon"": ""BlackMagic"",
+            ""description"": ""Non-traditional ways to print your models."",
+            ""children"":
+            {
+                  <BLACKMAGIC>
+            }
+          },
+          ""command_line_settings"":
+          {
+            ""label"": ""Command Line Settings"",
+            ""description"": ""Settings which are only used if CuraEngine isn't called from the Cura frontend."",
+            ""type"": ""category"",
+            ""enabled"": false,
+            ""children"":
+            {
+                <CMD>
+            }
+        }
     }
 }
     ";
@@ -186,19 +350,27 @@ namespace Workflow
 
         private string oneSettingText =
         @"
-            ""<KEY>:""
-            {
-                ""default_value"": ""<VAL>"",
-                ""value"": <VAL>
-            },";
+                ""<KEY>"":
+                   {
+                    ""label"": ""<LABEL>"",
+                    ""description"": ""<DESCRIPTION>"",
+                    ""type"": ""<TYPE>"",<OPTIONS>
+                    ""default_value"": <VAL>,
+                    ""value"": <VAL>
+                    
+                },";
 
         private string oneSettingTextStr =
         @"
-            ""<KEY>:""
-            {
-                ""default_value"": ""<VAL>"",
-                ""value"": ""<VAL>""
-            },";
+                ""<KEY>"":
+                {
+                  ""label"": ""<LABEL>"",
+                  ""description"": ""<DESCRIPTION>"",
+                  ""type"": ""<TYPE>"",<OPTIONS>
+                  ""default_value"": ""<DEFVAL>"",
+                  ""value"": ""<VAL>""
+                  
+                },";
 
         public bool Save(String fileName)
         {
@@ -206,26 +378,172 @@ namespace Workflow
             Dictionary<string, SettingDefinition> allsettings = new Dictionary<string, SettingDefinition>();
             AddSettings(allsettings);
             string fileContent = settingsContent;
+
+
             string settingText = "";
-            foreach (string k in allsettings.Keys)
-            {
-                SettingDefinition df = allsettings[k];
-                string tmp = oneSettingText;
-                if (df.Type.ToLower() == "str")
-                {
-                    tmp = oneSettingTextStr;
-                }
-                tmp = tmp.Replace("<KEY>", df.Name);
-                tmp = tmp.Replace("<VAL>", df.OverideValue);
-                settingText += tmp;
-            }
+            settingText = GetSectionText(allsettings, "machine_settings");
             if (settingText.EndsWith(","))
             {
                 settingText = settingText.Substring(0, settingText.Length - 1);
             }
+            fileContent = fileContent.Replace("<MACHINESETTINGS>", settingText);
+
+            settingText = GetSectionText(allsettings, "resolution");
+            if (settingText.EndsWith(","))
+            {
+                settingText = settingText.Substring(0, settingText.Length - 1);
+            }
+            fileContent = fileContent.Replace("<RESOLUTION>", settingText);
+
+            settingText = GetSectionText(allsettings, "shell");
+            if (settingText.EndsWith(","))
+            {
+                settingText = settingText.Substring(0, settingText.Length - 1);
+            }
+            fileContent = fileContent.Replace("<SHELL>", settingText);
+
+            settingText = GetSectionText(allsettings, "top_bottom");
+            if (settingText.EndsWith(","))
+            {
+                settingText = settingText.Substring(0, settingText.Length - 1);
+            }
+            fileContent = fileContent.Replace("<TOPBOTTOM>", settingText);
+
+            settingText = GetSectionText(allsettings, "infill");
+            if (settingText.EndsWith(","))
+            {
+                settingText = settingText.Substring(0, settingText.Length - 1);
+            }
+            fileContent = fileContent.Replace("<INFILL>", settingText);
+
+            settingText = GetSectionText(allsettings, "material");
+            if (settingText.EndsWith(","))
+            {
+                settingText = settingText.Substring(0, settingText.Length - 1);
+            }
+            fileContent = fileContent.Replace("<MATERIAL>", settingText);
+
+            settingText = GetSectionText(allsettings, "speed");
+            if (settingText.EndsWith(","))
+            {
+                settingText = settingText.Substring(0, settingText.Length - 1);
+            }
+            fileContent = fileContent.Replace("<SPEED>", settingText);
+
+            settingText = GetSectionText(allsettings, "travel");
+            if (settingText.EndsWith(","))
+            {
+                settingText = settingText.Substring(0, settingText.Length - 1);
+            }
+            fileContent = fileContent.Replace("<TRAVEL>", settingText);
+
+            settingText = GetSectionText(allsettings, "cooling");
+            if (settingText.EndsWith(","))
+            {
+                settingText = settingText.Substring(0, settingText.Length - 1);
+            }
+            fileContent = fileContent.Replace("<COOLING>", settingText);
+
+            settingText = GetSectionText(allsettings, "support");
+            if (settingText.EndsWith(","))
+            {
+                settingText = settingText.Substring(0, settingText.Length - 1);
+            }
+            fileContent = fileContent.Replace("<SUPPORT>", settingText);
+
+            settingText = GetSectionText(allsettings, "platform_adhesion");
+            if (settingText.EndsWith(","))
+            {
+                settingText = settingText.Substring(0, settingText.Length - 1);
+            }
+            fileContent = fileContent.Replace("<ADHESION>", settingText);
+
+            settingText = GetSectionText(allsettings, "dual");
+            if (settingText.EndsWith(","))
+            {
+                settingText = settingText.Substring(0, settingText.Length - 1);
+            }
+            fileContent = fileContent.Replace("<DUAL>", settingText);
+
+            settingText = GetSectionText(allsettings, "meshfix");
+            if (settingText.EndsWith(","))
+            {
+                settingText = settingText.Substring(0, settingText.Length - 1);
+            }
+            fileContent = fileContent.Replace("<MESHFIX>", settingText);
+
+            settingText = GetSectionText(allsettings, "blackmagic");
+            if (settingText.EndsWith(","))
+            {
+                settingText = settingText.Substring(0, settingText.Length - 1);
+            }
+            fileContent = fileContent.Replace("<BLACKMAGIC>", settingText);
+
+            settingText = GetSectionText(allsettings, "command_line_settings");
+            if (settingText.EndsWith(","))
+            {
+                settingText = settingText.Substring(0, settingText.Length - 1);
+            }
+            fileContent = fileContent.Replace("<CMD>", settingText);
+
+
             fileContent = fileContent.Replace("<ALLSETTINGS>", settingText);
             File.WriteAllText(fileName, fileContent.ToString());
             return res;
+        }
+
+        private string GetSectionText(Dictionary<string, SettingDefinition> allsettings, string testSection)
+        {
+            String sectionText = "";
+            foreach (string k in allsettings.Keys)
+            {
+                SettingDefinition df = allsettings[k];
+                if (df.Section == testSection)
+                {
+                    string tmp = oneSettingText;
+                    if ( df.DefaultValue == "False" || df.DefaultValue == "True")
+                    {
+                        df.DefaultValue = df.DefaultValue.ToLower();
+                    }
+
+                    if (df.Type.ToLower() == "str" || df.Type.ToLower() == "enum")
+                    {
+                        tmp = oneSettingTextStr;
+                    }
+                    if (df.Type.ToLower() == "enum")
+                    {
+                        String options = @"
+                    ""options"":
+                    {";
+                        foreach (string sk in df.Options.Keys)
+                        {
+                            options += "\n\t\t\t\t\t\t\"" + sk + "\": \"" + df.Options[sk] + "\",";
+                        }
+                        options = options.Substring(0, options.Length - 1);
+                        options += "\n\t\t},\n";
+                        tmp = tmp.Replace("<OPTIONS>", options);
+                    }
+                    else
+                    {
+                        tmp = tmp.Replace("<OPTIONS>", "");
+                    }
+                    tmp = tmp.Replace("<LABEL>", df.Label);
+                    tmp = tmp.Replace("<DESCRIPTION>", df.Description);
+                    tmp = tmp.Replace("<TYPE>", df.Type);
+                    tmp = tmp.Replace("<KEY>", df.Name);
+                    tmp = tmp.Replace("<DEFVAL>", df.DefaultValue);
+                    string v = df.OverideValue;
+                    if (v == "")
+                    {
+                        v = df.DefaultValue;
+                    }
+                    tmp = tmp.Replace("<VAL>", v);
+                    sectionText += tmp;
+                }
+
+            }
+
+            return sectionText;
         }
 
         private static void ReadPolygon(SettingDefinition cdf, JProperty setProp)
