@@ -6,11 +6,13 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using static Workflow.CuraDefinition;
 
 namespace Workflow
 {
     public class CuraEngineInterface
     {
+        /*
         // Cura gets upset if you send too many parameters
         // It also gets upset if you don't send these ones
         // even if they still have their default values
@@ -192,6 +194,7 @@ namespace Workflow
 "z_seam_type",
 "gantry_height",
         };
+*/
 
         private static string slicecmdtemplate =
         @"
@@ -212,6 +215,280 @@ $EndGcode
 cd %fld%
 exit 0
     ";
+
+        public static bool ExecuteCmds(string pt)
+        {
+            bool result = false;
+            if (File.Exists(pt))
+            {
+                ProcessStartInfo pi = new ProcessStartInfo();
+                pi.UseShellExecute = true;
+                pi.FileName = pt;
+                //  pi.WindowStyle = ProcessWindowStyle.Normal;
+                pi.WindowStyle = ProcessWindowStyle.Hidden;
+                pi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle";
+                Process runner = Process.Start(pi);
+                runner.WaitForExit();
+                if (runner.ExitCode == 0)
+                {
+                    result = true;
+                }
+            }
+
+            return result;
+        }
+
+        public static List<String> GetAvailableCuraExtruders(string folder)
+        {
+            List<string> res = new List<string>();
+            if (folder != null && folder != "")
+            {
+                String[] files = Directory.GetFiles(folder, "*.json");
+                if (files.GetLength(0) > 0)
+                {
+                    foreach (string s in files)
+                    {
+                        string t = Path.GetFileName(s).Replace(".def.json", "");
+                        res.Add(t);
+                    }
+                }
+            }
+            return res;
+        }
+
+        public static List<String> GetAvailableCuraPrinterDefinitions(string folder)
+        {
+            List<string> res = new List<string>();
+            if (folder != null && folder != "")
+            {
+                String[] files = Directory.GetFiles(folder, "*.json");
+                if (files.GetLength(0) > 0)
+                {
+                    foreach (string s in files)
+                    {
+                        string t = Path.GetFileName(s).Replace(".def.json", "");
+                        res.Add(Path.GetFileNameWithoutExtension(t));
+                    }
+                }
+            }
+            return res;
+        }
+
+        public static List<string> GetAvailableUserProfiles()
+        {
+            string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            folder += "\\Barnacle\\PrinterProfiles";
+            if (!Directory.Exists(folder))
+            {
+                try
+                {
+                    Directory.CreateDirectory(folder);
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogException(ex);
+                }
+            }
+            List<string> res = new List<string>();
+            res.Add("None");
+            String[] files = Directory.GetFiles(folder, "*.profile");
+            if (files.GetLength(0) > 0)
+            {
+                foreach (string s in files)
+                {
+                    res.Add(Path.GetFileNameWithoutExtension(s));
+                }
+            }
+
+            return res;
+        }
+
+        public static async Task<SliceResult> Slice(string stlPath, string gcodePath, string logPath, string sdCardName, string slicerPath, string printer, string extruder, string userProfile, String startG, string endG)
+        {
+            SliceResult res = new SliceResult();
+            res.Result = false;
+            try
+            {
+                // we need to construct a cmd file to run the slice
+                // Work  out where it should be.
+                // use different temp names, because we will have async tasks going
+                // and we dont want two trying to write to the same cmd or log file
+                string tmpCmdFile = Path.GetTempFileName();
+                tmpCmdFile = Path.ChangeExtension(tmpCmdFile, "cmd");
+                if (File.Exists(tmpCmdFile))
+                {
+                    File.Delete(tmpCmdFile);
+                }
+
+                string tmpFile = Path.GetTempFileName();
+                tmpFile = Path.ChangeExtension(tmpFile, "gcode");
+                if (File.Exists(tmpFile))
+                {
+                    File.Delete(tmpFile);
+                }
+
+                // We need a slicer profile.
+                // The profile is based on the ones supplied with Cura BUT
+                // it doesn't use Cura's ones directly
+                SlicerProfile userSettings = new SlicerProfile(userProfile);
+                string settingoverrides = "";
+                if (userSettings.CuraFile != null)
+                {
+                    foreach (SettingDefinition se in userSettings.CuraFile.Overrides)
+                    {
+                        settingoverrides += $"-s {se.Name}=\"{se.OverideValue}\" ^\n";
+                    }
+
+                    /*
+                    string fileName = AppDomain.CurrentDomain.BaseDirectory + @"Data\DefaultPrinter.profile";
+                    SlicerProfile userSettings = new SlicerProfile(fileName);
+                    SlicerProfile defaultSettings = null;
+
+                    if (userProfile != "" && userProfile.ToLower() != "none")
+                    {
+                        string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                        folder += "\\Barnacle\\PrinterProfiles\\";
+                        userProfile = folder + userProfile + ".profile";
+
+                        userSettings.LoadOverrides(userProfile);
+                        userSettings.SaveAsXml(folder + "\\test.xaml");
+                        foreach (SettingDefinition ov in defaultSettings.Overrides)
+                        {
+                            if (ov.Key.ToLower() == mustAlwaysSend[j].ToLower())
+                            {
+                                settingoverrides += $"-s {ov.Key}=\"{ov.Value}\" ^\n";
+                            }
+                        }
+
+                        string appFolder = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
+                        string defProfile = System.IO.Path.Combine(appFolder, "DefaultPrinter.profile");
+                        if (File.Exists(defProfile))
+                        {
+                            defaultSettings = new SlicerProfile();
+                            defaultSettings.LoadOverrides(defProfile);
+                        }
+                    }
+
+                    bool[] haveSentAlready = new bool[mustAlwaysSend.Length];
+
+                    string settingoverrides = "";
+                    foreach (SettingOverride ov in userSettings.Overrides)
+                    {
+                        bool add = true;
+                        if (defaultSettings != null)
+                        {
+                            foreach (SettingOverride df in defaultSettings.Overrides)
+                            {
+                                if (df.Key == ov.Key && !mustAlwaysSend.Contains(ov.Key))
+                                {
+                                    if (df.Value == ov.Value)
+                                    {
+                                        add = false;
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                        if (add)
+                        {
+                            settingoverrides += $"-s {ov.Key}=\"{ov.Value}\" ^\n";
+                            for (int j = 0; j < mustAlwaysSend.Length; j++)
+                            {
+                                if (mustAlwaysSend[j].ToLower() == ov.Key.ToLower())
+                                {
+                                    haveSentAlready[j] = true;
+                                }
+                            }
+                        }
+                    }
+                    if (defaultSettings != null)
+                    {
+                        for (int j = 0; j < mustAlwaysSend.Length; j++)
+                        {
+                            if (haveSentAlready[j] == false)
+                            {
+                                foreach (SettingOverride ov in defaultSettings.Overrides)
+                                {
+                                    if (ov.Key.ToLower() == mustAlwaysSend[j].ToLower())
+                                    {
+                                        settingoverrides += $"-s {ov.Key}=\"{ov.Value}\" ^\n";
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    settingoverrides = settingoverrides.Substring(0, settingoverrides.Length - 1);
+                    */
+                    string n = System.IO.Path.GetFileNameWithoutExtension(stlPath);
+                    if (File.Exists(logPath))
+                    {
+                        File.Delete(logPath);
+                    }
+                    WriteSliceFileCmd(tmpCmdFile,
+                                      slicerPath,
+                                      slicerPath + @"\share\cura\resources\definitions\" + printer,
+                                      slicerPath + @"\share\cura\resources\extruders\" + extruder,
+                                      settingoverrides,
+                                      startG,
+                                      endG,
+                                      stlPath,
+                                      tmpFile,
+                                      logPath);
+
+                    res.Result = await DoSlice(gcodePath, tmpCmdFile, tmpFile);
+
+                    if (File.Exists(tmpCmdFile))
+                    {
+                        File.Delete(tmpCmdFile);
+                    }
+
+                    if (File.Exists(tmpFile))
+                    {
+                        File.Delete(tmpFile);
+                    }
+                    if (res.Result && File.Exists(logPath))
+                    {
+                        string[] logLines = File.ReadAllLines(logPath);
+                        int len = logLines.GetLength(0);
+                        // if the log has something in it we can try extracting the print duration etc.
+                        // if its empty then we can't do anything with it
+                        if (len > 0)
+                        {
+                            for (int lineIndex = 0; lineIndex < len; lineIndex++)
+                            {
+                                int timeIndex = logLines[lineIndex].IndexOf("Print time (s):");
+                                if (timeIndex > -1)
+                                {
+                                    string dummy = logLines[lineIndex].Substring(timeIndex + 16).Trim();
+                                    res.TotalSeconds = Convert.ToInt32(dummy);
+
+                                    TimeSpan ts = new TimeSpan(0, 0, res.TotalSeconds);
+                                    res.Hours = ts.Hours;
+                                    res.Minutes = ts.Minutes;
+                                    res.Seconds = ts.Seconds;
+                                }
+                                int filamentIndex = logLines[lineIndex].IndexOf("Filament (mm^3):");
+                                if (filamentIndex > -1)
+                                {
+                                    string dummy = logLines[lineIndex].Substring(filamentIndex + 17).Trim();
+                                    res.Filament = Convert.ToInt32(dummy);
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    Logger.Log("userSettings.CuraFile is null, i.e.profile failed to load");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                Logger.LogException(ex);
+            }
+            return res;
+        }
 
         // examples
         // $Printer =".\resources\definitions\creality_ender3pro.def.json"
@@ -302,170 +579,6 @@ exit 0
             System.IO.File.WriteAllText(File, txt);
         }
 
-        public static async Task<SliceResult> Slice(string stlPath, string gcodePath, string logPath, string sdCardName, string slicerPath, string printer, string extruder, string userProfile, String startG, string endG)
-        {
-            SliceResult res = new SliceResult();
-            res.Result = false;
-            try
-            {
-                // we need to construct a cmd file to run the slice
-                // Work  out where it should be.
-                // use different temp names, because we will have async tasks going
-                // and we dont want two trying to write to the same cmd or log file
-                string tmpCmdFile = Path.GetTempFileName();
-                tmpCmdFile = Path.ChangeExtension(tmpCmdFile, "cmd");
-                if (File.Exists(tmpCmdFile))
-                {
-                    File.Delete(tmpCmdFile);
-                }
-
-                string tmpFile = Path.GetTempFileName();
-                tmpFile = Path.ChangeExtension(tmpFile, "gcode");
-                if (File.Exists(tmpFile))
-                {
-                    File.Delete(tmpFile);
-                }
-
-                // We need a slicer profile.
-                // The profile is based on the ones supplied with Cura BUT
-                // it doesn't use Cura's ones directly
-                string fileName = AppDomain.CurrentDomain.BaseDirectory + @"Data\DefaultPrinter.profile";
-                SlicerProfile userSettings = new SlicerProfile(fileName);
-                SlicerProfile defaultSettings = null;
-
-                if (userProfile != "" && userProfile.ToLower() != "none")
-                {
-                    string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                    folder += "\\Barnacle\\PrinterProfiles\\";
-                    userProfile = folder + userProfile + ".profile";
-
-                    userSettings.LoadOverrides(userProfile);
-                    userSettings.SaveAsXml(folder + "\\test.xaml");
-                    string appFolder = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
-                    string defProfile = System.IO.Path.Combine(appFolder, "DefaultPrinter.profile");
-                    if (File.Exists(defProfile))
-                    {
-                        defaultSettings = new SlicerProfile();
-                        defaultSettings.LoadOverrides(defProfile);
-                    }
-                }
-
-                bool[] haveSentAlready = new bool[mustAlwaysSend.Length];
-
-                string settingoverrides = "";
-                foreach (SettingOverride ov in userSettings.Overrides)
-                {
-                    bool add = true;
-                    if (defaultSettings != null)
-                    {
-                        foreach (SettingOverride df in defaultSettings.Overrides)
-                        {
-                            if (df.Key == ov.Key && !mustAlwaysSend.Contains(ov.Key))
-                            {
-                                if (df.Value == ov.Value)
-                                {
-                                    add = false;
-                                }
-                                break;
-                            }
-                        }
-                    }
-                    if (add)
-                    {
-                        settingoverrides += $"-s {ov.Key}=\"{ov.Value}\" ^\n";
-                        for (int j = 0; j < mustAlwaysSend.Length; j++)
-                        {
-                            if (mustAlwaysSend[j].ToLower() == ov.Key.ToLower())
-                            {
-                                haveSentAlready[j] = true;
-                            }
-                        }
-                    }
-                }
-                if (defaultSettings != null)
-                {
-                    for (int j = 0; j < mustAlwaysSend.Length; j++)
-                    {
-                        if (haveSentAlready[j] == false)
-                        {
-                            foreach (SettingOverride ov in defaultSettings.Overrides)
-                            {
-                                if (ov.Key.ToLower() == mustAlwaysSend[j].ToLower())
-                                {
-                                    settingoverrides += $"-s {ov.Key}=\"{ov.Value}\" ^\n";
-                                }
-                            }
-                        }
-                    }
-                }
-                settingoverrides = settingoverrides.Substring(0, settingoverrides.Length - 1);
-
-                string n = System.IO.Path.GetFileNameWithoutExtension(stlPath);
-                if (File.Exists(logPath))
-                {
-                    File.Delete(logPath);
-                }
-                WriteSliceFileCmd(tmpCmdFile,
-                                    slicerPath,
-                                  slicerPath + @"\share\cura\resources\definitions\" + printer,
-                                  slicerPath + @"\share\cura\resources\extruders\" + extruder,
-                                  settingoverrides,
-                                  startG,
-                                  endG,
-                                  stlPath,
-                                 tmpFile,
-                                 logPath);
-
-                res.Result = await DoSlice(gcodePath, tmpCmdFile, tmpFile);
-
-                if (File.Exists(tmpCmdFile))
-                {
-                    File.Delete(tmpCmdFile);
-                }
-
-                if (File.Exists(tmpFile))
-                {
-                    File.Delete(tmpFile);
-                }
-                if (res.Result && File.Exists(logPath))
-                {
-                    string[] logLines = File.ReadAllLines(logPath);
-                    int len = logLines.GetLength(0);
-                    // if the log has something in it we can try extracting the print duration etc.
-                    // if its empty then we can't do anything with it
-                    if (len > 0)
-                    {
-                        for (int lineIndex = 0; lineIndex < len; lineIndex++)
-                        {
-                            int timeIndex = logLines[lineIndex].IndexOf("Print time (s):");
-                            if (timeIndex > -1)
-                            {
-                                string dummy = logLines[lineIndex].Substring(timeIndex + 16).Trim();
-                                res.TotalSeconds = Convert.ToInt32(dummy);
-
-                                TimeSpan ts = new TimeSpan(0, 0, res.TotalSeconds);
-                                res.Hours = ts.Hours;
-                                res.Minutes = ts.Minutes;
-                                res.Seconds = ts.Seconds;
-                            }
-                            int filamentIndex = logLines[lineIndex].IndexOf("Filament (mm^3):");
-                            if (filamentIndex > -1)
-                            {
-                                string dummy = logLines[lineIndex].Substring(filamentIndex + 17).Trim();
-                                res.Filament = Convert.ToInt32(dummy);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                Logger.LogException(ex);
-            }
-            return res;
-        }
-
         private static Task<bool> DoSlice(string gcodePath, string tmpCmdFile, string tmpFile)
         {
             bool result = ExecuteCmds(tmpCmdFile);
@@ -475,71 +588,6 @@ exit 0
             }
 
             return Task.FromResult<bool>(result);
-        }
-
-        public static List<string> GetAvailableUserProfiles()
-        {
-            string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            folder += "\\Barnacle\\PrinterProfiles";
-            if (!Directory.Exists(folder))
-            {
-                try
-                {
-                    Directory.CreateDirectory(folder);
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogException(ex);
-                }
-            }
-            List<string> res = new List<string>();
-            res.Add("None");
-            String[] files = Directory.GetFiles(folder, "*.profile");
-            if (files.GetLength(0) > 0)
-            {
-                foreach (string s in files)
-                {
-                    res.Add(Path.GetFileNameWithoutExtension(s));
-                }
-            }
-
-            return res;
-        }
-
-        public static List<String> GetAvailableCuraPrinterDefinitions(string folder)
-        {
-            List<string> res = new List<string>();
-            if (folder != null && folder != "")
-            {
-                String[] files = Directory.GetFiles(folder, "*.json");
-                if (files.GetLength(0) > 0)
-                {
-                    foreach (string s in files)
-                    {
-                        string t = Path.GetFileName(s).Replace(".def.json", "");
-                        res.Add(Path.GetFileNameWithoutExtension(t));
-                    }
-                }
-            }
-            return res;
-        }
-
-        public static List<String> GetAvailableCuraExtruders(string folder)
-        {
-            List<string> res = new List<string>();
-            if (folder != null && folder != "")
-            {
-                String[] files = Directory.GetFiles(folder, "*.json");
-                if (files.GetLength(0) > 0)
-                {
-                    foreach (string s in files)
-                    {
-                        string t = Path.GetFileName(s).Replace(".def.json", "");
-                        res.Add(t);
-                    }
-                }
-            }
-            return res;
         }
 
         private static bool ReplaceNewLines(string src, string trg)
@@ -574,28 +622,6 @@ exit 0
                 fout.Close();
                 result = true;
             }
-            return result;
-        }
-
-        public static bool ExecuteCmds(string pt)
-        {
-            bool result = false;
-            if (File.Exists(pt))
-            {
-                ProcessStartInfo pi = new ProcessStartInfo();
-                pi.UseShellExecute = true;
-                pi.FileName = pt;
-                //  pi.WindowStyle = ProcessWindowStyle.Normal;
-                pi.WindowStyle = ProcessWindowStyle.Hidden;
-                pi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle";
-                Process runner = Process.Start(pi);
-                runner.WaitForExit();
-                if (runner.ExitCode == 0)
-                {
-                    result = true;
-                }
-            }
-
             return result;
         }
     }

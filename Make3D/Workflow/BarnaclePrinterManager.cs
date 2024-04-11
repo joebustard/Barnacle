@@ -119,5 +119,21 @@ namespace Workflow
                 Printers.Add(bp);
             }
         }
+
+        public void RemovePrinter(string name)
+        {
+            if (Printers != null && Printers.Count > 0)
+            {
+                List<BarnaclePrinter> tmp = new List<BarnaclePrinter>();
+                foreach (BarnaclePrinter bp in Printers)
+                {
+                    if (bp.Name != name)
+                    {
+                        tmp.Add(bp);
+                    }
+                }
+                Printers = tmp;
+            }
+        }
     }
 }
