@@ -24,13 +24,14 @@ namespace Barnacle.Dialogs.Slice
         private List<String> barnaclePrinterNames;
         private bool canClose;
         private bool canCopyToSD;
-        private bool canSlice;
         private bool canSeeLog;
+        private bool canSlice;
         private Document exportDoc;
 
         private List<String> extruders;
         private bool isEditPrinterEnabled;
         private bool isEditProfileEnabled;
+        private string lastLog;
         private string modelPath;
         private BarnaclePrinterManager printerManager;
         private List<String> profiles;
@@ -46,16 +47,6 @@ namespace Barnacle.Dialogs.Slice
             timer = new DispatcherTimer(new TimeSpan(0, 0, 20), DispatcherPriority.Normal, TimerTick, Dispatcher.CurrentDispatcher);
 
             //df.SaveSettings("c:\\tmp\\test.json.def");
-        }
-
-        private void TimerTick(object sender, EventArgs e)
-        {
-            timer.Stop();
-            if (canSlice)
-            {
-                CheckIfSDCopyShouldBeEnabled();
-            }
-            timer.Start();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -80,16 +71,6 @@ namespace Barnacle.Dialogs.Slice
             }
         }
 
-        public bool CanSeeLog
-        {
-            get { return canSeeLog; }
-            set
-            {
-                canSeeLog = value;
-                NotifyPropertyChanged();
-            }
-        }
-
         public bool CanCopyToSD
         {
             get { return canCopyToSD; }
@@ -100,6 +81,16 @@ namespace Barnacle.Dialogs.Slice
                     canCopyToSD = value;
                     NotifyPropertyChanged();
                 }
+            }
+        }
+
+        public bool CanSeeLog
+        {
+            get { return canSeeLog; }
+            set
+            {
+                canSeeLog = value;
+                NotifyPropertyChanged();
             }
         }
 
@@ -315,6 +306,21 @@ namespace Barnacle.Dialogs.Slice
             }
         }
 
+        private void CreateBaseProfile(string selectedPrinter, string srcPrinter)
+        {
+            String SlicerPath = Properties.Settings.Default.SlicerPath;
+            if (SlicerPath != null && SlicerPath != "")
+            {
+                CuraDefinitionFile df = new CuraDefinitionFile();
+                string fname = $"{SlicerPath}\\share\\cura\\resources\\definitions\\{srcPrinter}.def.json";
+                //df.Load(fname);
+                //df.ProcessSettings();
+                SlicerProfile baseSlicerProfile = new SlicerProfile(fname);
+                string baseFile = UserProfilePath + selectedPrinter + ".baseprofile";
+                baseSlicerProfile.SaveOverrides(baseFile);
+            }
+        }
+
         private void DelProfileClicked(object sender, RoutedEventArgs e)
         {
             if (!String.IsNullOrEmpty(selectedUserProfile))
@@ -322,7 +328,7 @@ namespace Barnacle.Dialogs.Slice
                 MessageBoxResult res = MessageBox.Show("The profile will be permanently deleted", "Warning", MessageBoxButton.OKCancel);
                 if (res == MessageBoxResult.OK)
                 {
-                    String defProfile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"\\Barnacle\\PrinterProfiles\\{selectedUserProfile}.profile";
+                    String defProfile = UserProfilePath + $"{selectedUserProfile}.profile";
                     if (File.Exists(defProfile))
                     {
                         try
@@ -331,8 +337,9 @@ namespace Barnacle.Dialogs.Slice
                             // refresh profiles list
                             Profiles = CuraEngineInterface.GetAvailableUserProfiles();
                         }
-                        catch
+                        catch (Exception ex)
                         {
+                            LoggerLib.Logger.LogException(ex);
                         }
                     }
                 }
@@ -375,12 +382,8 @@ namespace Barnacle.Dialogs.Slice
             if (!String.IsNullOrEmpty(selectedUserProfile))
             {
                 EditProfile dlg = new EditProfile();
-                string fl = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"\\Barnacle\\PrinterProfiles";
-                if (!Directory.Exists(fl))
-                {
-                    Directory.CreateDirectory(fl);
-                }
-                String defProfile = fl + $"\\{selectedUserProfile}.profile";
+                string fl = UserProfilePath;
+                String defProfile = fl + $"{selectedUserProfile}.profile";
                 if (File.Exists(defProfile))
                 {
                     dlg.LoadFile(defProfile);
@@ -426,40 +429,31 @@ M84 ; Disable stepper motors
 
             if (dlg.ShowDialog() == true)
             {
-                printerManager.AddPrinter(dlg.PrinterName, dlg.SelectedPrinter, dlg.SelectedExtruder, dlg.StartGCode, dlg.EndGCode);
-                printerManager.Save();
-                BarnaclePrinterNames = printerManager.GetPrinterNames();
-                SelectedPrinter = dlg.PrinterName;
-                string srcPrinter = dlg.SelectedPrinter;
+                bool update = true;
+                if (printerManager.FindPrinter(dlg.PrinterName) != null)
+                {
+                    if (MessageBox.Show($"Printer {dlg.PrinterName} already exists. Overwrite it?", "Warning", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel)
+                    {
+                        update = false;
+                    }
+                }
+                if (update)
+                {
+                    printerManager.AddPrinter(dlg.PrinterName, dlg.SelectedPrinter, dlg.SelectedExtruder, dlg.StartGCode, dlg.EndGCode);
+                    printerManager.Save();
+                    BarnaclePrinterNames = printerManager.GetPrinterNames();
+                    SelectedPrinter = dlg.PrinterName;
+                    string srcPrinter = dlg.SelectedPrinter;
 
-                CreateBaseProfile(SelectedPrinter, srcPrinter);
-            }
-        }
-
-        private void CreateBaseProfile(string selectedPrinter, string srcPrinter)
-        {
-            String SlicerPath = Properties.Settings.Default.SlicerPath;
-            if (SlicerPath != null && SlicerPath != "")
-            {
-                CuraDefinitionFile df = new CuraDefinitionFile();
-                string fname = $"{SlicerPath}\\share\\cura\\resources\\definitions\\{srcPrinter}.def.json";
-                df.Load(fname);
-                df.ProcessSettings();
-                SlicerProfile baseSlicerProfile = new SlicerProfile();
-                baseSlicerProfile.Overrides = df.Overrides;
-                string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                folder += "\\Barnacle\\PrinterProfiles\\";
-                string baseFile = folder + selectedPrinter + ".baseprofile";
-                baseSlicerProfile.SaveOverrides(baseFile);
+                    CreateBaseProfile(SelectedPrinter, srcPrinter);
+                }
             }
         }
 
         private void NewProfileClicked(object sender, RoutedEventArgs e)
         {
             EditProfile dlg = new EditProfile();
-            string defProfile = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            defProfile += "\\Barnacle\\PrinterProfiles\\";
-            defProfile = defProfile + SelectedPrinter + ".baseprofile";
+            string defProfile = UserProfilePath + SelectedPrinter + ".baseprofile";
             dlg.LoadFile(defProfile);
             dlg.ProfileName = "New Profile";
             dlg.CreatingNewProfile = true;
@@ -539,6 +533,21 @@ M84 ; Disable stepper motors
             }
         }
 
+        private void SeeLogClicked(object sender, RoutedEventArgs e)
+        {
+            if (lastLog != "" && File.Exists(lastLog))
+            {
+                ProcessStartInfo pi = new ProcessStartInfo();
+                pi.UseShellExecute = true;
+                pi.FileName = "Notepad.exe";
+                pi.Arguments = lastLog;
+                //  pi.WindowStyle = ProcessWindowStyle.Normal;
+                pi.WindowStyle = ProcessWindowStyle.Normal;
+                pi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle";
+                Process runner = Process.Start(pi);
+            }
+        }
+
         private async void SliceClicked(object sender, RoutedEventArgs e)
         {
             CanClose = false;
@@ -582,8 +591,6 @@ M84 ; Disable stepper motors
             CheckIfSDCopyShouldBeEnabled();
             AppendResults("Slice complete");
         }
-
-        private string lastLog;
 
         private async Task SliceSingleModel(string fullPath, string exportPath, string printerPath)
         {
@@ -642,6 +649,19 @@ M84 ; Disable stepper motors
             }
         }
 
+        private void TimerTick(object sender, EventArgs e)
+        {
+            timer.Stop();
+            if (canSlice)
+            {
+                CheckIfSDCopyShouldBeEnabled();
+            }
+            timer.Start();
+        }
+
+        private string UserProfilePath = "";
+        private string UserProfilePathNoSlash = "";
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = this;
@@ -666,21 +686,8 @@ M84 ; Disable stepper motors
                 CanSlice = false;
             }
             CheckIfSDCopyShouldBeEnabled();
-        }
-
-        private void SeeLogClicked(object sender, RoutedEventArgs e)
-        {
-            if (lastLog != "" && File.Exists(lastLog))
-            {
-                ProcessStartInfo pi = new ProcessStartInfo();
-                pi.UseShellExecute = true;
-                pi.FileName = "Notepad.exe";
-                pi.Arguments = lastLog;
-                //  pi.WindowStyle = ProcessWindowStyle.Normal;
-                pi.WindowStyle = ProcessWindowStyle.Normal;
-                pi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle";
-                Process runner = Process.Start(pi);
-            }
+            UserProfilePathNoSlash = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PrinterProfiles";
+            UserProfilePath = UserProfilePathNoSlash + "\\";
         }
     }
 }

@@ -1,32 +1,103 @@
-﻿using System;
+﻿using LoggerLib;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using LoggerLib;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using static Workflow.CuraDefinition;
 
 namespace Workflow
 {
     public class CuraDefinitionFile
     {
-        private String FilePath { get; set; }
-
         public CuraDefinition definition;
 
-        public CuraDefinitionFile BaseFile { get; set; }
-        private List<SettingOverride> overrides;
+        // these strings in a value suggest its a calculated one
+        private string[] calcTags =
+            {
+            "if ",
+            "(",
+            ")",
+            ">",
+            "<",
+            "=",
+            "!=",
+                "==",
+                "else ",
+                "*",
+                "/",
+                "+"
+        };
 
-        public List<SettingOverride> Overrides
+        // tmp code. remove after interpretvalue is complete
+        private String entry =
+@"
+
+            case ""<STDVALUE>"":
+                    {
+                            // <KEY>
+                            // <ORIGINALVALUE>
+                            // This is the value given in the log <LOGGEDVALUE>
+                            or.Value = <LOGGEDVALUE>;
+                    }
+                    break;
+
+";
+
+        //private List<SettingOverride> overrides;
+        private List<SettingDefinition> overrides;
+
+        private string settingsContent =
+    @"
+ {
+    ""name"": ""generic settings"",
+    ""version"": 2,
+    ""metadata"":
+    {
+        ""type"": ""machine"",
+        ""author"": ""Unknown"",
+        ""manufacturer"": ""Unknown"",
+        ""setting_version"": 22,
+        ""file_formats"": ""text/x-gcode;model/stl;application/x-wavefront-obj;application/x3g"",
+        ""visible"": false,
+        ""has_materials"": true,
+        ""has_variants"": false,
+        ""has_machine_quality"": false,
+        ""preferred_material"": ""generic_pla"",
+        ""preferred_quality_type"": ""normal"",
+        ""machine_extruder_trains"": { ""0"": ""fdmextruder"" },
+        ""supports_usb_connection"": true,
+        ""supports_network_connection"": false
+    },
+    ""settings"":
+    {
+    <ALLSETTINGS>
+    }
+}
+    ";
+
+        public CuraDefinitionFile BaseFile { get; set; }
+
+        public List<SettingDefinition> Overrides
         {
             get
             {
                 return overrides;
             }
+        }
+
+        private String FilePath { get; set; }
+
+        public void Dump()
+        {
+            if (BaseFile != null)
+            {
+                BaseFile.Dump();
+            }
+            System.Diagnostics.Debug.WriteLine("File:" + FilePath);
+            definition.Dump();
         }
 
         public bool Load(String fileName)
@@ -95,7 +166,8 @@ namespace Workflow
             Dictionary<string, SettingDefinition> allsettings = new Dictionary<string, SettingDefinition>();
             AddSettings(allsettings);
 
-            overrides = new List<SettingOverride>();
+            // overrides = new List<SettingOverride>();
+            overrides = new List<SettingDefinition>();
             foreach (string s in allsettings.Keys)
             {
                 SettingDefinition sd = allsettings[s];
@@ -104,51 +176,188 @@ namespace Workflow
                 {
                     v = sd.OverideValue;
                 }
-                SettingOverride so = new SettingOverride(sd.Section,s, v, sd.Description);
+                //SettingOverride so = new SettingOverride(sd.Section, s, v, sd.Description);
+                SettingDefinition so = new SettingDefinition(sd);
+                so.OverideValue = v;
                 overrides.Add(so);
             }
             Reconcile(overrides);
         }
 
-        /// <summary>
-        ///  some settings directlty reference others e.g. something like
-        ///  "speed_layer_0" :"speed_layer"
-        ///  or similar. Make a pass over the settings.
-        ///  If the value of an entry is actually the key of another, replace it with the
-        ///  reconciled value
-        /// </summary>
-        /// <param name="allsettings"></param>
-        private void Reconcile(List<SettingOverride> overrides)
-        {
-            bool found = false;
-            do
+        private string oneSettingText =
+        @"
+            ""<KEY>:""
             {
-                found = false;
-                for (int i = 0; i < overrides.Count; i++)
+                ""default_value"": ""<VAL>"",
+                ""value"": <VAL>
+            },";
+
+        private string oneSettingTextStr =
+        @"
+            ""<KEY>:""
+            {
+                ""default_value"": ""<VAL>"",
+                ""value"": ""<VAL>""
+            },";
+
+        public bool Save(String fileName)
+        {
+            bool res = false;
+            Dictionary<string, SettingDefinition> allsettings = new Dictionary<string, SettingDefinition>();
+            AddSettings(allsettings);
+            string fileContent = settingsContent;
+            string settingText = "";
+            foreach (string k in allsettings.Keys)
+            {
+                SettingDefinition df = allsettings[k];
+                string tmp = oneSettingText;
+                if (df.Type.ToLower() == "str")
                 {
-                    for (int j = 0; j < overrides.Count; j++)
+                    tmp = oneSettingTextStr;
+                }
+                tmp = tmp.Replace("<KEY>", df.Name);
+                tmp = tmp.Replace("<VAL>", df.OverideValue);
+                settingText += tmp;
+            }
+            if (settingText.EndsWith(","))
+            {
+                settingText = settingText.Substring(0, settingText.Length - 1);
+            }
+            fileContent = fileContent.Replace("<ALLSETTINGS>", settingText);
+            File.WriteAllText(fileName, fileContent.ToString());
+            return res;
+        }
+
+        private static void ReadPolygon(SettingDefinition cdf, JProperty setProp)
+        {
+            JArray jar = (JArray)setProp.Value;
+            if (jar.Count == 0)
+            {
+                cdf.DefaultValue = "[]";
+            }
+            else
+            {
+                cdf.DefaultValue = "[ ";
+                foreach (JToken tk in jar.Children())
+                {
+                    cdf.DefaultValue += " [ ";
+                    JArray j2 = (JArray)tk;
+                    foreach (JToken tk2 in j2.Children())
                     {
-                        if (i != j)
+                        String s = tk2.ToString();
+                        cdf.DefaultValue += $"{s},";
+                    }
+                    cdf.DefaultValue = cdf.DefaultValue.Substring(0, cdf.DefaultValue.Length - 1);
+                    cdf.DefaultValue += " ],";
+                }
+                cdf.DefaultValue = cdf.DefaultValue.Substring(0, cdf.DefaultValue.Length - 1);
+                cdf.DefaultValue += "]";
+            }
+        }
+
+        private void AddSettings(Dictionary<string, SettingDefinition> allsettings)
+        {
+            if (BaseFile != null)
+            {
+                BaseFile.AddSettings(allsettings);
+            }
+            definition.AddSettings(allsettings);
+        }
+
+        private string AltIfFalse(string key, double val0, double val1)
+        {
+            string res = "";
+            double val = val0;
+            //  SettingOverride so = FindOveride(overrides, key);
+            SettingDefinition so = FindOveride(overrides, key);
+            if (so != null)
+            {
+                if (so.OverideValue.ToLower() == "false")
+                {
+                    val = val1;
+                }
+            }
+            res = val.ToString();
+            return res;
+        }
+
+        private double Degrees(double angle)
+        {
+            return angle * 180.0 / Math.PI;
+        }
+
+        private String FetchLoggedValue(string key)
+        {
+            string res = "";
+            string pth = @"C:\Users\joe Bustard\source\repos\Barnacle\Make3D\Make3D\Data\DefaultPrinter.profile";
+            if (File.Exists(pth))
+            {
+                string[] lines = File.ReadAllLines(pth);
+                for (int i = 0; i < lines.Count(); i++)
+                {
+                    string[] words = lines[i].Split('=');
+                    if (words.GetLength(0) == 2)
+                    {
+                        if (words[0] == key)
                         {
-                            if (overrides[j].Value == overrides[i].Key)
-                            {
-                                overrides[j].Value = overrides[i].Value;
-                                found = true;
-                            }
+                            res = words[1];
+                            break;
                         }
                     }
                 }
-            } while (found == true);
-
-            InterpretValue(overrides);
+            }
+            return res;
         }
 
-        private SettingOverride FindOveride(List<SettingOverride> overrides, string key)
+        private bool FetchValue(string v, ref double value)
         {
-            SettingOverride res = null;
-            foreach (SettingOverride or in overrides)
+            bool res = false;
+            //  SettingOverride so = FindOveride(overrides, v);
+            SettingDefinition so = FindOveride(overrides, v);
+            if (so != null)
             {
-                if (or.Key == key)
+                value = Convert.ToDouble(so.OverideValue);
+                res = true;
+            }
+            return res; ;
+        }
+
+        private bool FetchValue(string v, ref string value)
+        {
+            bool res = false;
+            //  SettingOverride so = FindOveride(overrides, v);
+            SettingDefinition so = FindOveride(overrides, v);
+            if (so != null)
+            {
+                value = so.OverideValue;
+                res = true;
+            }
+            return res; ;
+        }
+
+        private bool FetchValue(string v, ref bool value)
+        {
+            bool res = false;
+            // SettingOverride so = FindOveride(overrides, v);
+            SettingDefinition so = FindOveride(overrides, v);
+            if (so != null)
+            {
+                value = Convert.ToBoolean(so.OverideValue);
+                res = true;
+            }
+            return res; ;
+        }
+
+        //     private SettingOverride FindOveride(List<SettingOverride> overrides, string key)
+        private SettingDefinition FindOveride(List<SettingDefinition> overrides, string key)
+        {
+            // SettingOverride res = null;
+            SettingDefinition res = null;
+            // foreach (SettingOverride or in overrides)
+            foreach (SettingDefinition or in overrides)
+            {
+                // if (or.Key == key)
+                if (or.Name == key)
                 {
                     res = or;
                     break;
@@ -157,22 +366,15 @@ namespace Workflow
             return res;
         }
 
-        // tmp code. remove after interpretvalue is complete
-        private String entry =
-@"
+        private string GetStdValue(string value)
+        {
+            string res = value.ToLower();
+            res = res.Replace(" ", "");
+            return res;
+        }
 
-            case ""<STDVALUE>"":
-                    {
-                            // <KEY>
-                            // <ORIGINALVALUE>
-                            // This is the value given in the log <LOGGEDVALUE>
-                            or.Value = <LOGGEDVALUE>;
-                    }
-                    break;
-
-";
-
-        private void InterpretValue(List<SettingOverride> overrides)
+        //  private void InterpretValue(List<SettingOverride> overrides)
+        private void InterpretValue(List<SettingDefinition> overrides)
         {
             int count = 0;
             int runcount = 5;
@@ -181,9 +383,10 @@ namespace Workflow
             {
                 rerun = false;
                 count = 0;
-                foreach (SettingOverride or in overrides)
+                //     foreach (SettingOverride or in overrides)
+                foreach (SettingDefinition or in overrides)
                 {
-                    String v = GetStdValue(or.Value);
+                    String v = GetStdValue(or.OverideValue);
                     try
                     {
                         switch (v)
@@ -191,10 +394,11 @@ namespace Workflow
                             case "extrudervalue(support_bottom_extruder_nr,'support_interface_line_width')":
                                 {
                                     // extruderValue(support_bottom_extruder_nr, 'support_interface_line_width')
-                                    SettingOverride so = FindOveride(overrides, "support_interface_line_width");
+                                    //    SettingOverride so = FindOveride(overrides, "support_interface_line_width");
+                                    SettingDefinition so = FindOveride(overrides, "support_interface_line_width");
                                     if (so != null)
                                     {
-                                        or.Value = so.Value;
+                                        or.OverideValue = so.OverideValue;
                                     }
                                 }
                                 break;
@@ -202,10 +406,10 @@ namespace Workflow
                             case "extrudervalue(support_roof_extruder_nr,'support_interface_line_width')":
                                 {
                                     // extruderValue(support_roof_extruder_nr, 'support_interface_line_width')
-                                    SettingOverride so = FindOveride(overrides, "support_interface_line_width");
+                                    SettingDefinition so = FindOveride(overrides, "support_interface_line_width");
                                     if (so != null)
                                     {
-                                        or.Value = so.Value;
+                                        or.OverideValue = so.OverideValue;
                                     }
                                 }
                                 break;
@@ -219,30 +423,30 @@ namespace Workflow
                             case "machine_gcode_flavor!=\"ultigcode\"":
                                 {
                                     String val = "True";
-                                    SettingOverride so = FindOveride(overrides, "machine_gcode_flavor");
+                                    SettingDefinition so = FindOveride(overrides, "machine_gcode_flavor");
                                     if (so != null)
                                     {
-                                        if (so.Value.ToLower() == "ultigcode")
+                                        if (so.OverideValue.ToLower() == "ultigcode")
                                         {
                                             val = "False";
                                         }
                                     }
-                                    or.Value = val;
+                                    or.OverideValue = val;
                                 }
                                 break;
 
                             case "machine_gcode_flavor=='reprap(volumetric)'ormachine_gcode_flavor=='ultigcode'ormachine_gcode_flavor=='bfb'":
                                 {
                                     String val = "False";
-                                    SettingOverride so = FindOveride(overrides, "machine_gcode_flavor");
+                                    SettingDefinition so = FindOveride(overrides, "machine_gcode_flavor");
                                     if (so != null)
                                     {
-                                        if (so.Value.ToLower() == "ultigcode" || so.Value.ToLower() == "reprap (volumetric)" || so.Value.ToLower() == "bfb")
+                                        if (so.OverideValue.ToLower() == "ultigcode" || so.OverideValue.ToLower() == "reprap (volumetric)" || so.OverideValue.ToLower() == "bfb")
                                         {
                                             val = "True";
                                         }
                                     }
-                                    or.Value = val;
+                                    or.OverideValue = val;
                                 }
                                 break;
 
@@ -274,14 +478,14 @@ namespace Workflow
                             case "max(cool_min_speed,speed_topbottom/2)":
                                 {
                                     // max(cool_min_speed, speed_topbottom / 2)
-                                    SettingOverride so = FindOveride(overrides, "cool_min_speed");
+                                    SettingDefinition so = FindOveride(overrides, "cool_min_speed");
                                     if (so != null)
                                     {
-                                        SettingOverride so2 = FindOveride(overrides, "speed_topbottom");
-                                        double val1 = Convert.ToDouble(so.Value);
-                                        double val2 = Convert.ToDouble(so2.Value) / 2.0;
+                                        SettingDefinition so2 = FindOveride(overrides, "speed_topbottom");
+                                        double val1 = Convert.ToDouble(so.OverideValue);
+                                        double val2 = Convert.ToDouble(so2.OverideValue) / 2.0;
                                         double val = Math.Max(val1, val2);
-                                        or.Value = val.ToString();
+                                        or.OverideValue = val.ToString();
                                     }
                                 }
                                 break;
@@ -289,14 +493,14 @@ namespace Workflow
                             case "max(cool_min_speed,speed_wall_0/2)":
                                 {
                                     // max(cool_min_speed, speed_wall_0 / 2)
-                                    SettingOverride so = FindOveride(overrides, "cool_min_speed");
+                                    SettingDefinition so = FindOveride(overrides, "cool_min_speed");
                                     if (so != null)
                                     {
-                                        SettingOverride so2 = FindOveride(overrides, "speed_wall_0");
-                                        double val1 = Convert.ToDouble(so.Value);
-                                        double val2 = Convert.ToDouble(so2.Value) / 2.0;
+                                        SettingDefinition so2 = FindOveride(overrides, "speed_wall_0");
+                                        double val1 = Convert.ToDouble(so.OverideValue);
+                                        double val2 = Convert.ToDouble(so2.OverideValue) / 2.0;
                                         double val = Math.Max(val1, val2);
-                                        or.Value = val.ToString();
+                                        or.OverideValue = val.ToString();
                                     }
                                 }
                                 break;
@@ -304,14 +508,14 @@ namespace Workflow
                             case "line_width+support_xy_distance+1.0":
                                 {
                                     // line_width + support_xy_distance + 1.0
-                                    SettingOverride so = FindOveride(overrides, "line_width");
+                                    SettingDefinition so = FindOveride(overrides, "line_width");
                                     if (so != null)
                                     {
-                                        SettingOverride so2 = FindOveride(overrides, "support_xy_distance");
-                                        double val1 = Convert.ToDouble(so.Value);
-                                        double val2 = Convert.ToDouble(so2.Value);
+                                        SettingDefinition so2 = FindOveride(overrides, "support_xy_distance");
+                                        double val1 = Convert.ToDouble(so.OverideValue);
+                                        double val2 = Convert.ToDouble(so2.OverideValue);
                                         double val = val1 + val2 + 1;
-                                        or.Value = val.ToString();
+                                        or.OverideValue = val.ToString();
                                     }
                                 }
                                 break;
@@ -326,11 +530,11 @@ namespace Workflow
                             case "resolveorvalue('layer_height')":
                                 {
                                     // resolveOrValue('layer_height')
-                                    SettingOverride so = FindOveride(overrides, "layer_height");
+                                    SettingDefinition so = FindOveride(overrides, "layer_height");
                                     if (so != null)
                                     {
-                                        double val = Convert.ToDouble(so.Value);
-                                        or.Value = val.ToString();
+                                        double val = Convert.ToDouble(so.OverideValue);
+                                        or.OverideValue = val.ToString();
                                     }
                                 }
                                 break;
@@ -338,28 +542,28 @@ namespace Workflow
                             case "0ifsupport_bottom_enableelse0.3":
                                 {
                                     // 0 if support_bottom_enable else 0.3
-                                    or.Value = AltIfFalse("support_bottom_enable", 0, 0.3);
+                                    or.OverideValue = AltIfFalse("support_bottom_enable", 0, 0.3);
                                 }
                                 break;
 
                             case "1ifinfill_meshelse0":
                                 {
                                     // 1 if infill_mesh else 0
-                                    or.Value = AltIfFalse("infill_mesh", 1, 0);
+                                    or.OverideValue = AltIfFalse("infill_mesh", 1, 0);
                                 }
                                 break;
 
                             case "extruders_enabled_count>1":
                                 {
                                     // extruders_enabled_count > 1
-                                    SettingOverride so = FindOveride(overrides, "extruders_enabled_count");
+                                    SettingDefinition so = FindOveride(overrides, "extruders_enabled_count");
                                     if (so != null)
                                     {
-                                        or.Value = "False";
-                                        double val = Convert.ToDouble(so.Value);
+                                        or.OverideValue = "False";
+                                        double val = Convert.ToDouble(so.OverideValue);
                                         if (val > 1.0)
                                         {
-                                            or.Value = "True";
+                                            or.OverideValue = "True";
                                         }
                                     }
                                 }
@@ -375,13 +579,13 @@ namespace Workflow
                             case "resolveorvalue('adhesion_type')in['raft','brim']":
                                 {
                                     // resolveOrValue('adhesion_type') in ['raft', 'brim']
-                                    SettingOverride so = FindOveride(overrides, "adhesion_type");
+                                    SettingDefinition so = FindOveride(overrides, "adhesion_type");
                                     if (so != null)
                                     {
-                                        or.Value = "False";
-                                        if (so.Value.ToLower() == "raft" || so.Value.ToLower() == "brim")
+                                        or.OverideValue = "False";
+                                        if (so.OverideValue.ToLower() == "raft" || so.OverideValue.ToLower() == "brim")
                                         {
-                                            or.Value = "True";
+                                            or.OverideValue = "True";
                                         }
                                     }
                                 }
@@ -397,15 +601,15 @@ namespace Workflow
                                 {
                                     // 2 if support_structure == 'normal' else 0
                                     double val = 0;
-                                    SettingOverride so = FindOveride(overrides, "support_structure");
+                                    SettingDefinition so = FindOveride(overrides, "support_structure");
                                     if (so != null)
                                     {
-                                        if (so.Value.ToLower() == "normal")
+                                        if (so.OverideValue.ToLower() == "normal")
                                         {
                                             val = 2;
                                         }
                                     }
-                                    or.Value = val.ToString();
+                                    or.OverideValue = val.ToString();
                                 }
                                 break;
 
@@ -419,13 +623,13 @@ namespace Workflow
                             case "magic_mesh_surface_mode!='surface'":
                                 {
                                     // magic_mesh_surface_mode != 'surface'
-                                    or.Value = "True";
-                                    SettingOverride so = FindOveride(overrides, "magic_mesh_surface_mode");
+                                    or.OverideValue = "True";
+                                    SettingDefinition so = FindOveride(overrides, "magic_mesh_surface_mode");
                                     if (so != null)
                                     {
-                                        if (so.Value.ToLower() == "surface")
+                                        if (so.OverideValue.ToLower() == "surface")
                                         {
-                                            or.Value = "False";
+                                            or.OverideValue = "False";
                                         }
                                     }
                                 }
@@ -434,14 +638,14 @@ namespace Workflow
                             case "machine_gcode_flavor==\"reprap(reprap)\"":
                                 {
                                     // machine_gcode_flavor=="RepRap (RepRap)"
-                                    or.Value = "False";
-                                    SettingOverride so = FindOveride(overrides, "machine_gcode_flavor");
+                                    or.OverideValue = "False";
+                                    SettingDefinition so = FindOveride(overrides, "machine_gcode_flavor");
                                     if (so != null)
                                     {
-                                        string tmp = GetStdValue(so.Value);
+                                        string tmp = GetStdValue(so.OverideValue);
                                         if (tmp == "reprap(reprap)" || tmp == "\"reprap(reprap)\"")
                                         {
-                                            or.Value = "True";
+                                            or.OverideValue = "True";
                                         }
                                     }
                                 }
@@ -478,12 +682,12 @@ namespace Workflow
                             case "raft_interface_line_width+0.2":
                                 {
                                     // raft_interface_line_width + 0.2
-                                    SettingOverride so = FindOveride(overrides, "raft_interface_line_width");
+                                    SettingDefinition so = FindOveride(overrides, "raft_interface_line_width");
                                     if (so != null)
                                     {
-                                        double val = Convert.ToDouble(so.Value);
+                                        double val = Convert.ToDouble(so.OverideValue);
                                         val = val + 0.2;
-                                        or.Value = val.ToString();
+                                        or.OverideValue = val.ToString();
                                     }
                                 }
                                 break;
@@ -505,11 +709,11 @@ namespace Workflow
                             case "extrudervalue(support_roof_extruder_nr,'support_interface_height')":
                                 {
                                     // extruderValue(support_roof_extruder_nr, 'support_interface_height')
-                                    SettingOverride so = FindOveride(overrides, "support_interface_height");
+                                    SettingDefinition so = FindOveride(overrides, "support_interface_height");
                                     if (so != null)
                                     {
-                                        double val = Convert.ToDouble(so.Value);
-                                        or.Value = val.ToString();
+                                        double val = Convert.ToDouble(so.OverideValue);
+                                        or.OverideValue = val.ToString();
                                     }
                                 }
                                 break;
@@ -517,11 +721,11 @@ namespace Workflow
                             case "extrudervalue(support_roof_extruder_nr,'support_interface_enable')":
                                 {
                                     // extruderValue(support_roof_extruder_nr, 'support_interface_enable')
-                                    or.Value = "False";
-                                    SettingOverride so = FindOveride(overrides, "support_interface_enable");
+                                    or.OverideValue = "False";
+                                    SettingDefinition so = FindOveride(overrides, "support_interface_enable");
                                     if (so != null)
                                     {
-                                        or.Value = so.Value;
+                                        or.OverideValue = so.OverideValue;
                                     }
                                 }
                                 break;
@@ -536,11 +740,11 @@ namespace Workflow
                             case "extrudervalue(support_bottom_extruder_nr,'support_interface_enable')":
                                 {
                                     // extruderValue(support_bottom_extruder_nr, 'support_interface_enable')
-                                    or.Value = "False";
-                                    SettingOverride so = FindOveride(overrides, "support_interface_enable");
+                                    or.OverideValue = "False";
+                                    SettingDefinition so = FindOveride(overrides, "support_interface_enable");
                                     if (so != null)
                                     {
-                                        or.Value = so.Value;
+                                        or.OverideValue = so.OverideValue;
                                     }
                                 }
                                 break;
@@ -548,15 +752,15 @@ namespace Workflow
                             case "layer_heightiflayer_height>=0.16elselayer_height*2":
                                 {
                                     // layer_height if layer_height >= 0.16 else layer_height * 2
-                                    SettingOverride so = FindOveride(overrides, "line_Height");
+                                    SettingDefinition so = FindOveride(overrides, "line_Height");
                                     if (so != null)
                                     {
-                                        double val = Convert.ToDouble(so.Value);
+                                        double val = Convert.ToDouble(so.OverideValue);
                                         if (val < 0.16)
                                         {
                                             val = val * 2;
                                         }
-                                        or.Value = val.ToString();
+                                        or.OverideValue = val.ToString();
                                     }
                                 }
                                 break;
@@ -566,16 +770,16 @@ namespace Workflow
                                     double val = 20;
 
                                     // 0 if support_enable and support_structure == 'tree' else 20
-                                    SettingOverride so = FindOveride(overrides, "support_enable");
+                                    SettingDefinition so = FindOveride(overrides, "support_enable");
                                     if (so != null)
                                     {
-                                        SettingOverride so2 = FindOveride(overrides, "support_structure");
-                                        if (so.Value.ToLower() == "tree" && so2.Value.ToLower() == "tree")
+                                        SettingDefinition so2 = FindOveride(overrides, "support_structure");
+                                        if (so.OverideValue.ToLower() == "tree" && so2.OverideValue.ToLower() == "tree")
                                         {
                                             val = 0;
                                         }
                                     }
-                                    or.Value = val.ToString();
+                                    or.OverideValue = val.ToString();
                                 }
                                 break;
 
@@ -583,16 +787,16 @@ namespace Workflow
                                 {
                                     // 3 if resolveOrValue('skirt_gap') > 0.0 else 1
                                     double val = 1;
-                                    SettingOverride so = FindOveride(overrides, "skirt_gap");
+                                    SettingDefinition so = FindOveride(overrides, "skirt_gap");
                                     if (so != null)
                                     {
-                                        double val2 = Convert.ToDouble(so.Value);
+                                        double val2 = Convert.ToDouble(so.OverideValue);
                                         if (val2 > 0)
                                         {
                                             val = 3;
                                         }
                                     }
-                                    or.Value = val.ToString();
+                                    or.OverideValue = val.ToString();
                                 }
                                 break;
 
@@ -600,16 +804,16 @@ namespace Workflow
                                 {
                                     // 0 if adhesion_extruder_nr == -1 else adhesion_extruder_nr
                                     double val = 0;
-                                    SettingOverride so = FindOveride(overrides, "adhesion_extruder_nr");
+                                    SettingDefinition so = FindOveride(overrides, "adhesion_extruder_nr");
                                     if (so != null)
                                     {
-                                        double val2 = Convert.ToDouble(so.Value);
+                                        double val2 = Convert.ToDouble(so.OverideValue);
                                         if (val2 != -1)
                                         {
                                             val = val2;
                                         }
                                     }
-                                    or.Value = val.ToString();
+                                    or.OverideValue = val.ToString();
                                 }
                                 break;
 
@@ -617,27 +821,27 @@ namespace Workflow
                                 {
                                     // 10000 if magic_fuzzy_skin_point_density == 0 else 1 / magic_fuzzy_skin_point_density
                                     double val = 10000;
-                                    SettingOverride so = FindOveride(overrides, "magic_fuzzy_skin_point_density");
+                                    SettingDefinition so = FindOveride(overrides, "magic_fuzzy_skin_point_density");
                                     if (so != null)
                                     {
-                                        double val2 = Convert.ToDouble(so.Value);
+                                        double val2 = Convert.ToDouble(so.OverideValue);
                                         if (val2 != 0)
                                         {
                                             val = 1.0 / val2;
                                         }
                                     }
-                                    or.Value = val.ToString();
+                                    or.OverideValue = val.ToString();
                                 }
                                 break;
 
                             case "extrudervalue(support_bottom_extruder_nr,'support_interface_offset')":
                                 {
                                     // extruderValue(support_bottom_extruder_nr, 'support_interface_offset')
-                                    SettingOverride so = FindOveride(overrides, "support_interface_offset");
+                                    SettingDefinition so = FindOveride(overrides, "support_interface_offset");
                                     if (so != null)
                                     {
-                                        double val = Convert.ToDouble(so.Value);
-                                        or.Value = val.ToString();
+                                        double val = Convert.ToDouble(so.OverideValue);
+                                        or.OverideValue = val.ToString();
                                     }
                                 }
                                 break;
@@ -645,33 +849,33 @@ namespace Workflow
                             case "resolveorvalue('raft_margin')ifresolveorvalue('adhesion_type')=='raft'elseresolveorvalue('brim_width')":
                                 {
                                     // resolveOrValue('raft_margin') if resolveOrValue('adhesion_type') == 'raft' else resolveOrValue('brim_width')
-                                    SettingOverride rm = FindOveride(overrides, "raft_margin");
-                                    double val = Convert.ToDouble(rm.Value);
+                                    SettingDefinition rm = FindOveride(overrides, "raft_margin");
+                                    double val = Convert.ToDouble(rm.OverideValue);
 
-                                    SettingOverride so = FindOveride(overrides, "adhesion_type");
+                                    SettingDefinition so = FindOveride(overrides, "adhesion_type");
                                     if (so != null)
                                     {
-                                        if (so.Value.ToLower() != "raft")
+                                        if (so.OverideValue.ToLower() != "raft")
                                         {
-                                            SettingOverride bw = FindOveride(overrides, "brim_width");
+                                            SettingDefinition bw = FindOveride(overrides, "brim_width");
                                             if (bw != null)
                                             {
-                                                val = Convert.ToDouble(bw.Value);
+                                                val = Convert.ToDouble(bw.OverideValue);
                                             }
                                         }
                                     }
-                                    or.Value = val.ToString();
+                                    or.OverideValue = val.ToString();
                                 }
                                 break;
 
                             case "extrudervalue(support_bottom_extruder_nr,'minimum_interface_area')":
                                 {
                                     // extruderValue(support_bottom_extruder_nr, 'minimum_interface_area')
-                                    SettingOverride so = FindOveride(overrides, "minimum_interface_area");
+                                    SettingDefinition so = FindOveride(overrides, "minimum_interface_area");
                                     if (so != null)
                                     {
-                                        double val = Convert.ToDouble(so.Value);
-                                        or.Value = val.ToString();
+                                        double val = Convert.ToDouble(so.OverideValue);
+                                        or.OverideValue = val.ToString();
                                     }
                                 }
                                 break;
@@ -679,11 +883,11 @@ namespace Workflow
                             case "extrudervalue(support_roof_extruder_nr,'support_interface_offset')":
                                 {
                                     // extruderValue(support_roof_extruder_nr, 'support_interface_offset')
-                                    SettingOverride so = FindOveride(overrides, "support_interface_offset");
+                                    SettingDefinition so = FindOveride(overrides, "support_interface_offset");
                                     if (so != null)
                                     {
-                                        double val = Convert.ToDouble(so.Value);
-                                        or.Value = val.ToString();
+                                        double val = Convert.ToDouble(so.OverideValue);
+                                        or.OverideValue = val.ToString();
                                     }
                                 }
                                 break;
@@ -691,7 +895,7 @@ namespace Workflow
                             case "int(defaultextruderposition())ifresolveorvalue('adhesion_type')=='raft'else-1":
                                 {
                                     // int(defaultExtruderPosition()) if resolveOrValue('adhesion_type') == 'raft' else -1
-                                    or.Value = "-1";
+                                    or.OverideValue = "-1";
                                 }
                                 break;
 
@@ -708,7 +912,7 @@ namespace Workflow
                                             if (FetchValue("initial_layer_line_width_factor", ref initial_layer_line_width_factor))
                                             {
                                                 double val = Math.Ceiling(brim_width / (skirt_brim_line_width * initial_layer_line_width_factor / 100.0));
-                                                or.Value = val.ToString();
+                                                or.OverideValue = val.ToString();
                                             }
                                         }
                                     }
@@ -734,12 +938,12 @@ namespace Workflow
                                                                 bool draft_shield_enabled = false;
                                                                 bool machine_center_is_zero = false;
 
-                                                                SettingOverride so = FindOveride(overrides, "line_width");
+                                                                SettingDefinition so = FindOveride(overrides, "line_width");
                                                                 if (so != null)
                                                                 {
                                                                     double val = Convert.ToDouble(so.Value);
                                                                     val = val * 2;
-                                                                    or.Value = val.ToString();
+                                                                    or.OverideValue = val.ToString();
                                                                 }
                                                             }
                                                             break;
@@ -750,10 +954,10 @@ namespace Workflow
                                 {
                                     // wall_line_count
                                     // 1 if magic_spiralize else max(1, round((wall_thickness - wall_line_width_0) / wall_line_width_x) + 1) if wall_thickness != 0 else 0
-                                    SettingOverride so = FindOveride(overrides, "line_width");
+                                    SettingDefinition so = FindOveride(overrides, "line_width");
                                     if (so != null)
                                     {
-                                        or.Value = "3";
+                                        or.OverideValue = "3";
                                     }
                                 }
                                 break;
@@ -768,7 +972,7 @@ namespace Workflow
                                 {
                                     // wall_0_inset
                                     // (machine_nozzle_size - wall_line_width_0) / 2 if (wall_line_width_0 < machine_nozzle_size and inset_direction != "outside_in") else 0
-                                    or.Value = "0";
+                                    or.OverideValue = "0";
                                 }
                                 break;
 
@@ -820,7 +1024,7 @@ namespace Workflow
                                          FetchValue("layer_height", ref lh))
                                     {
                                         double val = lh0 + lh * 3;
-                                        or.Value = val.ToString();
+                                        or.OverideValue = val.ToString();
                                     }
                                 }
                                 break;
@@ -850,7 +1054,7 @@ namespace Workflow
                                             }
                                         }
                                     }
-                                    or.Value = val.ToString();
+                                    or.OverideValue = val.ToString();
                                 }
                                 break;
 
@@ -858,13 +1062,13 @@ namespace Workflow
                                 {
                                     // zig_zaggify_support
                                     // support_pattern == 'cross' or support_pattern == 'gyroid'
-                                    or.Value = "False";
+                                    or.OverideValue = "False";
                                     string sp = "";
                                     if (FetchValue("support_patten", ref sp))
                                     {
                                         if (sp == "cross" || sp == "gyroid")
                                         {
-                                            or.Value = "True";
+                                            or.OverideValue = "True";
                                         }
                                     }
                                 }
@@ -874,10 +1078,10 @@ namespace Workflow
                                 {
                                     // support_bottom_wall_count
                                     // 1 if (support_interface_pattern == 'zigzag') else 0
-                                    or.Value = "0";
+                                    or.OverideValue = "0";
                                     if (Match("support_interface_pattern", "zigzag"))
                                     {
-                                        or.Value = "1";
+                                        or.OverideValue = "1";
                                     }
                                 }
                                 break;
@@ -895,7 +1099,7 @@ namespace Workflow
                                         double ang = Math.Atan(lw / 2 / lh);
                                         val = Math.Floor(Degrees(ang));
                                     }
-                                    or.Value = val.ToString();
+                                    or.OverideValue = val.ToString();
                                 }
                                 break;
 
@@ -903,10 +1107,10 @@ namespace Workflow
                                 {
                                     // support_tree_rest_preference
                                     // 'buildplate' if support_type == 'buildplate' else 'graceful'
-                                    or.Value = "graceful";
+                                    or.OverideValue = "graceful";
                                     if (Match("support_type", "buildplate"))
                                     {
-                                        or.Value = "buildplate";
+                                        or.OverideValue = "buildplate";
                                     }
                                 }
                                 break;
@@ -923,10 +1127,10 @@ namespace Workflow
                                 {
                                     // support_tree_top_rate
                                     // 30 if support_roof_enable else 10
-                                    or.Value = "10";
+                                    or.OverideValue = "10";
                                     if (Match("support_roof_enable", "true"))
                                     {
-                                        or.Value = "30";
+                                        or.OverideValue = "30";
                                     }
                                 }
                                 break;
@@ -948,7 +1152,7 @@ namespace Workflow
                                     {
                                         double val = Math.Min(sa, 85);
                                         val = Math.Max(val, 20);
-                                        or.Value = val.ToString();
+                                        or.OverideValue = val.ToString();
                                     }
                                 }
                                 break;
@@ -964,7 +1168,7 @@ namespace Workflow
                                         FetchValue("layer_height", ref lh))
                                     {
                                         double val = lh0 + 2 * lh;
-                                        or.Value = val.ToString();
+                                        or.OverideValue = val.ToString();
                                     }
                                 }
                                 break;
@@ -973,10 +1177,10 @@ namespace Workflow
                                 {
                                     // cool_fan_speed_max
                                     // 100.0 if cool_fan_enabled else 0.0
-                                    or.Value = "0.0";
+                                    or.OverideValue = "0.0";
                                     if (Match("cool_fan_enabled", "true"))
                                     {
-                                        or.Value = "100.0";
+                                        or.OverideValue = "100.0";
                                     }
                                 }
                                 break;
@@ -989,535 +1193,411 @@ namespace Workflow
                                 }
                                 break;
 
-
                             case "(0if(z_seam_position=='frontleft'orz_seam_position=='front'orz_seam_position=='frontright')elsemachine_depth/2if(z_seam_position=='left'orz_seam_position=='right')elsemachine_depth)-(machine_depth/2ifz_seam_relativeormachine_center_is_zeroelse0)":
                                 {
                                     // z_seam_y
                                     // (0 if (z_seam_position == 'frontleft' or z_seam_position == 'front' or z_seam_position == 'frontright') else machine_depth / 2 if (z_seam_position == 'left' or z_seam_position == 'right') else machine_depth) - (machine_depth / 2 if z_seam_relative or machine_center_is_zero else 0)
                                     // This is the value given in the log "220"
-                                    or.Value = "220";
+                                    or.OverideValue = "220";
                                 }
                                 break;
-                           
 
-            case "0ifinfill_sparse_density==100elsemath.ceil(round(top_thickness/resolveorvalue('layer_height'),4))":
+                            case "0ifinfill_sparse_density==100elsemath.ceil(round(top_thickness/resolveorvalue('layer_height'),4))":
                                 {
                                     // top_layers
                                     // 0 if infill_sparse_density == 100 else math.ceil(round(top_thickness / resolveOrValue('layer_height'), 4))
                                     // This is the value given in the log "6"
-                                    or.Value = "6";
+                                    or.OverideValue = "6";
                                 }
                                 break;
-
-
-
 
                             case "999999ifinfill_sparse_density==100andnotmagic_spiralizeelsemath.ceil(round(bottom_thickness/resolveorvalue('layer_height'),4))":
                                 {
                                     // bottom_layers
                                     // 999999 if infill_sparse_density == 100 and not magic_spiralize else math.ceil(round(bottom_thickness / resolveOrValue('layer_height'), 4))
                                     // This is the value given in the log "6"
-                                    or.Value = "6";
+                                    or.OverideValue = "6";
                                 }
                                 break;
-
 
                             case "0iftop_bottom_pattern=='concentric'andtop_bottom_pattern_0=='concentric'androofing_layer_count<=0else1":
                                 {
                                     // skin_outline_count
                                     // 0 if top_bottom_pattern == 'concentric' and top_bottom_pattern_0 == 'concentric' and roofing_layer_count <= 0 else 1
                                     // This is the value given in the log "1"
-                                    or.Value = "1";
+                                    or.OverideValue = "1";
                                 }
                                 break;
-
 
                             case "wall_line_width_0/2+(ironing_line_spacing-skin_line_width*(1.0+ironing_flow/100)/2ifironing_pattern=='concentric'elseskin_line_width*(1.0-ironing_flow/100)/2)":
                                 {
                                     // ironing_inset
                                     // wall_line_width_0 / 2 + (ironing_line_spacing - skin_line_width * (1.0 + ironing_flow / 100) / 2 if ironing_pattern == 'concentric' else skin_line_width * (1.0 - ironing_flow / 100) / 2)
                                     // This is the value given in the log "0.38"
-                                    or.Value = "0.38";
+                                    or.OverideValue = "0.38";
                                 }
                                 break;
-
-
-
 
                             case "speed_topbottom*20/30":
                                 {
                                     // speed_ironing
                                     // speed_topbottom * 20 / 30
                                     // This is the value given in the log "16.666666666666668"
-                                    or.Value = "16.666666666666668";
+                                    or.OverideValue = "16.666666666666668";
                                 }
                                 break;
-
-
-
 
                             case "0.5*(skin_line_width+(wall_line_width_xifwall_line_count>1elsewall_line_width_0))*skin_overlap/100iftop_bottom_pattern!='concentric'else0":
                                 {
                                     // skin_overlap_mm
                                     // 0.5 * (skin_line_width + (wall_line_width_x if wall_line_count > 1 else wall_line_width_0)) * skin_overlap / 100 if top_bottom_pattern != 'concentric' else 0
                                     // This is the value given in the log "0.04"
-                                    or.Value = "0.04";
+                                    or.OverideValue = "0.04";
                                 }
                                 break;
-
-
-
 
                             case "wall_line_width_0+(wall_line_count-1)*wall_line_width_x":
                                 {
                                     // skin_preshrink
                                     // wall_line_width_0 + (wall_line_count - 1) * wall_line_width_x
-                                    // This is the value given in the log "1.2000000000000002" 
-                                    or.Value = "1.2000000000000002";
+                                    // This is the value given in the log "1.2000000000000002"
+                                    or.OverideValue = "1.2000000000000002";
                                 }
                                 break;
-                          
 
                             case "top_layers*layer_height/math.tan(math.radians(max_skin_angle_for_expansion))":
                                 {
                                     // min_skin_width_for_expansion
                                     // top_layers * layer_height / math.tan(math.radians(max_skin_angle_for_expansion))
                                     // This is the value given in the log "5.878304635907295e-17"
-                                    or.Value = "5.878304635907295e-17";
+                                    or.OverideValue = "5.878304635907295e-17";
                                 }
                                 break;
-
-
-
 
                             case "0ifinfill_sparse_density==0else(infill_line_width*100)/infill_sparse_density*(2ifinfill_pattern=='grid'else(3ifinfill_pattern=='triangles'orinfill_pattern=='trihexagon'orinfill_pattern=='cubic'orinfill_pattern=='cubicsubdiv'else(2ifinfill_pattern=='tetrahedral'orinfill_pattern=='quarter_cubic'else(1ifinfill_pattern=='cross'orinfill_pattern=='cross_3d'else(1.6ifinfill_pattern=='lightning'else1)))))":
                                 {
                                     // infill_line_distance
                                     // 0 if infill_sparse_density == 0 else (infill_line_width * 100) / infill_sparse_density * (2 if infill_pattern == 'grid' else (3 if infill_pattern == 'triangles' or infill_pattern == 'trihexagon' or infill_pattern == 'cubic' or infill_pattern == 'cubicsubdiv' else (2 if infill_pattern == 'tetrahedral' or infill_pattern == 'quarter_cubic' else (1 if infill_pattern == 'cross' or infill_pattern == 'cross_3d' else (1.6 if infill_pattern == 'lightning' else 1)))))
                                     // This is the value given in the log "6.0"
-                                    or.Value = "6.0";
+                                    or.OverideValue = "6.0";
                                 }
                                 break;
-
-
-
 
                             case "'lines'ifinfill_sparse_density>50else'cubic'":
                                 {
                                     // infill_pattern
                                     // 'lines' if infill_sparse_density > 50 else 'cubic'
                                     // This is the value given in the log "cubic"
-                                    or.Value = "cubic";
+                                    or.OverideValue = "cubic";
                                 }
                                 break;
-
-
-
 
                             case "infill_pattern=='cross'orinfill_pattern=='cross_3d'":
                                 {
                                     // zig_zaggify_infill
                                     // infill_pattern == 'cross' or infill_pattern == 'cross_3d'
                                     // This is the value given in the log "False"
-                                    or.Value = "False";
+                                    or.OverideValue = "False";
                                 }
                                 break;
-
-
-
 
                             case "(infill_pattern=='cross'orinfill_pattern=='cross_3d'orinfill_multiplier%2==0)andinfill_wall_line_count>0":
                                 {
                                     // connect_infill_polygons
                                     // (infill_pattern == 'cross' or infill_pattern == 'cross_3d' or infill_multiplier % 2 == 0) and infill_wall_line_count > 0
                                     // This is the value given in the log "False"
-                                    or.Value = "False";
+                                    or.OverideValue = "False";
                                 }
                                 break;
-
-
-
 
                             case "0.5*(infill_line_width+(wall_line_width_xifwall_line_count>1elsewall_line_width_0))*infill_overlap/100ifinfill_sparse_density<95andinfill_pattern!='concentric'else0":
                                 {
                                     // infill_overlap_mm
                                     // 0.5 * (infill_line_width + (wall_line_width_x if wall_line_count > 1 else wall_line_width_0)) * infill_overlap / 100 if infill_sparse_density < 95 and infill_pattern != 'concentric' else 0
                                     // This is the value given in the log "0.12"
-                                    or.Value = "0.12";
+                                    or.OverideValue = "0.12";
                                 }
                                 break;
-
-
-
 
                             case "math.ceil(round(skin_edge_support_thickness/resolveorvalue('infill_sparse_thickness'),4))":
                                 {
                                     // skin_edge_support_layers
                                     // math.ceil(round(skin_edge_support_thickness / resolveOrValue('infill_sparse_thickness'), 4))
                                     // This is the value given in the log "0"
-                                    or.Value = "0";
+                                    or.OverideValue = "0";
                                 }
                                 break;
-
-
-
 
                             case "resolveorvalue('material_bed_temperature')":
                                 {
                                     // material_bed_temperature_layer_0
                                     // resolveOrValue('material_bed_temperature')
                                     // This is the value given in the log "65"
-                                    or.Value = "65";
+                                    or.OverideValue = "65";
                                 }
                                 break;
-
-
-
 
                             case "extrudervalue(support_roof_extruder_nr,'support_interface_material_flow')":
                                 {
                                     // support_roof_material_flow
                                     // extruderValue(support_roof_extruder_nr, 'support_interface_material_flow')
                                     // This is the value given in the log "100"
-                                    or.Value = "100";
+                                    or.OverideValue = "100";
                                 }
                                 break;
-
-
-
 
                             case "extrudervalue(support_bottom_extruder_nr,'support_interface_material_flow')":
                                 {
                                     // support_bottom_material_flow
                                     // extruderValue(support_bottom_extruder_nr, 'support_interface_material_flow')
                                     // This is the value given in the log "100"
-                                    or.Value = "100";
+                                    or.OverideValue = "100";
                                 }
                                 break;
-
-
-
 
                             case "extrudervalue(support_roof_extruder_nr,'speed_support_interface')":
                                 {
                                     // speed_support_roof
                                     // extruderValue(support_roof_extruder_nr, 'speed_support_interface')
                                     // This is the value given in the log "25.0"
-                                    or.Value = "25.0";
+                                    or.OverideValue = "25.0";
                                 }
                                 break;
-
-
-
 
                             case "extrudervalue(support_bottom_extruder_nr,'speed_support_interface')":
                                 {
                                     // speed_support_bottom
                                     // extruderValue(support_bottom_extruder_nr, 'speed_support_interface')
                                     // This is the value given in the log "25.0"
-                                    or.Value = "25.0";
+                                    or.OverideValue = "25.0";
                                 }
                                 break;
-
-
-
 
                             case "150.0ifspeed_print<60else250.0ifspeed_print>100elsespeed_print*2.5":
                                 {
                                     // speed_travel
                                     // 150.0 if speed_print < 60 else 250.0 if speed_print > 100 else speed_print * 2.5
                                     // This is the value given in the log "150.0"
-                                    or.Value = "150.0";
+                                    or.OverideValue = "150.0";
                                 }
                                 break;
-
-
-
 
                             case "100ifspeed_layer_0<20else150ifspeed_layer_0>30elsespeed_layer_0*5":
                                 {
                                     // speed_travel_layer_0
                                     // 100 if speed_layer_0 < 20 else 150 if speed_layer_0 > 30 else speed_layer_0 * 5
                                     // This is the value given in the log "100.0"
-                                    or.Value = "100.0";
+                                    or.OverideValue = "100.0";
                                 }
                                 break;
-
-
-
 
                             case "extrudervalue(support_roof_extruder_nr,'acceleration_support_interface')":
                                 {
                                     // acceleration_support_roof
                                     // extruderValue(support_roof_extruder_nr, 'acceleration_support_interface')
                                     // This is the value given in the log "500"
-                                    or.Value = "500";
+                                    or.OverideValue = "500";
                                 }
                                 break;
-
-
-
 
                             case "extrudervalue(support_bottom_extruder_nr,'acceleration_support_interface')":
                                 {
                                     // acceleration_support_bottom
                                     // extruderValue(support_bottom_extruder_nr, 'acceleration_support_interface')
                                     // This is the value given in the log "500"
-                                    or.Value = "500";
+                                    or.OverideValue = "500";
                                 }
                                 break;
-
-
-
 
                             case "extrudervalue(support_roof_extruder_nr,'jerk_support_interface')":
                                 {
                                     // jerk_support_roof
                                     // extruderValue(support_roof_extruder_nr, 'jerk_support_interface')
                                     // This is the value given in the log "8"
-                                    or.Value = "8";
+                                    or.OverideValue = "8";
                                 }
                                 break;
-
-
-
-
-
-
 
                             case "'off'ifretraction_hop_enabledelse'noskin'":
                                 {
                                     // retraction_combing
                                     // 'off' if retraction_hop_enabled else 'noskin'
                                     // This is the value given in the log "noskin"
-                                    or.Value = "noskin";
+                                    or.OverideValue = "noskin";
                                 }
                                 break;
-
-
-
 
                             case "max(1,int(math.floor((cool_fan_full_at_height-resolveorvalue('layer_height_0'))/resolveorvalue('layer_height'))+2))":
                                 {
                                     // cool_fan_full_layer
                                     // max(1, int(math.floor((cool_fan_full_at_height - resolveOrValue('layer_height_0')) / resolveOrValue('layer_height')) + 2))
                                     // This is the value given in the log "4"
-                                    or.Value = "4";
+                                    or.OverideValue = "4";
                                 }
                                 break;
-
-
-
 
                             case "int(anyextruderwithmaterial('material_is_support_material'))":
                                 {
                                     // support_extruder_nr
                                     // int(anyExtruderWithMaterial('material_is_support_material'))
                                     // This is the value given in the log "0"
-                                    or.Value = "0";
+                                    or.OverideValue = "0";
                                 }
                                 break;
 
-            case "1ifsupport_enableandsupport_structure=='tree'else(1if(support_pattern=='grid'orsupport_pattern=='triangles'orsupport_pattern=='concentric')else0)":
+                            case "1ifsupport_enableandsupport_structure=='tree'else(1if(support_pattern=='grid'orsupport_pattern=='triangles'orsupport_pattern=='concentric')else0)":
                                 {
                                     // support_wall_count
                                     // 1 if support_enable and support_structure == 'tree' else (1 if (support_pattern == 'grid' or support_pattern == 'triangles' or support_pattern == 'concentric') else 0)
                                     // This is the value given in the log "1"
-                                    or.Value = "1";
+                                    or.OverideValue = "1";
                                 }
                                 break;
-
-
-
 
                             case "0ifsupport_infill_rate==0else(support_line_width*100)/support_infill_rate*(2ifsupport_pattern=='grid'else(3ifsupport_pattern=='triangles'else1))":
                                 {
                                     // support_line_distance
                                     // 0 if support_infill_rate == 0 else (support_line_width * 100) / support_infill_rate * (2 if support_pattern == 'grid' else (3 if support_pattern == 'triangles' else 1))
                                     // This is the value given in the log "2.0"
-                                    or.Value = "2.0";
+                                    or.OverideValue = "2.0";
                                 }
                                 break;
-
-
-
-
 
                             case "round(support_brim_width/(skirt_brim_line_width*initial_layer_line_width_factor/100.0))":
                                 {
                                     // support_brim_line_count
                                     // round(support_brim_width / (skirt_brim_line_width * initial_layer_line_width_factor / 100.0))
                                     // This is the value given in the log "10"
-                                    or.Value = "10";
+                                    or.OverideValue = "10";
                                 }
                                 break;
-
-
-
 
                             case "extrudervalue(support_roof_extruder_nrifsupport_roof_enableelsesupport_infill_extruder_nr,'support_z_distance')":
                                 {
                                     // support_top_distance
                                     // extruderValue(support_roof_extruder_nr if support_roof_enable else support_infill_extruder_nr, 'support_z_distance')
                                     // This is the value given in the log "0.16"
-                                    or.Value = "0.16";
+                                    or.OverideValue = "0.16";
                                 }
                                 break;
-
-
-
 
                             case "extrudervalue(support_bottom_extruder_nrifsupport_bottom_enableelsesupport_infill_extruder_nr,'support_z_distance')ifsupport_type=='everywhere'else0":
                                 {
                                     // support_bottom_distance
                                     // extruderValue(support_bottom_extruder_nr if support_bottom_enable else support_infill_extruder_nr, 'support_z_distance') if support_type == 'everywhere' else 0
                                     // This is the value given in the log "0.16"
-                                    or.Value = "0.16";
+                                    or.OverideValue = "0.16";
                                 }
                                 break;
-
-
-
 
                             case "extrudervalue(support_bottom_extruder_nr,'support_interface_height')":
                                 {
                                     // support_bottom_height
                                     // extruderValue(support_bottom_extruder_nr, 'support_interface_height')
                                     // This is the value given in the log "0.96"
-                                    or.Value = "0.96";
+                                    or.OverideValue = "0.96";
                                 }
                                 break;
-
-
-
 
                             case "extrudervalue(support_roof_extruder_nr,'support_interface_density')":
                                 {
                                     // support_roof_density
                                     // extruderValue(support_roof_extruder_nr, 'support_interface_density')
                                     // This is the value given in the log "33.333"
-                                    or.Value = "33.333";
+                                    or.OverideValue = "33.333";
                                 }
                                 break;
-
-
-
 
                             case "0ifsupport_roof_density==0else(support_roof_line_width*100)/support_roof_density*(2ifsupport_roof_pattern=='grid'else(3ifsupport_roof_pattern=='triangles'else1))":
                                 {
                                     // support_roof_line_distance
                                     // 0 if support_roof_density == 0 else (support_roof_line_width * 100) / support_roof_density * (2 if support_roof_pattern == 'grid' else (3 if support_roof_pattern == 'triangles' else 1))
                                     // This is the value given in the log "2.4000240002400024"
-                                    or.Value = "2.4000240002400024";
+                                    or.OverideValue = "2.4000240002400024";
                                 }
                                 break;
-
-
-
 
                             case "extrudervalue(support_bottom_extruder_nr,'support_interface_density')":
                                 {
                                     // support_bottom_density
                                     // extruderValue(support_bottom_extruder_nr, 'support_interface_density')
                                     // This is the value given in the log "33.333"
-                                    or.Value = "33.333";
+                                    or.OverideValue = "33.333";
                                 }
                                 break;
-
-
-
 
                             case "0ifsupport_bottom_density==0else(support_bottom_line_width*100)/support_bottom_density*(2ifsupport_bottom_pattern=='grid'else(3ifsupport_bottom_pattern=='triangles'else1))":
                                 {
                                     // support_bottom_line_distance
                                     // 0 if support_bottom_density == 0 else (support_bottom_line_width * 100) / support_bottom_density * (2 if support_bottom_pattern == 'grid' else (3 if support_bottom_pattern == 'triangles' else 1))
                                     // This is the value given in the log "2.4000240002400024"
-                                    or.Value = "2.4000240002400024";
+                                    or.OverideValue = "2.4000240002400024";
                                 }
                                 break;
-
-
-
 
                             case "extrudervalue(support_roof_extruder_nr,'support_interface_pattern')":
                                 {
                                     // support_roof_pattern
                                     // extruderValue(support_roof_extruder_nr, 'support_interface_pattern')
                                     // This is the value given in the log "grid"
-                                    or.Value = "grid";
+                                    or.OverideValue = "grid";
                                 }
                                 break;
-
-
-
 
                             case "extrudervalue(support_bottom_extruder_nr,'support_interface_pattern')":
                                 {
                                     // support_bottom_pattern
                                     // extruderValue(support_bottom_extruder_nr, 'support_interface_pattern')
                                     // This is the value given in the log "grid"
-                                    or.Value = "grid";
+                                    or.OverideValue = "grid";
                                 }
                                 break;
-
-
-
 
                             case "extrudervalue(support_roof_extruder_nr,'minimum_interface_area')":
                                 {
                                     // minimum_roof_area
                                     // extruderValue(support_roof_extruder_nr, 'minimum_interface_area')
                                     // This is the value given in the log "10"
-                                    or.Value = "10";
+                                    or.OverideValue = "10";
                                 }
                                 break;
-
-
-
 
                             case "(resolveorvalue('machine_width')/2+resolveorvalue('prime_tower_size')/2)ifresolveorvalue('machine_shape')=='elliptic'else(resolveorvalue('machine_width')-(resolveorvalue('prime_tower_base_size')if(resolveorvalue('adhesion_type')=='raft'orresolveorvalue('prime_tower_brim_enable'))else0)-max(max(extrudervalues('travel_avoid_distance'))+max(extrudervalues('machine_nozzle_offset_x'))+max(extrudervalues('support_offset'))+(extrudervalue(skirt_brim_extruder_nr,'skirt_brim_line_width')*extrudervalue(skirt_brim_extruder_nr,'skirt_line_count')*extrudervalue(skirt_brim_extruder_nr,'initial_layer_line_width_factor')/100+extrudervalue(skirt_brim_extruder_nr,'skirt_gap')ifresolveorvalue('adhesion_type')=='skirt'else0)+(resolveorvalue('draft_shield_dist')ifresolveorvalue('draft_shield_enabled')else0),max(map(abs,extrudervalues('machine_nozzle_offset_x'))),1))-(resolveorvalue('machine_width')/2ifresolveorvalue('machine_center_is_zero')else0)":
                                 {
                                     // prime_tower_position_x
                                     // (resolveOrValue('machine_width') / 2 + resolveOrValue('prime_tower_size') / 2) if resolveOrValue('machine_shape') == 'elliptic' else (resolveOrValue('machine_width') - (resolveOrValue('prime_tower_base_size') if (resolveOrValue('adhesion_type') == 'raft' or resolveOrValue('prime_tower_brim_enable')) else 0) - max(max(extruderValues('travel_avoid_distance')) + max(extruderValues('machine_nozzle_offset_x')) + max(extruderValues('support_offset')) + (extruderValue(skirt_brim_extruder_nr, 'skirt_brim_line_width') * extruderValue(skirt_brim_extruder_nr, 'skirt_line_count') * extruderValue(skirt_brim_extruder_nr, 'initial_layer_line_width_factor') / 100 + extruderValue(skirt_brim_extruder_nr, 'skirt_gap') if resolveOrValue('adhesion_type') == 'skirt' else 0) + (resolveOrValue('draft_shield_dist') if resolveOrValue('draft_shield_enabled') else 0), max(map(abs, extruderValues('machine_nozzle_offset_x'))), 1)) - (resolveOrValue('machine_width') / 2 if resolveOrValue('machine_center_is_zero') else 0)
-                                    // This is the value given in the log "203.575" 
-                                    or.Value = "203.575";
+                                    // This is the value given in the log "203.575"
+                                    or.OverideValue = "203.575";
                                 }
                                 break;
-
-
-
 
                             case "machine_depth-prime_tower_size-(resolveorvalue('prime_tower_base_size')if(resolveorvalue('adhesion_type')=='raft'orresolveorvalue('prime_tower_brim_enable'))else0)-max(max(extrudervalues('travel_avoid_distance'))+max(extrudervalues('machine_nozzle_offset_y'))+max(extrudervalues('support_offset'))+(extrudervalue(skirt_brim_extruder_nr,'skirt_brim_line_width')*extrudervalue(skirt_brim_extruder_nr,'skirt_line_count')*extrudervalue(skirt_brim_extruder_nr,'initial_layer_line_width_factor')/100+extrudervalue(skirt_brim_extruder_nr,'skirt_gap')ifresolveorvalue('adhesion_type')=='skirt'else0)+(resolveorvalue('draft_shield_dist')ifresolveorvalue('draft_shield_enabled')else0),max(map(abs,extrudervalues('machine_nozzle_offset_y'))),1)-(resolveorvalue('machine_depth')/2ifresolveorvalue('machine_center_is_zero')else0)":
                                 {
                                     // prime_tower_position_y
                                     // machine_depth - prime_tower_size - (resolveOrValue('prime_tower_base_size') if (resolveOrValue('adhesion_type') == 'raft' or resolveOrValue('prime_tower_brim_enable')) else 0) - max(max(extruderValues('travel_avoid_distance')) + max(extruderValues('machine_nozzle_offset_y')) + max(extruderValues('support_offset')) + (extruderValue(skirt_brim_extruder_nr, 'skirt_brim_line_width') * extruderValue(skirt_brim_extruder_nr, 'skirt_line_count') * extruderValue(skirt_brim_extruder_nr, 'initial_layer_line_width_factor') / 100 + extruderValue(skirt_brim_extruder_nr, 'skirt_gap') if resolveOrValue('adhesion_type') == 'skirt' else 0) + (resolveOrValue('draft_shield_dist') if resolveOrValue('draft_shield_enabled') else 0), max(map(abs, extruderValues('machine_nozzle_offset_y'))), 1) - (resolveOrValue('machine_depth') / 2 if resolveOrValue('machine_center_is_zero') else 0)
-                                    // This is the value given in the log "183.575" 
-                                    or.Value = "183.575";
+                                    // This is the value given in the log "183.575"
+                                    or.OverideValue = "183.575";
                                 }
                                 break;
-
-
-
 
                             case "0ifsupport_line_distance==0elseround(support_skip_zag_per_mm/support_line_distance)":
                                 {
                                     // support_zag_skip_count
                                     // 0 if support_line_distance == 0 else round(support_skip_zag_per_mm / support_line_distance)
                                     // This is the value given in the log "10"
-                                    or.Value = "10";
+                                    or.OverideValue = "10";
                                 }
                                 break;
 
-
                             default:
-                                if (IsCalculated(or.Value))
+                                if (IsCalculated(or.OverideValue))
                                 {
                                     count++;
                                     String l = entry;
-                                    l = l.Replace("<KEY>", or.Key);
-                                    l = l.Replace("<ORIGINALVALUE>", or.Value);
+                                    l = l.Replace("<KEY>", or.Name);
+                                    l = l.Replace("<ORIGINALVALUE>", or.OverideValue);
                                     l = l.Replace("<STDVALUE>", v);
-                                    l = l.Replace("<LOGGEDVALUE>", FetchLoggedValue(or.Key));
+                                    //   l = l.Replace("<LOGGEDVALUE>", FetchLoggedValue(or.Name));
 
                                     System.Diagnostics.Debug.WriteLine(l);
                                 }
@@ -1526,6 +1606,7 @@ namespace Workflow
                     }
                     catch (Exception ex)
                     {
+                        Logger.LogException(ex);
                     }
                 }
                 runcount--;
@@ -1533,24 +1614,15 @@ namespace Workflow
             System.Diagnostics.Debug.WriteLine($"count of calculated entries={count}");
         }
 
-        private String FetchLoggedValue(string key)
+        private bool IsCalculated(string value)
         {
-            string res = "";
-            string pth = @"C:\Users\joe Bustard\source\repos\Barnacle\Make3D\Make3D\Data\DefaultPrinter.profile";
-            if (File.Exists(pth))
+            bool res = false;
+            foreach (string s in calcTags)
             {
-                string[] lines = File.ReadAllLines(pth);
-                for (int i = 0; i < lines.Count(); i++)
+                if (value.IndexOf(s) != -1)
                 {
-                    string[] words = lines[i].Split('=');
-                    if (words.GetLength(0) == 2)
-                    {
-                        if (words[0] == key)
-                        {
-                            res = words[1];
-                            break;
-                        }
-                    }
+                    res = true;
+                    break;
                 }
             }
             return res;
@@ -1567,169 +1639,17 @@ namespace Workflow
             return res;
         }
 
-        private double Degrees(double angle)
+        // private void Multiply(SettingOverride or, string v1, double v2)
+        private void Multiply(SettingDefinition or, string v1, double v2)
         {
-            return angle * 180.0 / Math.PI;
-        }
-
-        private bool FetchValue(string v, ref double value)
-        {
-            bool res = false;
-            SettingOverride so = FindOveride(overrides, v);
+            //SettingOverride so = FindOveride(overrides, v1);
+            SettingDefinition so = FindOveride(overrides, v1);
             if (so != null)
             {
-                value = Convert.ToDouble(so.Value);
-                res = true;
-            }
-            return res; ;
-        }
-
-        private bool FetchValue(string v, ref string value)
-        {
-            bool res = false;
-            SettingOverride so = FindOveride(overrides, v);
-            if (so != null)
-            {
-                value = so.Value;
-                res = true;
-            }
-            return res; ;
-        }
-
-        private bool FetchValue(string v, ref bool value)
-        {
-            bool res = false;
-            SettingOverride so = FindOveride(overrides, v);
-            if (so != null)
-            {
-                value = Convert.ToBoolean(so.Value);
-                res = true;
-            }
-            return res; ;
-        }
-
-        private void Multiply(SettingOverride or, string v1, double v2)
-        {
-            SettingOverride so = FindOveride(overrides, v1);
-            if (so != null)
-            {
-                double val = Convert.ToDouble(so.Value);
+                double val = Convert.ToDouble(so.OverideValue);
                 val = val * v2;
-                or.Value = val.ToString();
+                or.OverideValue = val.ToString();
             }
-        }
-
-        private string AltIfFalse(string key, double val0, double val1)
-        {
-            string res = "";
-            double val = val0;
-            SettingOverride so = FindOveride(overrides, key);
-            if (so != null)
-            {
-                if (so.Value.ToLower() == "false")
-                {
-                    val = val1;
-                }
-            }
-            res = val.ToString();
-            return res;
-        }
-
-        private string[] calcTags =
-            {
-            "if ",
-            "(",
-            ")",
-            ">",
-            "<",
-            "=",
-            "!=",
-                "==",
-                "else ",
-                "*",
-                "/",
-                "+"
-        };
-
-        private bool IsCalculated(string value)
-        {
-            bool res = false;
-            foreach (string s in calcTags)
-            {
-                if (value.IndexOf(s) != -1)
-                {
-                    res = true;
-                    break;
-                }
-            }
-            return res;
-        }
-
-        private string GetStdValue(string value)
-        {
-            string res = value.ToLower();
-            res = res.Replace(" ", "");
-            return res;
-        }
-
-        public bool SaveSettings(String fileName)
-        {
-            bool res = false;
-            Dictionary<string, SettingDefinition> allsettings = new Dictionary<string, SettingDefinition>();
-            AddSettings(allsettings);
-            string fileContent = settingsContent;
-
-            File.WriteAllText(fileName, fileContent.ToString());
-            return res;
-        }
-
-        private string singleSettingContent =
-    @"
- ";
-
-        private string settingsContent =
-    @"
- {
-    ""name"": ""generic settings"",
-    ""version"": 2,
-    ""metadata"":
-    {
-        ""type"": ""machine"",
-        ""author"": ""Unknown"",
-        ""manufacturer"": ""Unknown"",
-        ""setting_version"": 22,
-        ""file_formats"": ""text/x-gcode;model/stl;application/x-wavefront-obj;application/x3g"",
-        ""visible"": false,
-        ""has_materials"": true,
-        ""has_variants"": false,
-        ""has_machine_quality"": false,
-        ""preferred_material"": ""generic_pla"",
-        ""preferred_quality_type"": ""normal"",
-        ""machine_extruder_trains"": { ""0"": ""fdmextruder"" },
-        ""supports_usb_connection"": true,
-        ""supports_network_connection"": false
-    },
-    ""settings"":
-    {
-    <ALLSETTINGS>
-    }
-}
-    ";
-
-        private void AddSettings(Dictionary<string, SettingDefinition> allsettings)
-        {
-            if (BaseFile != null)
-            {
-                BaseFile.AddSettings(allsettings);
-            }
-            definition.AddSettings(allsettings);
-        }
-
-        private void ReadSettings(JObject settings, JProperty property)
-        {
-            JObject machine_settings = (JObject)settings[property.Name.ToLower()];
-            JObject children = (JObject)machine_settings["children"];
-            ReadChildren(children, property.Name);
         }
 
         private void ReadChildren(JObject children, string section)
@@ -1903,41 +1823,45 @@ namespace Workflow
             }
         }
 
-        private static void ReadPolygon(SettingDefinition cdf, JProperty setProp)
+        private void ReadSettings(JObject settings, JProperty property)
         {
-            JArray jar = (JArray)setProp.Value;
-            if (jar.Count == 0)
-            {
-                cdf.DefaultValue = "[]";
-            }
-            else
-            {
-                cdf.DefaultValue = "[ ";
-                foreach (JToken tk in jar.Children())
-                {
-                    cdf.DefaultValue += " [ ";
-                    JArray j2 = (JArray)tk;
-                    foreach (JToken tk2 in j2.Children())
-                    {
-                        String s = tk2.ToString();
-                        cdf.DefaultValue += $"{s},";
-                    }
-                    cdf.DefaultValue = cdf.DefaultValue.Substring(0, cdf.DefaultValue.Length - 1);
-                    cdf.DefaultValue += " ],";
-                }
-                cdf.DefaultValue = cdf.DefaultValue.Substring(0, cdf.DefaultValue.Length - 1);
-                cdf.DefaultValue += "]";
-            }
+            JObject machine_settings = (JObject)settings[property.Name.ToLower()];
+            JObject children = (JObject)machine_settings["children"];
+            ReadChildren(children, property.Name);
         }
 
-        public void Dump()
+        /// <summary>
+        ///  some settings directlty reference others e.g. something like
+        ///  "speed_layer_0" :"speed_layer"
+        ///  or similar. Make a pass over the settings.
+        ///  If the value of an entry is actually the key of another, replace it with the
+        ///  reconciled value
+        /// </summary>
+        /// <param name="allsettings"></param>
+        // private void Reconcile(List<SettingOverride> overrides)
+        private void Reconcile(List<SettingDefinition> overrides)
         {
-            if (BaseFile != null)
+            bool found = false;
+            do
             {
-                BaseFile.Dump();
-            }
-            System.Diagnostics.Debug.WriteLine("File:" + FilePath);
-            definition.Dump();
+                found = false;
+                for (int i = 0; i < overrides.Count; i++)
+                {
+                    for (int j = 0; j < overrides.Count; j++)
+                    {
+                        if (i != j)
+                        {
+                            if (overrides[j].OverideValue == overrides[i].Name)
+                            {
+                                overrides[j].OverideValue = overrides[i].OverideValue;
+                                found = true;
+                            }
+                        }
+                    }
+                }
+            } while (found == true);
+
+            InterpretValue(overrides);
         }
     }
 }

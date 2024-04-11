@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using static Workflow.CuraDefinition;
 
 namespace Workflow
 {
     public class SlicerProfile
     {
-        public List<SettingOverride> Overrides { get; set; }
+        //  public List<SettingOverride> Overrides { get; set; }
+        // public List<SettingDefinition> Overrides { get; set; }
+        public CuraDefinitionFile CuraFile { get; set; }
 
         public SlicerProfile(string fileName)
         {
@@ -24,15 +27,18 @@ namespace Workflow
             XmlDocument doc = new XmlDocument();
             doc.XmlResolver = null;
             XmlElement docNode = doc.CreateElement("Profile");
-
-            foreach (SettingOverride so in Overrides)
+            if (CuraFile != null)
             {
-                XmlElement ovr = doc.CreateElement("Ovr");
-                ovr.SetAttribute("s", so.Section);
-                ovr.SetAttribute("n", so.Key);
-                ovr.SetAttribute("v", so.Value);
-                ovr.SetAttribute("d", so.Description);
-                docNode.AppendChild(ovr);
+                // foreach (SettingOverride so in Overrides)
+                foreach (SettingDefinition so in CuraFile.Overrides)
+                {
+                    XmlElement ovr = doc.CreateElement("Ovr");
+                    ovr.SetAttribute("s", so.Section);
+                    ovr.SetAttribute("n", so.Name);
+                    ovr.SetAttribute("v", so.OverideValue);
+                    ovr.SetAttribute("d", so.Description);
+                    docNode.AppendChild(ovr);
+                }
             }
             doc.AppendChild(docNode);
             doc.Save(fileName);
@@ -40,37 +46,8 @@ namespace Workflow
 
         public void LoadOverrides(string fileName)
         {
-            // We use a dictionary to read in the profile.
-            string section = "";
-            string key = "";
-            string description = "";
-            string value = "";
-
-            Overrides = new List<SettingOverride>();
-            if (File.Exists(fileName))
-            {
-                string[] lines = System.IO.File.ReadAllLines(fileName);
-                for (int i = 0; i < lines.GetLength(0); i++)
-                {
-                    lines[i] = lines[i].Trim();
-                    if (lines[i] != "")
-                    {
-                        string[] words = lines[i].Split('$');
-                        if (words.GetLength(0) == 4)
-                        {                            
-                            section = words[0];
-                            key = words[1];
-                            description = words[2];
-                            value = words[3].Replace("\"", "");
-                            Overrides.Add(new SettingOverride(section,key, description,value));
-                        }
-                    }
-                }
-
-                
-                
-                
-            }
+            CuraFile = new CuraDefinitionFile();
+            CuraFile.Load(fileName);
         }
 
         public void SaveOverrides(String fName)
@@ -81,18 +58,14 @@ namespace Workflow
                 {
                     File.Delete(fName);
                 }
-                StreamWriter sw = File.AppendText(fName);
-                foreach (SettingOverride so in Overrides)
+                if (CuraFile != null)
                 {
-                    if (so.Key != "machine_start_gcode" && so.Key != "machine_end_gcode")
-                    {
-                        sw.WriteLine($"{so.Section}${so.Key}${so.Description}$\"{so.Value}\"");
-                    }
+                    CuraFile.Save(fName);
                 }
-                sw.Close();
             }
-            catch
+            catch (Exception ex)
             {
+                LoggerLib.Logger.LogException(ex);
             }
         }
     }
