@@ -91,7 +91,7 @@ namespace Workflow
             ""icon"": ""PrintQuality"",
             ""description"": ""All settings that influence the resolution of the print. These settings have a large impact on the quality (and print time)"",
             ""children"":
-            {            
+            {
                <RESOLUTION>
             }
         },
@@ -357,7 +357,6 @@ namespace Workflow
                     ""type"": ""<TYPE>"",<OPTIONS>
                     ""default_value"": <VAL>,
                     ""value"": <VAL>
-                    
                 },";
 
         private string oneSettingTextStr =
@@ -369,7 +368,6 @@ namespace Workflow
                   ""type"": ""<TYPE>"",<OPTIONS>
                   ""default_value"": ""<DEFVAL>"",
                   ""value"": ""<VAL>""
-                  
                 },";
 
         public bool Save(String fileName)
@@ -378,7 +376,6 @@ namespace Workflow
             Dictionary<string, SettingDefinition> allsettings = new Dictionary<string, SettingDefinition>();
             AddSettings(allsettings);
             string fileContent = settingsContent;
-
 
             string settingText = "";
             settingText = GetSectionText(allsettings, "machine_settings");
@@ -486,7 +483,6 @@ namespace Workflow
             }
             fileContent = fileContent.Replace("<CMD>", settingText);
 
-
             fileContent = fileContent.Replace("<ALLSETTINGS>", settingText);
             File.WriteAllText(fileName, fileContent.ToString());
             return res;
@@ -501,14 +497,28 @@ namespace Workflow
                 if (df.Section == testSection)
                 {
                     string tmp = oneSettingText;
-                    if ( df.DefaultValue == "False" || df.DefaultValue == "True")
+                    bool addQuotesToValue = false;
+                    bool addQuotesToDefaultValue = false;
+                    if (df.DefaultValue == "False" || df.DefaultValue == "True")
                     {
                         df.DefaultValue = df.DefaultValue.ToLower();
                     }
 
                     if (df.Type.ToLower() == "str" || df.Type.ToLower() == "enum")
                     {
-                        tmp = oneSettingTextStr;
+                        addQuotesToValue = true;
+                        addQuotesToDefaultValue = true;
+                    }
+                    else
+                    {
+                        if (IsText(df.DefaultValue))
+                        {
+                            addQuotesToDefaultValue = true;
+                        }
+                        if (IsText(df.OverideValue))
+                        {
+                            addQuotesToValue = true;
+                        }
                     }
                     if (df.Type.ToLower() == "enum")
                     {
@@ -531,19 +541,47 @@ namespace Workflow
                     tmp = tmp.Replace("<DESCRIPTION>", df.Description);
                     tmp = tmp.Replace("<TYPE>", df.Type);
                     tmp = tmp.Replace("<KEY>", df.Name);
-                    tmp = tmp.Replace("<DEFVAL>", df.DefaultValue);
+                    if (addQuotesToDefaultValue)
+                    {
+                        tmp = tmp.Replace("<DEFVAL>", "\"" + df.DefaultValue + "\"");
+                    }
+                    else
+                    {
+                        tmp = tmp.Replace("<DEFVAL>", df.DefaultValue);
+                    }
+
                     string v = df.OverideValue;
                     if (v == "")
                     {
                         v = df.DefaultValue;
                     }
-                    tmp = tmp.Replace("<VAL>", v);
+                    if (addQuotesToValue)
+                    {
+                        tmp = tmp.Replace("<VAL>", "\"" + v + "\"");
+                    }
+                    else
+                    {
+                        tmp = tmp.Replace("<VAL>", v);
+                    }
                     sectionText += tmp;
                 }
-
             }
 
             return sectionText;
+        }
+
+        private bool IsText(string v)
+        {
+            bool isText = false;
+            for (int i = 0; i < v.Length; i++)
+            {
+                if (!Char.IsNumber(v[i]))
+                {
+                    isText = true;
+                    break;
+                }
+            }
+            return isText;
         }
 
         private static void ReadPolygon(SettingDefinition cdf, JProperty setProp)

@@ -2994,7 +2994,10 @@ namespace Barnacle.ViewModels
                 {
                     CheckPoint();
                     RecalculateAllBounds();
-                    selectedObjectAdorner.Clear();
+                    if (selectedObjectAdorner != null)
+                    {
+                        selectedObjectAdorner.Clear();
+                    }
                     double radius = Convert.ToDouble(dlg.RadiusBox.Text);
                     double altRadius = Convert.ToDouble(dlg.AltBox.Text);
                     if (altRadius == 0)
@@ -3014,12 +3017,19 @@ namespace Barnacle.ViewModels
                         }
                         double cy = 0;
                         double cz = 0;
-                        double rx;
-                        double ry;
-                        double rz;
+                        if (Project.SharedProjectSettings.PlaceNewAtMarker && floorMarker != null)
+                        {
+                            cx = floorMarker.Position.X;
+                            cy = floorMarker.Position.Y;
+                            cz = floorMarker.Position.Z;
+                        }
                         int repeats = Convert.ToInt16(dlg.RepeatsBox.Text);
                         if (repeats > 0)
                         {
+                            double rx;
+                            double ry;
+                            double rz;
+
                             double dTheta = (Math.PI * 2) / repeats;
                             double theta = 0;
                             bool alt = false;
@@ -3057,16 +3067,20 @@ namespace Barnacle.ViewModels
                                         o.Position = new Point3D(cx + o.AbsoluteBounds.Width / 2 + x, cy, cz + o.AbsoluteBounds.Depth / 2 + y);
                                         ry = -theta;
                                     }
+
                                     if (dlg.DirectionY.IsChecked == true)
                                     {
                                         o.Position = new Point3D(cx, cy + o.AbsoluteBounds.Height / 2 + x, cz + o.AbsoluteBounds.Depth / 2 + y);
-                                        rx = (Math.PI / 2) + theta;
+                                        // rx = (Math.PI / 2) + theta;
+                                        rx = -theta;
                                     }
-                                    if (dlg.DirectionY.IsChecked == true)
+
+                                    if (dlg.DirectionZ.IsChecked == true)
                                     {
                                         o.Position = new Point3D(cx + o.AbsoluteBounds.Width / 2 + x, cy + o.AbsoluteBounds.Height / 2 + y, cz);
                                         rz = -theta;
                                     }
+
                                     o.CalcScale(false);
 
                                     o.Remesh();
@@ -3084,15 +3098,19 @@ namespace Barnacle.ViewModels
                                     Document.Dirty = true;
 
                                     selectedItems.Add(o);
+                                    if (selectedObjectAdorner == null)
+                                    {
+                                        MakeSizeAdorner();
+                                    }
                                     selectedObjectAdorner.AdornObject(o);
                                 }
 
                                 theta += dTheta;
                             }
-                            document.Dirty = true;
-                            RegenerateDisplayList();
-                            UpdateSelectionDisplay();
                         }
+                        document.Dirty = true;
+                        RegenerateDisplayList();
+                        UpdateSelectionDisplay();
                     }
                 }
             }
@@ -3714,7 +3732,22 @@ namespace Barnacle.ViewModels
                 {
                     CheckPoint();
                     RecalculateAllBounds();
+                    if (selectedObjectAdorner == null)
+                    {
+                        MakeSizeAdorner();
+                    }
+
                     selectedObjectAdorner.Clear();
+                    double cx = allBounds.Upper.X;
+
+                    double cy = allBounds.Upper.Y;
+                    double cz = allBounds.Upper.Z;
+                    if (Project.SharedProjectSettings.PlaceNewAtMarker && floorMarker != null)
+                    {
+                        cx = floorMarker.Position.X;
+                        cy = floorMarker.Position.Y;
+                        cz = floorMarker.Position.Z;
+                    }
                     double altOff = 0;
                     for (int i = 0; i < cfg.Repeats; i++)
                     {
@@ -3738,15 +3771,18 @@ namespace Barnacle.ViewModels
 
                             if (cfg.Direction == "X")
                             {
-                                o.Position = new Point3D(allBounds.Upper.X + o.AbsoluteBounds.Width / 2 + cfg.Spacing, 0, 0);
+                                o.Position = new Point3D(cx + o.AbsoluteBounds.Width / 2, cy, cz + altOff);
+                                cx += o.AbsoluteBounds.Width + cfg.Spacing;
                             }
                             if (cfg.Direction == "Y")
                             {
-                                o.Position = new Point3D(altOff, allBounds.Upper.Y + o.AbsoluteBounds.Height / 2 + cfg.Spacing, 0);
+                                o.Position = new Point3D(cx + altOff, cy + o.AbsoluteBounds.Height / 2, cz);
+                                cy += o.AbsoluteBounds.Height + cfg.Spacing;
                             }
                             if (cfg.Direction == "Z")
                             {
-                                o.Position = new Point3D(altOff, 0, allBounds.Upper.Z + o.AbsoluteBounds.Depth / 2 + cfg.Spacing);
+                                o.Position = new Point3D(cx + altOff, cy, cz + o.AbsoluteBounds.Depth / 2);
+                                cz += o.AbsoluteBounds.Depth + cfg.Spacing;
                             }
                             o.CalcScale(false);
 
@@ -3811,22 +3847,32 @@ namespace Barnacle.ViewModels
         private void OrdinaryPaste()
         {
             selectedObjectAdorner?.Clear();
-            foreach (Object3D cl in ObjectClipboard.Items)
-            {
-                Object3D o = cl.Clone();
-                if (Document.ContainsName(o.Name))
-                {
-                    o.Name = Document.DuplicateName(o.Name);
-                }
 
-                o.Position = new Point3D(allBounds.Upper.X + o.AbsoluteBounds.Width / 2, 0, 0);
-                o.Remesh();
-                o.MoveToFloor();
-                o.CalcScale(false);
-                allBounds += o.AbsoluteBounds;
-                GeometryModel3D gm = GetMesh(o);
-                Document.Content.Add(o);
-                Document.Dirty = true;
+            if (Project.SharedProjectSettings.PlaceNewAtMarker && floorMarker != null)
+            {
+                PasteAt(floorMarker.Position);
+            }
+            else
+            {
+                foreach (Object3D cl in ObjectClipboard.Items)
+                {
+                    Object3D o = cl.Clone();
+                    if (Document.ContainsName(o.Name))
+                    {
+                        o.Name = Document.DuplicateName(o.Name);
+                    }
+
+                    double cx = allBounds.Upper.X + o.AbsoluteBounds.Width / 2;
+
+                    o.Position = new Point3D(cx, 0, 0);
+                    o.Remesh();
+                    o.MoveToFloor();
+                    o.CalcScale(false);
+                    allBounds += o.AbsoluteBounds;
+                    GeometryModel3D gm = GetMesh(o);
+                    Document.Content.Add(o);
+                    Document.Dirty = true;
+                }
             }
             RegenerateDisplayList();
             NotificationManager.Notify("ObjectNamesChanged", null);

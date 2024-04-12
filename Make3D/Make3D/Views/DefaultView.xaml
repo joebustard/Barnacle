@@ -200,6 +200,7 @@
                                          ToolTip="Paste at the right of the existing bounds"
                                          VerticalAlignment="Top"
                                          x:Name="PasteButton" />
+                        <!--
                         <Custom:RibbonMenuItem Command="{Binding PasteAtCommand}"
                                          HorizontalAlignment="Stretch"
                                          Header="Paste At"
@@ -207,6 +208,7 @@
                                          ToolTip="Paste at the floor marker if its present"
                                          VerticalAlignment="Top"
                                          x:Name="PasteAtButton" />
+                        -->
 
                         <Custom:RibbonMenuItem Command="{Binding MultiPasteCommand}"
                                          HorizontalAlignment="Stretch"

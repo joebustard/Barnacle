@@ -88,16 +88,16 @@ namespace CSGLib
             int[] indices = solid.GetIndices();
             var verticesTemp = new List<Vertex>();
 
-            // create vertices & faces             
+            // create vertices & faces
             Faces = new List<Face>();
             Vertices = new List<Vertex>();
             octTree = new OctTree(Vertices, solid.Minimum, solid.Maximum, 100);
-            for (int i = 0; i < indices.Length; i+= 3)
+            for (int i = 0; i < indices.Length; i += 3)
             {
                 int f = indices[i];
                 v1 = AddVertex(octTree, verticesPoints[f], Status.UNKNOWN);
                 verticesTemp.Add(v1);
-                f = indices[i+1];
+                f = indices[i + 1];
                 v2 = AddVertex(octTree, verticesPoints[f], Status.UNKNOWN);
                 verticesTemp.Add(v2);
                 f = indices[i + 2];
@@ -105,7 +105,6 @@ namespace CSGLib
                 verticesTemp.Add(v3);
                 AddFace(v1, v2, v3, 0);
             }
-            
 
             //create bound
             _Bound = new Bound(verticesPoints);
@@ -413,11 +412,11 @@ namespace CSGLib
             int i;
             //if already there is an equal vertex, it is not inserted
             Vertex vertex = new Vertex(pos, status);
-            
+
             int vIndex = octTree.PointPresent(vertex);
-            if ( vIndex == -1)
+            if (vIndex == -1 || vIndex >= Vertices.Count)
             {
-                octTree.AddPoint(Vertices.Count,vertex);
+                octTree.AddPoint(Vertices.Count, vertex);
                 vertex.SetStatus(status);
                 //Vertices.Add(vertex);
                 return vertex;
@@ -428,7 +427,7 @@ namespace CSGLib
                 vertex.SetStatus(status);
                 return vertex;
             }
-            
+
             /*
             for (i = 0; i < Vertices.Count; i++)
             {

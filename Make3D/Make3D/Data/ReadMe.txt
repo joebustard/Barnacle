@@ -31,6 +31,7 @@ Fixed
 Changed
 	Make "Paste At" preserve the relative positions if there are multiple objects in the clipboard
 	Make "Paste" offer to replace object if a single one is selected as the target
+	Make Circular Paste and Multi Paste operate at the floor marker if "Place new obects at marker" setting selected
 	Make Symbol use a simpler/faster algorithm and scale 
 	Delete key now does delete, not cut
 	Deleted the commands folder from the templates.
