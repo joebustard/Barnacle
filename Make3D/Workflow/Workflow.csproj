@@ -79,6 +79,7 @@
     <Compile Include="CuraDefinition.cs" />
     <Compile Include="CuraDefinitionFile.cs" />
     <Compile Include="CuraEngineInterface.cs" />
+    <Compile Include="ProfileEntry.cs" />
     <Compile Include="SettingOverride.cs" />
     <Compile Include="SliceResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

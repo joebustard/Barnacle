@@ -9,10 +9,8 @@ namespace Workflow
 {
     public class SlicerProfile
     {
-        //  public List<SettingOverride> Overrides { get; set; }
-        // public List<SettingDefinition> Overrides { get; set; }
-        public CuraDefinitionFile CuraFile { get; set; }
-
+        
+      
         public SlicerProfile(string fileName)
         {
             LoadOverrides(fileName);
@@ -22,32 +20,9 @@ namespace Workflow
         {
         }
 
-        public void SaveAsXml(string fileName)
-        {
-            XmlDocument doc = new XmlDocument();
-            doc.XmlResolver = null;
-            XmlElement docNode = doc.CreateElement("Profile");
-            if (CuraFile != null)
-            {
-                // foreach (SettingOverride so in Overrides)
-                foreach (SettingDefinition so in CuraFile.Overrides)
-                {
-                    XmlElement ovr = doc.CreateElement("Ovr");
-                    ovr.SetAttribute("s", so.Section);
-                    ovr.SetAttribute("n", so.Name);
-                    ovr.SetAttribute("v", so.OverideValue);
-                    ovr.SetAttribute("d", so.Description);
-                    docNode.AppendChild(ovr);
-                }
-            }
-            doc.AppendChild(docNode);
-            doc.Save(fileName);
-        }
-
         public void LoadOverrides(string fileName)
         {
-            CuraFile = new CuraDefinitionFile();
-            CuraFile.Load(fileName);
+            
         }
 
         public void SaveOverrides(String fName)
@@ -58,10 +33,28 @@ namespace Workflow
                 {
                     File.Delete(fName);
                 }
-                if (CuraFile != null)
+ 
+            }
+            catch (Exception ex)
+            {
+                LoggerLib.Logger.LogException(ex);
+            }
+        }
+
+        internal void Prepare()
+        {
+           // CuraFile.ProcessSettings();
+        }
+
+        public void Save(string fName)
+        {
+            try
+            {
+                if (File.Exists(fName))
                 {
-                    CuraFile.Save(fName);
+                    File.Delete(fName);
                 }
+               
             }
             catch (Exception ex)
             {

@@ -454,8 +454,9 @@ M84 ; Disable stepper motors
         private void NewProfileClicked(object sender, RoutedEventArgs e)
         {
             EditProfile dlg = new EditProfile();
-            string defProfile = UserProfilePath + SelectedPrinter + ".baseprofile";
-            dlg.LoadFile(defProfile);
+            //   string defProfile = UserProfilePath + SelectedPrinter + ".baseprofile";
+            //dlg.LoadFile(defProfile);
+            dlg.PrinterName = SelectedPrinter;
             dlg.ProfileName = "New Profile";
             dlg.CreatingNewProfile = true;
             dlg.ShowDialog();
@@ -610,7 +611,8 @@ M84 ; Disable stepper motors
 
             string logPath = Path.GetTempPath() + modelName + "_slicelog.log";
             lastLog = logPath;
-            string prf = selectedUserProfile;
+            
+            string prf = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PrinterProfiles\\"+selectedUserProfile+".profile";
 
             AppendResults(modelName.PadRight(16) + ", ", false);
             string curaPrinterName;

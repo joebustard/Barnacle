@@ -331,13 +331,16 @@ exit 0
                 // The profile is based on the ones supplied with Cura BUT
                 // it doesn't use Cura's ones directly
                 SlicerProfile userSettings = new SlicerProfile(userProfile);
+                userSettings.Prepare();
+
                 string settingoverrides = "";
-                if (userSettings.CuraFile != null)
-                {
-                    foreach (SettingDefinition se in userSettings.CuraFile.Overrides)
+                //if (userSettings.CuraFile != null)
+                  
                     {
-                        settingoverrides += $"-s {se.Name}=\"{se.OverideValue}\" ^\n";
-                    }
+           //         foreach (SettingDefinition se in userSettings.CuraFile.Overrides)
+             //       {
+               //         settingoverrides += $"-s {se.Name}=\"{se.OverideValue}\" ^\n";
+                 //   }
 
                     /*
                     string fileName = AppDomain.CurrentDomain.BaseDirectory + @"Data\DefaultPrinter.profile";
@@ -477,10 +480,10 @@ exit 0
                         }
                     }
                 }
-                else
-                {
-                    Logger.Log("userSettings.CuraFile is null, i.e.profile failed to load");
-                }
+//                else
+  //              {
+    //                Logger.Log("userSettings.CuraFile is null, i.e.profile failed to load");
+      //          }
             }
             catch (Exception ex)
             {

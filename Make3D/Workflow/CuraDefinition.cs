@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Workflow
 {
@@ -12,10 +9,13 @@ namespace Workflow
     {
         public CuraDefinition()
         {
-            definitionSettings = new Dictionary<string, SettingDefinition>();
+            if (definitionSettings == null)
+            {
+                definitionSettings = new Dictionary<string, SettingDefinition>();
+            }
         }
 
-        public Dictionary<string, SettingDefinition> definitionSettings { get; set; }
+        public static Dictionary<string, SettingDefinition> definitionSettings { get; set; }
         public String inherits { get; set; }
         public String name { get; set; }
         public int version { get; set; }
@@ -79,6 +79,8 @@ namespace Workflow
                 Resolve = "";
                 WarningValue = "";
                 Section = "";
+                ModifiedByUser = false;
+                UserValue = "";
             }
 
             public SettingDefinition(SettingDefinition src)
@@ -102,6 +104,9 @@ namespace Workflow
                 Resolve = src.Resolve;
                 WarningValue = src.WarningValue;
                 Section = src.Section;
+                ModifiedByUser = src.ModifiedByUser;
+                Name = src.Name;
+                UserValue = src.UserValue;
             }
 
             /// <summary>
@@ -153,27 +158,22 @@ namespace Workflow
             public string Maximum_Value_Warning { get; set; }
             public string Minimum_Value { get; set; }
             public string Minimum_Value_Warning { get; set; }
+            public bool ModifiedByUser { get; set; }
             public string Name { get; set; }
             public Dictionary<string, string> Options { get; set; }
             public string OverideValue { get; set; }
             public string Resolve { get; set; }
-
             // the section the setting was read from.
             // used by gui to group together related settings
             public string Section { get; set; }
 
             public string Settable_Globally { get; set; }
-
             public string Settable_per_extruder { get; set; }
-
             public string Settable_per_mesh { get; set; }
-
             public string Settable_per_meshgroup { get; set; }
-
             public string Type { get; set; }
-
             public string Unit { get; set; }
-
+            public string UserValue { get; set; }
             public string WarningValue { get; set; }
 
             public void WriteToStream(StreamWriter sw)

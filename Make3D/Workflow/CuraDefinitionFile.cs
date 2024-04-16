@@ -242,6 +242,34 @@ namespace Workflow
 }
     ";
 
+        public void SetUserValues()
+        {
+            foreach (SettingDefinition st in Overrides)
+            {
+                st.UserValue = st.OverideValue;
+            }
+        }
+
+        public List<string> SectionNames()
+        {
+            List<String> tmp = new List<string>();
+            if (definition != null)
+            {
+                foreach (SettingDefinition sd in CuraDefinition.definitionSettings.Values)
+                {
+                    if (!tmp.Contains(sd.Section))
+                    {
+                        if (sd.Section.Trim() != "")
+                        {
+                            tmp.Add(sd.Section);
+                        }
+                        tmp.Sort();
+                    }
+                }
+            }
+            return tmp;
+        }
+
         public CuraDefinitionFile BaseFile { get; set; }
 
         public List<SettingDefinition> Overrides
@@ -343,6 +371,7 @@ namespace Workflow
                 //SettingOverride so = new SettingOverride(sd.Section, s, v, sd.Description);
                 SettingDefinition so = new SettingDefinition(sd);
                 so.OverideValue = v;
+
                 overrides.Add(so);
             }
             Reconcile(overrides);
@@ -898,6 +927,55 @@ namespace Workflow
                                 }
                                 break;
 
+                            case "speed_layer_0*speed_travel/speed_print":
+                                {
+                                    // speed_travel_layer_0
+                                    // speed_layer_0 * speed_travel / speed_print
+                                    // This is the value given in the log <LOGGEDVALUE>
+
+                                    double sl0 = 0;
+                                    double st = 0;
+                                    double sp = 0;
+
+                                    if (FetchValue("speed_layer_0", ref sl0) &&
+                                     FetchValue("speed_travel", ref st) &&
+                                     FetchValue("speed_print", ref sp))
+                                    {
+                                        if (sp > 0)
+                                        {
+                                            or.OverideValue = (sl0 * st / sp).ToString();
+                                        }
+                                    }
+                                }
+                                break;
+
+                            case "machine_nozzle_size/2":
+                                {
+                                    // wall_0_wipe_dist
+                                    // machine_nozzle_size / 2
+                                    // This is the value given in the log <LOGGEDVALUE>
+                                    Multiply(or, "machine_nozzle_size", 0.5);
+                                }
+                                break;
+
+                            case "speed_print*30/60":
+                                {
+                                    // speed_layer_0
+                                    // speed_print * 30 / 60
+                                    // This is the value given in the log <LOGGEDVALUE>
+                                    Multiply(or, "speed_print", 0.5);
+                                }
+                                break;
+
+                            case "speed_wall*2":
+                                {
+                                    // speed_wall_x
+                                    // speed_wall * 2
+                                    // This is the value given in the log <LOGGEDVALUE>
+                                    Multiply(or, "speed_wall", 2);
+                                }
+                                break;
+
                             case "layer_height*4":
                                 {
                                     // layer_height * 4
@@ -975,6 +1053,49 @@ namespace Workflow
                                 }
                                 break;
 
+                            case "jerk_layer_0*jerk_travel/jerk_print":
+                                {
+                                    // jerk_travel_layer_0
+                                    // jerk_layer_0 * jerk_travel / jerk_print
+                                    // This is the value given in the log <LOGGEDVALUE>
+                                    double sl0 = 0;
+                                    double st = 0;
+                                    double sp = 0;
+
+                                    if (FetchValue("jerk_layer_0", ref sl0) &&
+                                     FetchValue("jerk_travel", ref st) &&
+                                     FetchValue("jerk_print", ref sp))
+                                    {
+                                        if (sp > 0)
+                                        {
+                                            or.OverideValue = (sl0 * st / sp).ToString();
+                                        }
+                                    }
+                                }
+                                break;
+
+
+                            case "acceleration_layer_0*acceleration_travel/acceleration_print":
+                                {
+                                    // acceleration_travel_layer_0
+                                    // acceleration_layer_0 * acceleration_travel / acceleration_print
+                                    // This is the value given in the log <LOGGEDVALUE>
+                                    double sl0 = 0;
+                                    double st = 0;
+                                    double sp = 0;
+
+                                    if (FetchValue("acceleration_layer_0", ref sl0) &&
+                                     FetchValue("acceleration_travel", ref st) &&
+                                     FetchValue("acceleration_print", ref sp))
+                                    {
+                                        if (sp > 0)
+                                        {
+                                            or.OverideValue = (sl0 * st / sp).ToString();
+                                        }
+                                    }
+                                }
+                                break;
+
                             case "2ifsupport_structure=='normal'else0":
                                 {
                                     // 2 if support_structure == 'normal' else 0
@@ -985,6 +1106,64 @@ namespace Workflow
                                         if (so.OverideValue.ToLower() == "normal")
                                         {
                                             val = 2;
+                                        }
+                                    }
+                                    or.OverideValue = val.ToString();
+                                }
+                                break;
+
+
+                            case "0ifresolveorvalue('adhesion_type')=='raft'elseresolveorvalue('layer_height_0')":
+                                {
+                                    // cool_fan_full_at_height
+                                    // 0 if resolveOrValue('adhesion_type') == 'raft' else resolveOrValue('layer_height_0')
+                                    // This is the value given in the log <LOGGEDVALUE>
+                                    double val = 0;
+                                    if (FetchValue("layer_height_0", ref val))
+                                    {
+                                        SettingDefinition so = FindOveride(overrides, "adhesion_type");
+                                        if (so != null)
+                                        {
+                                            if (so.OverideValue.ToLower() == "raft")
+                                            {
+                                                val = 0;
+                                            }
+                                        }
+                                    }
+
+                                    or.OverideValue = val.ToString();
+                                }
+                                break;
+
+                            case "wall_line_width_0ifmagic_spiralizeelse0.8":
+                                {
+                                    // wall_thickness
+                                    // wall_line_width_0 if magic_spiralize else 0.8
+                                    // This is the value given in the log <LOGGEDVALUE>
+                                    double val = 0.8;
+                                    SettingDefinition so = FindOveride(overrides, "magic_spiralize");
+                                    if (so != null)
+                                    {
+                                        if (so.OverideValue.ToLower() == "true")
+                                        {
+                                            FetchValue("wall_line_width_0", ref val);
+                                        }
+                                    }
+                                    or.OverideValue = val.ToString();
+                                }
+                                break;
+                            case "speed_printifmagic_spiralizeelse120":
+                                {
+                                    // speed_travel
+                                    // speed_print if magic_spiralize else 120
+                                    
+                                    double val = 120;
+                                    SettingDefinition so = FindOveride(overrides, "magic_spiralize");
+                                    if (so != null)
+                                    {
+                                        if (so.OverideValue.ToLower() == "true")
+                                        {
+                                            FetchValue("speed_print", ref val);
                                         }
                                     }
                                     or.OverideValue = val.ToString();
@@ -1227,8 +1406,12 @@ namespace Workflow
                             case "resolveorvalue('raft_margin')ifresolveorvalue('adhesion_type')=='raft'elseresolveorvalue('brim_width')":
                                 {
                                     // resolveOrValue('raft_margin') if resolveOrValue('adhesion_type') == 'raft' else resolveOrValue('brim_width')
+                                    double val = 0;
                                     SettingDefinition rm = FindOveride(overrides, "raft_margin");
-                                    double val = Convert.ToDouble(rm.OverideValue);
+                                    if (rm != null)
+                                    {
+                                        val = Convert.ToDouble(rm.OverideValue);
+                                    }
 
                                     SettingDefinition so = FindOveride(overrides, "adhesion_type");
                                     if (so != null)
@@ -2037,10 +2220,25 @@ namespace Workflow
                 JObject oneSetting = (JObject)children[prop.Name];
                 // if this property is a new one then create a new setting definition
                 // if its old, then override the values in the existing one
-                SettingDefinition cdf = new SettingDefinition();
-                cdf.Name = prop.Name;
-                cdf.Section = section;
-                definition.definitionSettings[cdf.Name] = cdf;
+                SettingDefinition cdf;
+                if (prop.Name.ToLower() == "machine_head_with_fans_polygon")
+                {
+                    bool bre = true;
+                }
+                if (CuraDefinition.definitionSettings.Keys.Contains(prop.Name))
+                {
+                    cdf = CuraDefinition.definitionSettings[prop.Name];
+                }
+                else
+                {
+                    cdf = new SettingDefinition();
+                    cdf.Name = prop.Name;
+                    cdf.Section = section;
+                    CuraDefinition.definitionSettings[cdf.Name] = cdf;
+                }
+
+
+
 
                 foreach (JProperty setProp in oneSetting.Properties())
                 {
@@ -2076,12 +2274,12 @@ namespace Workflow
                                 {
                                     if (cdf.Type == "polygon")
                                     {
-                                       cdf.DefaultValue = ReadPolygon(cdf, setProp);
+                                        cdf.DefaultValue = ReadPolygon(cdf, setProp);
                                     }
                                     else
                                         if (cdf.Type == "polygons")
                                     {
-                                        cdf.DefaultValue=ReadPolygon(cdf, setProp);
+                                        cdf.DefaultValue = ReadPolygon(cdf, setProp);
                                     }
                                     else
                                     {
