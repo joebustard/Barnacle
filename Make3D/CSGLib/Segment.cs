@@ -81,7 +81,7 @@ namespace CSGLib
         public static int EDGE = 3;
 
         /** tolerance value to test equalities */
-        private static double TOL = 1e-10f;
+        private static double TOL = 1e-7f;
 
         //---------------------------------CONSTRUCTORS---------------------------------//
 

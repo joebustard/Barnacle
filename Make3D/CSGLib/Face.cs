@@ -61,7 +61,6 @@ namespace CSGLib
         private Vector3D Center;
 
         /** face status relative to a solid  */
-       // private static readonly double EqualityTolerance = 1e-5f;
 
         private enum Side
         { UP, DOWN, ON, NONE };
@@ -130,12 +129,12 @@ namespace CSGLib
         public bool Equals(Face face)
         {
             bool cond1 = V1.Equals(face.V1) && V2.Equals(face.V2) && V3.Equals(face.V3);
-            if ( cond1)
+            if (cond1)
             {
                 return true;
             }
             bool cond2 = V1.Equals(face.V2) && V2.Equals(face.V3) && V3.Equals(face.V1);
-            if ( cond2)
+            if (cond2)
             {
                 return true;
             }

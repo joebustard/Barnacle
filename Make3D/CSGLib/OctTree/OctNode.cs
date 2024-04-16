@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CSGLib
 {
-    internal class OctNode
+    public class OctNode
     {
         // The whole list of All the points.
         // This list is shared by all the nodes
@@ -129,7 +129,7 @@ namespace CSGLib
             }
         }
 
-        internal OctNode AddPoint(int index, Vertex position)
+        public OctNode AddPoint(int index, Vertex position)
         {
             OctNode targ = FindNodeAround(position);
             if (targ == null)
@@ -144,7 +144,7 @@ namespace CSGLib
             return targ;
         }
 
-        internal OctNode FindNodeAround(Vertex pnt)
+        public OctNode FindNodeAround(Vertex pnt)
         {
             OctNode res = null;
             if (pnt.Position.X >= Low.Position.X &&

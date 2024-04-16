@@ -85,7 +85,7 @@ namespace CSGLib
 
             //split the faces so that none of them intercepts each other
             //Logger.Log("Split Faces ob1 (ob2)\r\n");
-            CSGState ps1 = Object1.SplitFaces(Object2,null,"");
+            CSGState ps1 = Object1.SplitFaces(Object2, null, "");
             CSGState ps2 = CSGState.Good;
             CSGState ps3 = CSGState.Good;
             CSGState ps4 = CSGState.Good;
@@ -228,7 +228,7 @@ namespace CSGLib
                             ReportProgress("Split Left Faces", 0, progress);
                             if (!cancelToken.IsCancellationRequested)
                             {
-                                opresult.OperationStatus = Object1.SplitFaces(Object2,progress, "Split Left Faces");
+                                opresult.OperationStatus = Object1.SplitFaces(Object2, progress, "Split Left Faces");
                                 if (opresult.OperationStatus == CSGState.Good)
                                 {
                                     ReportProgress("Split Right Faces", 0, progress);
@@ -240,7 +240,7 @@ namespace CSGLib
                                             ReportProgress("Classify Left Faces", 0, progress);
                                             if (!cancelToken.IsCancellationRequested)
                                             {
-                                                opresult.OperationStatus = Object1.ClassifyFaces(Object2, progress,"Classify Left Faces");
+                                                opresult.OperationStatus = Object1.ClassifyFaces(Object2, progress, "Classify Left Faces");
                                                 if (opresult.OperationStatus == CSGState.Good)
                                                 {
                                                     ReportProgress("Classify Right Faces", 0, progress);
@@ -367,13 +367,33 @@ namespace CSGLib
 
         private Solid ComposeSolid(Status faceStatus1, Status faceStatus2, Status faceStatus3)
         {
+            Vertex min1;
+            Vertex max1;
+            Vertex min2;
+            Vertex max2;
+            Object1.octTree.Bounds(out min1, out max1);
+            Object1.octTree.Bounds(out min2, out max2);
+            double minx, miny, minz;
+            double maxx, maxy, maxz;
+            minx = Math.Min(min1.Position.X, min2.Position.X);
+            miny = Math.Min(min1.Position.Y, min2.Position.Y);
+            minz = Math.Min(min1.Position.Z, min2.Position.Z);
+
+            maxx = Math.Max(max1.Position.X, max2.Position.X);
+            maxy = Math.Max(max1.Position.Y, max2.Position.Y);
+            maxz = Math.Max(max1.Position.Z, max2.Position.Z);
+
+            Vertex min = new Vertex(minx, miny, minz);
+            Vertex max = new Vertex(maxx, maxy, maxz);
+
             var vertices = new List<Vertex>();
             var indices = new List<int>();
+            OctTree octTree = new OctTree(vertices, min, max, 100);
 
             //group the elements of the two solids whose faces fit with the desired status
-            GroupObjectComponents(Object1, vertices, indices, faceStatus1, faceStatus2);
+            GroupObjectComponents(octTree, Object1, vertices, indices, faceStatus1, faceStatus2);
             // GroupObjectComponents(Object2, vertices, indices, faceStatus3, faceStatus3);
-            GroupObjectComponents(Object2, vertices, indices, faceStatus3, faceStatus3);
+            GroupObjectComponents(octTree, Object2, vertices, indices, faceStatus3, faceStatus3);
 
             //turn the arrayLists to arrays
             Vector3D[] verticesArray = new Vector3D[vertices.Count];
@@ -402,7 +422,7 @@ namespace CSGLib
         * @param faceStatus2 a status expected for the faces used to to fill the data arrays
         */
 
-        private void GroupObjectComponents(Part obj, List<Vertex> vertices, List<int> indices, Status faceStatus1, Status faceStatus2)
+        private void GroupObjectComponents(OctTree octTree, Part obj, List<Vertex> vertices, List<int> indices, Status faceStatus1, Status faceStatus2)
         {
             Face face;
             //for each face..
@@ -416,6 +436,18 @@ namespace CSGLib
                     Vertex[] faceVerts = { face.V1, face.V2, face.V3 };
                     for (int j = 0; j < faceVerts.Length; j++)
                     {
+                        int vi = octTree.PointPresent(faceVerts[j]);
+                        if (vi != -1)
+                        {
+                            indices.Add(vi);
+                        }
+                        else
+                        {
+                            indices.Add(vertices.Count);
+                            octTree.AddPoint(vertices.Count, faceVerts[j]);
+                        }
+
+                        /*
                         if (vertices.Contains(faceVerts[j]))
                         {
                             indices.Add(vertices.IndexOf(faceVerts[j]));
@@ -425,6 +457,7 @@ namespace CSGLib
                             indices.Add(vertices.Count);
                             vertices.Add(faceVerts[j]);
                         }
+                        */
                     }
                 }
             }

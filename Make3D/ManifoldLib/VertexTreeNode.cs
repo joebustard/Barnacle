@@ -11,7 +11,7 @@ namespace ManifoldLib
             Black
         }
 
-        private const double tolerance = 1E-6;
+        private const double tolerance = 1E-7;
 
         public NodeColour Colour;
 

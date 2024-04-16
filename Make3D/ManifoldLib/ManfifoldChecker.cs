@@ -144,8 +144,8 @@ namespace ManifoldLib
                     }
                 }
             }
-
         }
+
         private int AddVertice(Point3DCollection pnts, double x, double y, double z)
         {
             int res = -1;
@@ -165,6 +165,7 @@ namespace ManifoldLib
             }
             return res;
         }
+
         /*
         public void RemoveDuplicateVertices()
         {
@@ -180,10 +181,8 @@ namespace ManifoldLib
             }
             Points = vertices;
             Indices = tris;
-
         }
         */
-
 
         public void RemoveUnreferencedVertices()
         {
@@ -399,7 +398,7 @@ namespace ManifoldLib
 
         private List<Vertex> SortTree()
         {
-            const double tolerence = 1E-8;
+            const double tolerence = 1E-7;
             treeRoot.Sort();
             List<Vertex> tmp = new List<Vertex>();
             treeRoot.AddToList(tmp);
