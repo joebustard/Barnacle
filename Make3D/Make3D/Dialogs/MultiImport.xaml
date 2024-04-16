@@ -31,51 +31,25 @@
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
-        <!--
-        <StackPanel
-            Grid.Row="1"
-            Grid.Column="1"
-            Grid.ColumnSpan="4"
-            Orientation="Horizontal">
-            <RadioButton GroupName="ImportTypeGroup" IsChecked="{Binding ImportFolderChecked}" Width="130" VerticalAlignment="Center">Import From Folder</RadioButton>
-            <TextBox
-                Width="300"
-                Margin="4,0,0,0"
-                VerticalAlignment="Center"
-                IsEnabled="{Binding CloseEnabled}"
-                Visibility="{Binding FolderVisibility}"
-                Text="{Binding ImportPath}" />
-            <Button
-                x:Name="BrowseButton"
-                Width="20"
-                Click="BrowseButton_Click"
-                Content="..."
-                IsEnabled="{Binding CloseEnabled}"
-                Visibility="{Binding FolderVisibility}"
-                Style="{StaticResource RoundedButton}"
-                ToolTip="Browse for folder containing STL files" />
-        </StackPanel>
-        -->
 
-        <RadioButton 
-        Grid.Row="1" 
-        Grid.Column="1" 
+        <RadioButton
+        Grid.Row="2"
+        Grid.Column="1"
         HorizontalAlignment="Left"
         GroupName="ImportTypeGroup" IsChecked="{Binding ImportFolderChecked}" Width="130" VerticalAlignment="Center">Import From Folder</RadioButton>
         <TextBox
-                Grid.Row="1" 
-        Grid.Column="2" 
-        Grid.ColumnSpan="2" 
+                Grid.Row="2"
+        Grid.Column="2"
+        Grid.ColumnSpan="2"
 
-                
                 Margin="4,0,0,0"
                 VerticalAlignment="Center"
                 IsEnabled="{Binding CloseEnabled}"
                 Visibility="{Binding FolderVisibility}"
                 Text="{Binding ImportPath}" />
         <Button
-                        Grid.Row="1" 
-        Grid.Column="4" 
+                        Grid.Row="2"
+        Grid.Column="4"
         HorizontalAlignment="Left"
                 x:Name="BrowseButton"
                 Width="20"
@@ -86,24 +60,26 @@
                 Style="{StaticResource RoundedButton}"
                 ToolTip="Browse for folder containing STL files" />
 
-        <RadioButton 
-        Grid.Row="2" 
-        Grid.Column="1" 
+        <!-- -->
+
+        <RadioButton
+        Grid.Row="1"
+        Grid.Column="1"
         HorizontalAlignment="Left"
-        GroupName="ImportTypeGroup" IsChecked="{Binding ImportZipChecked}" Width="130" VerticalAlignment="Center">Import From Zip</RadioButton>
+        GroupName="ImportTypeGroup" IsChecked="{Binding ImportZipChecked}" Width="130" VerticalAlignment="Center" ToolTip="Import multiple stl models from a zip file (from Thingiverse etc)">Import From Zip</RadioButton>
         <TextBox
-                        Grid.Row="2" 
-        Grid.Column="2" 
-        Grid.ColumnSpan="2" 
-                
+                        Grid.Row="1"
+        Grid.Column="2"
+        Grid.ColumnSpan="2"
+
                 Margin="4,0,0,0"
                 VerticalAlignment="Center"
                 IsEnabled="{Binding CloseEnabled}"
                 Visibility="{Binding ZipVisibility}"
                 Text="{Binding ImportZipPath}" />
         <Button
-                                Grid.Row="2" 
-        Grid.Column="4" 
+                                Grid.Row="1"
+        Grid.Column="4"
         HorizontalAlignment="Left"
 
                 x:Name="BrowseZipButton"
@@ -115,33 +91,6 @@
                 Style="{StaticResource RoundedButton}"
                 ToolTip="Browse for zip file containing STL files" />
 
-
-
-        <!--
-        <StackPanel
-            Grid.Row="2"
-            Grid.Column="1"
-            Grid.ColumnSpan="4"
-            Orientation="Horizontal">
-            <RadioButton GroupName="ImportTypeGroup" IsChecked="{Binding ImportZipChecked}" Width="130" VerticalAlignment="Center">Import From Zip</RadioButton>
-            <TextBox
-                MinWidth="300"
-                Margin="4,0,0,0"
-                VerticalAlignment="Center"
-                IsEnabled="{Binding CloseEnabled}"
-                Visibility="{Binding ZipVisibility}"
-                Text="{Binding ImportZipPath}" />
-            <Button
-                x:Name="BrowseZipButton"
-                Width="20"
-                Click="BrowseZipButton_Click"
-                Content="..."
-                IsEnabled="{Binding CloseEnabled}"
-                Visibility="{Binding ZipVisibility}"
-                Style="{StaticResource RoundedButton}"
-                ToolTip="Browse for zip file containing STL files" />
-        </StackPanel>
-        -->
         <StackPanel
             Grid.Row="4"
             Grid.Column="1"

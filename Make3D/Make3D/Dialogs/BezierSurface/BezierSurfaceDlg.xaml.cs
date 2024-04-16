@@ -90,7 +90,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        internal void KeyDown(Key key, bool shift, bool ctrl)
+        internal void KeyDownHandler(Key key, bool shift, bool ctrl)
         {
             switch (key)
             {
@@ -265,7 +265,7 @@ namespace Barnacle.Dialogs
 
         private void Grid_KeyDown(object sender, KeyEventArgs e)
         {
-            KeyDown(e.Key, Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift), Keyboard.IsKeyDown(Key.LeftCtrl));
+            KeyDownHandler(e.Key, Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift), Keyboard.IsKeyDown(Key.LeftCtrl));
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
