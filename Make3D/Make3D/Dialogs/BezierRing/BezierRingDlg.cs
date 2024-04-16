@@ -49,7 +49,7 @@ Brushes.Green
         public BezierRingDlg()
         {
             InitializeComponent();
-            
+
             DataContext = this;
 
             ToolName = "BezierRing";
@@ -406,27 +406,30 @@ Brushes.Green
 
         private void GenerateRing()
         {
-            List<PolarCoordinate> polarProfile = new List<PolarCoordinate>();
-            double hr = profileWidth / 2;
-            double vr = profileHeight / 2;
-            double cx = ringRadius;
-            double cy = vr;
-            double bstep = 4 / bezierDivisions;
-            if (Points != null && Points.Count > 0)
+            if (loaded)
             {
-                for (int i = 0; i < bzlines.GetLength(0); i++)
+                List<PolarCoordinate> polarProfile = new List<PolarCoordinate>();
+                double hr = profileWidth / 2;
+                double vr = profileHeight / 2;
+                double cx = ringRadius;
+                double cy = vr;
+                double bstep = 4 / bezierDivisions;
+                if (Points != null && Points.Count > 0)
                 {
-                    for (double t = 0; t < 1; t += bstep)
+                    for (int i = 0; i < bzlines.GetLength(0); i++)
                     {
-                        Point p = bzlines[i].GetCoord(t, false);
-                        Point3D p3d = new Point3D(cx + hr * p.X, 0, cy - (vr * p.Y));
-                        PolarCoordinate pcol = new PolarCoordinate(0, 0, 0);
-                        pcol.SetPoint3D(p3d);
-                        polarProfile.Add(pcol);
+                        for (double t = 0; t < 1; t += bstep)
+                        {
+                            Point p = bzlines[i].GetCoord(t, false);
+                            Point3D p3d = new Point3D(cx + hr * p.X, 0, cy - (vr * p.Y));
+                            PolarCoordinate pcol = new PolarCoordinate(0, 0, 0);
+                            pcol.SetPoint3D(p3d);
+                            polarProfile.Add(pcol);
+                        }
                     }
-                }
 
-                SweepPolarProfileTheta(polarProfile, cx, cy, sweepDegrees, rotDivisions);
+                    SweepPolarProfileTheta(polarProfile, cx, cy, sweepDegrees, rotDivisions);
+                }
             }
         }
 
@@ -626,7 +629,9 @@ Brushes.Green
         private void UserControl_GotFocus(object sender, RoutedEventArgs e)
         {
         }
-        bool loaded;
+
+        private bool loaded;
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             loaded = false;
@@ -650,7 +655,7 @@ Brushes.Green
             RotDivisions = EditorParameters.GetInt("RotDivisions", 20);
             BezierDivisions = EditorParameters.GetInt("BezierDivisions", 20);
             string s = EditorParameters.Get("L0");
-            if ( s != "")
+            if (s != "")
             {
                 bzlines[0].FromString(s);
                 bzlines[1].FromString(EditorParameters.Get("L1"));
@@ -666,6 +671,7 @@ Brushes.Green
             DialogResult = true;
             Close();
         }
+
         private void SaveEditorParameters()
         {
             EditorParameters.Set("SweepDegrees", SweepDegrees.ToString());

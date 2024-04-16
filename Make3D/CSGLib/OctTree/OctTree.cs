@@ -4,10 +4,16 @@ using System.Windows.Media.Media3D;
 
 namespace CSGLib
 {
-    internal class OctTree
+    public class OctTree
     {
         private const int MaxPointsPerNode = 500;
         private OctNode root;
+
+        public void Bounds(out Vertex min, out Vertex max)
+        {
+            min = root.Low;
+            max = root.High;
+        }
 
         public OctTree(List<Vertex> pnts, Vertex minPnt, Vertex maxPnt, int maxTreeDepth)
         {

@@ -51,11 +51,7 @@ namespace CSGLib
     /// </summary>
     public class Part
     {
-        /// <summary>
-        /// tolerance value to test equalities
-        /// </summary>
-    //    private static readonly double EqualityTolerance = 1e-5f;
-
+        public OctTree octTree;
         private readonly int maxSplitLevel = 300;
 
         /// <summary>
@@ -69,8 +65,6 @@ namespace CSGLib
         /// solid faces
         /// </summary>
         private List<Face> Faces;
-
-        private OctTree octTree;
 
         /// <summary>
         /// solid vertices
@@ -418,7 +412,6 @@ namespace CSGLib
             {
                 octTree.AddPoint(Vertices.Count, vertex);
                 vertex.SetStatus(status);
-                //Vertices.Add(vertex);
                 return vertex;
             }
             else
@@ -427,25 +420,6 @@ namespace CSGLib
                 vertex.SetStatus(status);
                 return vertex;
             }
-
-            /*
-            for (i = 0; i < Vertices.Count; i++)
-            {
-                if (vertex.Equals(Vertices[i]))
-                    break;
-            }
-            if (i == Vertices.Count)
-            {
-                Vertices.Add(vertex);
-                return vertex;
-            }
-            else
-            {
-                vertex = Vertices[i];
-                vertex.SetStatus(status);
-                return vertex;
-            }
-            */
         }
 
         /// <summary>

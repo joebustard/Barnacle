@@ -5,7 +5,7 @@ namespace ManifoldLib
 {
     internal class PointUtils
     {
-        private static readonly double EqualityTolerance = 1e-8f;
+        private static readonly double EqualityTolerance = 1e-7f;
 
         public static void MinMax(Point3DCollection pnts, ref Point3D min, ref Point3D max)
         {
