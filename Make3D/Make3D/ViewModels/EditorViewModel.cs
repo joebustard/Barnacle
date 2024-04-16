@@ -3066,28 +3066,47 @@ namespace Barnacle.ViewModels
                                     {
                                         o.Position = new Point3D(cx + o.AbsoluteBounds.Width / 2 + x, cy, cz + o.AbsoluteBounds.Depth / 2 + y);
                                         ry = -theta;
+                                        if (dlg.FaceIn.IsChecked == true)
+                                        {
+                                            ry += Math.PI;
+                                        }
+
                                     }
 
                                     if (dlg.DirectionY.IsChecked == true)
                                     {
                                         o.Position = new Point3D(cx, cy + o.AbsoluteBounds.Height / 2 + x, cz + o.AbsoluteBounds.Depth / 2 + y);
                                         // rx = (Math.PI / 2) + theta;
-                                        rx = -theta;
+                                        rx = theta;
+                                        if (dlg.FaceIn.IsChecked == true)
+                                        {
+                                            rx += Math.PI;
+                                        }
+
                                     }
 
                                     if (dlg.DirectionZ.IsChecked == true)
                                     {
                                         o.Position = new Point3D(cx + o.AbsoluteBounds.Width / 2 + x, cy + o.AbsoluteBounds.Height / 2 + y, cz);
-                                        rz = -theta;
+                                       // rz = theta;
+                                       //rz = (Math.PI / 2) + theta;
+                                        rz = 3 * Math.PI /2  + theta;
+                                        if (dlg.FaceIn.IsChecked == true)
+                                        {
+                                            rz += Math.PI;
+                                        }
+
                                     }
 
                                     o.CalcScale(false);
 
-                                    o.Remesh();
-                                    if (dlg.RotateToCenterBox.IsChecked == true)
+                                    if (!dlg.FaceNone.IsChecked == true)
                                     {
                                         o.RotateRad(new Point3D(rx, ry, rz));
                                     }
+                                   
+                                    o.Remesh();
+                                    
                                     if (dlg.DirectionX.IsChecked == true)
                                     {
                                         o.MoveToFloor();

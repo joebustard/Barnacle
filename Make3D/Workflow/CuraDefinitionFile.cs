@@ -499,12 +499,15 @@ namespace Workflow
                     string tmp = oneSettingText;
                     bool addQuotesToValue = false;
                     bool addQuotesToDefaultValue = false;
+                    df.Description = df.Description.Replace("\"", @"\""");
+                    df.DefaultValue = df.DefaultValue.Replace("\"", "'");
+                    df.OverideValue = df.OverideValue.Replace("\"", "'");
                     if (df.DefaultValue == "False" || df.DefaultValue == "True")
                     {
                         df.DefaultValue = df.DefaultValue.ToLower();
                     }
 
-                    if (df.Type.ToLower() == "str" || df.Type.ToLower() == "enum")
+                    if (df.Type.ToLower() == "str" || df.Type.ToLower() == "enum" || df.Type.ToLower() == "[int]")
                     {
                         addQuotesToValue = true;
                         addQuotesToDefaultValue = true;
@@ -520,6 +523,14 @@ namespace Workflow
                             addQuotesToValue = true;
                         }
                     }
+                    string defVal = df.DefaultValue;
+                    if (df.Type.ToLower() == "polygon")
+                    {
+                        defVal = defVal.Replace("[  [", "[\n[");
+                        defVal = defVal.Replace("],", "],\n");
+                        defVal = defVal.Replace("]]", "]\n]");
+                    }
+
                     if (df.Type.ToLower() == "enum")
                     {
                         String options = @"
@@ -543,17 +554,26 @@ namespace Workflow
                     tmp = tmp.Replace("<KEY>", df.Name);
                     if (addQuotesToDefaultValue)
                     {
-                        tmp = tmp.Replace("<DEFVAL>", "\"" + df.DefaultValue + "\"");
+                        tmp = tmp.Replace("<DEFVAL>", "\"" + defVal + "\"");
                     }
                     else
                     {
-                        tmp = tmp.Replace("<DEFVAL>", df.DefaultValue);
+                        tmp = tmp.Replace("<DEFVAL>", defVal);
                     }
 
                     string v = df.OverideValue;
                     if (v == "")
                     {
-                        v = df.DefaultValue;
+                        v = defVal;
+                    }
+                    else
+                    {
+                        if (df.Type.ToLower() == "polygon")
+                        {
+                            v = v.Replace("[  [", "[\n[");
+                            v = v.Replace("],", "],\n");
+                            v = v.Replace("]]", "]\n]");
+                        }
                     }
                     if (addQuotesToValue)
                     {
@@ -584,31 +604,33 @@ namespace Workflow
             return isText;
         }
 
-        private static void ReadPolygon(SettingDefinition cdf, JProperty setProp)
+        private static String ReadPolygon(SettingDefinition cdf, JProperty setProp)
         {
+            string res = "";
             JArray jar = (JArray)setProp.Value;
             if (jar.Count == 0)
             {
-                cdf.DefaultValue = "[]";
+                res = "[]";
             }
             else
             {
-                cdf.DefaultValue = "[ ";
+                res = "[ ";
                 foreach (JToken tk in jar.Children())
                 {
-                    cdf.DefaultValue += " [ ";
+                    res += " [ ";
                     JArray j2 = (JArray)tk;
                     foreach (JToken tk2 in j2.Children())
                     {
                         String s = tk2.ToString();
-                        cdf.DefaultValue += $"{s},";
+                        res += $"{s},";
                     }
-                    cdf.DefaultValue = cdf.DefaultValue.Substring(0, cdf.DefaultValue.Length - 1);
-                    cdf.DefaultValue += " ],";
+                    res = res.Substring(0, res.Length - 1);
+                    res += " ],";
                 }
-                cdf.DefaultValue = cdf.DefaultValue.Substring(0, cdf.DefaultValue.Length - 1);
-                cdf.DefaultValue += "]";
+                res = res.Substring(0, res.Length - 1);
+                res += "]";
             }
+            return res;
         }
 
         private void AddSettings(Dictionary<string, SettingDefinition> allsettings)
@@ -2054,12 +2076,12 @@ namespace Workflow
                                 {
                                     if (cdf.Type == "polygon")
                                     {
-                                        ReadPolygon(cdf, setProp);
+                                       cdf.DefaultValue = ReadPolygon(cdf, setProp);
                                     }
                                     else
                                         if (cdf.Type == "polygons")
                                     {
-                                        ReadPolygon(cdf, setProp);
+                                        cdf.DefaultValue=ReadPolygon(cdf, setProp);
                                     }
                                     else
                                     {
@@ -2100,7 +2122,19 @@ namespace Workflow
 
                             case "value":
                                 {
-                                    cdf.OverideValue = (string)setProp.Value;
+                                    if (cdf.Type == "polygon")
+                                    {
+                                        cdf.OverideValue = ReadPolygon(cdf, setProp);
+                                    }
+                                    else
+                                            if (cdf.Type == "polygons")
+                                    {
+                                        cdf.OverideValue = ReadPolygon(cdf, setProp);
+                                    }
+                                    else
+                                    {
+                                        cdf.OverideValue = (string)setProp.Value;
+                                    }
                                 }
                                 break;
 
