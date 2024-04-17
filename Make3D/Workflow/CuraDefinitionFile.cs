@@ -257,12 +257,17 @@ namespace Workflow
             {
                 foreach (SettingDefinition sd in CuraDefinition.definitionSettings.Values)
                 {
+                /*
+                    if (sd.Section.Trim() == "")
+                    {
+                        sd.Section = "Misc";
+                    }
+                    */
                     if (!tmp.Contains(sd.Section))
                     {
-                        if (sd.Section.Trim() != "")
-                        {
+                    
                             tmp.Add(sd.Section);
-                        }
+                    
                         tmp.Sort();
                     }
                 }
@@ -688,6 +693,39 @@ namespace Workflow
             return res;
         }
 
+        private string AltIfEqual(string key, string value, double val0, double val1)
+        {
+            string res = "";
+            double val = val0;
+            //  SettingOverride so = FindOveride(overrides, key);
+            SettingDefinition so = FindOveride(overrides, key);
+            if (so != null)
+            {
+                if (so.OverideValue.ToLower() == value)
+                {
+                    val = val1;
+                }
+            }
+            res = val.ToString();
+            return res;
+        }
+
+        private string AltIfNotEqual(string key, string value, double val0, double val1)
+        {
+            string res = "";
+            double val = val0;
+            //  SettingOverride so = FindOveride(overrides, key);
+            SettingDefinition so = FindOveride(overrides, key);
+            if (so != null)
+            {
+                if (so.OverideValue.ToLower() != value)
+                {
+                    val = val1;
+                }
+            }
+            res = val.ToString();
+            return res;
+        }
         private double Degrees(double angle)
         {
             return angle * 180.0 / Math.PI;
@@ -1156,7 +1194,7 @@ namespace Workflow
                                 {
                                     // speed_travel
                                     // speed_print if magic_spiralize else 120
-                                    
+
                                     double val = 120;
                                     SettingDefinition so = FindOveride(overrides, "magic_spiralize");
                                     if (so != null)
@@ -1985,6 +2023,10 @@ namespace Workflow
                                     // 'off' if retraction_hop_enabled else 'noskin'
                                     // This is the value given in the log "noskin"
                                     or.OverideValue = "noskin";
+                                    if (Match("retraction_hop_enabled", "true"))
+                                    {
+                                        or.OverideValue = "off";
+                                    }
                                 }
                                 break;
 
@@ -2150,6 +2192,214 @@ namespace Workflow
                                 }
                                 break;
 
+                            case "max(-273.15,material_print_temperature-15)":
+                                {
+                                    // material_final_print_temperature
+                                    // max(-273.15, material_print_temperature - 15)
+                                    double def = -273.15;
+                                    double mpt = def;
+                                    if (FetchValue("material_print_temperature", ref mpt))
+                                    {
+                                        mpt = Math.Max(def, mpt);
+                                        mpt = mpt - 15;
+                                    }
+                                    or.OverideValue = mpt.ToString();
+                                }
+                                break;
+
+
+
+
+                            case "max(-273.15,material_print_temperature-10)":
+                                {
+                                    // material_final_print_temperature
+                                    // max(-273.15, material_print_temperature - 15)
+                                    double def = -273.15;
+                                    double mpt = def;
+                                    if (FetchValue("material_print_temperature", ref mpt))
+                                    {
+                                        mpt = Math.Max(def, mpt);
+                                        mpt = mpt - 10;
+                                    }
+                                    or.OverideValue = mpt.ToString();
+                                }
+                                break;
+
+
+
+
+                            case "min(meshfix_maximum_resolution*speed_travel/speed_print,2*line_width)":
+                                {
+                                    // meshfix_maximum_travel_resolution
+                                    // min(meshfix_maximum_resolution * speed_travel / speed_print, 2 * line_width)
+                                    double mmr = 0;
+                                    double spt = 0;
+                                    double spp = 0;
+                                    double lw = 0;
+                                    double val = 0;
+                                    if (FetchValue("meshfix_maximum_resolution", ref mmr) &&
+                                    FetchValue("speed_travel", ref spt) &&
+                                    FetchValue("speed_print", ref spp) &&
+                                    FetchValue("line_width", ref lw))
+                                    {
+                                        val = Math.Min(mmr * spt / spp, 2 * lw);
+                                    }
+                                    or.OverideValue = val.ToString();
+                                }
+                                break;
+
+
+
+
+                            case "'no_outer_surfaces'if(any(extrudervalues('skin_monotonic'))orany(extrudervalues('ironing_enabled'))or(any(extrudervalues('roofing_monotonic'))andany(extrudervalues('roofing_layer_count'))))else'all'":
+                                {
+                                    // retraction_combing
+                                    // 'no_outer_surfaces' if (any(extruderValues('skin_monotonic')) or any(extruderValues('ironing_enabled')) or (any(extruderValues('roofing_monotonic')) and any(extruderValues('roofing_layer_count')))) else 'all'
+                                    // This is the value given in the log <LOGGEDVALUE>
+                                    or.OverideValue = "all";
+                                }
+                                break;
+
+
+
+
+                            case "5iftop_bottom_pattern!='concentric'else0":
+                                {
+                                    // skin_overlap
+                                    // 5 if top_bottom_pattern != 'concentric' else 0
+                                    AltIfNotEqual("top_bottom_pattern", "concentric", 5, 0);
+                                }
+                                break;
+
+
+
+
+                            case "speed_support/1.5":
+                                {
+                                    // speed_support_interface
+                                    // speed_support / 1.5
+                                    // This is the value given in the log <LOGGEDVALUE>
+                                    Divide(or, "speed_support", 1.5);
+                                }
+                                break;
+
+
+
+
+                            case "(skirt_brim_line_width*initial_layer_line_width_factor/100.0)*3":
+                                {
+                                    // support_brim_width
+                                    // (skirt_brim_line_width * initial_layer_line_width_factor / 100.0) * 3
+                                    double skblw = 0;
+                                    double illw = 0;
+                                    double val = 0;
+                                    if (FetchValue("skirt_brim_line_width", ref skblw) &&
+                                    FetchValue("initial_layer_line_width_factor", ref illw))
+                                    {
+                                        val = (skblw * illw / 100.0) * 3.0;
+                                    }
+                                    or.OverideValue = val.ToString();
+
+                                }
+                                break;
+
+
+
+
+                            case "15ifsupport_enableandsupport_structure=='normal'else0ifsupport_enableandsupport_structure=='tree'else15":
+                                {
+                                    // support_infill_rate
+                                    // 15 if support_enable and support_structure == 'normal' else 0 if support_enable and support_structure == 'tree' else 15
+                                    or.OverideValue = "15";
+                                    if (Match("support_enable", "true") && Match("support_structure", "tree"))
+                                    {
+                                        or.OverideValue = "0";
+                                    }
+                                }
+                                break;
+
+                            case "10ifinfill_sparse_density<95andinfill_pattern!='concentric'else0":
+                                {
+                                    // infill_overlap
+                                    // 10 if infill_sparse_density < 95 and infill_pattern != 'concentric' else 0
+                                    or.OverideValue = "0";
+                                    SettingDefinition sd = FindOveride(overrides, "infill_sparse_density");
+                                    if (sd != null)
+                                    {
+                                        double isd = Convert.ToDouble(sd.OverideValue);
+                                        if (isd < 95)
+                                        {
+                                            SettingDefinition sd2 = FindOveride(overrides, "infill_pattern");
+
+                                            if (sd2 != null)
+                                            {
+                                                if (sd2.OverideValue != "concentric")
+                                                {
+                                                    or.OverideValue = "10";
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                break;
+
+
+
+
+                            case "'lines'ifinfill_sparse_density>25else'grid'":
+                                {
+                                    // infill_pattern
+                                    // 'lines' if infill_sparse_density > 25 else 'grid'
+                                    or.OverideValue = "grid";
+                                    SettingDefinition sd = FindOveride(overrides, "infill_sparse_density");
+                                    if (sd != null)
+                                    {
+                                        double isd = Convert.ToDouble(sd.OverideValue);
+                                        if (isd > 25)
+                                        {
+                                            or.OverideValue = "lines";
+                                        }
+                                    }
+                                }
+                                break;
+
+
+
+
+                            case "wall_line_width_0/4ifwall_line_count==1elsewall_line_width_x/4":
+                                {
+                                    // infill_wipe_dist
+                                    // wall_line_width_0 / 4 if wall_line_count == 1 else wall_line_width_x / 4
+                                    if (Match("wall_line_count", "1"))
+                                    {
+                                        Divide(or,"wall_line_width_0", 4);
+                                    }
+                                    else
+                                    {
+                                        Divide(or, "wall_line_width_x", 4);
+                                    }
+                                }
+                                break;
+
+
+
+
+                            case "jerk_printifmagic_spiralizeelse30":
+                                {
+                                    // jerk_travel
+                                    // jerk_print if magic_spiralize else 30
+                                    or.OverideValue = "30";
+                                    if (Match("magic_spiralize", "true"))
+                                    {
+                                        SettingDefinition sd = FindOveride(overrides, "jerk_print");
+                                        if (sd != null)
+                                        {
+                                            or.OverideValue = sd.OverideValue;
+                                        }
+                                    }
+                                }
+                                break;
+
                             default:
                                 if (IsCalculated(or.OverideValue))
                                 {
@@ -2213,6 +2463,17 @@ namespace Workflow
             }
         }
 
+        private void Divide(SettingDefinition or, string v1, double v2)
+        {
+
+            SettingDefinition so = FindOveride(overrides, v1);
+            if (so != null)
+            {
+                double val = Convert.ToDouble(so.OverideValue);
+                val = val / v2;
+                or.OverideValue = val.ToString();
+            }
+        }
         private void ReadChildren(JObject children, string section)
         {
             foreach (JProperty prop in children.Properties())
@@ -2439,7 +2700,8 @@ namespace Workflow
                     {
                         if (i != j)
                         {
-                            if (overrides[j].OverideValue == overrides[i].Name)
+                            if (overrides[j].OverideValue == overrides[i].Name ||
+                                overrides[j].OverideValue == "'"+overrides[i].Name+"'")
                             {
                                 overrides[j].OverideValue = overrides[i].OverideValue;
                                 found = true;
