@@ -140,7 +140,18 @@ namespace Barnacle.Dialogs.Slice
                 {
                     File.Delete(fName);
                 }
-                profile.Save(fName);
+                String content = "";
+                foreach (SettingDefinition sd in curaPrinter.Overrides)
+                {
+                    if ( sd.UserValue != sd.OverideValue)
+                    {
+                        content += $"{sd.Name}\n";
+                        content += $"{sd.UserValue}\n";
+                    }
+
+                }
+                File.WriteAllText(fName, content);
+                
             }
             catch (Exception ex)
             {
