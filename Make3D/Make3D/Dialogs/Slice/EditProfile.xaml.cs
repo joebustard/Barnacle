@@ -28,7 +28,7 @@ namespace Barnacle.Dialogs.Slice
         public EditProfile()
         {
             InitializeComponent();
-            UserProfilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PrinterProfiles";
+            UserProfilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PrinterProfiles\\";
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
