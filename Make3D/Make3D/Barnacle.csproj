@@ -258,7 +258,6 @@
     <Compile Include="Dialogs\Slice\EditProfile.xaml.cs">
       <DependentUpon>EditProfile.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\Slice\ProfileEntry.cs" />
     <Compile Include="Dialogs\Slice\SliceControl.xaml.cs">
       <DependentUpon>SliceControl.xaml</DependentUpon>
     </Compile>

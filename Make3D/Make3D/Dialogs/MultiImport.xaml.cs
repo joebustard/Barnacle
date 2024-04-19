@@ -44,8 +44,8 @@ namespace Barnacle.Dialogs
             CloseEnabled = true;
             StartEnabled = true;
             OverWrite = false;
-            ImportFolderChecked = true;
-            
+            ImportZipChecked = true;
+
             if (Properties.Settings.Default.LastImportFolder != "")
             {
                 ImportPath = Properties.Settings.Default.LastImportFolder;
@@ -57,6 +57,7 @@ namespace Barnacle.Dialogs
         public Visibility FolderVisibility
         {
             get { return folderVisible; }
+
             set
             {
                 if (folderVisible != value)
@@ -70,6 +71,7 @@ namespace Barnacle.Dialogs
         public Visibility ZipVisibility
         {
             get { return zipVisible; }
+
             set
             {
                 if (zipVisible != value)
@@ -83,6 +85,7 @@ namespace Barnacle.Dialogs
         public bool CloseEnabled
         {
             get { return closeEnabled; }
+
             set
             {
                 if (closeEnabled != value)
@@ -96,7 +99,8 @@ namespace Barnacle.Dialogs
         public bool ImportFolderChecked
         {
             get { return importFolderChecked; }
-            set 
+
+            set
             {
                 if (importFolderChecked != value)
                 {
@@ -107,7 +111,6 @@ namespace Barnacle.Dialogs
                         FolderVisibility = Visibility.Visible;
                         ZipVisibility = Visibility.Hidden;
                     }
-
                 }
             }
         }
@@ -115,6 +118,7 @@ namespace Barnacle.Dialogs
         public string ImportPath
         {
             get { return importPath; }
+
             set
             {
                 if (importPath != value)
@@ -128,7 +132,8 @@ namespace Barnacle.Dialogs
         public bool ImportZipChecked
         {
             get { return importZipChecked; }
-            set 
+
+            set
             {
                 if (importZipChecked != value)
                 {
@@ -146,6 +151,7 @@ namespace Barnacle.Dialogs
         public string ImportZipPath
         {
             get { return importZipPath; }
+
             set
             {
                 if (importZipPath != value)
@@ -159,6 +165,7 @@ namespace Barnacle.Dialogs
         public int MaxModelsPerFile
         {
             get { return maxModelsPerFile; }
+
             set
             {
                 if (maxModelsPerFile != value)
@@ -172,6 +179,7 @@ namespace Barnacle.Dialogs
         public bool OverWrite
         {
             get { return overWrite; }
+
             set
             {
                 if (overWrite != value)
@@ -185,6 +193,7 @@ namespace Barnacle.Dialogs
         public double ProgressValue
         {
             get { return progressValue; }
+
             set
             {
                 if (progressValue != value)
@@ -198,6 +207,7 @@ namespace Barnacle.Dialogs
         public string ResultsText
         {
             get { return resultsText; }
+
             set
             {
                 if (resultsText != value)
@@ -211,6 +221,7 @@ namespace Barnacle.Dialogs
         public bool StartEnabled
         {
             get { return startEnabled; }
+
             set
             {
                 if (startEnabled != value)
@@ -224,6 +235,7 @@ namespace Barnacle.Dialogs
         public double XRotation
         {
             get { return xRotation; }
+
             set
             {
                 if (xRotation != value)
@@ -237,6 +249,7 @@ namespace Barnacle.Dialogs
         public double YRotation
         {
             get { return yRotation; }
+
             set
             {
                 if (yRotation != value)
@@ -250,6 +263,7 @@ namespace Barnacle.Dialogs
         public double ZRotation
         {
             get { return zRotation; }
+
             set
             {
                 if (zRotation != value)
@@ -403,7 +417,7 @@ namespace Barnacle.Dialogs
                 int numFiles = files.GetLength(0);
                 if (numFiles > 0)
                 {
-                    MaxProgress = numFiles-1;
+                    MaxProgress = numFiles - 1;
                 }
 
                 foreach (string fpath in files)
@@ -424,13 +438,15 @@ namespace Barnacle.Dialogs
                 StartEnabled = true;
             }
         }
+
         public static string GetTempFilePathWithExtension(string extension)
         {
             var path = Path.GetTempPath();
             var fileName = Path.ChangeExtension(Guid.NewGuid().ToString(), extension);
             return Path.Combine(path, fileName);
         }
-        private static Task<bool> ImportOneFromZip(string zipPath,string fpath, double xRot, double yRot, double zRot)
+
+        private static Task<bool> ImportOneFromZip(string zipPath, string fpath, double xRot, double yRot, double zRot)
         {
             bool result = false;
             if (File.Exists(zipPath))
@@ -494,14 +510,16 @@ namespace Barnacle.Dialogs
             }
             return Task.FromResult<bool>(result);
         }
+
         private int maxProgress;
 
         public int MaxProgress
         {
             get { return maxProgress; }
-            set 
+
+            set
             {
-                if (maxProgress != value )
+                if (maxProgress != value)
                 {
                     maxProgress = value;
                     NotifyPropertyChanged();
@@ -519,15 +537,14 @@ namespace Barnacle.Dialogs
                     StartEnabled = false;
                 });
 
-                // Properties.Settings.Default.LastImportFolder = ImportPath;
-                // Properties.Settings.Default.Save();
+                // Properties.Settings.Default.LastImportFolder = ImportPath; Properties.Settings.Default.Save();
                 ResultsText = "";
                 List<string> files = ZipUtils.ListFilesInZip(importZipPath, ".stl");
                 double prog = 0;
                 int numFiles = files.Count;
-                if ( numFiles>0)
+                if (numFiles > 0)
                 {
-                    MaxProgress = numFiles-1;
+                    MaxProgress = numFiles - 1;
                 }
                 foreach (string fpath in files)
                 {

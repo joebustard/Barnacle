@@ -15,17 +15,20 @@ namespace Barnacle.Dialogs.Slice
     /// </summary>
     public partial class EditProfile : Window, INotifyPropertyChanged
     {
-        private CuraDefinitionFile curaPrinter;
+        private CuraDefinitionFile curaDataForPrinter;
         private BarnaclePrinter printer;
         private BarnaclePrinterManager printerManager;
-        private SlicerProfile profile;
+
         private string profileName;
         private string selectedSection;
         private List<String> settingSections;
         private List<SettingDefinition> settingsToDisplay;
+        private string UserProfilePath;
+
         public EditProfile()
         {
             InitializeComponent();
+            UserProfilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PrinterProfiles";
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -53,6 +56,7 @@ namespace Barnacle.Dialogs.Slice
         public string SelectedSection
         {
             get { return selectedSection; }
+
             set
             {
                 if (selectedSection != value)
@@ -67,6 +71,7 @@ namespace Barnacle.Dialogs.Slice
         public List<String> SettingSections
         {
             get { return settingSections; }
+
             set
             {
                 if (value != settingSections)
@@ -76,9 +81,11 @@ namespace Barnacle.Dialogs.Slice
                 }
             }
         }
+
         public List<SettingDefinition> SettingsToDisplay
         {
             get { return settingsToDisplay; }
+
             set
             {
                 if (settingsToDisplay != value)
@@ -88,10 +95,32 @@ namespace Barnacle.Dialogs.Slice
                 }
             }
         }
+
         public void LoadFile(string fileName)
         {
-            //  profile = new CuraDefinitionFile();
-            //  profile.Load(fileName);
+            try
+            {
+                if (File.Exists(fileName))
+                {
+                    String[] content = File.ReadAllLines(fileName);
+                    for (int i = 0; i < content.GetLength(0); i += 2)
+                    {
+                        string key = content[i];
+                        string val = content[i + 1];
+                        foreach (SettingDefinition sd in curaDataForPrinter.Overrides)
+                        {
+                            if (sd.Name == key)
+                            {
+                                sd.UserValue = val;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex);
+            }
         }
 
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
@@ -110,16 +139,12 @@ namespace Barnacle.Dialogs.Slice
 
         private void OKClick(object sender, RoutedEventArgs e)
         {
-            String fileName = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PrinterProfiles";
-            if (!Directory.Exists(fileName))
+            String fileName = UserProfilePath + $"{ProfileName}.profile";
+            if (!Directory.Exists(UserProfilePath))
             {
-                Directory.CreateDirectory(fileName);
+                Directory.CreateDirectory(UserProfilePath);
             }
-            fileName += System.IO.Path.DirectorySeparatorChar + ProfileName;
-            if (!fileName.ToLower().EndsWith(".profile"))
-            {
-                fileName += ".profile";
-            }
+
             if (CreatingNewProfile && File.Exists(fileName))
             {
                 MessageBox.Show($"Profile {ProfileName} already exists. Use a different name.", "Error");
@@ -141,17 +166,15 @@ namespace Barnacle.Dialogs.Slice
                     File.Delete(fName);
                 }
                 String content = "";
-                foreach (SettingDefinition sd in curaPrinter.Overrides)
+                foreach (SettingDefinition sd in curaDataForPrinter.Overrides)
                 {
-                    if ( sd.UserValue != sd.OverideValue)
+                    if (sd.UserValue != sd.OverideValue)
                     {
                         content += $"{sd.Name}\n";
                         content += $"{sd.UserValue}\n";
                     }
-
                 }
                 File.WriteAllText(fName, content);
-                
             }
             catch (Exception ex)
             {
@@ -162,7 +185,7 @@ namespace Barnacle.Dialogs.Slice
         private void UpdateSettingsToDisplay()
         {
             List<SettingDefinition> tmp = new List<SettingDefinition>();
-            foreach (SettingDefinition sd in curaPrinter.Overrides)
+            foreach (SettingDefinition sd in curaDataForPrinter.Overrides)
             {
                 if (sd.Section == selectedSection)
                 {
@@ -171,6 +194,7 @@ namespace Barnacle.Dialogs.Slice
             }
             SettingsToDisplay = tmp;
         }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = this;
@@ -178,7 +202,7 @@ namespace Barnacle.Dialogs.Slice
             printer = printerManager.FindPrinter(PrinterName);
             if (printer != null)
             {
-                curaPrinter = new CuraDefinitionFile();
+                curaDataForPrinter = new CuraDefinitionFile();
                 String SlicerPath = Properties.Settings.Default.SlicerPath;
 
                 if (SlicerPath != null && SlicerPath != "")
@@ -186,12 +210,20 @@ namespace Barnacle.Dialogs.Slice
                     string curaPrinterName = SlicerPath + @"\share\cura\Resources\definitions\" + printer.CuraPrinterFile + ".def.json";
                     string curaExtruderName = SlicerPath + @"\share\cura\Resources\definitions\" + printer.CuraExtruderFile + ".def.json";
 
-                    curaPrinter.Load(curaPrinterName);
-                    curaPrinter.Load(curaExtruderName);
-                    curaPrinter.ProcessSettings();
-                    curaPrinter.SetUserValues();
-                    SettingSections = curaPrinter.SectionNames();
+                    curaDataForPrinter.Load(curaPrinterName);
+                    curaDataForPrinter.Load(curaExtruderName);
+                    curaDataForPrinter.ProcessSettings();
+                    curaDataForPrinter.SetUserValues();
+                    SettingSections = curaDataForPrinter.SectionNames();
                     SelectedSection = SettingSections[0];
+                }
+                if (!CreatingNewProfile)
+                {
+                    String profile = UserProfilePath + $"{ProfileName}.profile";
+                    if (File.Exists(profile))
+                    {
+                        LoadFile(profile);
+                    }
                 }
             }
         }

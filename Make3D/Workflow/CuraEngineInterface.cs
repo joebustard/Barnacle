@@ -13,9 +13,8 @@ namespace Workflow
     public class CuraEngineInterface
     {
         /*
-        // Cura gets upset if you send too many parameters
-        // It also gets upset if you don't send these ones
-        // even if they still have their default values
+        // Cura gets upset if you send too many parameters It also gets upset if you don't send
+        // these ones even if they still have their default values
         private static string[] mustAlwaysSend =
         {
 "roofing_monotonic",
@@ -224,7 +223,7 @@ exit 0
                 ProcessStartInfo pi = new ProcessStartInfo();
                 pi.UseShellExecute = true;
                 pi.FileName = pt;
-                //  pi.WindowStyle = ProcessWindowStyle.Normal;
+                // pi.WindowStyle = ProcessWindowStyle.Normal;
                 pi.WindowStyle = ProcessWindowStyle.Hidden;
                 pi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle";
                 Process runner = Process.Start(pi);
@@ -274,45 +273,15 @@ exit 0
             return res;
         }
 
-        public static List<string> GetAvailableUserProfiles()
-        {
-            string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            folder += "\\Barnacle\\PrinterProfiles";
-            if (!Directory.Exists(folder))
-            {
-                try
-                {
-                    Directory.CreateDirectory(folder);
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogException(ex);
-                }
-            }
-            List<string> res = new List<string>();
-            res.Add("None");
-            String[] files = Directory.GetFiles(folder, "*.profile");
-            if (files.GetLength(0) > 0)
-            {
-                foreach (string s in files)
-                {
-                    res.Add(Path.GetFileNameWithoutExtension(s));
-                }
-            }
-
-            return res;
-        }
-
         public static async Task<SliceResult> Slice(string stlPath, string gcodePath, string logPath, string sdCardName, string slicerPath, string printer, string extruder, string userProfile, String startG, string endG)
         {
             SliceResult res = new SliceResult();
             res.Result = false;
             try
             {
-                // we need to construct a cmd file to run the slice
-                // Work  out where it should be.
-                // use different temp names, because we will have async tasks going
-                // and we dont want two trying to write to the same cmd or log file
+                // we need to construct a cmd file to run the slice Work out where it should be. use
+                // different temp names, because we will have async tasks going and we dont want two
+                // trying to write to the same cmd or log file
                 string tmpCmdFile = Path.GetTempFileName();
                 tmpCmdFile = Path.ChangeExtension(tmpCmdFile, "cmd");
                 if (File.Exists(tmpCmdFile))
@@ -327,101 +296,51 @@ exit 0
                     File.Delete(tmpFile);
                 }
 
-                // We need a slicer profile.
-                // The profile is based on the ones supplied with Cura BUT
+                // We need a slicer profile. The profile is based on the ones supplied with Cura BUT
                 // it doesn't use Cura's ones directly
-                SlicerProfile userSettings = new SlicerProfile(userProfile);
-                userSettings.Prepare();
+                String settingoverrides = "";
 
-                string settingoverrides = "";
-                //if (userSettings.CuraFile != null)
-                  
+                CuraDefinitionFile curaDataForPrinter = new CuraDefinitionFile();
+
+                if (slicerPath != null && slicerPath != "")
+                {
+                    string curaPrinterName = slicerPath + @"\share\cura\Resources\definitions\" + printer;
+                    string curaExtruderName = slicerPath + @"\share\cura\Resources\definitions\" + extruder;
+
+                    curaDataForPrinter.Load(curaPrinterName);
+                    curaDataForPrinter.Load(curaExtruderName);
+                    curaDataForPrinter.ProcessSettings();
+                    curaDataForPrinter.SetUserValues();
+
+                    if (File.Exists(userProfile))
                     {
-           //         foreach (SettingDefinition se in userSettings.CuraFile.Overrides)
-             //       {
-               //         settingoverrides += $"-s {se.Name}=\"{se.OverideValue}\" ^\n";
-                 //   }
-
-                    /*
-                    string fileName = AppDomain.CurrentDomain.BaseDirectory + @"Data\DefaultPrinter.profile";
-                    SlicerProfile userSettings = new SlicerProfile(fileName);
-                    SlicerProfile defaultSettings = null;
-
-                    if (userProfile != "" && userProfile.ToLower() != "none")
-                    {
-                        string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                        folder += "\\Barnacle\\PrinterProfiles\\";
-                        userProfile = folder + userProfile + ".profile";
-
-                        userSettings.LoadOverrides(userProfile);
-                        userSettings.SaveAsXml(folder + "\\test.xaml");
-                        foreach (SettingDefinition ov in defaultSettings.Overrides)
+                        String[] content = File.ReadAllLines(userProfile);
+                        for (int i = 0; i < content.GetLength(0); i += 2)
                         {
-                            if (ov.Key.ToLower() == mustAlwaysSend[j].ToLower())
+                            string key = content[i];
+                            string val = content[i + 1];
+                            foreach (SettingDefinition sd in curaDataForPrinter.Overrides)
                             {
-                                settingoverrides += $"-s {ov.Key}=\"{ov.Value}\" ^\n";
-                            }
-                        }
-
-                        string appFolder = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
-                        string defProfile = System.IO.Path.Combine(appFolder, "DefaultPrinter.profile");
-                        if (File.Exists(defProfile))
-                        {
-                            defaultSettings = new SlicerProfile();
-                            defaultSettings.LoadOverrides(defProfile);
-                        }
-                    }
-
-                    bool[] haveSentAlready = new bool[mustAlwaysSend.Length];
-
-                    string settingoverrides = "";
-                    foreach (SettingOverride ov in userSettings.Overrides)
-                    {
-                        bool add = true;
-                        if (defaultSettings != null)
-                        {
-                            foreach (SettingOverride df in defaultSettings.Overrides)
-                            {
-                                if (df.Key == ov.Key && !mustAlwaysSend.Contains(ov.Key))
+                                if (sd.Name == key)
                                 {
-                                    if (df.Value == ov.Value)
-                                    {
-                                        add = false;
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                        if (add)
-                        {
-                            settingoverrides += $"-s {ov.Key}=\"{ov.Value}\" ^\n";
-                            for (int j = 0; j < mustAlwaysSend.Length; j++)
-                            {
-                                if (mustAlwaysSend[j].ToLower() == ov.Key.ToLower())
-                                {
-                                    haveSentAlready[j] = true;
+                                    sd.UserValue = val;
+                                    sd.ModifiedByUser = true;
                                 }
                             }
                         }
                     }
-                    if (defaultSettings != null)
+
+                    if (curaDataForPrinter.Overrides != null)
                     {
-                        for (int j = 0; j < mustAlwaysSend.Length; j++)
+                        foreach (SettingDefinition sd in curaDataForPrinter.Overrides)
                         {
-                            if (haveSentAlready[j] == false)
+                            if (sd.ModifiedByUser || sd.Calculated)
                             {
-                                foreach (SettingOverride ov in defaultSettings.Overrides)
-                                {
-                                    if (ov.Key.ToLower() == mustAlwaysSend[j].ToLower())
-                                    {
-                                        settingoverrides += $"-s {ov.Key}=\"{ov.Value}\" ^\n";
-                                    }
-                                }
+                                settingoverrides += $"-s {sd.Name} = \"{sd.UserValue}\" ^";
                             }
                         }
                     }
-                    settingoverrides = settingoverrides.Substring(0, settingoverrides.Length - 1);
-                    */
+
                     string n = System.IO.Path.GetFileNameWithoutExtension(stlPath);
                     if (File.Exists(logPath))
                     {
@@ -453,8 +372,8 @@ exit 0
                     {
                         string[] logLines = File.ReadAllLines(logPath);
                         int len = logLines.GetLength(0);
-                        // if the log has something in it we can try extracting the print duration etc.
-                        // if its empty then we can't do anything with it
+                        // if the log has something in it we can try extracting the print duration
+                        // etc. if its empty then we can't do anything with it
                         if (len > 0)
                         {
                             for (int lineIndex = 0; lineIndex < len; lineIndex++)
@@ -480,10 +399,6 @@ exit 0
                         }
                     }
                 }
-//                else
-  //              {
-    //                Logger.Log("userSettings.CuraFile is null, i.e.profile failed to load");
-      //          }
             }
             catch (Exception ex)
             {
@@ -493,19 +408,19 @@ exit 0
             return res;
         }
 
-        // examples
-        // $Printer =".\resources\definitions\creality_ender3pro.def.json"
-        // $Extruder =".\resources\definitions\fdmextruder.def.json"
-        // $SettingOverrides = -s material_print_temperature = "200" ^
+        // examples $Printer =".\resources\definitions\creality_ender3pro.def.json" $Extruder
+        // =".\resources\definitions\fdmextruder.def.json" $SettingOverrides = -s
+        // material_print_temperature = "200" ^
         // -s material_print_temperature_layer_0 = "200" ^
         // -s adhesion_type = "raft" ^
         // -s layer_height = "0.18" ^
         // -s layer_height_0 = "0.18" ^
-        // -s raft_base_thickness = "0.24" ^
-        // $StartGcode = -s machine_start_gcode = "M117 %2 \nM201 X500.00 Y500.00 Z100.00 E5000.00 \nM203 X500.00 Y500.00 Z10.00 E50.00 \nM204 P500.00 R1000.00 T500.00 \nM205 X8.00 Y8.00 Z0.40 E5.00 \nM220 S100 \nM221 S100 \n\nG28 \nG29\nG92 E0 \nG1 Z2.0 F3000 \nG1 X10.1 Y20 Z0.28 F5000.0 \nG1 X10.1 Y200.0 Z0.28 F1500.0 E15 \nG1 X10.4 Y200.0 Z0.28 F5000.0 \nG1 X10.4 Y20 Z0.28 F1500.0 E30 \nG92 E0 \nG1 Z2.0 F3000 \n" ^
-        // $EndGCode
-        // $src = path\file.stl
-        // $trg = path\file.gcode
+        // -s raft_base_thickness = "0.24" ^ $StartGcode = -s machine_start_gcode = "M117 %2 \nM201
+        // X500.00 Y500.00 Z100.00 E5000.00 \nM203 X500.00 Y500.00 Z10.00 E50.00 \nM204 P500.00
+        // R1000.00 T500.00 \nM205 X8.00 Y8.00 Z0.40 E5.00 \nM220 S100 \nM221 S100 \n\nG28
+        // \nG29\nG92 E0 \nG1 Z2.0 F3000 \nG1 X10.1 Y20 Z0.28 F5000.0 \nG1 X10.1 Y200.0 Z0.28
+        // F1500.0 E15 \nG1 X10.4 Y200.0 Z0.28 F5000.0 \nG1 X10.4 Y20 Z0.28 F1500.0 E30 \nG92 E0
+        // \nG1 Z2.0 F3000 \n" ^ $EndGCode $src = path\file.stl $trg = path\file.gcode
         public static void WriteSliceFileCmd(String File,
                                              string curapath,
                                              string prnter,
