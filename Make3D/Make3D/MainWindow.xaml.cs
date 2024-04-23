@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Barnacle.Models;
+using Barnacle.Models.BufferedPolyline;
+using System.Collections.Generic;
 
 namespace Barnacle
 {
@@ -16,7 +18,7 @@ namespace Barnacle
         public MainWindow()
         {
             InitializeComponent();
-           this.RestoreSizeAndLocation();
+            this.RestoreSizeAndLocation();
             PrepareUndo();
         }
 
@@ -59,6 +61,13 @@ namespace Barnacle
             }
 
             InfoWindow.Instance().Owner = this;
+
+            List<Point> pnts = new List<Point>();
+            pnts.Add(new Point(10, 10));
+            pnts.Add(new Point(20, 20));
+            pnts.Add(new Point(30, 20));
+            BufferedPolyline bp = new BufferedPolyline(pnts);
+            bp.GenerateBuffer();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

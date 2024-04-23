@@ -331,6 +331,9 @@
     <Compile Include="Adorners\Adorner.cs" />
     <Compile Include="Dialogs\WireFrame\WireFrameSegment.cs" />
     <Compile Include="Models\Axies.cs" />
+    <Compile Include="Models\BufferedPolyline\BufferedPolyline.cs" />
+    <Compile Include="Models\BufferedPolyline\CoreSegment.cs" />
+    <Compile Include="Models\BufferedPolyline\Segment.cs" />
     <Compile Include="Models\CohenSutherland.cs" />
     <Compile Include="Models\GridData.cs" />
     <Compile Include="Models\HorizontalPlane.cs" />
