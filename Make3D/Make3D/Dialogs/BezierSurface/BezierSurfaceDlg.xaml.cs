@@ -41,6 +41,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -58,6 +59,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -75,6 +77,7 @@ namespace Barnacle.Dialogs
             {
                 return surfaceThickness;
             }
+
             set
             {
                 if (surfaceThickness != value)
@@ -461,6 +464,7 @@ namespace Barnacle.Dialogs
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             LoadEditorParameters();
+            MeshColour = System.Windows.Media.Color.FromArgb(64, 128, 128, 128);
             GenerateShape();
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
