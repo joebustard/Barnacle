@@ -12,7 +12,7 @@ namespace Workflow
 {
     public class CuraEngineInterface
     {
-        /*
+        
         // Cura gets upset if you send too many parameters It also gets upset if you don't send
         // these ones even if they still have their default values
         private static string[] mustAlwaysSend =
@@ -193,7 +193,7 @@ namespace Workflow
 "z_seam_type",
 "gantry_height",
         };
-*/
+
 
         private static string slicecmdtemplate =
         @"
@@ -334,13 +334,16 @@ exit 0
                     {
                         foreach (SettingDefinition sd in curaDataForPrinter.Overrides)
                         {
-                            if (sd.ModifiedByUser || sd.Calculated)
+                            if (sd.ModifiedByUser || sd.Calculated || mustAlwaysSend.Contains(sd.Name))
                             {
-                                settingoverrides += $"-s {sd.Name} = \"{sd.UserValue}\" ^";
+                                settingoverrides += $"-s {sd.Name}=\"{sd.UserValue}\" ^\n";
                             }
                         }
                     }
-
+                    if (settingoverrides.EndsWith("\n"))
+                    {
+                        settingoverrides = settingoverrides.Substring(0, settingoverrides.Length - 1);
+                    }
                     string n = System.IO.Path.GetFileNameWithoutExtension(stlPath);
                     if (File.Exists(logPath))
                     {

@@ -382,6 +382,7 @@ namespace Barnacle.Dialogs.Slice
                 String defProfile = fl + $"{selectedUserProfile}.profile";
                 if (File.Exists(defProfile))
                 {
+                    dlg.PrinterName = SelectedPrinter;
                     dlg.ProfileName = selectedUserProfile;
                     dlg.CreatingNewProfile = false;
                     dlg.ShowDialog();
@@ -663,6 +664,8 @@ M84 ; Disable stepper motors
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = this;
+            UserProfilePathNoSlash = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PrinterProfiles";
+            UserProfilePath = UserProfilePathNoSlash + "\\";
 
             printerManager = new BarnaclePrinterManager();
             BarnaclePrinterNames = printerManager.GetPrinterNames();
@@ -684,8 +687,6 @@ M84 ; Disable stepper motors
                 CanSlice = false;
             }
             CheckIfSDCopyShouldBeEnabled();
-            UserProfilePathNoSlash = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PrinterProfiles";
-            UserProfilePath = UserProfilePathNoSlash + "\\";
         }
 
         public List<string> GetAvailableUserProfiles()
