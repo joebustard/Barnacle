@@ -51,7 +51,8 @@ namespace Barnacle.Models.BufferedPolyline
         public void GenerateBuffer()
         {
             /*
-            for reference points are orientated around the core like this
+            for reference,
+            points are orientated around the core like this
 
             p0 ------------------>--------- p1
 
@@ -145,6 +146,11 @@ namespace Barnacle.Models.BufferedPolyline
                         if (sideIsA)
                         {
                             CoreSegments[i].FillA = true;
+
+                            // Add curve section to the segment
+                            // as extension curves
+                            side[i].Extensions = new List<Segment>();
+                            AddExtensions(side[i].Extensions, CoreSegments[i].End, side[i].End, side[i + 1].Start);
                         }
                         else
                         {
@@ -152,6 +158,47 @@ namespace Barnacle.Models.BufferedPolyline
                         }
                     }
                 }
+            }
+        }
+
+        private void AddExtensions(List<Segment> extensions, Point centre, Point p1, Point p2)
+        {
+            // Generate a curve of segments
+            double dy1 = p1.Y - centre.Y;
+            double dx1 = p1.X - centre.X;
+
+            double startAngle = Math.Atan2(dy1, dx1);
+            if ( startAngle < 0)
+            {
+                startAngle += Math.PI * 2;
+            }
+
+            double dy2 = p2.Y - centre.Y;
+            double dx2 = p2.X - centre.X;
+
+            double endAngle = Math.Atan2(dy2, dx2);
+            if (endAngle < 0)
+            {
+                endAngle += Math.PI * 2;
+            }
+
+            int numdiv = 10;
+            double da = (endAngle - startAngle) / numdiv;
+            double theta ;
+            Point? oldp = null;
+            for ( int i = 1; i < numdiv; i++ )
+            {
+                theta = startAngle + (da * i);
+                Point p = new Point();
+                p.X = BufferRadius * Math.Sin(theta) + centre.X;
+                p.Y = BufferRadius * Math.Cos(theta) + centre.Y;
+                System.Diagnostics.Debug.WriteLine($"Curve {p.X},{p.Y}");
+                if (oldp != null)
+                {
+                    Segment sg = new Segment((Point)oldp, p);
+                    extensions.Add(sg);
+                }
+                oldp = p;
             }
         }
 

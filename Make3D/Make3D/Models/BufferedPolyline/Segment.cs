@@ -11,22 +11,18 @@ namespace Barnacle.Models.BufferedPolyline
     {
         public Point Start { get; set; }
         public Point End { get; set; }
-
+        public List<Segment> Extensions { get; set; }
         public Segment(Point s, Point e)
         {
             Start = s;
             End = e;
+            Extensions = null;
         }
 
         public Segment()
         {
+            Extensions = null;
         }
 
-        public void Reverse()
-        {
-            Point tmp = Start;
-            Start = End;
-            End = tmp;
-        }
     }
 }
