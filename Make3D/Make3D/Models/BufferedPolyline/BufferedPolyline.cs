@@ -118,15 +118,33 @@ namespace Barnacle.Models.BufferedPolyline
                     SideA.Add(left);
                     Segment right = new Segment(p2, p3);
                     SideB.Insert(0, right);
-                    System.Diagnostics.Debug.WriteLine($"Segment corners {p0.X},{p0.Y}   {p1.X},{p1.Y}  {p2.X},{p2.Y}  {p3.X},{p3.Y}");
                 }
 
-                CheckForIntercepts(SideA, true);
-                CheckForIntercepts(SideB, false);
+                CheckForIntercepts(SideA);
+                CheckForIntercepts(SideB);
+                DumpSegments(SideA);
+                DumpSegments(SideB);
             }
         }
 
-        private void CheckForIntercepts(List<Segment> side, bool sideIsA)
+        private void DumpSegments(List<Segment> side)
+        {
+            foreach (Segment seg in side)
+            {
+                System.Diagnostics.Debug.WriteLine($"{seg.Start.X},{seg.Start.Y}   {seg.End.X},{seg.End.Y}");
+                // {seg.End.X},{seg.End.Y}
+                if (seg.Extensions != null)
+                {
+                    foreach (Segment ext in seg.Extensions)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"{ext.Start.X},{ext.Start.Y} {ext.End.X},{ext.End.Y}");
+                        // {ext.End.X},{ext.End.Y}
+                    }
+                }
+            }
+        }
+
+        private void CheckForIntercepts(List<Segment> side)
         {
             for (int i = 0; i < side.Count - 1; i++)
             {
@@ -138,24 +156,12 @@ namespace Barnacle.Models.BufferedPolyline
                     {
                         side[i].End = (Point)crossPoint;
                         side[i + 1].Start = (Point)crossPoint;
-                        System.Diagnostics.Debug.WriteLine($"Move end of segment");
                     }
                     else
                     {
-                        // need to fill gap between
-                        if (sideIsA)
-                        {
-                            CoreSegments[i].FillA = true;
-
-                            // Add curve section to the segment
-                            // as extension curves
-                            side[i].Extensions = new List<Segment>();
-                            AddExtensions(side[i].Extensions, CoreSegments[i].End, side[i].End, side[i + 1].Start);
-                        }
-                        else
-                        {
-                            CoreSegments[side.Count - i - 1].FillB = true;
-                        }
+                        // Add curve section to the segment as extension curves
+                        side[i].Extensions = new List<Segment>();
+                        AddExtensions(side[i].Extensions, CoreSegments[i].End, side[i].End, side[i + 1].Start);
                     }
                 }
             }
@@ -168,31 +174,41 @@ namespace Barnacle.Models.BufferedPolyline
             double dx1 = p1.X - centre.X;
 
             double startAngle = Math.Atan2(dy1, dx1);
-            if ( startAngle < 0)
-            {
-                startAngle += Math.PI * 2;
-            }
 
             double dy2 = p2.Y - centre.Y;
             double dx2 = p2.X - centre.X;
 
             double endAngle = Math.Atan2(dy2, dx2);
+            int numdiv = 4;
+            double theta;
+            Point? oldp = null;
+            /*
+            if (startAngle < 0)
+            {
+                startAngle += Math.PI * 2;
+            }
             if (endAngle < 0)
             {
                 endAngle += Math.PI * 2;
             }
-
-            int numdiv = 10;
-            double da = (endAngle - startAngle) / numdiv;
-            double theta ;
-            Point? oldp = null;
-            for ( int i = 1; i < numdiv; i++ )
+            */
+            if (startAngle < endAngle)
             {
-                theta = startAngle + (da * i);
+                startAngle += Math.PI * 2;
+            }
+            double da = (startAngle - endAngle) / numdiv;
+            for (int i = 0; i < numdiv; i++)
+            {
+                theta = startAngle - (da * i);
+                /*
+                    if (theta < 0)
+                    {
+                        theta += Math.PI * 2;
+                    }
+                    */
                 Point p = new Point();
                 p.X = BufferRadius * Math.Sin(theta) + centre.X;
                 p.Y = BufferRadius * Math.Cos(theta) + centre.Y;
-                System.Diagnostics.Debug.WriteLine($"Curve {p.X},{p.Y}");
                 if (oldp != null)
                 {
                     Segment sg = new Segment((Point)oldp, p);

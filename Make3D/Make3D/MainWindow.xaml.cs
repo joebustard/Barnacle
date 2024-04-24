@@ -63,10 +63,11 @@ namespace Barnacle
             InfoWindow.Instance().Owner = this;
 
             List<Point> pnts = new List<Point>();
-            pnts.Add(new Point(10, 10));
-            pnts.Add(new Point(20, 20));
-            pnts.Add(new Point(30, 20));
+            pnts.Add(new Point(2, 2));
+            pnts.Add(new Point(6, 6));
+            pnts.Add(new Point(10, 6));
             BufferedPolyline bp = new BufferedPolyline(pnts);
+            bp.BufferRadius = 1;
             bp.GenerateBuffer();
         }
 
