@@ -42,14 +42,15 @@ namespace Barnacle.Models.BufferedPolyline
             }
         }
 
-        public void GenerateBuffer(double br)
+        public List<Point> GenerateBuffer(double br)
         {
             BufferRadius = br;
-            GenerateBuffer();
+            return GenerateBuffer();
         }
 
-        public void GenerateBuffer()
+        public List<Point> GenerateBuffer()
         {
+            List<Point> outline = new List<Point>();
             /*
             for reference,
             points are orientated around the core like this
@@ -120,11 +121,47 @@ namespace Barnacle.Models.BufferedPolyline
                     SideB.Insert(0, right);
                 }
 
-                CheckForIntercepts(SideA);
+                CheckForIntercepts(SideA,true);
                 CheckForIntercepts(SideB);
-                DumpSegments(SideA);
-                DumpSegments(SideB);
+              //  DumpSegments(SideA);
+              //  DumpSegments(SideB);
+                
+                AddOutline(outline, SideA);
+                AddOutline(outline, SideB);
+                
             }
+            return outline;
+        }
+
+        private void AddOutline(List<Point> outline, List<Segment> side)
+        {
+
+            foreach (Segment seg in side)
+            {
+                if (outline.Count == 0)
+                {
+                    outline.Add(seg.Start);
+                    outline.Add(seg.End);
+                }
+                else
+                {
+                    AddNoDup(outline, seg.Start);
+                    AddNoDup(outline, seg.End);
+                }
+                if ( seg.Extensions != null)
+                {
+                    AddOutline(outline, seg.Extensions);
+                }
+            }
+        }
+
+        private void AddNoDup(List<Point> outline, Point pt)
+        {
+           int last = outline.Count-1;
+           if (  outline[last].X != pt.X || outline[last].Y != pt.Y)
+           {
+                outline.Add(pt);
+           }
         }
 
         private void DumpSegments(List<Segment> side)
@@ -144,7 +181,7 @@ namespace Barnacle.Models.BufferedPolyline
             }
         }
 
-        private void CheckForIntercepts(List<Segment> side)
+        private void CheckForIntercepts(List<Segment> side, bool isA = false)
         {
             for (int i = 0; i < side.Count - 1; i++)
             {
@@ -159,9 +196,16 @@ namespace Barnacle.Models.BufferedPolyline
                     }
                     else
                     {
+                    
                         // Add curve section to the segment as extension curves
                         side[i].Extensions = new List<Segment>();
-                        AddExtensions(side[i].Extensions, CoreSegments[i].End, side[i].End, side[i + 1].Start);
+                        Point centre = CoreSegments[i].End;
+                        if (!isA)
+                        {
+                            centre = CoreSegments[CoreSegments.Count - i -1].Start;
+                        }
+                        AddExtensions(side[i].Extensions, centre, side[i].End, side[i + 1].Start);
+                        
                     }
                 }
             }
@@ -207,8 +251,8 @@ namespace Barnacle.Models.BufferedPolyline
                     }
                     */
                 Point p = new Point();
-                p.X = BufferRadius * Math.Sin(theta) + centre.X;
-                p.Y = BufferRadius * Math.Cos(theta) + centre.Y;
+                p.X = BufferRadius * Math.Cos(theta) + centre.X;
+                p.Y = BufferRadius * Math.Sin(theta) + centre.Y;
                 if (oldp != null)
                 {
                     Segment sg = new Segment((Point)oldp, p);

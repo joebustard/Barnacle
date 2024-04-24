@@ -1425,17 +1425,13 @@ namespace Barnacle.Dialogs
                         top = points[i].Y;
                     }
                 }
-                //       for (int i = 0; i < points.Count - 1; i++)
-                //       {
-                //           tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
-                //       }
+                
                 for (int i = 0; i < points.Count; i++)
                 {
                     if (PathEditor.LocalImage == null)
                     {
                         // flipping coordinates so have to reverse polygon too
-                        //tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
-                        tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
+                         tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
                     }
                     else
                     {
@@ -1450,15 +1446,12 @@ namespace Barnacle.Dialogs
                 OctTree octTree = CreateOctree(new Point3D(-lx, -by, -1.5 * (plateWidth + textureDepth)),
           new Point3D(+rx, +ty, 1.5 * (plateWidth + textureDepth)));
 
-                // generate side triangles so original points are already in list
-                //    Point[] clk = OrderClockwise(tmp.ToArray());
-
-                // Point[] clk = tmp.ToArray();
-                //  tmp = clk.ToList();
+                
                 for (int i = 0; i < tmp.Count; i++)
                 {
                     CreateSideFace(tmp, i);
                 }
+
                 // triangulate the basic polygon
                 TriangulationPolygon ply = new TriangulationPolygon();
                 List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();

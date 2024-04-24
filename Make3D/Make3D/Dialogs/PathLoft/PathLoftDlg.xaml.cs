@@ -1,11 +1,15 @@
 using asdflibrary;
+using Barnacle.Models.BufferedPolyline;
 using EarClipperLib;
 using MakerLib;
+using OctTreeLib;
+using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Media3D;
+using Triangle = PolygonTriangulationLib.Triangle;
 
 namespace Barnacle.Dialogs
 {
@@ -225,8 +229,151 @@ namespace Barnacle.Dialogs
             Close();
         }
 
-        private const double sizeLimit = 0.05;
+        public int AddVerticeOctTree(double x, double y, double z)
+        {
+            int res = -1;
+            if (octTree != null)
+            {
+                Point3D v = new Point3D(x, y, z);
+                res = octTree.PointPresent(v);
 
+                if (res == -1)
+                {
+                    res = Vertices.Count;
+                    octTree.AddPoint(res, v);
+                }
+            }
+            return res;
+        }
+        private OctTree octTree;
+        private void GenerateShape()
+        {
+            ClearShape();
+            if (pathPoints != null && pathPoints.Count > 0)
+            {
+                BufferedPolyline bl = new BufferedPolyline(pathPoints);
+                bl.BufferRadius = loftThickness / 2;
+                List<Point> outline = bl.GenerateBuffer();
+                if (outline != null && outline.Count > 3)
+                {
+                    List<System.Windows.Point> tmp = new List<System.Windows.Point>();
+                    double top = 0;
+                    for (int i = 0; i < outline.Count; i++)
+                    {
+                        if (outline[i].Y > top)
+                        {
+                            top = outline[i].Y;
+                        }
+                    }
+
+                    for (int i = 0; i < outline.Count; i++)
+                    {
+                       
+                            double x = PathEditor.ToMM(outline[i].X);
+                            double y = PathEditor.ToMM(top - outline[i].Y);
+                            tmp.Insert(0, new System.Windows.Point(x, y));
+                        
+                    }
+                    double lx, rx, ty, by;
+                    CalculateExtents(tmp, out lx, out rx, out ty, out by);
+
+                    octTree = CreateOctree( new Point3D(-lx, -by, -1),
+                                            new Point3D(+rx, +ty, loftHeight+1));
+
+
+                    for (int i = 0; i < tmp.Count; i++)
+                    {
+                        CreateSideFace(tmp, i);
+                    }
+                    /*
+                    // triangulate the basic polygon
+                    TriangulationPolygon ply = new TriangulationPolygon();
+                    List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
+                    foreach (System.Windows.Point p in tmp)
+                    {
+                        pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
+                    }
+                    ply.Points = pf.ToArray();
+                    List<Triangle> tris = ply.Triangulate();
+                    foreach (Triangle t in tris)
+                    {
+                        int c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, 0.0);
+                        int c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, 0.0);
+                        int c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, 0.0);
+                        Faces.Add(c0);
+                        Faces.Add(c2);
+                        Faces.Add(c1);
+
+                        c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, loftHeight);
+                        c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, loftHeight);
+                        c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, loftHeight);
+                        Faces.Add(c0);
+                        Faces.Add(c1);
+                        Faces.Add(c2);
+                    }
+                    */
+                    CentreVertices();
+                }
+
+            }
+        }
+
+        private void CreateSideFace(List<System.Windows.Point> pnts, int i, bool autoclose = true)
+        {
+            int v = i + 1;
+
+            if (v == pnts.Count)
+            {
+                if (autoclose)
+                {
+                    v = 0;
+                }
+                else
+                {
+                    // dont process the final point if caller doesn't want it
+                    return;
+                }
+            }
+
+            int c0 = AddVerticeOctTree(pnts[i].X, pnts[i].Y, 0.0);
+            int c1 = AddVerticeOctTree(pnts[i].X, pnts[i].Y, loftHeight);
+            int c2 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, loftHeight);
+            int c3 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, 0.0);
+            Faces.Add(c0);
+            Faces.Add(c1);
+            Faces.Add(c2);
+
+            Faces.Add(c0);
+            Faces.Add(c2);
+            Faces.Add(c3);
+        }
+
+        protected OctTree CreateOctree(Point3D minPoint, Point3D maxPoint)
+        {
+            octTree = new OctTree(Vertices, minPoint, maxPoint, 200);
+            return octTree;
+        }
+
+        private double xExtent;
+        private double yExtent;
+        private void CalculateExtents(List<Point> tmp, out double lx, out double rx, out double ty, out double by)
+        {
+            lx = double.MaxValue;
+            rx = double.MinValue;
+            ty = double.MinValue;
+            by = double.MaxValue;
+            for (int i = 0; i < tmp.Count; i++)
+            {
+                lx = Math.Min(tmp[i].X, lx);
+                rx = Math.Max(tmp[i].X, rx);
+                by = Math.Min(tmp[i].Y, by);
+                ty = Math.Max(tmp[i].Y, ty);
+            }
+            xExtent = rx - lx;
+            yExtent = ty - by;
+        }
+        private const double sizeLimit = 0.05;
+/*
         private void GenerateShape()
         {
             ClearShape();
@@ -450,7 +597,7 @@ namespace Barnacle.Dialogs
                 GC.Collect();
             }
         }
-
+*/
         private float CalculateDistance(float x, float y)
         {
             Point closest = new Point(0, 0);

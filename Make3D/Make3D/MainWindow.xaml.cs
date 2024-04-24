@@ -68,7 +68,11 @@ namespace Barnacle
             pnts.Add(new Point(10, 6));
             BufferedPolyline bp = new BufferedPolyline(pnts);
             bp.BufferRadius = 1;
-            bp.GenerateBuffer();
+            pnts =bp.GenerateBuffer();
+            foreach (Point p in pnts)
+            {
+                System.Diagnostics.Debug.WriteLine($"{p.X},{p.Y}");
+            }
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
