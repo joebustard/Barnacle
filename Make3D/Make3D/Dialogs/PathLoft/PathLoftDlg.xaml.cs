@@ -255,19 +255,24 @@ namespace Barnacle.Dialogs
                             top = outline[i].Y;
                         }
                     }
-
-                    /*
-                    for (int i = 0; i < outline.Count; i++)
+                    if (PathEditor.LocalImage == null)
                     {
-                        double x = PathEditor.ToMM(outline[i].X);
-                        double y = PathEditor.ToMM(top - outline[i].Y);
-                        //tmp.Insert(0, new System.Windows.Point(x, y));
-                        tmp.Add(new System.Windows.Point(x, y));
+                        for (int i = 0; i < outline.Count; i++)
+                        {
+                            tmp.Add(new Point(outline[i].X, top - outline[i].Y));
+                        }
                     }
-                    */
-                    for (int i = 0; i < outline.Count; i++)
+                    else
                     {
-                        tmp.Add(new Point(outline[i].X, top - outline[i].Y));
+                        
+                        for (int i = 0; i < outline.Count; i++)
+                        {
+                            double x = PathEditor.ToMM(outline[i].X);
+                            double y = PathEditor.ToMM(top - outline[i].Y);
+                            
+                            tmp.Add(new System.Windows.Point(x, y));
+                        }
+                        
                     }
                     double lx, rx, ty, by;
                     CalculateExtents(tmp, out lx, out rx, out ty, out by);
@@ -314,7 +319,11 @@ namespace Barnacle.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-
+            string imageName = EditorParameters.Get("ImagePath");
+            if (imageName != "")
+            {
+                PathEditor.LoadImage(imageName);
+            }
             LoftHeight = EditorParameters.GetDouble("LoftHeight", 10);
             LoftThickness = EditorParameters.GetDouble("LoftThickness", 5);
             String s = EditorParameters.Get("Path");
@@ -322,17 +331,12 @@ namespace Barnacle.Dialogs
             {
                 PathEditor.FromString(s);
             }
+
         }
 
         private void PathPointsChanged(List<Point> points)
         {
-            trx = 0;
-            triy = 0;
-            blx = 0;
-            bly = 0;
-            Get2DBounds(points, ref blx, ref bly, ref trx, ref triy);
-            if (trx < double.MaxValue)
-            {
+       
                 pathPoints.Clear();
                 foreach (Point p in points)
                 {
@@ -341,7 +345,7 @@ namespace Barnacle.Dialogs
 
                 GenerateShape();
                 Redisplay();
-            }
+            
         }
 
         private void SaveEditorParmeters()
@@ -351,6 +355,7 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("LoftHeight", LoftHeight.ToString());
             EditorParameters.Set("LoftThickness", LoftThickness.ToString());
             EditorParameters.Set("Path", PathEditor.AbsolutePathString);
+            EditorParameters.Set("ImagePath", PathEditor.ImagePath);
         }
 
         private void UpdateDisplay()
@@ -367,7 +372,7 @@ namespace Barnacle.Dialogs
             WarningText = "";
             // should flexi control give us live point updates while lines are dragged. Computing
             // new line costs too much so , no, instead wait until mouse up
-            PathEditor.ContinuousPointsNotify = false;
+            
             PathEditor.OpenEndedPath = true;
             LoadEditorParameters();
 

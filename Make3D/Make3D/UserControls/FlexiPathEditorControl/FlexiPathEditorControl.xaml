@@ -62,7 +62,7 @@
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Start appending new points to the line"  Visibility="{Binding AppendButtonVisible}">
 
-                                <Image Source="/Barnacle;component/Images/Buttons/SelectSegment.png" />
+                                <Image Source="/Barnacle;component/Images/Buttons/AppendPoint.png" />
                             </Button>
                         </Border>
                         <Border

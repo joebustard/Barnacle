@@ -447,17 +447,7 @@ namespace CSGLib
                             octTree.AddPoint(vertices.Count, faceVerts[j]);
                         }
 
-                        /*
-                        if (vertices.Contains(faceVerts[j]))
-                        {
-                            indices.Add(vertices.IndexOf(faceVerts[j]));
-                        }
-                        else
-                        {
-                            indices.Add(vertices.Count);
-                            vertices.Add(faceVerts[j]);
-                        }
-                        */
+                       
                     }
                 }
             }

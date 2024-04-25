@@ -944,6 +944,7 @@ namespace Barnacle.UserControls
             {
                 if (vm != null)
                 {
+                    continuosPointsNotify = value;
                     vm.ContinuousPointsNotify = value;
                 }
                 else
