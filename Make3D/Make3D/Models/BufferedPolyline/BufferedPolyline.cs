@@ -1,54 +1,72 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Barnacle.Models.BufferedPolyline
 {
     public class BufferedPolyline
     {
-        public List<CoreSegment> CoreSegments { get; set; }
-        public List<Segment> SideA { get; set; }
-        public List<Segment> SideB { get; set; }
-
-        public double BufferRadius
-        {
-            get; set;
-        }
+        private const double EquityTolerance = 0.0000001d;
 
         public BufferedPolyline()
         {
-            CoreSegments = new List<CoreSegment>();
-            SideA = new List<Segment>();
-            SideB = new List<Segment>();
+            coreSegments = new List<CoreSegment>();
+            sideSegments = new List<Segment>();
             BufferRadius = 1;
         }
 
         public BufferedPolyline(List<Point> pnts)
         {
-            SideA = new List<Segment>();
-            SideB = new List<Segment>();
+            sideSegments = new List<Segment>();
             BufferRadius = 2;
-            CoreSegments = new List<CoreSegment>();
+            coreSegments = new List<CoreSegment>();
             if (pnts != null && pnts.Count > 1)
             {
                 for (int i = 0; i < pnts.Count - 1; i++)
                 {
                     CoreSegment seg = new CoreSegment(new Point(pnts[i].X, pnts[i].Y), new Point(pnts[i + 1].X, pnts[i + 1].Y));
-                    CoreSegments.Add(seg);
+                    coreSegments.Add(seg);
                 }
             }
         }
 
-        public List<Point> GenerateBuffer(double br)
+        private double bufferRadius;
+
+        public double BufferRadius
         {
-            BufferRadius = br;
-            return GenerateBuffer();
+            get { return bufferRadius; }
+
+            set
+            {
+                if (value != bufferRadius && value > 0)
+                {
+                    bufferRadius = value;
+                }
+            }
         }
 
-        public List<Point> GenerateBuffer()
+        private List<CoreSegment> coreSegments { get; set; }
+        private List<Segment> sideSegments { get; set; }
+
+        public List<Point> GenerateBufferOutline(double br)
+        {
+            if (br > 0)
+            {
+                BufferRadius = br;
+            }
+            else
+            {
+                BufferRadius = 1;
+            }
+            return GenerateBufferOutline();
+        }
+
+        /// <summary>
+        /// Assuming we have been given a polyline and its been stored in the Coresegments, generate
+        /// the outline, offset by BufferRadius
+        /// </summary>
+        /// <returns></returns>
+        public List<Point> GenerateBufferOutline()
         {
             List<Point> outline = new List<Point>();
             /*
@@ -59,224 +77,30 @@ namespace Barnacle.Models.BufferedPolyline
 
             ==================================
 
-            p3 -----------<---------------- p2
+            p1 -----------<---------------- p0
             */
-            if (CoreSegments != null)
+            if (coreSegments != null)
             {
-                foreach (CoreSegment seg in CoreSegments)
+                foreach (CoreSegment seg in coreSegments)
                 {
-                    // as far as we know at this point the segment doesn't need to fill in its end
-                    // with curve points
-                    seg.FillA = false;
-                    seg.FillB = false;
-                    double dx = seg.End.X - seg.Start.X;
-                    double dy = seg.End.Y - seg.Start.Y;
-                    Point p0 = new Point(0, 0);
-                    Point p1 = new Point(0, 0);
-                    Point p2 = new Point(0, 0);
-                    Point p3 = new Point(0, 0);
+                    Point sp = seg.Start;
+                    Point se = seg.End;
 
-                    // is the line horizontal
-                    if (dy != 0)
-                    {
-                        double len = Math.Sqrt((dx * dx) + (dy * dy));
-                        double mag = BufferRadius / len;
-                        double dx2 = -dy * mag;
-                        double dy2 = dx * mag;
-
-                        p0.X = seg.Start.X + dx2;
-                        p0.Y = seg.Start.Y + dy2;
-
-                        p1.X = seg.End.X + dx2;
-                        p1.Y = seg.End.Y + dy2;
-
-                        dx2 = dy * mag;
-                        dy2 = -dx * mag;
-
-                        p2.X = seg.End.X + dx2;
-                        p2.Y = seg.End.Y + dy2;
-
-                        p3.X = seg.Start.X + dx2;
-                        p3.Y = seg.Start.Y + dy2;
-                    }
-                    else
-                    {
-                        // the segment is horizontal
-                        p0.X = seg.Start.X;
-                        p0.Y = seg.Start.Y + BufferRadius;
-
-                        p1.X = seg.End.X;
-                        p1.Y = seg.Start.Y + BufferRadius;
-
-                        p2.X = seg.End.X;
-                        p2.Y = seg.End.Y - BufferRadius;
-
-                        p3.X = seg.Start.X;
-                        p3.Y = seg.Start.Y - BufferRadius;
-                    }
-
-                    Segment left = new Segment(p0, p1);
-                    SideA.Add(left);
-                    Segment right = new Segment(p2, p3);
-                    SideB.Insert(0, right);
+                    GetOffsetEdge(sp, se);
+                }
+                for (int si = coreSegments.Count - 1; si >= 0; si--)
+                {
+                    CoreSegment seg = coreSegments[si];
+                    Point sp = seg.End;
+                    Point se = seg.Start;
+                    GetOffsetEdge(sp, se, false);
                 }
 
-                CheckForIntercepts(SideA,true);
-                CheckForIntercepts(SideB);
-              //  DumpSegments(SideA);
-              //  DumpSegments(SideB);
-                
-                AddOutline(outline, SideA);
-                AddOutline(outline, SideB);
-                
+                FixOutlineConnections(sideSegments);
+
+                ExtractOutlinePoints(outline, sideSegments);
             }
             return outline;
-        }
-
-        private void AddOutline(List<Point> outline, List<Segment> side)
-        {
-
-            foreach (Segment seg in side)
-            {
-                if (outline.Count == 0)
-                {
-                    outline.Add(seg.Start);
-                    outline.Add(seg.End);
-                }
-                else
-                {
-                    AddNoDup(outline, seg.Start);
-                    AddNoDup(outline, seg.End);
-                }
-                if ( seg.Extensions != null)
-                {
-                    AddOutline(outline, seg.Extensions);
-                }
-            }
-        }
-
-        private void AddNoDup(List<Point> outline, Point pt)
-        {
-           int last = outline.Count-1;
-           if (  outline[last].X != pt.X || outline[last].Y != pt.Y)
-           {
-                outline.Add(pt);
-           }
-        }
-
-        private void DumpSegments(List<Segment> side)
-        {
-            foreach (Segment seg in side)
-            {
-                System.Diagnostics.Debug.WriteLine($"{seg.Start.X},{seg.Start.Y}   {seg.End.X},{seg.End.Y}");
-                // {seg.End.X},{seg.End.Y}
-                if (seg.Extensions != null)
-                {
-                    foreach (Segment ext in seg.Extensions)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"{ext.Start.X},{ext.Start.Y} {ext.End.X},{ext.End.Y}");
-                        // {ext.End.X},{ext.End.Y}
-                    }
-                }
-            }
-        }
-
-        private void CheckForIntercepts(List<Segment> side, bool isA = false)
-        {
-            for (int i = 0; i < side.Count - 1; i++)
-            {
-                // ignore if the end of the first side segment just matches the start of the next
-                if (!PointsEqual(side[i].End, side[i + 1].Start))
-                {
-                    Point? crossPoint = GetIntersectionPoint(side[i].Start, side[i].End, side[i + 1].Start, side[i + 1].End);
-                    if (crossPoint != null)
-                    {
-                        side[i].End = (Point)crossPoint;
-                        side[i + 1].Start = (Point)crossPoint;
-                    }
-                    else
-                    {
-                    
-                        // Add curve section to the segment as extension curves
-                        side[i].Extensions = new List<Segment>();
-                        Point centre = CoreSegments[i].End;
-                        if (!isA)
-                        {
-                            centre = CoreSegments[CoreSegments.Count - i -1].Start;
-                        }
-                        AddExtensions(side[i].Extensions, centre, side[i].End, side[i + 1].Start);
-                        
-                    }
-                }
-            }
-        }
-
-        private void AddExtensions(List<Segment> extensions, Point centre, Point p1, Point p2)
-        {
-            // Generate a curve of segments
-            double dy1 = p1.Y - centre.Y;
-            double dx1 = p1.X - centre.X;
-
-            double startAngle = Math.Atan2(dy1, dx1);
-
-            double dy2 = p2.Y - centre.Y;
-            double dx2 = p2.X - centre.X;
-
-            double endAngle = Math.Atan2(dy2, dx2);
-            int numdiv = 4;
-            double theta;
-            Point? oldp = null;
-            /*
-            if (startAngle < 0)
-            {
-                startAngle += Math.PI * 2;
-            }
-            if (endAngle < 0)
-            {
-                endAngle += Math.PI * 2;
-            }
-            */
-            if (startAngle < endAngle)
-            {
-                startAngle += Math.PI * 2;
-            }
-            double da = (startAngle - endAngle) / numdiv;
-            for (int i = 0; i < numdiv; i++)
-            {
-                theta = startAngle - (da * i);
-                /*
-                    if (theta < 0)
-                    {
-                        theta += Math.PI * 2;
-                    }
-                    */
-                Point p = new Point();
-                p.X = BufferRadius * Math.Cos(theta) + centre.X;
-                p.Y = BufferRadius * Math.Sin(theta) + centre.Y;
-                if (oldp != null)
-                {
-                    Segment sg = new Segment((Point)oldp, p);
-                    extensions.Add(sg);
-                }
-                oldp = p;
-            }
-        }
-
-        private bool PointsEqual(Point p1, Point p2)
-        {
-            bool res = false;
-            if (IsEqual(p1.X, p2.X) && IsEqual(p1.Y, p2.Y))
-            {
-                res = true;
-            }
-            return res;
-        }
-
-        private const double EquityTolerance = 0.0000001d;
-
-        private bool IsEqual(double d1, double d2)
-        {
-            return Math.Abs(d1 - d2) <= EquityTolerance;
         }
 
         //math logic from http://www.wyrmtale.com/blog/2013/115/2d-line-intersection-in-c
@@ -312,6 +136,207 @@ namespace Barnacle.Models.BufferedPolyline
                     return new Point(x, y);
             }
             return null; //intersection is at out of at least one segment.
+        }
+
+        /// <summary>
+        /// Fill the gap between the start of one line segment and an other with segments following
+        /// an arc from one point to another.
+        /// </summary>
+        /// <param name="extensions"></param>
+        /// <param name="centre"></param>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        /// <param name="outbound"></param>
+        private void CreateCurvedLinks(List<Segment> extensions, Point centre, Point p1, Point p2, bool outbound)
+        {
+            // Generate a curve of segments
+            double dy1 = p1.Y - centre.Y;
+            double dx1 = p1.X - centre.X;
+
+            double startAngle = Math.Atan2(dy1, dx1);
+
+            double dy2 = p2.Y - centre.Y;
+            double dx2 = p2.X - centre.X;
+
+            double endAngle = Math.Atan2(dy2, dx2);
+            int numdiv = 4;
+            double theta;
+            Point? oldp = null;
+
+            if (startAngle < endAngle)
+            {
+                startAngle += Math.PI * 2;
+            }
+            double da = (startAngle - endAngle) / numdiv;
+            for (int i = 0; i < numdiv; i++)
+            {
+                theta = startAngle - (da * i);
+
+                Point p = new Point();
+                p.X = BufferRadius * Math.Cos(theta) + centre.X;
+                p.Y = BufferRadius * Math.Sin(theta) + centre.Y;
+                if (oldp != null)
+                {
+                    // dont care about rotation centre for this, just set to dummy
+                    Segment sg = new Segment((Point)oldp, p, new Point(0, 0), outbound);
+                    extensions.Add(sg);
+                }
+                oldp = p;
+            }
+        }
+
+        /// <summary>
+        /// Add a new point to the end of a list as long as it doesn't cause duplicates
+        /// </summary>
+        /// <param name="outline"></param>
+        /// <param name="pt"></param>
+        private void AddNoDup(List<Point> outline, Point pt)
+        {
+            int last = outline.Count - 1;
+            if (!PointsEqual(outline[last], pt))
+            {
+                outline.Add(pt);
+            }
+        }
+
+        private void ExtractOutlinePoints(List<Point> outline, List<Segment> side)
+        {
+            foreach (Segment seg in side)
+            {
+                if (outline.Count == 0)
+                {
+                    outline.Add(seg.Start);
+                    outline.Add(seg.End);
+                }
+                else
+                {
+                    AddNoDup(outline, seg.Start);
+                    AddNoDup(outline, seg.End);
+                }
+                if (seg.Extensions != null)
+                {
+                    ExtractOutlinePoints(outline, seg.Extensions);
+                }
+            }
+        }
+
+        /// <summary>
+        /// If two edges are already linked up do nothing If they intercept set the end of one and
+        /// the start of the other to the interception point so they are linked up If there ia gap
+        /// between the points fill it with small segments that go round the circumference of a
+        /// circle between the gaps
+        /// </summary>
+        /// <param name="side"></param>
+        private void FixOutlineConnections(List<Segment> side)
+        {
+            for (int i = 0; i < side.Count - 1; i++)
+            {
+                // ignore if the end of the first side segment just matches the start of the next
+                if (!PointsEqual(side[i].End, side[i + 1].Start))
+                {
+                    Point? crossPoint = GetIntersectionPoint(side[i].Start, side[i].End, side[i + 1].Start, side[i + 1].End);
+                    if (crossPoint != null)
+                    {
+                        side[i].End = (Point)crossPoint;
+                        side[i + 1].Start = (Point)crossPoint;
+                    }
+                    else
+                    {
+                        // Add curve section to the segment as extension curves
+                        side[i].Extensions = new List<Segment>();
+
+                        CreateCurvedLinks(side[i].Extensions, side[i].ExtensionCentre, side[i].End, side[i + 1].Start, side[i].Outbound);
+                    }
+                }
+            }
+        }
+
+        private void DumpSegments(List<Segment> side)
+        {
+            foreach (Segment seg in side)
+            {
+                System.Diagnostics.Debug.WriteLine($"{seg.Start.X},{seg.Start.Y}   {seg.End.X},{seg.End.Y}");
+
+                if (seg.Extensions != null)
+                {
+                    foreach (Segment ext in seg.Extensions)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"{ext.Start.X},{ext.Start.Y} {ext.End.X},{ext.End.Y}");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Given a line defined by a start point and end point Calculate the position of a line,
+        /// offset by the buffer radius to the left Add it to the list of sides
+        /// </summary>
+        /// <param name="sp"></param>
+        /// <param name="se"></param>
+        /// <param name="outbound"></param>
+        private void GetOffsetEdge(Point sp, Point se, bool outbound = true)
+        {
+            double dx = se.X - sp.X;
+            double dy = se.Y - sp.Y;
+            Point p0 = new Point(0, 0);
+            Point p1 = new Point(0, 0);
+            Point p2 = new Point(0, 0);
+            Point p3 = new Point(0, 0);
+
+            // is the line horizontal
+            if (dy != 0)
+            {
+                double len = Math.Sqrt((dx * dx) + (dy * dy));
+
+                double mag = BufferRadius / len;
+                double dx2 = -dy * mag;
+                double dy2 = dx * mag;
+
+                p0.X = sp.X + dx2;
+                p0.Y = sp.Y + dy2;
+
+                p1.X = se.X + dx2;
+                p1.Y = se.Y + dy2;
+            }
+            else
+            {
+                // the segment is horizontal
+                if (sp.X < se.X)
+                {
+                    p0.X = sp.X;
+                    p0.Y = sp.Y + BufferRadius;
+
+                    p1.X = se.X;
+                    p1.Y = se.Y + BufferRadius;
+                }
+                else
+                {
+                    p0.X = sp.X;
+                    p0.Y = sp.Y - BufferRadius;
+
+                    p1.X = se.X;
+                    p1.Y = se.Y - BufferRadius;
+                }
+            }
+
+            Segment left = new Segment(p0, p1, se, outbound);
+
+            sideSegments.Add(left);
+        }
+
+        private bool IsEqual(double d1, double d2)
+        {
+            return Math.Abs(d1 - d2) <= EquityTolerance;
+        }
+
+        private bool PointsEqual(Point p1, Point p2)
+        {
+            bool res = false;
+            if (IsEqual(p1.X, p2.X) && IsEqual(p1.Y, p2.Y))
+            {
+                res = true;
+            }
+            return res;
         }
     }
 }

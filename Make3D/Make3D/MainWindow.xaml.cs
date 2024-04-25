@@ -61,18 +61,6 @@ namespace Barnacle
             }
 
             InfoWindow.Instance().Owner = this;
-
-            List<Point> pnts = new List<Point>();
-            pnts.Add(new Point(2, 2));
-            pnts.Add(new Point(6, 6));
-            pnts.Add(new Point(10, 6));
-            BufferedPolyline bp = new BufferedPolyline(pnts);
-            bp.BufferRadius = 1;
-            pnts =bp.GenerateBuffer();
-            foreach (Point p in pnts)
-            {
-                System.Diagnostics.Debug.WriteLine($"{p.X},{p.Y}");
-            }
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

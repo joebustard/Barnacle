@@ -1,28 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
 
 namespace Barnacle.Models.BufferedPolyline
 {
     public class Segment
     {
-        public Point Start { get; set; }
-        public Point End { get; set; }
-        public List<Segment> Extensions { get; set; }
-        public Segment(Point s, Point e)
+        public Segment(Point s, Point e, Point c, bool dir)
         {
             Start = s;
             End = e;
+            ExtensionCentre = c;
             Extensions = null;
+            Outbound = dir;
         }
 
-        public Segment()
-        {
-            Extensions = null;
-        }
-
+        public Point End { get; set; }
+        public Point ExtensionCentre { get; set; }
+        public List<Segment> Extensions { get; set; }
+        public bool Outbound { get; set; }
+        public Point Start { get; set; }
     }
 }

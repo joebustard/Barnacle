@@ -7,12 +7,10 @@ using System.Windows;
 
 namespace Barnacle.Models.BufferedPolyline
 {
-    public class CoreSegment : Segment
+    public class CoreSegment
     {
-        // does side A or B need to have curve points added to link it to the next one
-        public bool FillA { get; set; }
-
-        public bool FillB { get; set; }
+        public Point Start { get; set; }
+        public Point End { get; set; }
 
         public CoreSegment(Point s, Point e)
         {

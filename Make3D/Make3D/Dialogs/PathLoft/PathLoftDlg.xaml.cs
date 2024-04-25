@@ -31,6 +31,7 @@ namespace Barnacle.Dialogs
             {
                 return loftHeight;
             }
+
             set
             {
                 if (loftHeight != value)
@@ -66,6 +67,7 @@ namespace Barnacle.Dialogs
             {
                 return loftThickness;
             }
+
             set
             {
                 if (loftThickness != value)
@@ -119,37 +121,16 @@ namespace Barnacle.Dialogs
             Get2DBounds(points, ref blx, ref bly, ref trx, ref triy);
             if (trx < double.MaxValue)
             {
-                pathXSize = blx - trx;
+                pathXSize = trx - blx;
                 pathYSize = bly - triy;
 
                 double mx = trx + pathXSize / 2.0;
                 double my = triy + pathYSize / 2.0;
-                // double px;
-                // double py;
+                // double px; double py;
                 pathPoints.Clear();
                 foreach (Point p in points)
                 {
-                    /*
-                    if (pathXSize > 0)
-                    {
-                        px = (p.X - mx) / pathXSize;
-                    }
-                    else
-                    {
-                        px = 0.0;
-                    }
-                    if (pathYSize > 0)
-                    {
-                        py = (p.Y - my) / pathYSize;
-                    }
-                    else
-                    {
-                        py = 0.0;
-                    }
-                    pathPoints.Add(new Point(px, py));
-                    */
-
-                    pathPoints.Add(new Point(p.X, p.Y));
+                    pathPoints.Insert(0, new Point(p.X, p.Y));
                 }
                 if (pathXSize > 0)
                 {
@@ -178,6 +159,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -195,6 +177,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -212,6 +195,7 @@ namespace Barnacle.Dialogs
             {
                 return warningText;
             }
+
             set
             {
                 if (warningText != value)
@@ -245,7 +229,9 @@ namespace Barnacle.Dialogs
             }
             return res;
         }
+
         private OctTree octTree;
+
         private void GenerateShape()
         {
             ClearShape();
@@ -253,7 +239,7 @@ namespace Barnacle.Dialogs
             {
                 BufferedPolyline bl = new BufferedPolyline(pathPoints);
                 bl.BufferRadius = loftThickness / 2;
-                List<Point> outline = bl.GenerateBuffer();
+                List<Point> outline = bl.GenerateBufferOutline();
                 if (outline != null && outline.Count > 3)
                 {
                     List<System.Windows.Point> tmp = new List<System.Windows.Point>();
@@ -266,26 +252,30 @@ namespace Barnacle.Dialogs
                         }
                     }
 
+                    /*
                     for (int i = 0; i < outline.Count; i++)
                     {
-                       
-                            double x = PathEditor.ToMM(outline[i].X);
-                            double y = PathEditor.ToMM(top - outline[i].Y);
-                            tmp.Insert(0, new System.Windows.Point(x, y));
-                        
+                        double x = PathEditor.ToMM(outline[i].X);
+                        double y = PathEditor.ToMM(top - outline[i].Y);
+                        //tmp.Insert(0, new System.Windows.Point(x, y));
+                        tmp.Add(new System.Windows.Point(x, y));
+                    }
+                    */
+                    for (int i = 0; i < outline.Count; i++)
+                    {
+                        tmp.Add(new Point(outline[i].X, top - outline[i].Y));
                     }
                     double lx, rx, ty, by;
                     CalculateExtents(tmp, out lx, out rx, out ty, out by);
 
-                    octTree = CreateOctree( new Point3D(-lx, -by, -1),
-                                            new Point3D(+rx, +ty, loftHeight+1));
-
+                    octTree = CreateOctree(new Point3D(-lx, -by, -1),
+                                            new Point3D(+rx, +ty, loftHeight + 1));
 
                     for (int i = 0; i < tmp.Count; i++)
                     {
                         CreateSideFace(tmp, i);
                     }
-                    /*
+
                     // triangulate the basic polygon
                     TriangulationPolygon ply = new TriangulationPolygon();
                     List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
@@ -311,10 +301,9 @@ namespace Barnacle.Dialogs
                         Faces.Add(c1);
                         Faces.Add(c2);
                     }
-                    */
+
                     CentreVertices();
                 }
-
             }
         }
 
@@ -340,12 +329,12 @@ namespace Barnacle.Dialogs
             int c2 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, loftHeight);
             int c3 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, 0.0);
             Faces.Add(c0);
-            Faces.Add(c1);
             Faces.Add(c2);
+            Faces.Add(c1);
 
             Faces.Add(c0);
-            Faces.Add(c2);
             Faces.Add(c3);
+            Faces.Add(c2);
         }
 
         protected OctTree CreateOctree(Point3D minPoint, Point3D maxPoint)
@@ -356,6 +345,7 @@ namespace Barnacle.Dialogs
 
         private double xExtent;
         private double yExtent;
+
         private void CalculateExtents(List<Point> tmp, out double lx, out double rx, out double ty, out double by)
         {
             lx = double.MaxValue;
@@ -372,232 +362,236 @@ namespace Barnacle.Dialogs
             xExtent = rx - lx;
             yExtent = ty - by;
         }
-        private const double sizeLimit = 0.05;
-/*
-        private void GenerateShape()
-        {
-            ClearShape();
-            // PathLoftMaker maker = new PathLoftMaker(loftHeight, loftThickness);
-            //  maker.Generate(Vertices, Faces);
-            if (pathPoints != null && pathPoints.Count > 0)
-            {
-                DistanceCell2D cell = new DistanceCell2D();
-                cell.InitialisePoints();
-                DistanceCell2D.OnCalculateDistance = CalculateDistance;
-                float th = (float)(loftThickness / 2.0);
-                cell.SetPoint(DistanceCell2D.TopLeft, (float)blx - th - 1, (float)triy + th + 1, CalculateDistance((float)blx - th - 1, (float)triy + th + 1));
-                cell.SetPoint(DistanceCell2D.TopRight, (float)trx + th + 1, (float)triy + th + 1, CalculateDistance((float)trx + th + 1, (float)triy + th + 1));
-                cell.SetPoint(DistanceCell2D.BottomLeft, (float)blx - th - 1, (float)bly - th - 1, CalculateDistance((float)blx - th - 1, (float)bly - th - 1));
-                cell.SetPoint(DistanceCell2D.BottomRight, (float)trx + th + 1, (float)bly - th - 1, CalculateDistance((float)trx + th + 1, (float)bly - th - 1));
-                cell.SetCentre();
 
-                cell.CreateSubCells();
-                // cell.Dump();
-                List<DistanceCell2D> queue = new List<DistanceCell2D>();
-                queue.Add(cell.SubCells[0]);
-                queue.Add(cell.SubCells[1]);
-                queue.Add(cell.SubCells[2]);
-                queue.Add(cell.SubCells[3]);
-                DateTime start = DateTime.Now;
-                bool subdivide = false;
-                while (queue.Count > 0)
+        private const double sizeLimit = 0.05;
+        /*
+                private void GenerateShape()
                 {
-                    DistanceCell2D cn = queue[0];
-                    queue.RemoveAt(0);
-                    subdivide = false;
-                    if (cn.Size() > sizeLimit)
+                    ClearShape();
+                    // PathLoftMaker maker = new PathLoftMaker(loftHeight, loftThickness);
+                    // maker.Generate(Vertices, Faces);
+                    if (pathPoints != null && pathPoints.Count > 0)
                     {
-                        if (cn.Size() > th / 2.0)
+                        DistanceCell2D cell = new DistanceCell2D();
+                        cell.InitialisePoints();
+                        DistanceCell2D.OnCalculateDistance = CalculateDistance;
+                        float th = (float)(loftThickness / 2.0);
+                        cell.SetPoint(DistanceCell2D.TopLeft, (float)blx - th - 1, (float)triy + th + 1, CalculateDistance((float)blx - th - 1, (float)triy + th + 1));
+                        cell.SetPoint(DistanceCell2D.TopRight, (float)trx + th + 1, (float)triy + th + 1, CalculateDistance((float)trx + th + 1, (float)triy + th + 1));
+                        cell.SetPoint(DistanceCell2D.BottomLeft, (float)blx - th - 1, (float)bly - th - 1, CalculateDistance((float)blx - th - 1, (float)bly - th - 1));
+                        cell.SetPoint(DistanceCell2D.BottomRight, (float)trx + th + 1, (float)bly - th - 1, CalculateDistance((float)trx + th + 1, (float)bly - th - 1));
+                        cell.SetCentre();
+
+                        cell.CreateSubCells();
+                        // cell.Dump();
+                        List<DistanceCell2D> queue = new List<DistanceCell2D>();
+                        queue.Add(cell.SubCells[0]);
+                        queue.Add(cell.SubCells[1]);
+                        queue.Add(cell.SubCells[2]);
+                        queue.Add(cell.SubCells[3]);
+                        DateTime start = DateTime.Now;
+                        bool subdivide = false;
+                        while (queue.Count > 0)
                         {
-                            subdivide = true;
-                        }
-                        else
-                        {
-                            // always subdivide if big and any point is in cell
-                            foreach (Point p in pathPoints)
+                            DistanceCell2D cn = queue[0];
+                            queue.RemoveAt(0);
+                            subdivide = false;
+                            if (cn.Size() > sizeLimit)
                             {
-                                if (cn.Contains(p.X, p.Y))
+                                if (cn.Size() > th / 2.0)
                                 {
                                     subdivide = true;
-                                    break;
-                                }
-                            }
-
-                            //if no points are the box we may still need to subdivide
-                            // if any path segment intercepts the ends of the box;
-                            if (!subdivide)
-                            {
-                                for (int i = 0; i < pathPoints.Count - 1; i++)
-                                {
-                                    if (cn.InterceptedBy(pathPoints[i], pathPoints[i + 1]))
-                                    {
-                                        subdivide = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if (subdivide)
-                    {
-                        cn.CreateSubCells();
-                        queue.Add(cn.SubCells[0]);
-                        queue.Add(cn.SubCells[1]);
-                        queue.Add(cn.SubCells[2]);
-                        queue.Add(cn.SubCells[3]);
-                    }
-                }
-
-                cell.AdjustValues(th);
-                DateTime end = DateTime.Now;
-                TimeSpan dur = end - start;
-                Debug($"Duration {dur}");
-
-                List<Triangle> triangles = new List<Triangle>();
-                cell.GenerateWalls(triangles);
-
-                foreach (Triangle t in triangles)
-                {
-                    int p0 = AddVertice(t.p[0].x, (t.p[0].y * loftHeight), t.p[0].z);
-                    int p1 = AddVertice(t.p[1].x, (t.p[1].y * loftHeight), t.p[1].z);
-                    int p2 = AddVertice(t.p[2].x, (t.p[2].y * loftHeight), t.p[2].z);
-                    Faces.Add(p0);
-                    Faces.Add(p2);
-                    Faces.Add(p1);
-                }
-
-                List<PathEdge> pathEdges = new List<PathEdge>(); ;
-                foreach (Triangle t in triangles)
-                {
-                    //    Debug($"tri p0={t.p[0].x},{t.p[0].y},{t.p[0].z}  p1={t.p[1].x},{t.p[1].y},{t.p[1].z}    p2={t.p[2].x},{t.p[2].y},{t.p[2].z}");
-                    if ((Math.Abs(t.p[0].y) < 0.0001) && (Math.Abs(t.p[1].y) < 0.0001))
-                    {
-                        PathEdge pe = new PathEdge(t.p[0], t.p[1]);
-                        //  Debug($" p0={t.p[0].x},{t.p[0].y},{t.p[0].z}  p1={t.p[1].x},{t.p[1].y},{t.p[1].z} ");
-                        pathEdges.Add(pe);
-                    }
-                    if ((Math.Abs(t.p[0].y) < 0.0001) && (Math.Abs(t.p[2].y) < 0.0001))
-                    {
-                        PathEdge pe = new PathEdge(t.p[0], t.p[2]);
-                        //        Debug($"p0={t.p[0].x},{t.p[0].y},{t.p[0].z}  p2={t.p[2].x},{t.p[2].y},{t.p[2].z}");
-                        pathEdges.Add(pe);
-                    }
-                    if ((Math.Abs(t.p[1].y) < 0.0001) && (Math.Abs(t.p[2].y) < 0.0001))
-                    {
-                        //        Debug($"p1={t.p[1].x},{t.p[1].y},{t.p[1].z}    p2={t.p[2].x},{t.p[2].y},{t.p[2].z}");
-                        PathEdge pe = new PathEdge(t.p[1], t.p[2]);
-                        pathEdges.Add(pe);
-                    }
-                }
-                if (pathEdges.Count > 0)
-                {
-                    List<System.Drawing.PointF> polyLine = new List<System.Drawing.PointF>();
-                    polyLine.Add(pathEdges[0].P1);
-                    polyLine.Add(pathEdges[0].P2);
-                    pathEdges.RemoveAt(0);
-                    bool done = false;
-                    int pend = 0;
-                    while (!done)
-                    {
-                        pend = polyLine.Count - 1;
-                        // Debug($" {pathEdges.Count} edges, Looking for either {polyLine[0].X},{polyLine[0].Y}  or {polyLine[pend].X},{polyLine[pend].Y}");
-                        int i = 0;
-                        bool match = false;
-                        System.Drawing.PointF sp = polyLine[0];
-                        System.Drawing.PointF ep = polyLine[pend];
-
-                        while (i < pathEdges.Count && match == false)
-                        {
-                            // does the current edge start at the end of the poly
-                            if (pathEdges[i].StartEquals(ep))
-                            {
-                                polyLine.Add(pathEdges[i].P2);
-
-                                match = true;
-                            }
-                            else
-                            // does the current edge end at the end of the poly
-                            // if so add it reverse
-                            if (pathEdges[i].EndEquals(ep))
-                            {
-                                polyLine.Add(pathEdges[i].P2);
-
-                                match = true;
-                            }
-                            else
-                            // does the current edge end at the start of the poly
-                            if (pathEdges[i].EndEquals(sp))
-                            {
-                                polyLine.Insert(0, pathEdges[i].P1);
-
-                                match = true;
-                            }
-                            else
-                            // does the current edge start at the start of the poly
-                            // if so add it reverse
-                            if (pathEdges[i].StartEquals(sp))
-                            {
-                                polyLine.Insert(0, pathEdges[i].P2);
-
-                                match = true;
-                            }
-                            if (match)
-                            {
-                                pathEdges.RemoveAt(i);
-                            }
-                            i++;
-                        }
-                        if (pathEdges.Count == 0 || match == false)
-                        {
-                            done = true;
-                        }
-                    }
-                    if (polyLine.Count >= 3)
-                    {
-                        bool reverse = false;
-                        for (float py = 0; py <= loftHeight; py += (float)loftHeight)
-                        {
-                            EarClipping earClipping = new EarClipping();
-                            List<Vector3m> rootPoints = new List<Vector3m>();
-
-                            foreach (System.Drawing.PointF rp in polyLine)
-                            {
-                                rootPoints.Insert(0, new Vector3m(rp.X, py, rp.Y));
-                            }
-
-                            earClipping.SetPoints(rootPoints);
-
-                            earClipping.Triangulate();
-                            var surface = earClipping.Result;
-                            for (int i = 0; i < surface.Count; i += 3)
-                            {
-                                int v1 = AddVertice(surface[i].X, surface[i].Y, surface[i].Z);
-                                int v2 = AddVertice(surface[i + 1].X, surface[i + 1].Y, surface[i + 1].Z);
-                                int v3 = AddVertice(surface[i + 2].X, surface[i + 2].Y, surface[i + 2].Z);
-                                if (reverse)
-                                {
-                                    Faces.Add(v1);
-                                    Faces.Add(v3);
-                                    Faces.Add(v2);
                                 }
                                 else
                                 {
-                                    Faces.Add(v1);
-                                    Faces.Add(v2);
-                                    Faces.Add(v3);
+                                    // always subdivide if big and any point is in cell
+                                    foreach (Point p in pathPoints)
+                                    {
+                                        if (cn.Contains(p.X, p.Y))
+                                        {
+                                            subdivide = true;
+                                            break;
+                                        }
+                                    }
+
+                                    //if no points are the box we may still need to subdivide
+                                    // if any path segment intercepts the ends of the box;
+                                    if (!subdivide)
+                                    {
+                                        for (int i = 0; i < pathPoints.Count - 1; i++)
+                                        {
+                                            if (cn.InterceptedBy(pathPoints[i], pathPoints[i + 1]))
+                                            {
+                                                subdivide = true;
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
                             }
-                            reverse = !reverse;
+
+                            if (subdivide)
+                            {
+                                cn.CreateSubCells();
+                                queue.Add(cn.SubCells[0]);
+                                queue.Add(cn.SubCells[1]);
+                                queue.Add(cn.SubCells[2]);
+                                queue.Add(cn.SubCells[3]);
+                            }
                         }
+
+                        cell.AdjustValues(th);
+                        DateTime end = DateTime.Now;
+                        TimeSpan dur = end - start;
+                        Debug($"Duration {dur}");
+
+                        List<Triangle> triangles = new List<Triangle>();
+                        cell.GenerateWalls(triangles);
+
+                        foreach (Triangle t in triangles)
+                        {
+                            int p0 = AddVertice(t.p[0].x, (t.p[0].y * loftHeight), t.p[0].z);
+                            int p1 = AddVertice(t.p[1].x, (t.p[1].y * loftHeight), t.p[1].z);
+                            int p2 = AddVertice(t.p[2].x, (t.p[2].y * loftHeight), t.p[2].z);
+                            Faces.Add(p0);
+                            Faces.Add(p2);
+                            Faces.Add(p1);
+                        }
+
+                        List<PathEdge> pathEdges = new List<PathEdge>(); ;
+                        foreach (Triangle t in triangles)
+                        {
+                            // Debug($"tri p0={t.p[0].x},{t.p[0].y},{t.p[0].z}
+                            // p1={t.p[1].x},{t.p[1].y},{t.p[1].z} p2={t.p[2].x},{t.p[2].y},{t.p[2].z}");
+                            if ((Math.Abs(t.p[0].y) < 0.0001) && (Math.Abs(t.p[1].y) < 0.0001))
+                            {
+                                PathEdge pe = new PathEdge(t.p[0], t.p[1]);
+                                // Debug($" p0={t.p[0].x},{t.p[0].y},{t.p[0].z}
+                                // p1={t.p[1].x},{t.p[1].y},{t.p[1].z} ");
+                                pathEdges.Add(pe);
+                            }
+                            if ((Math.Abs(t.p[0].y) < 0.0001) && (Math.Abs(t.p[2].y) < 0.0001))
+                            {
+                                PathEdge pe = new PathEdge(t.p[0], t.p[2]);
+                                // Debug($"p0={t.p[0].x},{t.p[0].y},{t.p[0].z} p2={t.p[2].x},{t.p[2].y},{t.p[2].z}");
+                                pathEdges.Add(pe);
+                            }
+                            if ((Math.Abs(t.p[1].y) < 0.0001) && (Math.Abs(t.p[2].y) < 0.0001))
+                            {
+                                // Debug($"p1={t.p[1].x},{t.p[1].y},{t.p[1].z} p2={t.p[2].x},{t.p[2].y},{t.p[2].z}");
+                                PathEdge pe = new PathEdge(t.p[1], t.p[2]);
+                                pathEdges.Add(pe);
+                            }
+                        }
+                        if (pathEdges.Count > 0)
+                        {
+                            List<System.Drawing.PointF> polyLine = new List<System.Drawing.PointF>();
+                            polyLine.Add(pathEdges[0].P1);
+                            polyLine.Add(pathEdges[0].P2);
+                            pathEdges.RemoveAt(0);
+                            bool done = false;
+                            int pend = 0;
+                            while (!done)
+                            {
+                                pend = polyLine.Count - 1;
+                                // Debug($" {pathEdges.Count} edges, Looking for either
+                                // {polyLine[0].X},{polyLine[0].Y} or {polyLine[pend].X},{polyLine[pend].Y}");
+                                int i = 0;
+                                bool match = false;
+                                System.Drawing.PointF sp = polyLine[0];
+                                System.Drawing.PointF ep = polyLine[pend];
+
+                                while (i < pathEdges.Count && match == false)
+                                {
+                                    // does the current edge start at the end of the poly
+                                    if (pathEdges[i].StartEquals(ep))
+                                    {
+                                        polyLine.Add(pathEdges[i].P2);
+
+                                        match = true;
+                                    }
+                                    else
+                                    // does the current edge end at the end of the poly if so add it reverse
+                                    if (pathEdges[i].EndEquals(ep))
+                                    {
+                                        polyLine.Add(pathEdges[i].P2);
+
+                                        match = true;
+                                    }
+                                    else
+                                    // does the current edge end at the start of the poly
+                                    if (pathEdges[i].EndEquals(sp))
+                                    {
+                                        polyLine.Insert(0, pathEdges[i].P1);
+
+                                        match = true;
+                                    }
+                                    else
+                                    // does the current edge start at the start of the poly if so
+                                    // add it reverse
+                                    if (pathEdges[i].StartEquals(sp))
+                                    {
+                                        polyLine.Insert(0, pathEdges[i].P2);
+
+                                        match = true;
+                                    }
+                                    if (match)
+                                    {
+                                        pathEdges.RemoveAt(i);
+                                    }
+                                    i++;
+                                }
+                                if (pathEdges.Count == 0 || match == false)
+                                {
+                                    done = true;
+                                }
+                            }
+                            if (polyLine.Count >= 3)
+                            {
+                                bool reverse = false;
+                                for (float py = 0; py <= loftHeight; py += (float)loftHeight)
+                                {
+                                    EarClipping earClipping = new EarClipping();
+                                    List<Vector3m> rootPoints = new List<Vector3m>();
+
+                                    foreach (System.Drawing.PointF rp in polyLine)
+                                    {
+                                        rootPoints.Insert(0, new Vector3m(rp.X, py, rp.Y));
+                                    }
+
+                                    earClipping.SetPoints(rootPoints);
+
+                                    earClipping.Triangulate();
+                                    var surface = earClipping.Result;
+                                    for (int i = 0; i < surface.Count; i += 3)
+                                    {
+                                        int v1 = AddVertice(surface[i].X, surface[i].Y, surface[i].Z);
+                                        int v2 = AddVertice(surface[i + 1].X, surface[i + 1].Y, surface[i + 1].Z);
+                                        int v3 = AddVertice(surface[i + 2].X, surface[i + 2].Y, surface[i + 2].Z);
+                                        if (reverse)
+                                        {
+                                            Faces.Add(v1);
+                                            Faces.Add(v3);
+                                            Faces.Add(v2);
+                                        }
+                                        else
+                                        {
+                                            Faces.Add(v1);
+                                            Faces.Add(v2);
+                                            Faces.Add(v3);
+                                        }
+                                    }
+                                    reverse = !reverse;
+                                }
+                            }
+                        }
+                        CentreVertices();
+                        cell = null;
+                        GC.Collect();
                     }
                 }
-                CentreVertices();
-                cell = null;
-                GC.Collect();
-            }
-        }
-*/
+        */
+
         private float CalculateDistance(float x, float y)
         {
             Point closest = new Point(0, 0);
@@ -644,8 +638,7 @@ namespace Barnacle.Dialogs
             double t = ((x - p1.X) * dx + (y - p1.Y) * dy) /
                 (dx * dx + dy * dy);
 
-            // See if this represents one of the segment's
-            // end points or a point in the middle.
+            // See if this represents one of the segment's end points or a point in the middle.
             if (t < 0)
             {
                 closest = new Point(p1.X, p1.Y);
@@ -709,8 +702,8 @@ namespace Barnacle.Dialogs
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             loaded = true;
-            // should flexi control give us live point updates while lines are dragged.
-            // Computing new line costs too much so , no, instead wait until mouse up
+            // should flexi control give us live point updates while lines are dragged. Computing
+            // new line costs too much so , no, instead wait until mouse up
 
             UpdateDisplay();
         }
