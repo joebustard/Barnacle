@@ -242,10 +242,19 @@ namespace Barnacle.Models.BufferedPolyline
                     }
                     else
                     {
-                        // Add curve section to the segment as extension curves
                         side[i].Extensions = new List<Segment>();
+                        if (side[i].Outbound == side[i + 1].Outbound)
+                        {
+                            // Add curve section to the segment as extension curves
 
-                        CreateCurvedLinks(side[i].Extensions, side[i].ExtensionCentre, side[i].End, side[i + 1].Start, side[i].Outbound);
+                            CreateCurvedLinks(side[i].Extensions, side[i].ExtensionCentre, side[i].End, side[i + 1].Start, side[i].Outbound);
+                        }
+                        else
+                        {
+                            // probably at the end of the outbound so just close off with a straight
+                            // edge only the start and ens matter
+                            Segment ext = new Segment(side[i].End, side[i + 1].Start, side[i].ExtensionCentre, true);
+                        }
                     }
                 }
             }

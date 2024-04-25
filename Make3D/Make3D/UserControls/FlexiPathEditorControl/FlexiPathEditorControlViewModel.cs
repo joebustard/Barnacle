@@ -23,6 +23,8 @@ namespace Barnacle.UserControls
         private bool absolutePaths;
         private List<FlexiPath> allPaths;
 
+        private Visibility appendButtonVisible;
+
         // private BitmapImage backgroundImage;
         private BitmapSource backgroundImage;
 
@@ -80,6 +82,7 @@ namespace Barnacle.UserControls
             AddCubicBezierCommand = new RelayCommand(OnAddCubic);
             ApplyPresetCommand = new RelayCommand(OnApplyPreset);
             AddQuadBezierCommand = new RelayCommand(OnAddQuad);
+            AppendCommand = new RelayCommand(OnAppendPoint);
             SplitQuadBezierCommand = new RelayCommand(OnSplitQuad);
             AddSegmentCommand = new RelayCommand(OnAddSegment);
             CNVDoubleSegCommand = new RelayCommand(OnCnvDoubleSegment);
@@ -103,7 +106,7 @@ namespace Barnacle.UserControls
             fixedEndPath = false;
             supportsHoles = false;
             showHoleControls = Visibility.Hidden;
-
+            appendButtonVisible = Visibility.Hidden;
             allPaths = new List<FlexiPath>();
             allPaths.Add(new FlexiPath());
             selectedFlexiPath = allPaths[0];
@@ -134,6 +137,11 @@ namespace Barnacle.UserControls
             LoadPresets();
         }
 
+        private void OnAppendPoint(object obj)
+        {
+            SelectionMode = SelectionModeType.AppendPoint;
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public enum SelectionModeType
@@ -153,6 +161,7 @@ namespace Barnacle.UserControls
         public bool AbsolutePaths
         {
             get { return absolutePaths; }
+
             set
             {
                 absolutePaths = value;
@@ -164,6 +173,21 @@ namespace Barnacle.UserControls
         public ICommand AddQuadBezierCommand { get; set; }
 
         public ICommand AddSegmentCommand { get; set; }
+        public ICommand AppendCommand { get; set; }
+
+        public Visibility AppendButtonVisible
+        {
+            get { return appendButtonVisible; }
+
+            set
+            {
+                if (value != appendButtonVisible)
+                {
+                    appendButtonVisible = value;
+                    NotifyPropertyChanged("AppendButtonVisible");
+                }
+            }
+        }
 
         public RelayCommand ApplyPresetCommand { get; private set; }
 
@@ -185,6 +209,7 @@ namespace Barnacle.UserControls
         public bool CanCNVDouble
         {
             get { return canCNVDouble; }
+
             set
             {
                 if (canCNVDouble != value)
@@ -222,6 +247,7 @@ namespace Barnacle.UserControls
         public ObservableCollection<string> CurveNames
         {
             get { return curveNames; }
+
             set
             {
                 if (value != curveNames)
@@ -235,6 +261,7 @@ namespace Barnacle.UserControls
         public string DefaultImagePath
         {
             get { return defaultImagePath; }
+
             set
             {
                 defaultImagePath = value;
@@ -256,6 +283,7 @@ namespace Barnacle.UserControls
         public String EditedPresetText
         {
             get { return editedPresetText; }
+
             set
             {
                 if (editedPresetText != value)
@@ -269,6 +297,7 @@ namespace Barnacle.UserControls
         public bool FixedEndPath
         {
             get { return fixedEndPath; }
+
             set
             {
                 if (fixedEndPath != value)
@@ -297,6 +326,7 @@ namespace Barnacle.UserControls
         public Point FixedPolarGridCentre
         {
             get { return FixedPolarGridCentre; }
+
             set
             {
                 if (value != fixedPolarGridCentre)
@@ -344,6 +374,7 @@ namespace Barnacle.UserControls
         public string ImagePath
         { get { return imagePath; } }
 
+        public bool IncludeCommonPresets { get; internal set; }
         public RelayCommand LineStyleCommand { get; private set; }
 
         public RelayCommand LoadImageCommand { get; }
@@ -355,6 +386,7 @@ namespace Barnacle.UserControls
         public bool OpenEndedPath
         {
             get { return openEndedPath; }
+
             set
             {
                 openEndedPath = value;
@@ -397,6 +429,7 @@ namespace Barnacle.UserControls
             {
                 return pathText;
             }
+
             set
             {
                 if (pathText != value)
@@ -415,6 +448,7 @@ namespace Barnacle.UserControls
             {
                 return selectedFlexiPathControlPoints;
             }
+
             set
             {
                 if (value != selectedFlexiPathControlPoints)
@@ -428,6 +462,7 @@ namespace Barnacle.UserControls
         public bool PointsDirty
         {
             get { return pointsDirty; }
+
             set
             {
                 if (value != pointsDirty)
@@ -443,6 +478,7 @@ namespace Barnacle.UserControls
         public String PositionText
         {
             get { return positionText; }
+
             set
             {
                 if (positionText != value)
@@ -462,6 +498,7 @@ namespace Barnacle.UserControls
         public double Scale
         {
             get { return scale; }
+
             set
             {
                 if (value != scale)
@@ -475,6 +512,7 @@ namespace Barnacle.UserControls
         public DpiScale ScreenDpi
         {
             get { return screenDpi; }
+
             set
             {
                 screenDpi = value;
@@ -484,6 +522,7 @@ namespace Barnacle.UserControls
         public string SelectedCurveName
         {
             get { return selectedCurveName; }
+
             set
             {
                 if (value != selectedCurveName)
@@ -502,6 +541,7 @@ namespace Barnacle.UserControls
             {
                 return selectedPoint;
             }
+
             set
             {
                 if (selectedPoint != value)
@@ -524,6 +564,7 @@ namespace Barnacle.UserControls
         public string SelectedPreset
         {
             get { return selectedPreset; }
+
             set
             {
                 if (value != selectedPreset)
@@ -540,6 +581,7 @@ namespace Barnacle.UserControls
             {
                 return selectionMode;
             }
+
             set
             {
                 if (value != selectionMode)
@@ -555,6 +597,7 @@ namespace Barnacle.UserControls
         public GridSettings.GridStyle ShowGrid
         {
             get { return gridSettings.ShowGrid; }
+
             set
             {
                 gridSettings.ShowGrid = value;
@@ -570,35 +613,10 @@ namespace Barnacle.UserControls
             }
         }
 
-        internal void GetSegmentLengthLabel(out string lengthText, out Point labelPos)
-        {
-            lengthText = "";
-            labelPos = new Point(-1, -1);
-            FlexiSegment fs = FirstSelectedSegment();
-            if (fs != null)
-            {
-                FlexiPoint ps = selectedFlexiPath.FlexiPoints[fs.Start()];
-                FlexiPoint pe = selectedFlexiPath.FlexiPoints[fs.End()];
-
-                double dx = ps.X - pe.X;
-                double dy = ps.Y - pe.Y;
-
-                double d = Math.Sqrt(dx * dx + dy * dy);
-                lengthText = d.ToString("F3");
-                labelPos.X = ToPixelX((ps.X + pe.X) / 2);
-                labelPos.Y = ToPixelY((ps.Y + pe.Y) / 2);
-
-            }
-        }
-
-        internal FlexiSegment FirstSelectedSegment()
-        {
-            return selectedFlexiPath.FirstSelectedSegment();
-        }
-
         public Visibility ShowHoleControls
         {
             get { return showHoleControls; }
+
             set
             {
                 if (showHoleControls != value)
@@ -612,6 +630,7 @@ namespace Barnacle.UserControls
         public bool ShowOrtho
         {
             get { return showOrtho; }
+
             set
             {
                 if (showOrtho != value)
@@ -625,6 +644,7 @@ namespace Barnacle.UserControls
         public Visibility ShowPresets
         {
             get { return showPresets; }
+
             set
             {
                 if (showPresets != value)
@@ -638,6 +658,7 @@ namespace Barnacle.UserControls
         public Visibility ShowSavePresets
         {
             get { return showSavePresets; }
+
             set
             {
                 if (showSavePresets != value)
@@ -651,6 +672,7 @@ namespace Barnacle.UserControls
         public bool Snap
         {
             get { return snap; }
+
             set
             {
                 if (snap != value)
@@ -666,6 +688,7 @@ namespace Barnacle.UserControls
         public bool SupportsHoles
         {
             get { return supportsHoles; }
+
             set
             {
                 if (supportsHoles != value)
@@ -687,6 +710,7 @@ namespace Barnacle.UserControls
         public string ToolName
         {
             get { return toolName; }
+
             set
             {
                 if (toolName != value)
@@ -791,6 +815,37 @@ namespace Barnacle.UserControls
 
                 imagePath = f;
                 NotifyPropertyChanged("BackgroundImage");
+            }
+        }
+
+        public void LoadPresets()
+        {
+            // can have two sets of presets one in the installed data and the other user defined.
+            try
+            {
+                presets.Clear();
+                PresetNames.Clear();
+                string dataPath = "";
+                // some paths will want to show all presets some will only want to show presets of
+                // their own
+                if (IncludeCommonPresets)
+                {
+                    dataPath = AppDomain.CurrentDomain.BaseDirectory + "data\\PresetPaths.txt";
+                    LoadPresetFile(dataPath, false);
+
+                    dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PresetPaths.txt";
+                    LoadPresetFile(dataPath, true);
+                }
+                dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\" + ToolName + "PresetPaths.txt";
+                LoadPresetFile(dataPath, true);
+
+                foreach (String s in presets.Keys)
+                {
+                    PresetNames.Add(s);
+                }
+            }
+            catch
+            {
             }
         }
 
@@ -905,6 +960,11 @@ namespace Barnacle.UserControls
             return selectedFlexiPath.DisplayPointsF();
         }
 
+        internal FlexiSegment FirstSelectedSegment()
+        {
+            return selectedFlexiPath.FirstSelectedSegment();
+        }
+
         internal void FromString(string s, bool resetMode = true)
         {
             selectedFlexiPath.FromString(s);
@@ -934,6 +994,26 @@ namespace Barnacle.UserControls
                 res = allPaths[index].ToPath(true);
             }
             return res;
+        }
+
+        internal void GetSegmentLengthLabel(out string lengthText, out Point labelPos)
+        {
+            lengthText = "";
+            labelPos = new Point(-1, -1);
+            FlexiSegment fs = FirstSelectedSegment();
+            if (fs != null)
+            {
+                FlexiPoint ps = selectedFlexiPath.FlexiPoints[fs.Start()];
+                FlexiPoint pe = selectedFlexiPath.FlexiPoints[fs.End()];
+
+                double dx = ps.X - pe.X;
+                double dy = ps.Y - pe.Y;
+
+                double d = Math.Sqrt(dx * dx + dy * dy);
+                lengthText = d.ToString("F3");
+                labelPos.X = ToPixelX((ps.X + pe.X) / 2);
+                labelPos.Y = ToPixelY((ps.Y + pe.Y) / 2);
+            }
         }
 
         internal bool MouseDown(MouseButtonEventArgs e, System.Windows.Point position)
@@ -979,9 +1059,8 @@ namespace Barnacle.UserControls
                     }
                     else
                     {
-                        // dont snap position when selecting points as they  may have been positioned between two
-                        // grid points .
-                        // just convert position to mm
+                        // dont snap position when selecting points as they may have been positioned
+                        // between two grid points . just convert position to mm
                         position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
 
                         // find the closest point thats within search radius
@@ -1099,7 +1178,7 @@ namespace Barnacle.UserControls
 
             if (Math.Abs(position.X - selectedFlexiPath.Start.X) < 2 && Math.Abs(position.Y - selectedFlexiPath.Start.Y) < 2)
             {
-                //  closeFigure = true;
+                // closeFigure = true;
                 selectedPoint = -1;
                 SelectionMode = SelectionModeType.SelectSegmentAtPoint;
                 PointsDirty = true;
@@ -1224,7 +1303,7 @@ namespace Barnacle.UserControls
                         {
                             position.Y = ToPixelY(selectedFlexiPathControlPoints[0].Y);
                         }
-                        //  polyPoints[selectedPoint].Y = position.Y;
+                        // polyPoints[selectedPoint].Y = position.Y;
                         System.Windows.Point snappedPos = SnapPositionToMM(position);
                         snappedPos.X = selectedFlexiPathControlPoints[selectedPoint].X;
                         selectedFlexiPath.SetPointPos(selectedPoint, snappedPos);
@@ -1326,40 +1405,6 @@ namespace Barnacle.UserControls
             }
         }
 
-        public bool IncludeCommonPresets { get; internal set; }
-
-        public void LoadPresets()
-        {
-            // can have two sets of presets
-            // one in the installed data and the other user defined.
-            try
-            {
-                presets.Clear();
-                PresetNames.Clear();
-                string dataPath = "";
-                // some paths will want to show all presets
-                // some will only want to show presets of their own
-                if (IncludeCommonPresets)
-                {
-                    dataPath = AppDomain.CurrentDomain.BaseDirectory + "data\\PresetPaths.txt";
-                    LoadPresetFile(dataPath, false);
-
-                    dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PresetPaths.txt";
-                    LoadPresetFile(dataPath, true);
-                }
-                dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\" + ToolName + "PresetPaths.txt";
-                LoadPresetFile(dataPath, true);
-
-                foreach (String s in presets.Keys)
-                {
-                    PresetNames.Add(s);
-                }
-            }
-            catch
-            {
-            }
-        }
-
         private void MakeGrid(double actualWidth, double actualHeight)
         {
             if (rectGrid == null)
@@ -1455,8 +1500,7 @@ namespace Barnacle.UserControls
                 {
                     if (e.LeftButton == MouseButtonState.Pressed && moving)
                     {
-                        // polyPoints[selectedPoint].X = position.X;
-                        // polyPoints[selectedPoint].Y = position.Y;
+                        // polyPoints[selectedPoint].X = position.X; polyPoints[selectedPoint].Y = position.Y;
                         bool okToSet = true;
                         if (editingHole)
                         {

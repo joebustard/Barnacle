@@ -27,6 +27,7 @@ namespace Barnacle.UserControls
         public bool FixedEndPath
         {
             get { return fixedEndPath; }
+
             set
             {
                 if (fixedEndPath != value)
@@ -41,6 +42,7 @@ namespace Barnacle.UserControls
         public Point FixedPathStartPoint
         {
             get { return fixedPathStartPoint; }
+
             set
             {
                 if (value != fixedPathStartPoint)
@@ -55,10 +57,12 @@ namespace Barnacle.UserControls
         public bool SupportsHoles { get; internal set; }
         public bool HasPresets { get; internal set; }
         public bool IncludeCommonPresets { get; internal set; }
+        public bool ShowAppend { get; internal set; }
 
         public Point FixedPathMidPoint
         {
             get { return fixedPathMidPoint; }
+
             set
             {
                 if (value != fixedPathMidPoint)
@@ -73,6 +77,7 @@ namespace Barnacle.UserControls
         public Point FixedPathEndPoint
         {
             get { return fixedPathEndPoint; }
+
             set
             {
                 if (value != fixedPathEndPoint)
@@ -87,6 +92,7 @@ namespace Barnacle.UserControls
         public string ToolName
         {
             get { return toolName; }
+
             set
             {
                 toolName = value;
@@ -102,6 +108,7 @@ namespace Barnacle.UserControls
             InitializeComponent();
             OnFlexiPathChanged = null;
             fixedEndPath = false;
+            ShowAppend = false;
             showGrid = GridSettings.GridStyle.Rectangular;
             fixedPathStartPoint = new Point(0, 10);
             fixedPathMidPoint = new Point(20, 50);
@@ -209,6 +216,7 @@ namespace Barnacle.UserControls
         public string DefaultImagePath
         {
             get { return defaultImagePath; }
+
             set
             {
                 defaultImagePath = value;
@@ -285,7 +293,6 @@ namespace Barnacle.UserControls
                         DrawLine(i, i + 1, points);
                     }
                 }
-
             }
         }
 
@@ -335,8 +342,8 @@ namespace Barnacle.UserControls
                         }
                     }
 
-                    // only show the points if they are marked as visible
-                    // OR they are orthogonal to the selected one
+                    // only show the points if they are marked as visible OR they are orthogonal to
+                    // the selected one
                     if (vm.Points[i].Visible || (ortho && vm.ShowOrtho))
                     {
                         if (vm.Points[i].Mode == FlexiPoint.PointMode.Data)
@@ -490,6 +497,7 @@ namespace Barnacle.UserControls
             DoButtonBorder(src, SplitQuadBezierBorder);
             DoButtonBorder(src, DelSegBorder);
             DoButtonBorder(src, MovePathBorder);
+            DoButtonBorder(src, AppendBorder);
         }
 
         internal List<System.Drawing.PointF> DisplayPointsF()
@@ -512,12 +520,12 @@ namespace Barnacle.UserControls
                             lengthLabel = null;
                             bool shiftDown = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
                             found = vm.SelectLineFromPoint(position, shiftDown);
-                            if ( !shiftDown  && found)
+                            if (!shiftDown && found)
                             {
                                 string lengthText = "";
                                 Point labelPos;
                                 vm.GetSegmentLengthLabel(out lengthText, out labelPos);
-                                if ( labelPos.X != -1)
+                                if (labelPos.X != -1)
                                 {
                                     lengthLabel = new LengthLabel();
                                     lengthLabel.Content = lengthText;
@@ -585,7 +593,9 @@ namespace Barnacle.UserControls
                 UpdateDisplay();
             }
         }
+
         private LengthLabel lengthLabel = null;
+
         private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
         {
             System.Windows.Point position = e.GetPosition(MainCanvas);
@@ -679,7 +689,7 @@ namespace Barnacle.UserControls
             el.MouseDown += MainCanvas_MouseDown;
             el.MouseMove += MainCanvas_MouseMove;
             el.MouseUp += MainCanvas_MouseUp;
-            //      el.ContextMenu = PointMenu(el);
+            // el.ContextMenu = PointMenu(el);
             MainCanvas.Children.Add(el);
             return p;
         }
@@ -707,7 +717,7 @@ namespace Barnacle.UserControls
             myPolygon.MouseDown += MainCanvas_MouseDown;
             myPolygon.MouseMove += MainCanvas_MouseMove;
             myPolygon.MouseUp += MainCanvas_MouseUp;
-            //   myPolygon.ContextMenu = PointMenu(myPolygon);
+            // myPolygon.ContextMenu = PointMenu(myPolygon);
             MainCanvas.Children.Add(myPolygon);
             return p;
         }
@@ -756,6 +766,18 @@ namespace Barnacle.UserControls
             switch (vm.SelectionMode)
             {
                 case FlexiPathEditorControlViewModel.SelectionModeType.AppendPoint:
+                    {
+                        if (ShowAppend)
+                        {
+                            EnableSelectionModeBorder(AppendBorder);
+                        }
+                        else
+                        {
+                            EnableSelectionModeBorder(PickBorder);
+                        }
+                    }
+                    break;
+
                 case FlexiPathEditorControlViewModel.SelectionModeType.StartPoint:
                 case FlexiPathEditorControlViewModel.SelectionModeType.SelectSegmentAtPoint:
                     {
@@ -981,6 +1003,7 @@ namespace Barnacle.UserControls
         public GridSettings.GridStyle ShowGrid
         {
             get { return showGrid; }
+
             set
             {
                 showGrid = value;
@@ -1001,6 +1024,7 @@ namespace Barnacle.UserControls
         public Point FixedPolarGridCentre
         {
             get { return FixedPolarGridCentre; }
+
             set
             {
                 if (value != fixedPolarGridCentre)
@@ -1042,6 +1066,14 @@ namespace Barnacle.UserControls
                     vm.FixedEndPath = fixedEndPath;
                     vm.OpenEndedPath = openEndedPath;
                     vm.SupportsHoles = SupportsHoles;
+                    if (ShowAppend)
+                    {
+                        vm.AppendButtonVisible = Visibility.Visible;
+                    }
+                    else
+                    {
+                        vm.AppendButtonVisible = Visibility.Hidden;
+                    }
                     ScreenDpi = VisualTreeHelper.GetDpi(MainCanvas);
                     vm.CreateGrid(ScreenDpi, MainCanvas.ActualWidth, MainCanvas.ActualHeight);
                     vm.ShowGrid = showGrid;

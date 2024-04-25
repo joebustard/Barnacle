@@ -53,6 +53,19 @@
                             </Button>
                         </Border>
                         <Border
+                            x:Name="AppendBorder"
+                            BorderThickness="4"
+                            CornerRadius="2" Visibility="{Binding AppendButtonVisible}">
+                            <Button
+                                x:Name="AppendButton"
+                                Command="{Binding AppendCommand}"
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Start appending new points to the line"  Visibility="{Binding AppendButtonVisible}">
+
+                                <Image Source="/Barnacle;component/Images/Buttons/SelectSegment.png" />
+                            </Button>
+                        </Border>
+                        <Border
                             x:Name="AddSegBorder"
                             BorderThickness="4"
                             CornerRadius="2">

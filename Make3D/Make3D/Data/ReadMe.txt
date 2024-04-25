@@ -39,6 +39,7 @@ Changed
     Default slice Z Seam type to random
 	Allow Vase loft to use preset path strings
 	Tie the error reporting of unknown primitive types in the Limpet function Make() directly to the primitive factory.
+	Replaced the pathloft algorithm completely from sdf to bufferedpolyline. Improves speed of path lofting dramatically
 
 v1.0.4
 ===========

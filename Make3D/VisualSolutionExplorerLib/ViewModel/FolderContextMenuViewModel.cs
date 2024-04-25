@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows;
 using System.Windows.Input;
 
 namespace VisualSolutionExplorer
@@ -74,6 +75,7 @@ namespace VisualSolutionExplorer
             {
                 return contextMenuActions;
             }
+
             set
             {
                 if (contextMenuActions != value)
@@ -99,6 +101,7 @@ namespace VisualSolutionExplorer
         public bool Valid
         {
             get { return valid; }
+
             set
             {
                 valid = value;

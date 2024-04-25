@@ -20,6 +20,7 @@ namespace Barnacle.LineLib
             closed = true;
             openEndedPath = false;
         }
+
         public FlexiSegment FirstSelectedSegment()
         {
             FlexiSegment res = null;
@@ -33,6 +34,7 @@ namespace Barnacle.LineLib
             }
             return res;
         }
+
         private bool openEndedPath;
 
         public bool OpenEndedPath
@@ -66,6 +68,7 @@ namespace Barnacle.LineLib
                     return null;
                 }
             }
+
             set
             {
                 if (flexiPoints.Count == 0)
@@ -205,6 +208,7 @@ namespace Barnacle.LineLib
                 flexiPoints[i].X = low + (high - flexiPoints[i].X);
             }
         }
+
         public void FlipVertical()
         {
             double low = double.MaxValue;
@@ -267,8 +271,7 @@ namespace Barnacle.LineLib
                 double t = DistToLine.FindTOfClosestToLine(targetPoint, P0, P2);
                 if (t != double.MinValue && t != 0)
                 {
-                    // Now it gets nasty
-                    // delete the second segment
+                    // Now it gets nasty delete the second segment
                     DeleteSegmentStartingAt(seg1P0);
                     // calculate where the control point should be so cuve goes through target point
                     System.Windows.Point P1 = new System.Windows.Point(0, 0);
@@ -531,8 +534,8 @@ namespace Barnacle.LineLib
 
         public List<System.Windows.Point> DisplayPoints()
         {
-            // display points are NOT the same as the raw FlexiPoints;
-            // Any curves etc may generate more intermediate display points
+            // display points are NOT the same as the raw FlexiPoints; Any curves etc may generate
+            // more intermediate display points
             List<System.Windows.Point> res = new List<System.Windows.Point>();
             if (Start != null)
             {
@@ -557,8 +560,8 @@ namespace Barnacle.LineLib
 
         public List<System.Drawing.PointF> DisplayPointsF()
         {
-            // display points are NOT the same as the raw FlexiPoints;
-            // Any curves etc may generate more intermediate display points
+            // display points are NOT the same as the raw FlexiPoints; Any curves etc may generate
+            // more intermediate display points
             List<System.Drawing.PointF> res = new List<System.Drawing.PointF>();
             if (Start != null)
             {
@@ -568,8 +571,8 @@ namespace Barnacle.LineLib
                     sg.DisplayPointsF(res, flexiPoints);
                 }
             }
-            //  We want a consistent orientaion of the final points, no matter how the user
-            // has drawn his curve
+            // We want a consistent orientaion of the final points, no matter how the user has drawn
+            // his curve
             bool anticlockwise = SignedPolygonArea(res) > 0;
             if (anticlockwise)
             {
@@ -583,17 +586,13 @@ namespace Barnacle.LineLib
             return res;
         }
 
-        // Return the polygon's area in "square units."
-        // Add the areas of the trapezoids defined by the
-        // polygon's edges dropped to the X-axis. When the
-        // program considers a bottom edge of a polygon, the
-        // calculation gives a negative area so the space
-        // between the polygon and the axis is subtracted,
-        // leaving the polygon's area. This method gives odd
-        // results for non-simple polygons.
+        // Return the polygon's area in "square units." Add the areas of the trapezoids defined by
+        // the polygon's edges dropped to the X-axis. When the program considers a bottom edge of a
+        // polygon, the calculation gives a negative area so the space between the polygon and the
+        // axis is subtracted, leaving the polygon's area. This method gives odd results for
+        // non-simple polygons.
         //
-        // The value will be negative if the polygon is
-        // oriented clockwise.
+        // The value will be negative if the polygon is oriented clockwise.
         private float SignedPolygonArea(List<System.Drawing.PointF> fpoints)
         {
             // Get the areas.
@@ -650,7 +649,7 @@ namespace Barnacle.LineLib
                         System.Windows.Point p1 = flexiPoints[controlIndex].ToPoint();
                         System.Windows.Point p2 = flexiPoints[endIndex].ToPoint();
 
-                        // calculate  points for lower curve
+                        // calculate points for lower curve
                         double x, y;
                         System.Windows.Point lnp0 = p0;
                         x = (1 - splitT) * p0.X + (splitT * p1.X);
@@ -945,7 +944,7 @@ namespace Barnacle.LineLib
                     i++;
                 }
             }
-            if (valid && pnts.Count > 2)
+            if (valid && pnts.Count >= 2)
             {
                 flexiPoints.Clear();
                 int i = 0;
@@ -1074,8 +1073,7 @@ namespace Barnacle.LineLib
         }
 
         /// <summary>
-        /// Does the path have two consecutive line segments selected
-        /// Used to enable related buttons
+        /// Does the path have two consecutive line segments selected Used to enable related buttons
         /// </summary>
         /// <returns></returns>
         public bool HasTwoConsecutiveLineSegmentsSelected()
@@ -1151,8 +1149,8 @@ namespace Barnacle.LineLib
             }
             if (!found && closed)
             {
-                // special case, trying to split the imaginary line that connects
-                // the last point back to the first
+                // special case, trying to split the imaginary line that connects the last point
+                // back to the first
                 if (segs[segs.Count - 1].End() == pointIndex)
                 {
                     FlexiPoint np = new FlexiPoint(position, flexiPoints.Count);
@@ -1332,10 +1330,9 @@ namespace Barnacle.LineLib
         }
 
         /// <summary>
-        /// Look for the first selected items
-        /// If its two consecutive linesegments return the index of the first one
-        /// Else return -1
-        /// Used to decide if two sements can be converted to a quadratic bezier
+        /// Look for the first selected items If its two consecutive linesegments return the index
+        /// of the first one Else return -1 Used to decide if two sements can be converted to a
+        /// quadratic bezier
         /// </summary>
         /// <returns></returns>
         public int TwoConsecutiveLineSegmentsSelected()
