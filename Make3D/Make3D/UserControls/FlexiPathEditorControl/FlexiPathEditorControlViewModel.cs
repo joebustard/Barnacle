@@ -808,8 +808,9 @@ namespace Barnacle.UserControls
                     byte[] rawImage = new byte[rawStride * bmi.PixelHeight];
                     bmi.CopyPixels(rawImage, rawStride, 0);
                     BitmapSource bitmapSource = BitmapSource.Create(bmi.PixelWidth, bmi.PixelHeight,
-                    dpi.PixelsPerInchX / dpi.DpiScaleX, dpi.PixelsPerInchY / dpi.DpiScaleY, pf, null, rawImage, rawStride);
-
+                    dpi.PixelsPerInchX, dpi.PixelsPerInchY, pf, null, rawImage, rawStride);
+                    // dpi.PixelsPerInchX / dpi.DpiScaleX, dpi.PixelsPerInchY / dpi.DpiScaleY, pf,
+                    // null, rawImage, rawStride);
                     BackgroundImage = bitmapSource;
                 }
 
@@ -1495,6 +1496,7 @@ namespace Barnacle.UserControls
             else
             {
                 System.Windows.Point snappedPos = SnapPositionToMM(position);
+
                 PositionText = $"({position.X.ToString("F3")},{position.Y.ToString("F3")})";
                 if (selectedPoint != -1)
                 {

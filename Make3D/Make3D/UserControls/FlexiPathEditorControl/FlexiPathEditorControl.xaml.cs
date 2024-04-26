@@ -860,21 +860,21 @@ namespace Barnacle.UserControls
         public double ToMMX(double x)
         {
             DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
-            double res = (25.4 * x / sc.PixelsPerInchX) * sc.DpiScaleX;
+            double res = (25.4 * x / sc.PixelsPerInchX); // * sc.DpiScaleX;
             return res;
         }
 
         public double ToMM(double x)
         {
             DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
-            double res = (25.4 * x / sc.PixelsPerInchX) * sc.DpiScaleX;
+            double res = (25.4 * x / sc.PixelsPerInchX); // * sc.DpiScaleX;
             return res;
         }
 
         public double ToMMY(double y)
         {
             DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
-            double res = (25.4 * y / sc.PixelsPerInchY) * sc.DpiScaleY; ;
+            double res = (25.4 * y / sc.PixelsPerInchY); // * sc.DpiScaleY; ;
             return res;
         }
 
