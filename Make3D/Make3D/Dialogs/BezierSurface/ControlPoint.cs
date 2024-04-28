@@ -156,7 +156,7 @@ namespace Barnacle.Dialogs.BezierSurface
             set;
         }
 
-        internal bool CheckHit(GeometryModel3D m, bool shift)
+        internal bool CheckHit(GeometryModel3D m)
         {
             bool res = false;
             if (m == model)
@@ -174,7 +174,11 @@ namespace Barnacle.Dialogs.BezierSurface
                 Position.X + positionChange.X,
                 Position.Y + positionChange.Y,
                 Position.Z + positionChange.Z);
+            GenerateControlMarker();
+        }
 
+        public void GenerateControlMarker()
+        {
             Point3D p = Position;
             double si = 0.75;
             MeshGeometry3D faces = model.Geometry as MeshGeometry3D;

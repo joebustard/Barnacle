@@ -255,12 +255,14 @@ namespace Barnacle.Dialogs
                             top = outline[i].Y;
                         }
                     }
+                    for (int i = 0; i < outline.Count; i++)
+                    {
+                        tmp.Add(new Point(outline[i].X, top - outline[i].Y));
+                    }
+                    /*
                     if (PathEditor.LocalImage == null)
                     {
-                        for (int i = 0; i < outline.Count; i++)
-                        {
-                            tmp.Add(new Point(outline[i].X, top - outline[i].Y));
-                        }
+                        
                     }
                     else
                     {
@@ -274,6 +276,7 @@ namespace Barnacle.Dialogs
                         }
                         
                     }
+                    */
                     double lx, rx, ty, by;
                     CalculateExtents(tmp, out lx, out rx, out ty, out by);
 

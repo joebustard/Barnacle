@@ -915,18 +915,8 @@ namespace Barnacle.Dialogs
                 top = ty;
                 for (int i = 0; i < points.Count; i++)
                 {
-                    if (PathEditor.LocalImage == null)
-                    {
-                        // flipping coordinates so have to reverse polygon too
-                        //tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
-                        tmp.Add(new System.Windows.Point(points[i].X, top - points[i].Y));
-                    }
-                    else
-                    {
-                        double x = PathEditor.ToMM(points[i].X);
-                        double y = PathEditor.ToMM(top - points[i].Y);
-                        tmp.Insert(0, new System.Windows.Point(x, y));
-                    }
+                    // flipping coordinates so have to reverse polygon too
+                    tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
                 }
                 // Point[] clik = OrderAntiClockwise(tmp.ToArray());
                 for (int i = 0; i < tmp.Count - 1; i++)
@@ -1058,17 +1048,9 @@ namespace Barnacle.Dialogs
                 top = ty;
                 for (int i = 0; i < points.Count; i++)
                 {
-                    if (PathEditor.LocalImage == null)
-                    {
-                        // flipping coordinates so have to reverse polygon too
-                        tmp.Add(new System.Windows.Point(points[i].X, top - points[i].Y));
-                    }
-                    else
-                    {
-                        double x = PathEditor.ToMM(points[i].X);
-                        double y = PathEditor.ToMM(top - points[i].Y);
-                        tmp.Insert(0, new System.Windows.Point(x, y));
-                    }
+                    // flipping coordinates so have to reverse polygon too
+                    tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
+                    
                 }
                 //  Point[] clik = OrderAntiClockwise(tmp.ToArray());
                 for (int i = 0; i < tmp.Count - 1; i++)
@@ -1227,18 +1209,8 @@ namespace Barnacle.Dialogs
                 }
                 for (int i = 0; i < points.Count; i++)
                 {
-                    if (PathEditor.LocalImage == null)
-                    {
-                        // flipping coordinates so have to reverse polygon too
-                        //tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
-                        outLineTmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
-                    }
-                    else
-                    {
-                        double x = PathEditor.ToMM(points[i].X);
-                        double y = PathEditor.ToMM(top - points[i].Y);
-                        outLineTmp.Insert(0, new System.Windows.Point(x, y));
-                    }
+                    // flipping coordinates so have to reverse polygon too
+                    outLineTmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
                 }
                 double lx, rx, ty, by;
                 CalculateExtents(outLineTmp, out lx, out rx, out ty, out by);
@@ -1425,20 +1397,11 @@ namespace Barnacle.Dialogs
                         top = points[i].Y;
                     }
                 }
-                
+
                 for (int i = 0; i < points.Count; i++)
                 {
-                    if (PathEditor.LocalImage == null)
-                    {
-                        // flipping coordinates so have to reverse polygon too
-                         tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
-                    }
-                    else
-                    {
-                        double x = PathEditor.ToMM(points[i].X);
-                        double y = PathEditor.ToMM(top - points[i].Y);
-                        tmp.Insert(0, new System.Windows.Point(x, y));
-                    }
+                    // flipping coordinates so have to reverse polygon too
+                    tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
                 }
                 double lx, rx, ty, by;
                 CalculateExtents(tmp, out lx, out rx, out ty, out by);
@@ -1601,18 +1564,7 @@ namespace Barnacle.Dialogs
             }
             for (int i = 0; i < points.Count - 1; i++)
             {
-                if (PathEditor.LocalImage == null)
-                {
-                    // flipping coordinates so have to reverse polygon too
-                    tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
-                }
-                else
-
-                {
-                    double x = PathEditor.ToMM(points[i].X);
-                    double y = PathEditor.ToMM(top - points[i].Y);
-                    tmp.Insert(0, new System.Windows.Point(x, y));
-                }
+                tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
             }
         }
 

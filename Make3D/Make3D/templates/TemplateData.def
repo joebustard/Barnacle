@@ -126,8 +126,8 @@
     </Folder>
     <Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
     <Folder Name="Docs" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True" AutoLoad="True">
-      <File Name="BillOfMaterials.xlsx" Source="templates/tankbom.xlsx" />
-      <File Name="BuildInstructions.docx" Source="templates/TankBuildInstructions.docx" />
+      <File Name="BillOfMaterials.xlsx" Source="templates/tank/tankbom.xlsx" />
+      <File Name="BuildInstructions.docx" Source="templates/tank/TankBuildInstructions.docx" />
     </Folder>
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
     <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />

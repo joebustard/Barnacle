@@ -1,10 +1,12 @@
 ﻿using Barnacle.Dialogs.BezierSurface;
 using Barnacle.Models;
 using Barnacle.Models.Adorners;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
@@ -28,6 +30,7 @@ namespace Barnacle.Dialogs
             ToolName = "BezierSurface";
             DataContext = this;
             ModelGroup = MyModelGroup;
+
             controlPoints = new ControlPointManager();
             surfaceThickness = 1;
             surface = new Surface();
@@ -97,6 +100,12 @@ namespace Barnacle.Dialogs
         {
             switch (key)
             {
+                case Key.F:
+                    {
+                        FloorPoint();
+                    }
+                    break;
+
                 case Key.Up:
                     {
                         if (ctrl)
@@ -179,6 +188,12 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void FloorPoint()
+        {
+            controlPoints.FloorPoint(lastSelectedPointRow, lastSelectedPointColumn);
+            GenerateShape();
+        }
+
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             SaveEditorParmeters();
@@ -222,6 +237,26 @@ namespace Barnacle.Dialogs
             }
         }
 
+        protected override GeometryModel3D GetModel()
+        {
+            MeshGeometry3D mesh = new MeshGeometry3D();
+            mesh.Positions = Vertices;
+            mesh.TriangleIndices = Faces;
+            mesh.Normals = null;
+            GeometryModel3D gm = new GeometryModel3D();
+            gm.Geometry = mesh;
+
+            DiffuseMaterial mt = new DiffuseMaterial();
+            mt.Color = meshColour;
+            mt.Brush = new SolidColorBrush(meshColour);
+            gm.Material = mt;
+            DiffuseMaterial mtb = new DiffuseMaterial();
+            mtb.Color = meshColour;
+            mtb.Brush = new SolidColorBrush(meshColour);
+            gm.BackMaterial = mtb;
+
+            return gm;
+        }
         private void DwnDiag1_Click(object sender, RoutedEventArgs e)
         {
             controlPoints.UpDiagPoints(0, 0, controlPoints.PatchRows, controlPoints.PatchColumns, -1);
@@ -301,9 +336,30 @@ namespace Barnacle.Dialogs
 
         private void LoadEditorParameters()
         {
-            // load back the tool specific parameters
-        }
+            controlPoints.PatchRows = EditorParameters.GetInt("Rows", 13);
+            controlPoints.PatchColumns = EditorParameters.GetInt("Columns", 13);
+            string pnts = EditorParameters.Get("Points");
+            if (!String.IsNullOrEmpty(pnts))
+            {
+                string[] coords = pnts.Split(' ');
+                int i = 0;
+                for (int r = 0; r < controlPoints.PatchRows; r++)
+                {
+                    for (int c = 0; c < controlPoints.PatchColumns; c++)
+                    {
+                        if (i + 2 < coords.GetLength(0))
+                        {
+                            double x = Convert.ToDouble(coords[i++]);
+                            double y = Convert.ToDouble(coords[i++]);
+                            double z = Convert.ToDouble(coords[i++]);
+                            controlPoints.SetPointPos(r, c, x, y, z);
+                        }
+                    }
+                }
+                controlPoints.GenerateWireFrames();
 
+            }
+        }
         private void MoveBox(double deltaX, double deltaY, double deltaZ)
         {
             Point3D positionChange = new Point3D(0, 0, 0);
@@ -339,7 +395,8 @@ namespace Barnacle.Dialogs
             {
                 if (lastSelectedPointRow != -1)
                 {
-                    controlPoints.MovePoint(lastSelectedPointRow, lastSelectedPointColumn, positionChange);
+                    //controlPoints.MovePoint(lastSelectedPointRow, lastSelectedPointColumn, positionChange);
+                    controlPoints.MoveSelectedPoints(positionChange);
                     GenerateShape();
                 }
             }
@@ -464,7 +521,7 @@ namespace Barnacle.Dialogs
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             LoadEditorParameters();
-            MeshColour = System.Windows.Media.Color.FromArgb(64, 128, 128, 128);
+            MeshColour = System.Windows.Media.Color.FromArgb(128, 128, 255, 128);
             GenerateShape();
             UpdateCameraPos();
             MyModelGroup.Children.Clear();

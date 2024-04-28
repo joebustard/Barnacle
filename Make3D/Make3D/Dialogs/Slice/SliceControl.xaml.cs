@@ -590,7 +590,7 @@ M84 ; Disable stepper motors
             exportDoc = new Document();
             exportDoc.ParentProject = BaseViewModel.Project;
             exportDoc.Load(fullPath);
-
+            exportDoc.ProjectSettings = BaseViewModel.Project.SharedProjectSettings;
             string modelName = Path.GetFileNameWithoutExtension(fullPath);
             fullPath = Path.GetDirectoryName(fullPath);
             Bounds3D allBounds = RecalculateAllBounds();

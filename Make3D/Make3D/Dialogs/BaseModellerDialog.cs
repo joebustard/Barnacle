@@ -1072,7 +1072,7 @@ namespace Barnacle.Dialogs
             return bnds;
         }
 
-        protected GeometryModel3D GetModel()
+protected virtual GeometryModel3D GetModel()
         {
             MeshGeometry3D mesh = new MeshGeometry3D();
             mesh.Positions = Vertices;
