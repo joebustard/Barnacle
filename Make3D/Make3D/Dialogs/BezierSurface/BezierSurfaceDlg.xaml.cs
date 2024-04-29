@@ -96,18 +96,21 @@ namespace Barnacle.Dialogs
             }
         }
 
-        internal void KeyDownHandler(Key key, bool shift, bool ctrl)
+        internal bool KeyDownHandler(Key key, bool shift, bool ctrl)
         {
+            bool handled = false;
             switch (key)
             {
                 case Key.F:
                     {
                         FloorPoint();
+                        handled = true;
                     }
                     break;
 
                 case Key.Up:
                     {
+                        handled = true;
                         if (ctrl)
                         {
                             if (shift)
@@ -135,6 +138,7 @@ namespace Barnacle.Dialogs
 
                 case Key.Down:
                     {
+                        handled = true;
                         if (ctrl)
                         {
                             if (shift)
@@ -162,6 +166,7 @@ namespace Barnacle.Dialogs
 
                 case Key.Left:
                     {
+                        handled = true;
                         if (shift)
                         {
                             Nudge(Adorner.NudgeDirection.Left, 0.1);
@@ -175,6 +180,7 @@ namespace Barnacle.Dialogs
 
                 case Key.Right:
                     {
+                        handled = true;
                         if (shift)
                         {
                             Nudge(Adorner.NudgeDirection.Right, 0.1);
@@ -186,11 +192,12 @@ namespace Barnacle.Dialogs
                     }
                     break;
             }
+            return handled;
         }
 
         private void FloorPoint()
         {
-            controlPoints.FloorPoint(lastSelectedPointRow, lastSelectedPointColumn);
+            controlPoints.FloorPoints();
             GenerateShape();
         }
 
@@ -246,17 +253,19 @@ namespace Barnacle.Dialogs
             GeometryModel3D gm = new GeometryModel3D();
             gm.Geometry = mesh;
 
+            Color transparentSurfaceColour = System.Windows.Media.Color.FromArgb(128, 128, 255, 128);
             DiffuseMaterial mt = new DiffuseMaterial();
             mt.Color = meshColour;
-            mt.Brush = new SolidColorBrush(meshColour);
+            mt.Brush = new SolidColorBrush(transparentSurfaceColour);
             gm.Material = mt;
             DiffuseMaterial mtb = new DiffuseMaterial();
             mtb.Color = meshColour;
-            mtb.Brush = new SolidColorBrush(meshColour);
+            mtb.Brush = new SolidColorBrush(transparentSurfaceColour);
             gm.BackMaterial = mtb;
 
             return gm;
         }
+
         private void DwnDiag1_Click(object sender, RoutedEventArgs e)
         {
             controlPoints.UpDiagPoints(0, 0, controlPoints.PatchRows, controlPoints.PatchColumns, -1);
@@ -303,11 +312,15 @@ namespace Barnacle.Dialogs
 
         private void Grid_KeyDown(object sender, KeyEventArgs e)
         {
-            KeyDownHandler(e.Key, Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift), Keyboard.IsKeyDown(Key.LeftCtrl));
+            draggingPoints = false;
+            e.Handled = KeyDownHandler(e.Key, Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift), Keyboard.IsKeyDown(Key.LeftCtrl));
         }
+
+        private bool draggingPoints = false;
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            draggingPoints = false;
             bool leftButton = (e.LeftButton == MouseButtonState.Pressed);
             if (leftButton)
             {
@@ -319,19 +332,40 @@ namespace Barnacle.Dialogs
             bool shift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
             if (lastHitModel != null)
             {
-                if (controlPoints.CheckHit(lastHitModel, shift, ref lastSelectedPointRow, ref lastSelectedPointColumn))
+                if (controlPoints.CheckHit(lastHitModel, shift | draggingPoints, ref lastSelectedPointRow, ref lastSelectedPointColumn))
                 {
+                    draggingPoints = true;
                     Redisplay();
                     viewport3D1.Focus();
+                    e.Handled = true;
                 }
             }
+            if (!e.Handled)
+            {
+                base.Viewport_MouseDown(viewport3D1, e);
+            }
+        }
 
-            base.Viewport_MouseDown(viewport3D1, e);
+        private void Grid_MouseMove(object sender, MouseEventArgs e)
+        {
+            bool leftButton = (e.LeftButton == MouseButtonState.Pressed);
+            if (leftButton && draggingPoints)
+            {
+                Point newPos = e.GetPosition(viewport3D1);
+                bool ctrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                MouseMovePoints(lastMousePos, newPos, ctrlDown);
+                lastMousePos = newPos;
+            }
+            else
+            {
+                base.Viewport_MouseMove(sender, e);
+            }
         }
 
         private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
+            draggingPoints = false;
         }
 
         private void LoadEditorParameters()
@@ -357,9 +391,9 @@ namespace Barnacle.Dialogs
                     }
                 }
                 controlPoints.GenerateWireFrames();
-
             }
         }
+
         private void MoveBox(double deltaX, double deltaY, double deltaZ)
         {
             Point3D positionChange = new Point3D(0, 0, 0);
@@ -521,12 +555,64 @@ namespace Barnacle.Dialogs
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             LoadEditorParameters();
-            MeshColour = System.Windows.Media.Color.FromArgb(128, 128, 255, 128);
+
             GenerateShape();
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
 
             Redisplay();
+        }
+
+        private void MouseMovePoints(Point lastPos, Point newPos, bool ctrlDown)
+        {
+            double dr = Math.Sqrt(Camera.Distance);
+            double deltaX = (newPos.X - lastPos.X) / dr;
+
+            double deltaY;
+            double deltaZ;
+
+            if (!ctrlDown)
+            {
+                deltaY = -(newPos.Y - lastPos.Y) / dr;
+                deltaZ = 0;
+            }
+            else
+            {
+                deltaY = 0;
+                deltaZ = -(newPos.Y - lastPos.Y) / dr;
+            }
+
+            Point3D positionChange = new Point3D(0, 0, 0);
+            PolarCamera.Orientations ori = Camera.HorizontalOrientation;
+            switch (ori)
+            {
+                case PolarCamera.Orientations.Front:
+                    {
+                        positionChange = new Point3D(1 * deltaX, 1 * deltaY, -1 * deltaZ);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Back:
+                    {
+                        positionChange = new Point3D(-1 * deltaX, 1 * deltaY, 1 * deltaZ);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Left:
+                    {
+                        positionChange = new Point3D(1 * deltaZ, 1 * deltaY, 1 * deltaX);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Right:
+                    {
+                        positionChange = new Point3D(-1 * deltaZ, 1 * deltaY, -1 * deltaX);
+                    }
+                    break;
+            }
+
+            controlPoints.MoveSelectedPoints(positionChange);
+            GenerateShape();
         }
     }
 }

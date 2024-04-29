@@ -8,8 +8,7 @@ namespace Barnacle.Dialogs.BezierSurface
     {
         private void SetModelMaterials()
         {
-            // don't try to update model materials if one of them isn't
-            // defined yet
+            // don't try to update model materials if one of them isn't defined yet
             if (model != null && SelectedMaterial != null)
             {
                 if (selected)
@@ -52,6 +51,7 @@ namespace Barnacle.Dialogs.BezierSurface
         public GeometryModel3D Model
         {
             get { return model; }
+
             set
             {
                 if (model != value)
@@ -180,7 +180,7 @@ namespace Barnacle.Dialogs.BezierSurface
         public void GenerateControlMarker()
         {
             Point3D p = Position;
-            double si = 0.75;
+            double si = 1.25;
             MeshGeometry3D faces = model.Geometry as MeshGeometry3D;
             faces.Positions.Clear();
             int v0 = AddPoint(faces.Positions, new Point3D(p.X, p.Y + si, p.Z));

@@ -47,7 +47,7 @@
                             Orientation="Horizontal">
                     <Label VerticalAlignment="Center"
                            Width="100">
-                    Thickness
+                        Thickness
                     </Label>
                     <Slider Maximum="100"
                             Minimum="1"
@@ -61,73 +61,73 @@
                 <StackPanel Grid.Row="3"
                             Orientation="Horizontal">
                     <Label VerticalAlignment="Center">
-                    Reset Control Points
+                        Reset Control Points
                     </Label>
                     <Button Click="ResetControlPoints_Click"
                             Margin="4,2,0,0">
-                    Flat
+                        Flat
                     </Button>
                     <Button Click="ResetControlPointsDisk_Click"
                             Margin="4,2,0,0">
-                    Disk
+                        Disk
                     </Button>
                     <Button Click="ResetControlPointsBow_Click"
                             Margin="4,2,0,0">
-                    Bow
+                        Bow
                     </Button>
                 </StackPanel>
                 <StackPanel Grid.Row="5"
                             Orientation="Horizontal">
                     <Label VerticalAlignment="Center"
                            Width="80">
-                    Bend Up
+                        Bend Up
                     </Label>
                     <Button Click="UpX_Click"
                             Margin="4,2,0,0">
-                    X
+                        X
                     </Button>
                     <Button Click="UpZ_Click"
                             Margin="4,2,0,0">
-                    Z
+                        Z
                     </Button>
                     <Button Click="UpXZ_Click"
                             Margin="4,2,0,0">
-                    X + Z
+                        X + Z
                     </Button>
                     <Button Click="UpDiag1_Click"
                             Margin="4,2,0,0">
-                    Diag 1
+                        Diag 1
                     </Button>
                     <Button Click="UpDiag2_Click"
                             Margin="4,2,0,0">
-                    Diag 2
+                        Diag 2
                     </Button>
                 </StackPanel>
                 <StackPanel Grid.Row="6"
                             Orientation="Horizontal">
                     <Label VerticalAlignment="Center"
                            Width="80">
-                    Bend Down
+                        Bend Down
                     </Label>
                     <Button Click="DwnX_Click"
                             Margin="4,0,0,0">
-                    X
+                        X
                     </Button>
                     <Button Click="DwnZ_Click"
                             Margin="4,0,0,0">
-                    Z
+                        Z
                     </Button>
                     <Button Click="DwnXZ_Click"
                             Margin="4,0,0,0">
-                    X + Z
+                        X + Z
                     </Button>
                     <Button Click="DwnDiag1_Click"
                             Margin="4,0,0,0">
-                    Diag 1
+                        Diag 1
                     </Button>
                     <Button Click="DwnDiag2_Click"
                             Margin="4,0,0,0">
-                    Diag 2
+                        Diag 2
                     </Button>
                 </StackPanel>
                 <StackPanel Grid.Row="7"
@@ -147,8 +147,9 @@
             <Viewport3D Name="viewport3D1"
                         Focusable="True"
                         KeyDown="Grid_KeyDown"
-                        MouseDown="Viewport_MouseDown"
-                        MouseMove="Viewport_MouseMove"
+                        MouseDown="Grid_MouseDown"
+                        MouseMove="Grid_MouseMove"
+                        MouseUp="Grid_MouseUp"
                         MouseWheel="Viewport_MouseWheel">
                 <Viewport3D.Camera>
                     <PerspectiveCamera LookDirection="{Binding LookDirection}"
