@@ -120,6 +120,38 @@ namespace Barnacle.Dialogs.BezierSurface
             GenerateWireFrames();
         }
 
+        public void ResetControlPointsHalfTube()
+        {
+            allcontrolPoints = new ControlPoint[patchRows, patchColumns];
+
+            double xo = (patchColumns / 2) * XGap;
+            double zo = (patchRows / 2) * ZGap;
+            for (int r = 0; r < patchRows; r++)
+            {
+                for (int c = 0; c < patchColumns; c++)
+                {
+                    double x = c * XGap - xo;
+                    double z = r * ZGap - zo;
+
+                    double y = 20;
+                    if (c == 0 || c == patchColumns - 1)
+                    {
+                        y = 0;
+                    }
+                    if (c == 1 || c == patchColumns - 2)
+                    {
+                        y = 6;
+                    }
+                    if (c == 2 || c == patchColumns - 3)
+                    {
+                        y = 16;
+                    }
+                    allcontrolPoints[r, c] = new ControlPoint(x, y, z);
+                }
+            }
+            GenerateWireFrames();
+        }
+
         public void ResetControlPointsBow()
         {
             allcontrolPoints = new ControlPoint[patchRows, patchColumns];
@@ -167,6 +199,7 @@ namespace Barnacle.Dialogs.BezierSurface
                 }
                 offset++;
             }
+
             GenerateWireFrames();
         }
 

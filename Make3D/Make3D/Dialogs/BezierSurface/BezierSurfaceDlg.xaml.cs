@@ -512,6 +512,13 @@ namespace Barnacle.Dialogs
         private void ResetControlPointsDisk_Click(object sender, RoutedEventArgs e)
         {
             controlPoints.ResetControlPointsCircle();
+
+            UpdateDisplay();
+        }
+
+        private void ResetControlPointsTube_Click(object sender, RoutedEventArgs e)
+        {
+            controlPoints.ResetControlPointsHalfTube();
             UpdateDisplay();
         }
 

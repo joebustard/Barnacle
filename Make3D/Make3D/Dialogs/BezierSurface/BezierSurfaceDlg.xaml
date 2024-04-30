@@ -58,11 +58,12 @@
                              x:Name="ThickBox"
                              Width="50" />
                 </StackPanel>
-                <StackPanel Grid.Row="3"
+                <Label VerticalAlignment="Center" Grid.Row="3">
+                    Reset Control Points
+                </Label>
+                <StackPanel Grid.Row="4"
                             Orientation="Horizontal">
-                    <Label VerticalAlignment="Center">
-                        Reset Control Points
-                    </Label>
+
                     <Button Click="ResetControlPoints_Click"
                             Margin="4,2,0,0">
                         Flat
@@ -75,8 +76,12 @@
                             Margin="4,2,0,0">
                         Bow
                     </Button>
+                    <Button Click="ResetControlPointsTube_Click"
+                            Margin="4,2,0,0">
+                        Tube
+                    </Button>
                 </StackPanel>
-                <StackPanel Grid.Row="5"
+                <StackPanel Grid.Row="6"
                             Orientation="Horizontal">
                     <Label VerticalAlignment="Center"
                            Width="80">
@@ -103,7 +108,7 @@
                         Diag 2
                     </Button>
                 </StackPanel>
-                <StackPanel Grid.Row="6"
+                <StackPanel Grid.Row="7"
                             Orientation="Horizontal">
                     <Label VerticalAlignment="Center"
                            Width="80">
@@ -130,7 +135,7 @@
                         Diag 2
                     </Button>
                 </StackPanel>
-                <StackPanel Grid.Row="7"
+                <StackPanel Grid.Row="8"
                             Orientation="Horizontal">
                 </StackPanel>
                 <StackPanel Grid.Row="9"
