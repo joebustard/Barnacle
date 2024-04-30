@@ -320,23 +320,42 @@ namespace Barnacle.Dialogs
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            draggingPoints = false;
+            // draggingPoints = false;
             bool leftButton = (e.LeftButton == MouseButtonState.Pressed);
             if (leftButton)
             {
                 lastMousePos = e.GetPosition(viewport3D1);
-            }
-            lastHitModel = null;
-            lastHitPoint = new Point3D(0, 0, 0);
-            HitTest(viewport3D1, e.GetPosition(viewport3D1));
-            bool shift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
-            if (lastHitModel != null)
-            {
-                if (controlPoints.CheckHit(lastHitModel, shift | draggingPoints, ref lastSelectedPointRow, ref lastSelectedPointColumn))
+                oldMousePos = lastMousePos;
+
+                lastHitModel = null;
+                lastHitPoint = new Point3D(0, 0, 0);
+                HitTest(viewport3D1, e.GetPosition(viewport3D1));
+                bool shift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+
+                if (lastHitModel != null)
                 {
-                    draggingPoints = true;
-                    Redisplay();
-                    viewport3D1.Focus();
+                    bool alreadySelected = false;
+                    int row = -1;
+                    int col = -1;
+                    if (controlPoints.CheckHit(lastHitModel, shift, ref alreadySelected, ref row, ref col))
+                    {
+                        if (!shift && !alreadySelected)
+                        {
+                            controlPoints.DeselectAll();
+                        }
+
+                        controlPoints.Select(row, col);
+                        if (alreadySelected)
+                        {
+                            draggingPoints = true;
+                        }
+                        else
+                        {
+                            draggingPoints = false;
+                        }
+                        Redisplay();
+                        viewport3D1.Focus();
+                    }
                     e.Handled = true;
                 }
             }
@@ -429,7 +448,6 @@ namespace Barnacle.Dialogs
             {
                 if (lastSelectedPointRow != -1)
                 {
-                    //controlPoints.MovePoint(lastSelectedPointRow, lastSelectedPointColumn, positionChange);
                     controlPoints.MoveSelectedPoints(positionChange);
                     GenerateShape();
                 }
@@ -546,10 +564,6 @@ namespace Barnacle.Dialogs
             controlPoints.UpZPoints(1);
             controlPoints.GenerateWireFrames();
             UpdateDisplay();
-        }
-
-        private void Viewport_MouseDown(object sender, MouseButtonEventArgs e)
-        {
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

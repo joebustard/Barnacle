@@ -27,7 +27,7 @@ namespace Barnacle.Dialogs.BezierSurface
         {
             Position = new Point3D(x, y, z);
             CreateMaterials();
-            CreateModel();
+            CreateInitialModel();
         }
 
         private void CreateMaterials()
@@ -81,9 +81,9 @@ namespace Barnacle.Dialogs.BezierSurface
             return res;
         }
 
-        internal void CreateModel()
+        internal void CreateInitialModel()
         {
-            double si = 0.75;
+            double si = 2;
             model = new GeometryModel3D();
 
             Point3D p = Position;
@@ -161,8 +161,6 @@ namespace Barnacle.Dialogs.BezierSurface
             bool res = false;
             if (m == model)
             {
-                Selected = true;
-
                 res = true;
             }
             return res;
@@ -174,13 +172,13 @@ namespace Barnacle.Dialogs.BezierSurface
                 Position.X + positionChange.X,
                 Position.Y + positionChange.Y,
                 Position.Z + positionChange.Z);
-            GenerateControlMarker();
+            MoveControlMarker();
         }
 
-        public void GenerateControlMarker()
+        public void MoveControlMarker()
         {
             Point3D p = Position;
-            double si = 1.25;
+            double si = 2;
             MeshGeometry3D faces = model.Geometry as MeshGeometry3D;
             faces.Positions.Clear();
             int v0 = AddPoint(faces.Positions, new Point3D(p.X, p.Y + si, p.Z));
