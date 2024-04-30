@@ -140,11 +140,15 @@ namespace Barnacle.Dialogs.BezierSurface
                     }
                     if (c == 1 || c == patchColumns - 2)
                     {
-                        y = 6;
+                        y = 3;
                     }
                     if (c == 2 || c == patchColumns - 3)
                     {
-                        y = 16;
+                        y = 6;
+                    }
+                    if (c == 3 || c == patchColumns - 4)
+                    {
+                        y = 10;
                     }
                     allcontrolPoints[r, c] = new ControlPoint(x, y, z);
                 }
