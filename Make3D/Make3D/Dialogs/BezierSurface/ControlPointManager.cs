@@ -22,6 +22,13 @@ namespace Barnacle.Dialogs.BezierSurface
             ResetControlPoints();
         }
 
+        public void SetDimensions(int rows, int cols)
+        {
+            patchRows = rows;
+            patchColumns = cols;
+            ResetControlPoints();
+        }
+
         public ControlPoint[,] AllcontrolPoints
         { get { return allcontrolPoints; } }
 

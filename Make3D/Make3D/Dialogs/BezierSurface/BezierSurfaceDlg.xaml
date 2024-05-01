@@ -47,7 +47,15 @@
                             Orientation="Horizontal">
                     <Label VerticalAlignment="Center"
                            Width="100">
-                        Thickness
+                        Dimensions
+                    </Label>
+                    <ComboBox Width="200" ItemsSource="{Binding AvailableDimensions}" SelectedItem="{Binding SelectedDimensions}" />
+                </StackPanel>
+                <StackPanel Grid.Row="2"
+                            Orientation="Horizontal">
+                    <Label VerticalAlignment="Center"
+                           Width="100">
+                        Shell
                     </Label>
                     <Slider Maximum="100"
                             Minimum="1"
@@ -56,12 +64,12 @@
                             Width="200" />
                     <TextBox Text="{Binding SurfaceThickness}"
                              x:Name="ThickBox"
-                             Width="50" />
+                             Width="50" Margin="8,0,0,0" />
                 </StackPanel>
-                <Label VerticalAlignment="Center" Grid.Row="3">
+                <Label VerticalAlignment="Center" Grid.Row="4">
                     Reset Control Points
                 </Label>
-                <StackPanel Grid.Row="4"
+                <StackPanel Grid.Row="5"
                             Orientation="Horizontal">
 
                     <Button Click="ResetControlPoints_Click"
@@ -81,7 +89,7 @@
                         Tube
                     </Button>
                 </StackPanel>
-                <StackPanel Grid.Row="6"
+                <StackPanel Grid.Row="7"
                             Orientation="Horizontal">
                     <Label VerticalAlignment="Center"
                            Width="80">
@@ -108,7 +116,7 @@
                         Diag 2
                     </Button>
                 </StackPanel>
-                <StackPanel Grid.Row="7"
+                <StackPanel Grid.Row="8"
                             Orientation="Horizontal">
                     <Label VerticalAlignment="Center"
                            Width="80">
@@ -135,10 +143,10 @@
                         Diag 2
                     </Button>
                 </StackPanel>
-                <StackPanel Grid.Row="8"
+                <StackPanel Grid.Row="9"
                             Orientation="Horizontal">
                 </StackPanel>
-                <StackPanel Grid.Row="9"
+                <StackPanel Grid.Row="10"
                             Orientation="Horizontal">
                 </StackPanel>
             </Grid>

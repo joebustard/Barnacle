@@ -30,12 +30,58 @@ namespace Barnacle.Dialogs
             ToolName = "BezierSurface";
             DataContext = this;
             ModelGroup = MyModelGroup;
-
+            availableDimensions = new List<string>();
+            availableDimensions.Add("4 x 4");
+            availableDimensions.Add("7 x 7");
+            availableDimensions.Add("9 x 9");
+            availableDimensions.Add("11 x 11");
+            availableDimensions.Add("13 x 13");
+            selectedDimensions = "13 x 13";
             controlPoints = new ControlPointManager();
+            controlPoints.SetDimensions(9, 9);
             surfaceThickness = 1;
             surface = new Surface();
             surface.controlPointManager = controlPoints;
             surface.Thickness = surfaceThickness;
+        }
+
+        private void ChangeDimensions(string s)
+        {
+            switch (s)
+            {
+                case "4 x 4":
+                    {
+                        controlPoints.SetDimensions(4, 4);
+                    }
+                    break;
+
+                case "7 x 7":
+                    {
+                        controlPoints.SetDimensions(7, 7);
+                    }
+                    break;
+
+                case "9 x 9":
+                    {
+                        controlPoints.SetDimensions(9, 9);
+                    }
+                    break;
+
+                case "11 x 11":
+                    {
+                        controlPoints.SetDimensions(11, 11);
+                    }
+                    break;
+
+                case "13 x 13":
+                    {
+                        controlPoints.SetDimensions(13, 13);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         public override bool ShowAxies
@@ -381,6 +427,22 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private List<String> availableDimensions;
+
+        public List<String> AvailableDimensions
+        {
+            get { return availableDimensions; }
+
+            set
+            {
+                if (value != availableDimensions)
+                {
+                    availableDimensions = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
@@ -499,27 +561,66 @@ namespace Barnacle.Dialogs
 
         private void ResetControlPoints_Click(object sender, RoutedEventArgs e)
         {
-            controlPoints.ResetControlPoints();
-            UpdateDisplay();
+            if (ConfirmDiscard())
+            {
+                controlPoints.ResetControlPoints();
+                UpdateDisplay();
+            }
+        }
+
+        private bool ConfirmDiscard()
+        {
+            MessageBoxResult mbr = MessageBox.Show("This will reset all control points. Any changes will be lost.", "Caution", MessageBoxButton.OKCancel);
+            return (mbr == MessageBoxResult.OK);
         }
 
         private void ResetControlPointsBow_Click(object sender, RoutedEventArgs e)
         {
-            controlPoints.ResetControlPointsBow();
-            UpdateDisplay();
+            if (ConfirmDiscard())
+            {
+                controlPoints.ResetControlPointsBow();
+                UpdateDisplay();
+            }
         }
 
         private void ResetControlPointsDisk_Click(object sender, RoutedEventArgs e)
         {
-            controlPoints.ResetControlPointsCircle();
+            if (ConfirmDiscard())
+            {
+                controlPoints.ResetControlPointsCircle();
 
-            UpdateDisplay();
+                UpdateDisplay();
+            }
+        }
+
+        private string selectedDimensions;
+
+        public String SelectedDimensions
+        {
+            get { return selectedDimensions; }
+
+            set
+            {
+                if (value != selectedDimensions)
+                {
+                    if (ConfirmDiscard())
+                    {
+                        selectedDimensions = value;
+                        ChangeDimensions(selectedDimensions);
+                        UpdateDisplay();
+                        NotifyPropertyChanged();
+                    }
+                }
+            }
         }
 
         private void ResetControlPointsTube_Click(object sender, RoutedEventArgs e)
         {
-            controlPoints.ResetControlPointsHalfTube();
-            UpdateDisplay();
+            if (ConfirmDiscard())
+            {
+                controlPoints.ResetControlPointsHalfTube();
+                UpdateDisplay();
+            }
         }
 
         private void SaveEditorParmeters()
@@ -576,7 +677,7 @@ namespace Barnacle.Dialogs
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             LoadEditorParameters();
-
+            NotifyPropertyChanged("AvailableDimensions");
             GenerateShape();
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
