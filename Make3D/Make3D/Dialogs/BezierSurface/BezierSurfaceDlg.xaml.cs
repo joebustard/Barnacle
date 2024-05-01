@@ -320,29 +320,32 @@ namespace Barnacle.Dialogs
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            draggingPoints = false;
+          //  draggingPoints = false;
             bool leftButton = (e.LeftButton == MouseButtonState.Pressed);
             if (leftButton)
             {
                 lastMousePos = e.GetPosition(viewport3D1);
-            }
-            lastHitModel = null;
-            lastHitPoint = new Point3D(0, 0, 0);
-            HitTest(viewport3D1, e.GetPosition(viewport3D1));
-            bool shift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
-            if (lastHitModel != null)
-            {
-                if (controlPoints.CheckHit(lastHitModel, shift | draggingPoints, ref lastSelectedPointRow, ref lastSelectedPointColumn))
+
+                lastHitModel = null;
+                lastHitPoint = new Point3D(0, 0, 0);
+                HitTest(viewport3D1, lastMousePos);
+                bool shift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+                if (lastHitModel != null)
                 {
-                    draggingPoints = true;
-                    Redisplay();
-                    viewport3D1.Focus();
-                    e.Handled = true;
+                    if (controlPoints.CheckHit(lastHitModel, shift | draggingPoints, ref lastSelectedPointRow, ref lastSelectedPointColumn))
+                    {
+                        System.Diagnostics.Debug.WriteLine($" Grid_MouseDown draggingPoint {draggingPoints} ");
+                        draggingPoints = true;
+                        Redisplay();
+                        viewport3D1.Focus();
+                        e.Handled = true;
+                    }
                 }
             }
             if (!e.Handled)
             {
                 base.Viewport_MouseDown(viewport3D1, e);
+                draggingPoints = false;
             }
         }
 
@@ -365,7 +368,9 @@ namespace Barnacle.Dialogs
         private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
-            draggingPoints = false;
+            System.Diagnostics.Debug.WriteLine($" Grid_MouseUp draggingPoint {draggingPoints} ");
+            //draggingPoints = false;
+
         }
 
         private void LoadEditorParameters()
@@ -548,9 +553,7 @@ namespace Barnacle.Dialogs
             UpdateDisplay();
         }
 
-        private void Viewport_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-        }
+        
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {

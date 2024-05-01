@@ -213,13 +213,7 @@ namespace Barnacle.Dialogs.BezierSurface
             selColumn = -1;
             if (!shift)
             {
-                for (int r = 0; r < allcontrolPoints.GetLength(0); r++)
-                {
-                    for (int c = 0; c < allcontrolPoints.GetLength(0); c++)
-                    {
-                        allcontrolPoints[r, c].Selected = false;
-                    }
-                }
+                DeselectAllControlPoints();
             }
 
             for (int r = 0; r < allcontrolPoints.GetLength(0) && hit == false; r++)
@@ -235,6 +229,17 @@ namespace Barnacle.Dialogs.BezierSurface
                 }
             }
             return hit;
+        }
+
+        private void DeselectAllControlPoints()
+        {
+            for (int r = 0; r < allcontrolPoints.GetLength(0); r++)
+            {
+                for (int c = 0; c < allcontrolPoints.GetLength(0); c++)
+                {
+                    allcontrolPoints[r, c].Selected = false;
+                }
+            }
         }
 
         internal void MovePoint(int r, int c, Point3D positionChange)
