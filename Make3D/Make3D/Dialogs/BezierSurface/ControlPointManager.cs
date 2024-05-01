@@ -22,6 +22,13 @@ namespace Barnacle.Dialogs.BezierSurface
             ResetControlPoints();
         }
 
+        public void SetDimensions(int rows, int cols)
+        {
+            patchRows = rows;
+            patchColumns = cols;
+            ResetControlPoints();
+        }
+
         public ControlPoint[,] AllcontrolPoints
         { get { return allcontrolPoints; } }
 
@@ -120,6 +127,42 @@ namespace Barnacle.Dialogs.BezierSurface
             GenerateWireFrames();
         }
 
+        public void ResetControlPointsHalfTube()
+        {
+            allcontrolPoints = new ControlPoint[patchRows, patchColumns];
+
+            double xo = (patchColumns / 2) * XGap;
+            double zo = (patchRows / 2) * ZGap;
+            for (int r = 0; r < patchRows; r++)
+            {
+                for (int c = 0; c < patchColumns; c++)
+                {
+                    double x = c * XGap - xo;
+                    double z = r * ZGap - zo;
+
+                    double y = 20;
+                    if (c == 0 || c == patchColumns - 1)
+                    {
+                        y = 0;
+                    }
+                    if (c == 1 || c == patchColumns - 2)
+                    {
+                        y = 3;
+                    }
+                    if (c == 2 || c == patchColumns - 3)
+                    {
+                        y = 6;
+                    }
+                    if (c == 3 || c == patchColumns - 4)
+                    {
+                        y = 10;
+                    }
+                    allcontrolPoints[r, c] = new ControlPoint(x, y, z);
+                }
+            }
+            GenerateWireFrames();
+        }
+
         public void ResetControlPointsBow()
         {
             allcontrolPoints = new ControlPoint[patchRows, patchColumns];
@@ -167,6 +210,7 @@ namespace Barnacle.Dialogs.BezierSurface
                 }
                 offset++;
             }
+
             GenerateWireFrames();
         }
 
@@ -185,7 +229,7 @@ namespace Barnacle.Dialogs.BezierSurface
                         );
                     }
 
-                    allcontrolPoints[r, c].GenerateControlMarker();
+                    allcontrolPoints[r, c].MoveControlMarker();
                 }
             }
             GenerateWireFrames();
@@ -206,32 +250,33 @@ namespace Barnacle.Dialogs.BezierSurface
             return res;
         }
 
-        internal bool CheckHit(GeometryModel3D hitModel, bool shift, ref int selRow, ref int selColumn)
+        internal bool CheckHit(GeometryModel3D hitModel, bool shift, ref bool alreadySelected, ref int selectedRow, ref int selectedCol)
         {
             bool hit = false;
-            selRow = -1;
-            selColumn = -1;
-            if (!shift)
+            alreadySelected = false;
+            selectedCol = -1;
+            selectedRow = -1;
+            for (int r = 0; r < patchRows && hit == false; r++)
             {
-                DeselectAllControlPoints();
-            }
 
-            for (int r = 0; r < allcontrolPoints.GetLength(0) && hit == false; r++)
-            {
-                for (int c = 0; c < allcontrolPoints.GetLength(0) && hit == false; c++)
+                for (int c = 0; c < patchColumns && hit == false; c++)
                 {
                     hit = allcontrolPoints[r, c].CheckHit(hitModel);
                     if (hit)
                     {
-                        selRow = r;
-                        selColumn = c;
+                        alreadySelected = allcontrolPoints[r, c].Selected;
+
+                        allcontrolPoints[r, c].Selected = true;
+                        selectedCol = c;
+                        selectedRow = r;
                     }
                 }
             }
             return hit;
         }
 
-        private void DeselectAllControlPoints()
+
+        public void DeselectAll()
         {
             for (int r = 0; r < allcontrolPoints.GetLength(0); r++)
             {
@@ -333,6 +378,17 @@ namespace Barnacle.Dialogs.BezierSurface
             }
         }
 
+        internal void Select(int r, int c)
+        {
+            if (r >= 0 &&
+                r < patchRows &&
+                c >= 0 &&
+                c < patchColumns)
+            {
+                allcontrolPoints[r, c].Selected = true;
+            }
+        }
+
         internal void SetPointPos(int r, int c, double x, double y, double z)
         {
             if (r >= 0 &&
@@ -346,9 +402,9 @@ namespace Barnacle.Dialogs.BezierSurface
 
         internal void MoveSelectedPoints(Point3D positionChange)
         {
-            for (int r = 0; r < allcontrolPoints.GetLength(0); r++)
+            for (int r = 0; r < patchRows; r++)
             {
-                for (int c = 0; c < allcontrolPoints.GetLength(0); c++)
+                for (int c = 0; c < patchColumns; c++)
                 {
                     if (allcontrolPoints[r, c].Selected)
                     {

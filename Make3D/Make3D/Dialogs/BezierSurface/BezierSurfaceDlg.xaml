@@ -11,10 +11,10 @@
                           xmlns:local="clr-namespace:Barnacle.Dialogs"
                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                          Width="800"
+                          Width="900"
                           Height="450">
     <Grid Focusable="True"
-          KeyDown="Grid_KeyDown"
+    KeyDown="Grid_KeyDown"
           VerticalAlignment="Stretch"
           x:Name="MainGrid">
         <Grid.RowDefinitions>
@@ -42,12 +42,22 @@
                     <RowDefinition Height="25" />
                     <RowDefinition Height="25" />
                     <RowDefinition Height="25" />
+                    <RowDefinition />
+                    <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="1"
                             Orientation="Horizontal">
                     <Label VerticalAlignment="Center"
                            Width="100">
-                        Thickness
+                        Dimensions
+                    </Label>
+                    <ComboBox Width="200" ItemsSource="{Binding AvailableDimensions}" SelectedItem="{Binding SelectedDimensions}" />
+                </StackPanel>
+                <StackPanel Grid.Row="2"
+                            Orientation="Horizontal">
+                    <Label VerticalAlignment="Center"
+                           Width="100">
+                        Shell
                     </Label>
                     <Slider Maximum="100"
                             Minimum="1"
@@ -56,13 +66,14 @@
                             Width="200" />
                     <TextBox Text="{Binding SurfaceThickness}"
                              x:Name="ThickBox"
-                             Width="50" />
+                             Width="50" Margin="8,0,0,0" />
                 </StackPanel>
-                <StackPanel Grid.Row="3"
+                <Label VerticalAlignment="Center" Grid.Row="4">
+                    Reset Control Points
+                </Label>
+                <StackPanel Grid.Row="5"
                             Orientation="Horizontal">
-                    <Label VerticalAlignment="Center">
-                        Reset Control Points
-                    </Label>
+
                     <Button Click="ResetControlPoints_Click"
                             Margin="4,2,0,0">
                         Flat
@@ -75,8 +86,12 @@
                             Margin="4,2,0,0">
                         Bow
                     </Button>
+                    <Button Click="ResetControlPointsTube_Click"
+                            Margin="4,2,0,0">
+                        Tube
+                    </Button>
                 </StackPanel>
-                <StackPanel Grid.Row="5"
+                <StackPanel Grid.Row="7"
                             Orientation="Horizontal">
                     <Label VerticalAlignment="Center"
                            Width="80">
@@ -103,7 +118,7 @@
                         Diag 2
                     </Button>
                 </StackPanel>
-                <StackPanel Grid.Row="6"
+                <StackPanel Grid.Row="8"
                             Orientation="Horizontal">
                     <Label VerticalAlignment="Center"
                            Width="80">
@@ -130,11 +145,42 @@
                         Diag 2
                     </Button>
                 </StackPanel>
-                <StackPanel Grid.Row="7"
-                            Orientation="Horizontal">
-                </StackPanel>
                 <StackPanel Grid.Row="9"
                             Orientation="Horizontal">
+                </StackPanel>
+                <StackPanel Grid.Row="10"
+                            Orientation="Horizontal">
+                </StackPanel>
+                <StackPanel Grid.Row="12" Orientation="Horizontal">
+                    <Label
+                        Width="50"
+                        VerticalAlignment="Center"
+                        Content="Presets"
+                        Visibility="{Binding ShowPresets}" />
+                    <ComboBox
+                        x:Name="PresetCombos"
+                        Width="250"
+                        Margin="2,0,0,0"
+                        IsEditable="True"
+                        IsReadOnly="False"
+                        ItemsSource="{Binding PresetNames}"
+                        SelectedItem="{Binding SelectedPreset}"
+                        Text="{Binding EditedPresetText}"
+                        Visibility="{Binding ShowPresets}" />
+                    <Button
+                        Width="50"
+                        Margin="2,2,2,2"
+                        Command="{Binding ApplyPresetCommand}"
+                        Content="Apply"
+                        Style="{StaticResource SmallButton}"
+                        Visibility="{Binding ShowSavePresets}" />
+                    <Button
+                        Width="50"
+                        Margin="2,2,2,2"
+                        Click="SavePresetClick"
+                        Content="Save"
+                        Style="{StaticResource SmallButton}"
+                        Visibility="{Binding ShowPresets}" />
                 </StackPanel>
             </Grid>
         </Border>
