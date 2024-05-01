@@ -11,7 +11,7 @@
                           xmlns:local="clr-namespace:Barnacle.Dialogs"
                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                          Width="800"
+                          Width="900"
                           Height="450">
     <Grid Focusable="True"
           KeyDown="Grid_KeyDown"
@@ -41,6 +41,8 @@
                     <RowDefinition Height="30" />
                     <RowDefinition Height="25" />
                     <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition />
                     <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="1"
@@ -148,6 +150,36 @@
                 </StackPanel>
                 <StackPanel Grid.Row="10"
                             Orientation="Horizontal">
+                </StackPanel>
+                <StackPanel Grid.Row="12" Orientation="Horizontal">
+                    <Label
+                        Width="50"
+                        VerticalAlignment="Center"
+                        Content="Presets"
+                        Visibility="{Binding ShowPresets}" />
+                    <ComboBox
+                        Width="250"
+                        Margin="2,0,0,0"
+                        IsEditable="True"
+                        IsReadOnly="False"
+                        ItemsSource="{Binding PresetNames}"
+                        SelectedItem="{Binding SelectedPreset}"
+                        Text="{Binding EditedPresetText}"
+                        Visibility="{Binding ShowPresets}" />
+                    <Button
+                        Width="50"
+                        Margin="2,2,2,2"
+                        Command="{Binding ApplyPresetCommand}"
+                        Content="Apply"
+                        Style="{StaticResource SmallButton}"
+                        Visibility="{Binding ShowSavePresets}" />
+                    <Button
+                        Width="50"
+                        Margin="2,2,2,2"
+                        Command="{Binding SavePresetCommand}"
+                        Content="Save"
+                        Style="{StaticResource SmallButton}"
+                        Visibility="{Binding ShowPresets}" />
                 </StackPanel>
             </Grid>
         </Border>
