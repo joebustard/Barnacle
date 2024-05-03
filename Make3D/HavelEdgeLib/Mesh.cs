@@ -133,9 +133,12 @@ namespace HalfEdgeLib
                     res.Add(HalfEdges[next].StartVertex);
 
                     current = HalfEdges[current].Twin;
-                    current = HalfEdges[current].Next;
+                    if (current != -1)
+                    {
+                        current = HalfEdges[current].Next;
+                    }
                     count++;
-                } while (count < 100 && origin != current);
+                } while (count < 100 && origin != current && current != -1);
             }
             return res;
         }

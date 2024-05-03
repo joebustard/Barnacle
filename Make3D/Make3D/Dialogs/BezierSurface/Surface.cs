@@ -2,6 +2,7 @@
 using System;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using HalfEdgeLib;
 
 namespace Barnacle.Dialogs.BezierSurface
 {
@@ -39,9 +40,34 @@ namespace Barnacle.Dialogs.BezierSurface
             Vector3D off = new Vector3D(0, Thickness, 0);
             if (controlPointManager != null)
             {
-                TopAndBottom(vertices, tris, delta, off);
-                CloseLeftAndRight(vertices, tris, delta, off);
-                CloseFrontAndBack(vertices, tris, delta, off);
+                TopOnly(vertices, tris, delta, off);
+                Mesh hemesh = new HalfEdgeLib.Mesh(vertices, tris);
+                Vector3D[] normals = new Vector3D[vertices.Count];
+                for (int i = 0; i < vertices.Count; i++)
+                {
+                    normals[i] = hemesh.GetVertexNormal(i);
+                }
+
+                Mesh hemeshInner = new HalfEdgeLib.Mesh(vertices, tris);
+                for (int i = 0; i < vertices.Count; i++)
+                {
+
+                    hemeshInner.Vertices[i].X += (float)(normals[i].X * Thickness);
+                    hemeshInner.Vertices[i].Y += (float)(normals[i].Y * Thickness);
+                    hemeshInner.Vertices[i].Z += (float)(normals[i].Z * Thickness);
+                }
+                int faceOffset = tris.Count;
+                foreach(Vertex vx in hemeshInner.Vertices)
+                {
+                    vertices.Add(new Point3D(vx.X, vx.Y, vx.Z));
+                }
+                for ( int i = 0; i < faceOffset; i ++)
+                {
+                    tris.Add(tris[i] + faceOffset);
+                }
+                
+                //CloseLeftAndRight(vertices, tris, delta, off);
+                // CloseFrontAndBack(vertices, tris, delta, off);
             }
             DateTime endTime = DateTime.Now;
             TimeSpan duration = endTime - startTime;
@@ -227,6 +253,62 @@ namespace Barnacle.Dialogs.BezierSurface
             return vpoint;
         }
 
+
+        private void TopOnly(Point3DCollection vertices, Int32Collection tris, double delta, Vector3D off)
+        {
+            int patchStartRow = 0;
+            int patchStartColumn = 0;
+            for (patchStartRow = 0; patchStartRow < controlPointManager.PatchRows - 3; patchStartRow += 3)
+            {
+                for (patchStartColumn = 0; patchStartColumn < controlPointManager.PatchColumns - 3; patchStartColumn += 3)
+                {
+                    double u;
+                    double v;
+                    for (u = 0; u < 1; u += delta)
+                    {
+                        double u1 = u + delta;
+                        double um = u + (delta / 2);
+                        for (v = 0; v < 1; v += delta)
+                        {
+                            double v1 = v + delta;
+                            double vm = v + (delta / 2.0);
+
+                            // top
+                            Point3D p1 = GetSurfacePoint(patchStartRow, patchStartColumn, u, v);
+                            Point3D p2 = GetSurfacePoint(patchStartRow, patchStartColumn, u1, v);
+                            Point3D p3 = GetSurfacePoint(patchStartRow, patchStartColumn, u1, v1);
+                            Point3D p4 = GetSurfacePoint(patchStartRow, patchStartColumn, u, v1);
+                            Point3D p5 = GetSurfacePoint(patchStartRow, patchStartColumn, um, vm);
+
+                            int ve1 = AddVertice(p1, vertices);
+                            int ve2 = AddVertice(p2, vertices);
+                            int ve3 = AddVertice(p3, vertices);
+                            int ve4 = AddVertice(p4, vertices);
+                            int ve5 = AddVertice(p5, vertices);
+
+                            tris.Add(ve1);
+                            tris.Add(ve5);
+                            tris.Add(ve2);
+
+                            tris.Add(ve2);
+                            tris.Add(ve5);
+                            tris.Add(ve3);
+
+                            tris.Add(ve3);
+                            tris.Add(ve5);
+                            tris.Add(ve4);
+
+                            tris.Add(ve4);
+                            tris.Add(ve5);
+                            tris.Add(ve1);
+
+
+                        }
+                    }
+                }
+            }
+        }
+        /*
         private void TopAndBottom(Point3DCollection vertices, Int32Collection tris, double delta, Vector3D off)
         {
             int patchStartRow = 0;
@@ -309,5 +391,6 @@ namespace Barnacle.Dialogs.BezierSurface
                 }
             }
         }
+        */
     }
 }

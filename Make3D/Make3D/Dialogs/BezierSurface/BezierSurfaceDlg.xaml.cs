@@ -536,8 +536,9 @@ namespace Barnacle.Dialogs
                         }
                         Redisplay();
                         viewport3D1.Focus();
+                        e.Handled = true;
                     }
-                    e.Handled = true;
+                    
                 }
             }
             if (!e.Handled)
