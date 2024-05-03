@@ -15,6 +15,7 @@ namespace HalfEdgeLib
 
         public int Previous;
         public int Next;
+        public bool OnBoundary;
 
         public HalfEdge()
         {
@@ -23,6 +24,7 @@ namespace HalfEdgeLib
             Twin = -1;
             Previous = -1;
             Next = -1;
+            OnBoundary = false;
         }
     }
 }

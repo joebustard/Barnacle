@@ -22,6 +22,7 @@ namespace Barnacle.Dialogs.BezierSurface
             {
                 return thickness;
             }
+
             set
             {
                 if (value > 0)
@@ -51,21 +52,22 @@ namespace Barnacle.Dialogs.BezierSurface
                 Mesh hemeshInner = new HalfEdgeLib.Mesh(vertices, tris);
                 for (int i = 0; i < vertices.Count; i++)
                 {
-
                     hemeshInner.Vertices[i].X += (float)(normals[i].X * Thickness);
                     hemeshInner.Vertices[i].Y += (float)(normals[i].Y * Thickness);
                     hemeshInner.Vertices[i].Z += (float)(normals[i].Z * Thickness);
                 }
+                vertices.Clear();
+                tris.Clear();
                 int faceOffset = tris.Count;
-                foreach(Vertex vx in hemeshInner.Vertices)
+                foreach (Vertex vx in hemeshInner.Vertices)
                 {
                     vertices.Add(new Point3D(vx.X, vx.Y, vx.Z));
                 }
-                for ( int i = 0; i < faceOffset; i ++)
+                for (int i = 0; i < faceOffset; i++)
                 {
                     tris.Add(tris[i] + faceOffset);
                 }
-                
+
                 //CloseLeftAndRight(vertices, tris, delta, off);
                 // CloseFrontAndBack(vertices, tris, delta, off);
             }
@@ -253,7 +255,6 @@ namespace Barnacle.Dialogs.BezierSurface
             return vpoint;
         }
 
-
         private void TopOnly(Point3DCollection vertices, Int32Collection tris, double delta, Vector3D off)
         {
             int patchStartRow = 0;
@@ -301,13 +302,12 @@ namespace Barnacle.Dialogs.BezierSurface
                             tris.Add(ve4);
                             tris.Add(ve5);
                             tris.Add(ve1);
-
-
                         }
                     }
                 }
             }
         }
+
         /*
         private void TopAndBottom(Point3DCollection vertices, Int32Collection tris, double delta, Vector3D off)
         {
