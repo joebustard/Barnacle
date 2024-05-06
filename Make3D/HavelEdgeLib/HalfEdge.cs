@@ -8,15 +8,15 @@ namespace HalfEdgeLib
 {
     public class HalfEdge
     {
-        public int StartVertex;
-        public int Face;
+        public int StartVertex { get; set; }
+        public int Face { get; set; }
 
-        public int Twin;
+        public int Twin { get; set; }
 
-        public int Previous;
-        public int Next;
-        public bool OnBoundary;
-
+        public int Previous { get; set; }
+        public int Next { get; set; }
+        public bool OnBoundary { get; set; }
+        public int Id { get; set; }
         public HalfEdge()
         {
             StartVertex = -1;
@@ -25,6 +25,9 @@ namespace HalfEdgeLib
             Previous = -1;
             Next = -1;
             OnBoundary = false;
+            Id = -1;
         }
+        public int EndVertex { get;set; }
+        
     }
 }

@@ -777,25 +777,28 @@ namespace Barnacle.ViewModels
             NotificationManager.Notify("GroupSelected", false);
         }
 
-        internal void KeyDown(Key key, bool shift, bool ctrl)
+        internal bool KeyDown(Key key, bool shift, bool ctrl)
         {
+            bool handled = false;
             if (isEditingEnabled)
             {
-                HandleKeyWhenEditingIsEnabled(key, shift, ctrl);
+                handled = HandleKeyWhenEditingIsEnabled(key, shift, ctrl);
             }
             else
             {
-                HandleKeyWhenEditingDisabled(key);
+                handled = HandleKeyWhenEditingDisabled(key);
             }
+            return handled;
         }
 
         private String holdKey = "";
 
-        private void HandleKeyWhenEditingIsEnabled(Key key, bool shift, bool ctrl)
+        private bool HandleKeyWhenEditingIsEnabled(Key key, bool shift, bool ctrl)
         {
+            bool handled = false;
             if (holdKey != "")
             {
-                HandleHeldKey(key, shift, ctrl);
+                handled = HandleHeldKey(key, shift, ctrl);
             }
             else
             {
@@ -803,6 +806,7 @@ namespace Barnacle.ViewModels
                 {
                     case Key.Up:
                         {
+                            handled = true;
                             if (selectedObjectAdorner != null)
                             {
                                 CheckPointForNudge();
@@ -843,6 +847,7 @@ namespace Barnacle.ViewModels
 
                     case Key.Down:
                         {
+                            handled = true;
                             if (selectedObjectAdorner != null)
                             {
                                 CheckPointForNudge();
@@ -883,6 +888,7 @@ namespace Barnacle.ViewModels
 
                     case Key.Left:
                         {
+                            handled = true;
                             if (selectedObjectAdorner != null)
                             {
                                 CheckPointForNudge();
@@ -910,6 +916,7 @@ namespace Barnacle.ViewModels
 
                     case Key.Right:
                         {
+                            handled = true;
                             if (selectedObjectAdorner != null)
                             {
                                 CheckPointForNudge();
@@ -936,12 +943,14 @@ namespace Barnacle.ViewModels
 
                     case Key.OemPlus:
                         {
+                            handled = true;
                             CloseObjectDistances();
                         }
                         break;
 
                     case Key.A:
                         {
+                            handled = true;
                             if (ctrl)
                             {
                                 SelectAll();
@@ -951,6 +960,7 @@ namespace Barnacle.ViewModels
 
                     case Key.C:
                         {
+                            handled = true;
                             if (ctrl)
                             {
                                 OnCopy(null);
@@ -965,18 +975,21 @@ namespace Barnacle.ViewModels
 
                     case Key.E:
                         {
+                            handled = true;
                             CheckEditSelection();
                         }
                         break;
 
                     case Key.O:
                         {
+                            handled = true;
                             SwitchToObjectProperties();
                         }
                         break;
 
                     case Key.V:
                         {
+                            handled = true;
                             if (ctrl)
                             {
                                 OnPaste(null);
@@ -986,6 +999,7 @@ namespace Barnacle.ViewModels
 
                     case Key.F:
                         {
+                            handled = true;
                             if (ctrl)
                             {
                                 CheckPoint();
@@ -1003,12 +1017,14 @@ namespace Barnacle.ViewModels
 
                     case Key.K:
                         {
+                            handled = true;
                             OnCloneInPlace(null);
                         }
                         break;
 
                     case Key.M:
                         {
+                            handled = true;
                             CheckPoint();
                             MoveToMarker(null);
                             RegenerateDisplayList();
@@ -1017,6 +1033,7 @@ namespace Barnacle.ViewModels
 
                     case Key.X:
                         {
+                            handled = true;
                             if (ctrl)
 
                             {
@@ -1027,12 +1044,14 @@ namespace Barnacle.ViewModels
 
                     case Key.Delete:
                         {
+                            handled = true;
                             OnDelete(null);
                         }
                         break;
 
                     case Key.Z:
                         {
+                            handled = true;
                             if (ctrl)
                             {
                                 Undo();
@@ -1047,6 +1066,7 @@ namespace Barnacle.ViewModels
 
                     case Key.H:
                         {
+                            handled = true;
                             showAdorners = false;
                             RegenerateDisplayList();
                         }
@@ -1054,12 +1074,14 @@ namespace Barnacle.ViewModels
 
                     case Key.Home:
                         {
+                            handled = true;
                             HomeCamera();
                         }
                         break;
 
                     case Key.Escape:
                         {
+                            handled = true;
                             if (csgCancelation != null && !csgCancelation.IsCancellationRequested)
                             {
                                 csgCancelation.Cancel();
@@ -1069,41 +1091,48 @@ namespace Barnacle.ViewModels
 
                     case Key.F5:
                         {
+                            handled = true;
                             RotateCamera(-0.5, 0.0);
                         }
                         break;
 
                     case Key.F6:
                         {
+                            handled = true;
                             RotateCamera(0.5, 0.0);
                         }
                         break;
 
                     case Key.F7:
                         {
+                            handled = true;
                             RotateCamera(0.0, -0.5);
                         }
                         break;
 
                     case Key.F8:
                         {
+                            handled = true;
                             RotateCamera(0.0, 0.5);
                         }
                         break;
 
                     case Key.S:
                         {
+                            handled = true;
                             holdKey = "S";
                         }
                         break;
 
                     case Key.L:
                         {
+                            handled = true;
                             holdKey = "L";
                         }
                         break;
                 }
             }
+            return handled;
         }
 
         private void CloseObjectDistances()
@@ -1129,12 +1158,14 @@ namespace Barnacle.ViewModels
             NotificationManager.Notify("SwitchToObjectProperties", null);
         }
 
-        private void HandleHeldKey(Key key, bool shift, bool ctrl)
+        private bool HandleHeldKey(Key key, bool shift, bool ctrl)
         {
+            bool handled = false;
             switch (holdKey)
             {
                 case "S":
                     {
+                        handled = true;
                         switch (key)
                         {
                             case Key.Up:
@@ -1187,6 +1218,7 @@ namespace Barnacle.ViewModels
 
                 case "L":
                     {
+                        handled = true;
                         switch (key)
                         {
                             case Key.Up:
@@ -1240,15 +1272,18 @@ namespace Barnacle.ViewModels
                 default:
                     break;
             }
+            return handled;
         }
 
-        private void HandleKeyWhenEditingDisabled(Key key)
+        private bool HandleKeyWhenEditingDisabled(Key key)
         {
+            bool handled = false;
             switch (key)
             {
                 // if editing is disable, ignore all keys except escape ( which may enale it again)
                 case Key.Escape:
                     {
+                        handled = true;
                         if (csgCancelation != null && !csgCancelation.IsCancellationRequested)
                         {
                             csgCancelation.Cancel();
@@ -1258,34 +1293,40 @@ namespace Barnacle.ViewModels
 
                 case Key.Home:
                     {
+                        handled = true;
                         HomeCamera();
                     }
                     break;
 
                 case Key.F5:
                     {
+                        handled = true;
                         RotateCamera(-0.5, 0.0);
                     }
                     break;
 
                 case Key.F6:
                     {
+                        handled = true;
                         RotateCamera(0.5, 0.0);
                     }
                     break;
 
                 case Key.F7:
                     {
+                        handled = true;
                         RotateCamera(0.0, -0.5);
                     }
                     break;
 
                 case Key.F8:
-                    {
-                        RotateCamera(0.0, 0.5);
+                { 
+                    handled = true;
+                    RotateCamera(0.0, 0.5);
                     }
                     break;
             }
+            return handled ;
         }
 
         internal void KeyUp(Key key, bool shift, bool ctrl)

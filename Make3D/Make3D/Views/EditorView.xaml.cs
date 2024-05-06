@@ -124,7 +124,7 @@ namespace Barnacle.Views
         private void OnKeyDown(object param)
         {
             KeyEventArgs e = param as KeyEventArgs;
-            vm.KeyDown(e.Key, Keyboard.IsKeyDown(Key.LeftShift) | Keyboard.IsKeyDown(Key.RightShift),
+            e.Handled = vm.KeyDown(e.Key, Keyboard.IsKeyDown(Key.LeftShift) | Keyboard.IsKeyDown(Key.RightShift),
                   Keyboard.IsKeyDown(Key.LeftCtrl) | Keyboard.IsKeyDown(Key.RightCtrl));
         }
 

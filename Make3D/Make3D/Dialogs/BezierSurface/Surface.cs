@@ -49,25 +49,52 @@ namespace Barnacle.Dialogs.BezierSurface
                     normals[i] = hemesh.GetVertexNormal(i);
                 }
 
-                Mesh hemeshInner = new HalfEdgeLib.Mesh(vertices, tris);
+                Point3DCollection innerVerts = new Point3DCollection();
                 for (int i = 0; i < vertices.Count; i++)
                 {
-                    hemeshInner.Vertices[i].X += (float)(normals[i].X * Thickness);
-                    hemeshInner.Vertices[i].Y += (float)(normals[i].Y * Thickness);
-                    hemeshInner.Vertices[i].Z += (float)(normals[i].Z * Thickness);
-                }
-                vertices.Clear();
-                tris.Clear();
-                int faceOffset = tris.Count;
-                foreach (Vertex vx in hemeshInner.Vertices)
-                {
-                    vertices.Add(new Point3D(vx.X, vx.Y, vx.Z));
-                }
-                for (int i = 0; i < faceOffset; i++)
-                {
-                    tris.Add(tris[i] + faceOffset);
+                    Point3D p = new Point3D(vertices[i].X + (normals[i].X * Thickness),
+                                            vertices[i].Y + (normals[i].Y * Thickness),
+                                            vertices[i].Z + (normals[i].Z * Thickness));
+                    innerVerts.Add(p);
                 }
 
+
+                int faceOffset = tris.Count;
+                for (int findex = 0; findex < faceOffset; findex += 3)
+                {
+                    int f0 = tris[findex];
+                    int f1 = tris[findex + 1];
+                    int f2 = tris[findex + 2];
+
+                    int v0 = AddVertice(innerVerts[f0], vertices);
+                    int v1 = AddVertice(innerVerts[f1], vertices);
+                    int v2 = AddVertice(innerVerts[f2], vertices);
+
+                    tris.Add(v0);
+                    tris.Add(v2);
+                    tris.Add(v1);
+                }
+
+                foreach ( HalfEdge he in hemesh.FakeFace)
+                {
+
+                    int f0 = he.StartVertex;
+                    int f1 = he.EndVertex;
+                    
+
+                    int v0 = AddVertice(innerVerts[f0], vertices);
+                    int v1 = AddVertice(innerVerts[f1], vertices);
+
+                  //  int v2 = AddVertice(innerVerts[f2], vertices);
+
+                    tris.Add(f0);
+                    tris.Add(f1);
+                    tris.Add(v0);
+
+                    tris.Add(f1);
+                    tris.Add(v1);
+                    tris.Add(v0);
+                }
                 //CloseLeftAndRight(vertices, tris, delta, off);
                 // CloseFrontAndBack(vertices, tris, delta, off);
             }
