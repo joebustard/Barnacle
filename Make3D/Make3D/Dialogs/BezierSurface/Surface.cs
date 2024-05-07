@@ -58,7 +58,6 @@ namespace Barnacle.Dialogs.BezierSurface
                     innerVerts.Add(p);
                 }
 
-
                 int faceOffset = tris.Count;
                 for (int findex = 0; findex < faceOffset; findex += 3)
                 {
@@ -75,17 +74,15 @@ namespace Barnacle.Dialogs.BezierSurface
                     tris.Add(v1);
                 }
 
-                foreach ( HalfEdge he in hemesh.FakeFace)
+                foreach (HalfEdge he in hemesh.FakeFace)
                 {
-
                     int f0 = he.StartVertex;
                     int f1 = he.EndVertex;
-                    
 
                     int v0 = AddVertice(innerVerts[f0], vertices);
                     int v1 = AddVertice(innerVerts[f1], vertices);
 
-                  //  int v2 = AddVertice(innerVerts[f2], vertices);
+                    // int v2 = AddVertice(innerVerts[f2], vertices);
 
                     tris.Add(f0);
                     tris.Add(f1);
@@ -104,6 +101,8 @@ namespace Barnacle.Dialogs.BezierSurface
 
         public Point3D GetBezier3D(Point3D p1, Point3D p2, Point3D p3, Point3D p4, double t)
         {
+            if (t < 0) t = 0;
+            // if (t > 1.0) t = 1.0;
             double k1 = (1 - t) * (1 - t) * (1 - t);
             double k2 = 3 * (1 - t) * (1 - t) * t;
             double k3 = 3 * (1 - t) * t * t;
@@ -307,6 +306,11 @@ namespace Barnacle.Dialogs.BezierSurface
                             Point3D p3 = GetSurfacePoint(patchStartRow, patchStartColumn, u1, v1);
                             Point3D p4 = GetSurfacePoint(patchStartRow, patchStartColumn, u, v1);
                             Point3D p5 = GetSurfacePoint(patchStartRow, patchStartColumn, um, vm);
+                            System.Diagnostics.Debug.WriteLine($"u:{u} v:{v}");
+                            System.Diagnostics.Debug.WriteLine($"p1:{p1.X},{p1.Y},{p1.Z}");
+                            System.Diagnostics.Debug.WriteLine($"p2:{p2.X},{p2.Y},{p2.Z}");
+                            System.Diagnostics.Debug.WriteLine($"p3:{p3.X},{p3.Y},{p3.Z}");
+                            System.Diagnostics.Debug.WriteLine($"p4:{p4.X},{p4.Y},{p4.Z}");
 
                             int ve1 = AddVertice(p1, vertices);
                             int ve2 = AddVertice(p2, vertices);

@@ -284,20 +284,20 @@ namespace Barnacle.Dialogs
                         controlPoints.DeselectAll();
                     }
                     break;
+
                 case Key.A:
-                {
+                    {
                         if (ctrl)
                         {
                             handled = true;
                             controlPoints.SelectAll();
                         }
-                }
+                    }
                     break;
 
                 case Key.F:
                     {
                         handled = FloorPoint();
-                        
                     }
                     break;
 
@@ -388,7 +388,7 @@ namespace Barnacle.Dialogs
             return handled;
         }
 
-        private bool  FloorPoint()
+        private bool FloorPoint()
         {
             bool res = controlPoints.FloorPoints();
             GenerateShape();
@@ -397,8 +397,7 @@ namespace Barnacle.Dialogs
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
-            ClearShape();
-            surface.GenerateSurface(Vertices, Faces,10);
+            // ClearShape(); surface.GenerateSurface(Vertices, Faces,10);
             SaveEditorParmeters();
             base.SaveSizeAndLocation();
             DialogResult = true;
@@ -519,7 +518,6 @@ namespace Barnacle.Dialogs
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
-
             bool leftButton = (e.LeftButton == MouseButtonState.Pressed);
             if (leftButton)
             {
@@ -556,7 +554,6 @@ namespace Barnacle.Dialogs
                         viewport3D1.Focus();
                         e.Handled = true;
                     }
-                    
                 }
             }
             if (!e.Handled)
@@ -603,13 +600,12 @@ namespace Barnacle.Dialogs
             e.Handled = true;
             System.Diagnostics.Debug.WriteLine($" Grid_MouseUp draggingPoint {draggingPoints} ");
             //draggingPoints = false;
-
         }
 
         private void LoadEditorParameters()
         {
             selectedDimensions = EditorParameters.Get("Dim");
-            surfaceThickness = EditorParameters.GetDouble("Thickness",1);
+            surfaceThickness = EditorParameters.GetDouble("Thickness", 1);
             controlPoints.PatchRows = EditorParameters.GetInt("Rows", 13);
             controlPoints.PatchColumns = EditorParameters.GetInt("Columns", 13);
             string pnts = EditorParameters.Get("Points");
@@ -909,7 +905,6 @@ namespace Barnacle.Dialogs
         {
             controlPoints.DeselectAll();
             GenerateShape();
-
         }
 
         private void SelectRow_Click(object sender, RoutedEventArgs e)
