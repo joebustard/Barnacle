@@ -397,7 +397,8 @@ namespace Barnacle.Dialogs
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
-            // ClearShape(); surface.GenerateSurface(Vertices, Faces,10);
+            ClearShape(); 
+            surface.GenerateSurface(Vertices, Faces,8);
             SaveEditorParmeters();
             base.SaveSizeAndLocation();
             DialogResult = true;

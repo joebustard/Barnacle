@@ -102,7 +102,7 @@ namespace Barnacle.Dialogs.BezierSurface
         public Point3D GetBezier3D(Point3D p1, Point3D p2, Point3D p3, Point3D p4, double t)
         {
             if (t < 0) t = 0;
-            // if (t > 1.0) t = 1.0;
+            if (t > 1.0) t = 1.0;
             double k1 = (1 - t) * (1 - t) * (1 - t);
             double k2 = 3 * (1 - t) * (1 - t) * t;
             double k3 = 3 * (1 - t) * t * t;
