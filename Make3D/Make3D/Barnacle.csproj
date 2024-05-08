@@ -1380,6 +1380,7 @@
     <Resource Include="Images\TiledRoof.png" />
     <Resource Include="Images\Buttons\TiledRoof.png" />
     <Resource Include="Images\Buttons\AppendPoint.png" />
+    <Resource Include="Images\Buttons\BezierSurface.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
