@@ -1,6 +1,7 @@
 ﻿using Barnacle.EditorParameterLib;
 using Barnacle.Models;
 using Barnacle.Object3DLib;
+using HalfEdgeLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -62,21 +63,22 @@ namespace Barnacle.Dialogs
             showAxies = true;
             bounds = new Bounds3D();
             spaceTreeRoot = null;
-        
         }
+
         protected override void OnClosing(CancelEventArgs e)
         {
             this.SaveSizeAndLocation(true);
             base.OnClosing(e);
         }
+
         protected void RestoreSizeAndLocation()
         {
             this.RestoreSizeAndLocation(true);
         }
-        protected void ScaleVertices(double x,double y,double z)
-        {
 
-            for ( int i =0; i < Vertices.Count; i ++)
+        protected void ScaleVertices(double x, double y, double z)
+        {
+            for (int i = 0; i < Vertices.Count; i++)
             {
                 Point3D p = Vertices[i];
                 Vertices[i] = new Point3D(p.X * x, p.Y * y, p.Z * z);
@@ -96,6 +98,7 @@ namespace Barnacle.Dialogs
             {
                 return bounds;
             }
+
             set
             {
                 if (bounds != value)
@@ -111,6 +114,7 @@ namespace Barnacle.Dialogs
             {
                 return polarCamera;
             }
+
             set
             {
                 polarCamera = value;
@@ -134,9 +138,70 @@ namespace Barnacle.Dialogs
             }
         }
 
+        protected void SurfaceToSolid(Point3DCollection vertices, Int32Collection tris, double thickness)
+        {
+            Mesh hemesh = new HalfEdgeLib.Mesh(vertices, tris);
+            Vector3D[] normals = new Vector3D[vertices.Count];
+            for (int i = 0; i < vertices.Count; i++)
+            {
+                normals[i] = hemesh.GetVertexNormal(i);
+            }
+
+            Point3DCollection innerVerts = new Point3DCollection();
+            for (int i = 0; i < vertices.Count; i++)
+            {
+                Point3D p = new Point3D(vertices[i].X + (normals[i].X * thickness),
+                                        vertices[i].Y + (normals[i].Y * thickness),
+                                        vertices[i].Z + (normals[i].Z * thickness));
+                innerVerts.Add(p);
+            }
+
+            int faceOffset = tris.Count;
+            for (int findex = 0; findex < faceOffset; findex += 3)
+            {
+                int f0 = tris[findex];
+                int f1 = tris[findex + 1];
+                int f2 = tris[findex + 2];
+
+                int v0 = AddPoint(vertices, innerVerts[f0]);
+                int v1 = AddPoint(vertices, innerVerts[f1]);
+                int v2 = AddPoint(vertices, innerVerts[f2]);
+
+                tris.Add(v0);
+                tris.Add(v2);
+                tris.Add(v1);
+            }
+
+            // close sides, The Fake face used to close the boundary of the inner surface has
+            // vertices which correspond to there outer counter parts. i.e. Vertex 0 in the inner is
+            // vertex 0 of the outer but moved along the normal so in effect we triangulate the
+            // rectangle formed by two outer and and the corresponding two inner vertices
+            foreach (HalfEdge he in hemesh.FakeFace)
+            {
+                // outer indices
+                int f0 = he.StartVertex;
+                int f1 = he.EndVertex;
+
+                // inner indices
+                int v0 = AddPoint(vertices, innerVerts[f0]);
+                int v1 = AddPoint(vertices, innerVerts[f1]);
+
+                // make a triangle
+                tris.Add(f0);
+                tris.Add(f1);
+                tris.Add(v0);
+
+                // make the other triangle
+                tris.Add(f1);
+                tris.Add(v1);
+                tris.Add(v0);
+            }
+        }
+
         public string DefaultImagePath
         {
             get { return defaultImagePath; }
+
             set
             {
                 defaultImagePath = value;
@@ -149,6 +214,7 @@ namespace Barnacle.Dialogs
             {
                 return editorParameters;
             }
+
             set
             {
                 editorParameters = value;
@@ -161,6 +227,7 @@ namespace Barnacle.Dialogs
             {
                 return tris;
             }
+
             set
             {
                 tris = value;
@@ -173,6 +240,7 @@ namespace Barnacle.Dialogs
             {
                 return fieldOfView;
             }
+
             set
             {
                 if (fieldOfView != value)
@@ -189,6 +257,7 @@ namespace Barnacle.Dialogs
             {
                 return lookDirection;
             }
+
             set
             {
                 if (lookDirection != value)
@@ -205,6 +274,7 @@ namespace Barnacle.Dialogs
             {
                 return meshColour;
             }
+
             set
             {
                 meshColour = value;
@@ -219,6 +289,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -235,6 +306,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -274,6 +346,7 @@ namespace Barnacle.Dialogs
             {
                 return vertices;
             }
+
             set
             {
                 vertices = value;
@@ -418,7 +491,7 @@ namespace Barnacle.Dialogs
                     lastHitV0 = rayMeshResult.VertexIndex1;
                     lastHitV1 = rayMeshResult.VertexIndex2;
                     lastHitV2 = rayMeshResult.VertexIndex3;
-                    //   if (lastHitModel == null)
+                    // if (lastHitModel == null)
                     {
                         lastHitModel = hitgeo;
                         lastHitPoint = rayMeshResult.PointHit;
@@ -513,8 +586,7 @@ namespace Barnacle.Dialogs
 
         internal void GenerateCube(ref Point3DCollection pnts, ref Int32Collection indices, double width)
         {
-            // this is not the normal cube.
-            // it has a lot of sub triangles to allow editing
+            // this is not the normal cube. it has a lot of sub triangles to allow editing
             double numDiv = 20;
             double div = width / numDiv;
             List<Point3D> perimeter = new List<Point3D>();
@@ -972,12 +1044,11 @@ namespace Barnacle.Dialogs
             for (int i = 0; i < verts.Count; i++)
             {
                 verts[i] += offset;
-                //   bounds.Adjust(Vertices[i]);
+                // bounds.Adjust(Vertices[i]);
             }
         }
 
-        // run around around a list of points
-        // assume the start and end are linked.
+        // run around around a list of points assume the start and end are linked.
         protected void CreateSideFaces(List<Point> points, double thickness, bool rev, double zOff = 0)
         {
             for (int i = 0; i < points.Count; i++)
@@ -1072,7 +1143,7 @@ namespace Barnacle.Dialogs
             return bnds;
         }
 
-protected virtual GeometryModel3D GetModel()
+        protected virtual GeometryModel3D GetModel()
         {
             MeshGeometry3D mesh = new MeshGeometry3D();
             mesh.Positions = Vertices;

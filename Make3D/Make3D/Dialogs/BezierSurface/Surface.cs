@@ -6,7 +6,7 @@ using HalfEdgeLib;
 
 namespace Barnacle.Dialogs.BezierSurface
 {
-    internal class Surface
+    internal class Surface : BaseModellerDialog
     {
         private double thickness = 1.0;
 
@@ -46,66 +46,6 @@ namespace Barnacle.Dialogs.BezierSurface
             }
             DateTime endTime = DateTime.Now;
             TimeSpan duration = endTime - startTime;
-        }
-
-        private void SurfaceToSolid(Point3DCollection vertices, Int32Collection tris, double thickness)
-        {
-            Mesh hemesh = new HalfEdgeLib.Mesh(vertices, tris);
-            Vector3D[] normals = new Vector3D[vertices.Count];
-            for (int i = 0; i < vertices.Count; i++)
-            {
-                normals[i] = hemesh.GetVertexNormal(i);
-            }
-
-            Point3DCollection innerVerts = new Point3DCollection();
-            for (int i = 0; i < vertices.Count; i++)
-            {
-                Point3D p = new Point3D(vertices[i].X + (normals[i].X * thickness),
-                                        vertices[i].Y + (normals[i].Y * thickness),
-                                        vertices[i].Z + (normals[i].Z * thickness));
-                innerVerts.Add(p);
-            }
-
-            int faceOffset = tris.Count;
-            for (int findex = 0; findex < faceOffset; findex += 3)
-            {
-                int f0 = tris[findex];
-                int f1 = tris[findex + 1];
-                int f2 = tris[findex + 2];
-
-                int v0 = AddVertice(innerVerts[f0], vertices);
-                int v1 = AddVertice(innerVerts[f1], vertices);
-                int v2 = AddVertice(innerVerts[f2], vertices);
-
-                tris.Add(v0);
-                tris.Add(v2);
-                tris.Add(v1);
-            }
-
-            // close sides, The Fake face used to close the boundary of the inner surface has
-            // vertices which correspond to there outer counter parts. i.e. Vertex 0 in the inner is
-            // vertex 0 of the outer but moved along the normal so in effect we triangulate the
-            // rectangle formed by two outer and and the corresponding two inner vertices
-            foreach (HalfEdge he in hemesh.FakeFace)
-            {
-                // outer indices
-                int f0 = he.StartVertex;
-                int f1 = he.EndVertex;
-
-                // inner indices
-                int v0 = AddVertice(innerVerts[f0], vertices);
-                int v1 = AddVertice(innerVerts[f1], vertices);
-
-                // make a triangle
-                tris.Add(f0);
-                tris.Add(f1);
-                tris.Add(v0);
-
-                // make the other triangle
-                tris.Add(f1);
-                tris.Add(v1);
-                tris.Add(v0);
-            }
         }
 
         public Point3D GetBezier3D(Point3D p1, Point3D p2, Point3D p3, Point3D p4, double t)

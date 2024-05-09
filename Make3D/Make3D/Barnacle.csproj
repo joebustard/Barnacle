@@ -103,7 +103,6 @@
     </Compile>
     <Compile Include="Dialogs\BezierSurface\ControlPoint.cs" />
     <Compile Include="Dialogs\BezierSurface\ControlPointManager.cs" />
-    <Compile Include="Dialogs\BezierSurface\Patch.cs" />
     <Compile Include="Dialogs\BezierSurface\Surface.cs" />
     <Compile Include="Dialogs\BiCorn\BicornDlg.xaml.cs">
       <DependentUpon>BicornDlg.xaml</DependentUpon>
@@ -1381,6 +1380,10 @@
     <Resource Include="Images\Buttons\TiledRoof.png" />
     <Resource Include="Images\Buttons\AppendPoint.png" />
     <Resource Include="Images\Buttons\BezierSurface.png" />
+    <Resource Include="Images\Buttons\RoofRidge.png" />
+    <Resource Include="Images\Buttons\StoneWall.png" />
+    <Resource Include="Images\Buttons\BrickTower.png" />
+    <Resource Include="Images\Buttons\ShapedTiledRoof.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
