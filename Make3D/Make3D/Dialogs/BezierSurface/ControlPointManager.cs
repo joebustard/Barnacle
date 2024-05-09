@@ -8,8 +8,8 @@ namespace Barnacle.Dialogs.BezierSurface
 {
     internal class ControlPointManager
     {
-        private const double XGap = 5;
-        private const double ZGap = 5;
+        private const double XGap = 10;
+        private const double ZGap = 10;
         private ControlPoint[,] allcontrolPoints;
         private int patchColumns;
         private int patchRows;
@@ -262,7 +262,6 @@ namespace Barnacle.Dialogs.BezierSurface
             selectedRow = -1;
             for (int r = 0; r < patchRows && hit == false; r++)
             {
-
                 for (int c = 0; c < patchColumns && hit == false; c++)
                 {
                     hit = allcontrolPoints[r, c].CheckHit(hitModel);
@@ -279,7 +278,6 @@ namespace Barnacle.Dialogs.BezierSurface
             return hit;
         }
 
-
         public void DeselectAll()
         {
             for (int r = 0; r < allcontrolPoints.GetLength(0); r++)
@@ -290,6 +288,7 @@ namespace Barnacle.Dialogs.BezierSurface
                 }
             }
         }
+
         public void SelectAll()
         {
             for (int r = 0; r < allcontrolPoints.GetLength(0); r++)
@@ -300,6 +299,7 @@ namespace Barnacle.Dialogs.BezierSurface
                 }
             }
         }
+
         internal void MovePoint(int r, int c, Point3D positionChange)
         {
             if (r >= 0 && r < allcontrolPoints.GetLength(0))
@@ -456,7 +456,6 @@ namespace Barnacle.Dialogs.BezierSurface
 
         private bool SinglePointSelected(out int sr, out int sc)
         {
-            
             sr = -1;
             sc = -1;
             int count = 0;
@@ -472,7 +471,7 @@ namespace Barnacle.Dialogs.BezierSurface
                     }
                 }
             }
-            return (count ==1 );
+            return (count == 1);
         }
     }
 }
