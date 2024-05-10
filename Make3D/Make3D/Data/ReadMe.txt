@@ -15,12 +15,13 @@ Added
 	Show object type (i.e. primitive, group etc) in object properties window
 	Cut all faces and vertices of object below a moveable horizontal plane
 	Subdivide
-	Basic dimensioning Ctrl +right click on two seperate object points to display the distance between them
+	Basic dimensioning Ctrl +right click on two seperate object points to display the distance between them. Press + key to close distance to 0
 	Detect if a named memorycard is inserted while the slicing window is open and enable the copy to sd card button
 	Delete part from the parts library
 	First cut of a morphable object tool. i.e. Make a shape thats 50% sphere and 50% pyramid etc
 	Show the top of the build volume for the selected printer (in addition to the existing floor marker)
 	Backup menu option on File Menu. If the project has a Backup folder, then the main project files are zipped into Backup/<projname>_<date>_<time>.zip
+	First cut of a bezier surface tool
 
 Fixed
 	Prevent preset names being loaded twice in flexipathcontrol 
