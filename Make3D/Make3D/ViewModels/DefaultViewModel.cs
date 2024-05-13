@@ -99,7 +99,7 @@ namespace Barnacle.ViewModels
             ScreenShotCommand = new RelayCommand(OnScreenShot);
 
             UndoCommand = new RelayCommand(OnUndo);
-            //   RedoCommand = new RelayCommand(OnRedo);
+            // RedoCommand = new RelayCommand(OnRedo);
 
             PasteCommand = new RelayCommand(OnPaste);
             PasteAtCommand = new RelayCommand(OnPasteAt);
@@ -154,6 +154,7 @@ namespace Barnacle.ViewModels
             SelectedFont = "Arial";
             FontSize = "14";
             snapMarginChecked = true;
+            tabPanelWidth = 180;
             StatusBlockText1 = "Status Text 1";
             StatusBlockText2 = "V" + SoftwareVersion;
 
@@ -216,7 +217,6 @@ namespace Barnacle.ViewModels
                     List<String> emptyFolderNames = new List<string>();
                     AddTargetNamesForProject(projRoot, fileNames, emptyFolderNames);
 
-
                     ZipUtils.CreateZipFromFiles(zipPath, fileNames, emptyFolderNames, projRoot);
                     MessageBox.Show("Project Zipped to file: " + zipPath);
                 }
@@ -245,7 +245,7 @@ namespace Barnacle.ViewModels
                 }
                 else
                 {
-                // pretend backup folder is an empty one
+                    // pretend backup folder is an empty one
                     emptyFolderNames.Add(folder);
                 }
             }
@@ -276,6 +276,7 @@ namespace Barnacle.ViewModels
             {
                 return aircraftToolsToShow;
             }
+
             set
             {
                 if (aircraftToolsToShow != value)
@@ -298,6 +299,7 @@ namespace Barnacle.ViewModels
             {
                 return bezierRingEnabled;
             }
+
             set
             {
                 if (bezierRingEnabled != value)
@@ -314,6 +316,7 @@ namespace Barnacle.ViewModels
             {
                 return boldChecked;
             }
+
             set
             {
                 if (value != boldChecked)
@@ -331,6 +334,7 @@ namespace Barnacle.ViewModels
             {
                 return buildingToolsToShow;
             }
+
             set
             {
                 if (buildingToolsToShow != value)
@@ -347,6 +351,7 @@ namespace Barnacle.ViewModels
             {
                 return buildPlateNames;
             }
+
             set
             {
                 if (buildPlateNames != value)
@@ -360,6 +365,7 @@ namespace Barnacle.ViewModels
         public bool CanSlice
         {
             get { return canSlice; }
+
             set
             {
                 if (canSlice != value)
@@ -376,6 +382,7 @@ namespace Barnacle.ViewModels
             {
                 return caption;
             }
+
             set
             {
                 if (caption != value)
@@ -392,6 +399,7 @@ namespace Barnacle.ViewModels
             {
                 return centerTextAlignment;
             }
+
             set
             {
                 if (value != centerTextAlignment)
@@ -416,6 +424,7 @@ namespace Barnacle.ViewModels
             {
                 return decorativeToolsToShow;
             }
+
             set
             {
                 if (decorativeToolsToShow != value)
@@ -438,6 +447,7 @@ namespace Barnacle.ViewModels
             {
                 return doughnutEnabled;
             }
+
             set
             {
                 if (doughnutEnabled != value)
@@ -456,6 +466,7 @@ namespace Barnacle.ViewModels
             {
                 return editingActive;
             }
+
             set
             {
                 if (editingActive != value)
@@ -486,6 +497,7 @@ namespace Barnacle.ViewModels
             {
                 return fontSize;
             }
+
             set
             {
                 if (value != fontSize)
@@ -505,6 +517,7 @@ namespace Barnacle.ViewModels
             {
                 return fuselageEnabled;
             }
+
             set
             {
                 if (fuselageEnabled != value)
@@ -521,6 +534,7 @@ namespace Barnacle.ViewModels
             {
                 return grilleToolsToShow;
             }
+
             set
             {
                 if (grilleToolsToShow != value)
@@ -543,6 +557,7 @@ namespace Barnacle.ViewModels
             {
                 return irregularEnabled;
             }
+
             set
             {
                 if (irregularEnabled != value)
@@ -556,6 +571,7 @@ namespace Barnacle.ViewModels
         public bool IsSelectedObjectAGroup
         {
             get { return isSelectedObjectAGroup; }
+
             set
             {
                 if (value != isSelectedObjectAGroup)
@@ -572,6 +588,7 @@ namespace Barnacle.ViewModels
             {
                 return italicChecked;
             }
+
             set
             {
                 if (value != italicChecked)
@@ -589,6 +606,7 @@ namespace Barnacle.ViewModels
             {
                 return leftTextAlignment;
             }
+
             set
             {
                 if (value != leftTextAlignment)
@@ -605,6 +623,7 @@ namespace Barnacle.ViewModels
             {
                 return libraryImageSource;
             }
+
             set
             {
                 if (libraryImageSource != value)
@@ -621,6 +640,7 @@ namespace Barnacle.ViewModels
             {
                 return libraryVisibility;
             }
+
             set
             {
                 if (libraryVisibility != value)
@@ -656,6 +676,7 @@ namespace Barnacle.ViewModels
             {
                 return loftedToolsToShow;
             }
+
             set
             {
                 if (loftedToolsToShow != value)
@@ -676,6 +697,7 @@ namespace Barnacle.ViewModels
             {
                 return mechanicalToolsToShow;
             }
+
             set
             {
                 if (mechanicalToolsToShow != value)
@@ -731,6 +753,7 @@ namespace Barnacle.ViewModels
             {
                 return parametricToolsToShow;
             }
+
             set
             {
                 if (parametricToolsToShow != value)
@@ -755,6 +778,7 @@ namespace Barnacle.ViewModels
             {
                 return profileFuselageEnabled;
             }
+
             set
             {
                 if (profileFuselageEnabled != value)
@@ -785,6 +809,7 @@ namespace Barnacle.ViewModels
             {
                 return rightTextAlignment;
             }
+
             set
             {
                 if (value != rightTextAlignment)
@@ -809,6 +834,7 @@ namespace Barnacle.ViewModels
             {
                 return selectedBuildPlate;
             }
+
             set
             {
                 if (selectedBuildPlate != value)
@@ -854,6 +880,7 @@ namespace Barnacle.ViewModels
             {
                 return showAxiesChecked;
             }
+
             set
             {
                 if (showAxiesChecked != value)
@@ -871,6 +898,7 @@ namespace Barnacle.ViewModels
             {
                 return showBuildPlate;
             }
+
             set
             {
                 if (showBuildPlate != value)
@@ -893,6 +921,7 @@ namespace Barnacle.ViewModels
             {
                 return showBuildVolume;
             }
+
             set
             {
                 if (showBuildVolume != value)
@@ -915,6 +944,7 @@ namespace Barnacle.ViewModels
             {
                 return showFloorChecked;
             }
+
             set
             {
                 if (showFloorChecked != value)
@@ -936,6 +966,7 @@ namespace Barnacle.ViewModels
             {
                 return showFloorMarkerChecked;
             }
+
             set
             {
                 if (showFloorMarkerChecked != value)
@@ -961,6 +992,7 @@ namespace Barnacle.ViewModels
             {
                 return snapMarginChecked;
             }
+
             set
             {
                 if (snapMarginChecked != value)
@@ -1007,6 +1039,7 @@ namespace Barnacle.ViewModels
             {
                 return stadiumEnabled;
             }
+
             set
             {
                 if (stadiumEnabled != value)
@@ -1074,6 +1107,7 @@ namespace Barnacle.ViewModels
             {
                 return subView;
             }
+
             set
             {
                 if (subView != value)
@@ -1108,6 +1142,22 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private int tabPanelWidth;
+
+        public int TabPanelWidth
+        {
+            get { return tabPanelWidth; }
+
+            set
+            {
+                if (tabPanelWidth != value)
+                {
+                    tabPanelWidth = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public ICommand TextAlignmentCommand { get; set; }
 
         public ICommand ToolCommand { get; set; }
@@ -1136,6 +1186,7 @@ namespace Barnacle.ViewModels
             {
                 return tubeEnabled;
             }
+
             set
             {
                 if (tubeEnabled != value)
@@ -1171,6 +1222,7 @@ namespace Barnacle.ViewModels
             {
                 return underLineChecked;
             }
+
             set
             {
                 if (value != underLineChecked)
@@ -1192,6 +1244,7 @@ namespace Barnacle.ViewModels
             {
                 return vehicleToolsToShow;
             }
+
             set
             {
                 if (vehicleToolsToShow != value)
@@ -1210,6 +1263,7 @@ namespace Barnacle.ViewModels
             {
                 return wingEnabled;
             }
+
             set
             {
                 if (wingEnabled != value)
@@ -1245,8 +1299,8 @@ namespace Barnacle.ViewModels
         }
 
         /// <summary>
-        /// The slice menu options should only be shown if we have access to CuraEngine
-        /// So check if its there
+        /// The slice menu options should only be shown if we have access to CuraEngine So check if
+        /// its there
         /// </summary>
         private void CheckIfCanSlice()
         {
@@ -1300,7 +1354,8 @@ namespace Barnacle.ViewModels
             decorativeToolsToShow.Add(new ToolDef("Pill", true, "Pill", "Create Pill."));
             decorativeToolsToShow.Add(new ToolDef("Morphable", true, "Morphable", "Create a morphable shape."));
             decorativeToolsToShow.Add(new ToolDef("Image Plaque", true, "ImagePlaque", "Create a plaque from a black and white image."));
-            //  decorativeToolsToShow.Add(new ToolDef("Clay", true, "ClaySculpt", "Sculpt a simple organic shape in clay."));
+            // decorativeToolsToShow.Add(new ToolDef("Clay", true, "ClaySculpt", "Sculpt a simple
+            // organic shape in clay."));
             SortMenu(decorativeToolsToShow);
             NotifyPropertyChanged("DecorativeToolsToShow");
         }
@@ -1355,7 +1410,7 @@ namespace Barnacle.ViewModels
 
             parametricToolsToShow.Add(new ToolDef("Tube", true, "Tube", "Create a partial or full tube with bevelled ends."));
 
-            //  parametricToolsToShow.Add(new ToolDef("DevTest", true, "DevTest", "Test dialog"));
+            // parametricToolsToShow.Add(new ToolDef("DevTest", true, "DevTest", "Test dialog"));
             parametricToolsToShow.Add(new ToolDef("Curved Funnel", true, "CurvedFunnel", "Create a curved funnel"));
             parametricToolsToShow.Add(new ToolDef("Spring", true, "Spring", "Create a spring"));
             parametricToolsToShow.Add(new ToolDef("Pie Slice", true, "Pie", "Create a pie slice"));
@@ -1741,7 +1796,7 @@ namespace Barnacle.ViewModels
         {
             NotificationManager.Notify("SaveAsFile", null);
             Caption = BaseViewModel.Document.Caption;
-            //  UpdateRecentFiles(BaseViewModel.Document.FilePath);
+            // UpdateRecentFiles(BaseViewModel.Document.FilePath);
         }
 
         private void OnScreenShot(object obj)

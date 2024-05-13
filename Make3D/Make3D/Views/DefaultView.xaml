@@ -1122,83 +1122,90 @@
         <Grid Grid.Row="1"
               SizeChanged="Grid_SizeChanged"
               x:Name="MyGrid">
-            <DockPanel LastChildFill="True">
-                <TabControl HorizontalContentAlignment="Left"
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="{Binding TabPanelWidth}" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <!--         <DockPanel LastChildFill="True"> -->
+            <TabControl HorizontalContentAlignment="Left"
                             x:Name="SolutionPanel"
-                            Width="180">
-                    <TabItem Header="Solution">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <vsx1:SolutionExplorerControl Grid.Column="0"
+                            Grid.Column="0">
+                <TabItem Header="Solution">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <vsx1:SolutionExplorerControl Grid.Column="0"
                                                           VerticalAlignment="Stretch"
                                                           x:Name="SolutionExplorer" />
-                        </Grid>
-                    </TabItem>
+                    </Grid>
+                </TabItem>
 
-                    <TabItem Header="Edit"
+                <TabItem Header="Edit"
                              x:Name="EditPanel">
-                        <Grid HorizontalAlignment="Stretch">
-                            <ScrollViewer>
-                                <StackPanel HorizontalAlignment="Left"
+                    <Grid HorizontalAlignment="Stretch">
+                        <ScrollViewer>
+                            <StackPanel HorizontalAlignment="Left"
                                             Width="180">
-                                    <local:CameraPalette HorizontalAlignment="Left"
+                                <local:CameraPalette HorizontalAlignment="Left"
                                                          VerticalAlignment="Stretch"
                                                          Visibility="{Binding CameraPaletteVisible}" />
-                                    <local:ObjectPalette HorizontalAlignment="Left"
+                                <local:ObjectPalette HorizontalAlignment="Left"
                                                          VerticalAlignment="Stretch"
                                                          Visibility="{Binding ToolPaletteVisible}"
                                                          IsEnabled="{Binding EditingActive}" />
-                                </StackPanel>
-                            </ScrollViewer>
-                        </Grid>
-                    </TabItem>
-                    <TabItem Header="Object"
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Object"
                              Margin="-2,-2,-2.4,0"
                              VerticalAlignment="Bottom"
                              x:Name="ObjectPanel"
                              Height="22">
-                        <ScrollViewer>
-                            <Grid HorizontalAlignment="Stretch">
-                                <Views:ObjectPropertiesView HorizontalAlignment="Stretch"
+                    <ScrollViewer>
+                        <Grid HorizontalAlignment="Stretch">
+                            <Views:ObjectPropertiesView HorizontalAlignment="Stretch"
                                                             VerticalAlignment="Stretch" />
-                            </Grid>
-                        </ScrollViewer>
-                    </TabItem>
-                    <TabItem Header="Library"
+                        </Grid>
+                    </ScrollViewer>
+                </TabItem>
+                <TabItem Header="Library"
                              Visibility="{Binding LibraryVisibility}">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="128" />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Border BorderThickness="4"
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="128" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Border BorderThickness="4"
                                     Grid.Row="0"
                                     Style="{StaticResource ControlBorder}"
                                     Width="128"
                                     Height="128">
-                                <Image Source="{Binding LibraryImageSource}" />
-                            </Border>
-                            <vsx1:SolutionExplorerControl Grid.Row="1"
+                            <Image Source="{Binding LibraryImageSource}" />
+                        </Border>
+                        <vsx1:SolutionExplorerControl Grid.Row="1"
                                                           Margin="0,0,0.4,0"
                                                           VerticalAlignment="Stretch"
                                                           VerticalContentAlignment="Stretch"
                                                           x:Name="LibraryExplorer" />
-                        </Grid>
-                    </TabItem>
-                </TabControl>
-                <ScrollViewer HorizontalAlignment="Stretch"
+                    </Grid>
+                </TabItem>
+            </TabControl>
+
+            <GridSplitter Grid.Column="1" ResizeDirection="Columns" Background="CadetBlue" Width="15" HorizontalAlignment="Stretch" />
+            <ScrollViewer Grid.Column="2" HorizontalAlignment="Stretch"
                               HorizontalScrollBarVisibility="Auto"
                               VerticalAlignment="Stretch"
                               VerticalScrollBarVisibility="Auto"
                                                             x:Name="Scroller">
-                    <ContentControl Content="{Binding SubView}"
+                <ContentControl Content="{Binding SubView}"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch"
                                     x:Name="SubViewControl" />
-                </ScrollViewer>
-            </DockPanel>
+            </ScrollViewer>
+            <!--  </DockPanel> -->
         </Grid>
         <StatusBar Grid.Row="2">
             <StatusBar.ItemsPanel>
