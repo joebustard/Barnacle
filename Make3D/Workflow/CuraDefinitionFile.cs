@@ -539,6 +539,7 @@ namespace Workflow
         private static String ReadPolygon(SettingDefinition cdf, JProperty setProp)
         {
             string res = "";
+            System.Diagnostics.Debug.WriteLine($"{setProp.Name} = {setProp.Value.ToString()}");
             JArray jar = (JArray)setProp.Value;
             if (jar.Count == 0)
             {
@@ -2670,7 +2671,7 @@ namespace Workflow
                 or.Calculated = true;
             }
         }
-
+        
         private void ReadChildren(JObject children, string section)
         {
             foreach (JProperty prop in children.Properties())
@@ -2679,10 +2680,7 @@ namespace Workflow
                 // if this property is a new one then create a new setting definition if its old,
                 // then override the values in the existing one
                 SettingDefinition cdf;
-                if (prop.Name.ToLower() == "machine_head_with_fans_polygon")
-                {
-                    bool bre = true;
-                }
+                
                 if (CuraDefinition.definitionSettings.Keys.Contains(prop.Name))
                 {
                     cdf = CuraDefinition.definitionSettings[prop.Name];
@@ -2699,6 +2697,7 @@ namespace Workflow
                 {
                     try
                     {
+                        System.Diagnostics.Debug.WriteLine($"{setProp.Name.ToLower()}");
                         switch (setProp.Name.ToLower())
                         {
                             case "label":
@@ -2728,17 +2727,34 @@ namespace Workflow
                             case "default_value":
                                 {
                                     if (cdf.Type == "polygon")
-                                    {
+                                    {                                        
                                         cdf.DefaultValue = ReadPolygon(cdf, setProp);
                                     }
                                     else
-                                        if (cdf.Type == "polygons")
-                                    {
+                                    if (cdf.Type == "polygons")
+                                    {                                     
                                         cdf.DefaultValue = ReadPolygon(cdf, setProp);
                                     }
                                     else
                                     {
-                                        cdf.DefaultValue = (string)setProp.Value;
+                                        // looks like some override files have arrays as defaults
+                                        // even though type isn't set to polygon
+                                        if (cdf.Type == "" && setProp.Value.ToString().Contains("["))
+                                        {
+                                            try
+                                            {
+                                                cdf.DefaultValue = ReadPolygon(cdf, setProp);
+                                            }
+                                            catch (System.InvalidCastException ex)
+                                            {
+                                                cdf.DefaultValue = (string)setProp.Value; 
+                                            }
+                                        }
+                                        else
+                                        {
+                                            cdf.DefaultValue = (string)setProp.Value;
+                                        }
+
                                     }
                                 }
                                 break;
@@ -2779,14 +2795,28 @@ namespace Workflow
                                     {
                                         cdf.OverideValue = ReadPolygon(cdf, setProp);
                                     }
-                                    else
-                                            if (cdf.Type == "polygons")
+                                    else if (cdf.Type == "polygons")
                                     {
                                         cdf.OverideValue = ReadPolygon(cdf, setProp);
                                     }
                                     else
                                     {
-                                        cdf.OverideValue = (string)setProp.Value;
+                                        if (cdf.Type == "" && setProp.Value.ToString().Contains("["))
+                                        {
+                                            try
+                                            {
+                                                cdf.OverideValue = ReadPolygon(cdf, setProp);
+                                            }
+                                            catch (System.InvalidCastException ex)
+                                            {
+                                                cdf.OverideValue = (string)setProp.Value;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            cdf.OverideValue = (string)setProp.Value;
+                                        }
+
                                     }
                                 }
                                 break;
