@@ -1,3 +1,20 @@
+/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
 using MakerLib;
 using MakerLib.MorphableModel;
 using System;
@@ -40,7 +57,7 @@ namespace Barnacle.Dialogs
             shape1Items = CreateShapeList();
             shape2Items = CreateShapeList();
             maker = new MorphableModelMaker(shape1, shape2);
-            
+
             ToolName = "Morphable";
             DataContext = this;
             ModelGroup = MyModelGroup;
@@ -62,6 +79,7 @@ namespace Barnacle.Dialogs
             {
                 return modelHeight;
             }
+
             set
             {
                 if (modelHeight != value)
@@ -91,6 +109,7 @@ namespace Barnacle.Dialogs
             {
                 return modelLength;
             }
+
             set
             {
                 if (modelLength != value)
@@ -120,6 +139,7 @@ namespace Barnacle.Dialogs
             {
                 return modelWidth;
             }
+
             set
             {
                 if (modelWidth != value)
@@ -146,6 +166,7 @@ namespace Barnacle.Dialogs
         public string Shape1
         {
             get { return shape1; }
+
             set
             {
                 if (shape1 != value)
@@ -165,6 +186,7 @@ namespace Barnacle.Dialogs
         public ObservableCollection<String> Shape1Items
         {
             get { return shape1Items; }
+
             set
             {
                 if (shape1Items != value)
@@ -184,6 +206,7 @@ namespace Barnacle.Dialogs
         public string Shape2
         {
             get { return shape2; }
+
             set
             {
                 if (shape2 != value)
@@ -203,6 +226,7 @@ namespace Barnacle.Dialogs
         public ObservableCollection<String> Shape2Items
         {
             get { return shape2Items; }
+
             set
             {
                 if (shape2Items != value)
@@ -225,6 +249,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -242,6 +267,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -259,6 +285,7 @@ namespace Barnacle.Dialogs
             {
                 return warningText;
             }
+
             set
             {
                 if (warningText != value)
@@ -278,6 +305,7 @@ namespace Barnacle.Dialogs
             {
                 return warpFactor;
             }
+
             set
             {
                 if (warpFactor != value)
@@ -343,6 +371,7 @@ namespace Barnacle.Dialogs
         public String FactorText
         {
             get { return factorText; }
+
             set
             {
                 if (value != factorText)

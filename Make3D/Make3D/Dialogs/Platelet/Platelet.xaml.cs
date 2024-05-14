@@ -1,4 +1,21 @@
-﻿using Barnacle.Models;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using Barnacle.Models;
 using MakerLib.TextureUtils;
 using OctTreeLib;
 using PolygonLibrary;
@@ -59,7 +76,7 @@ namespace Barnacle.Dialogs
         public Platelet()
         {
             InitializeComponent();
-            
+
             ToolName = "Platelet";
             DataContext = this;
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
@@ -102,6 +119,7 @@ namespace Barnacle.Dialogs
             {
                 return hollowShape;
             }
+
             set
             {
                 if (hollowShape != value)
@@ -131,6 +149,7 @@ namespace Barnacle.Dialogs
             {
                 return boxShape;
             }
+
             set
             {
                 if (boxShape != value)
@@ -158,6 +177,7 @@ namespace Barnacle.Dialogs
             {
                 return largeTexture;
             }
+
             set
             {
                 if (value != largeTexture)
@@ -172,6 +192,7 @@ namespace Barnacle.Dialogs
         public double PlateWidth
         {
             get { return plateWidth; }
+
             set
             {
                 if (plateWidth != value)
@@ -191,6 +212,7 @@ namespace Barnacle.Dialogs
         public double BaseWidth
         {
             get { return baseWidth; }
+
             set
             {
                 if (baseWidth != value)
@@ -212,6 +234,7 @@ namespace Barnacle.Dialogs
         public string SelectedTexture
         {
             get { return selectedTexture; }
+
             set
             {
                 if (value != selectedTexture)
@@ -233,6 +256,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -250,6 +274,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -267,6 +292,7 @@ namespace Barnacle.Dialogs
             {
                 return showTextures;
             }
+
             set
             {
                 if (showTextures != value)
@@ -283,6 +309,7 @@ namespace Barnacle.Dialogs
             {
                 return showWidth;
             }
+
             set
             {
                 if (showWidth != value)
@@ -299,6 +326,7 @@ namespace Barnacle.Dialogs
             {
                 return smallTexture;
             }
+
             set
             {
                 if (value != smallTexture)
@@ -316,6 +344,7 @@ namespace Barnacle.Dialogs
             {
                 return solidShape;
             }
+
             set
             {
                 if (solidShape != value)
@@ -338,6 +367,7 @@ namespace Barnacle.Dialogs
             {
                 return textureDepth;
             }
+
             set
             {
                 if (textureDepth != value)
@@ -358,6 +388,7 @@ namespace Barnacle.Dialogs
             {
                 return texturedShape;
             }
+
             set
             {
                 if (texturedShape != value)
@@ -384,6 +415,7 @@ namespace Barnacle.Dialogs
         public int SelectedShape
         {
             get { return selectedShape; }
+
             set
             {
                 if (selectedShape != value)
@@ -476,6 +508,7 @@ namespace Barnacle.Dialogs
             {
                 return tileTexture;
             }
+
             set
             {
                 if (tileTexture != value)
@@ -490,6 +523,7 @@ namespace Barnacle.Dialogs
         public double WallWidth
         {
             get { return wallWidth; }
+
             set
             {
                 if (wallWidth != value)
@@ -510,6 +544,7 @@ namespace Barnacle.Dialogs
             {
                 return warningText;
             }
+
             set
             {
                 if (warningText != value)
@@ -898,8 +933,7 @@ namespace Barnacle.Dialogs
                     }
                 }
 
-                // user may ahve chosen a wallwidth that means the inside walls overlap
-                // DOnt allow that.
+                // user may ahve chosen a wallwidth that means the inside walls overlap DOnt allow that.
                 double actualWallWidth = wallWidth;
                 double d = ((rx - lx) / 2) - 0.1;
                 if (d < actualWallWidth)
@@ -941,8 +975,9 @@ namespace Barnacle.Dialogs
 
                 OctTree octTree = CreateOctree(new Point3D(-lx, -by, -1.5 * (plateWidth + textureDepth)),
           new Point3D(+rx, +ty, 1.5 * (plateWidth + textureDepth)));                // generate side triangles so original points are already in list
-                                                                                    // Point[] clk = OrderClockwise(tmp.ToArray());
-                                                                                    //  tmp = clk.ToList();
+                                                                                    // Point[] clk =
+                                                                                    // OrderClockwise(tmp.ToArray());
+                                                                                    // tmp = clk.ToList();
                 for (int i = 0; i < tmp.Count; i++)
                 {
                     CreateSideFace(tmp, i);
@@ -953,9 +988,8 @@ namespace Barnacle.Dialogs
                 {
                     tmp.Add(new System.Windows.Point(innerPolygon[i].X, innerPolygon[i].Y));
                 }
-                // generate side triangles so original points are already in list
-                //  clk = OrderAntiClockwise(tmp.ToArray());
-                //  tmp = clk.ToList();
+                // generate side triangles so original points are already in list clk =
+                // OrderAntiClockwise(tmp.ToArray()); tmp = clk.ToList();
                 for (int i = 0; i < tmp.Count; i++)
                 {
                     CreateSideFace(tmp, i);
@@ -1031,8 +1065,7 @@ namespace Barnacle.Dialogs
                     }
                 }
 
-                // user may have  chosen a wallwidth that means the inside walls overlap
-                // DOnt allow that.
+                // user may have chosen a wallwidth that means the inside walls overlap DOnt allow that.
                 double actualWallWidth = wallWidth;
                 double d = ((rx - lx) / 2) - 0.1;
                 if (d < actualWallWidth)
@@ -1050,9 +1083,8 @@ namespace Barnacle.Dialogs
                 {
                     // flipping coordinates so have to reverse polygon too
                     tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
-                    
                 }
-                //  Point[] clik = OrderAntiClockwise(tmp.ToArray());
+                // Point[] clik = OrderAntiClockwise(tmp.ToArray());
                 for (int i = 0; i < tmp.Count - 1; i++)
                 {
                     outerPolygon.Add(new System.Drawing.PointF((float)tmp[i].X, (float)tmp[i].Y));
@@ -1075,8 +1107,9 @@ namespace Barnacle.Dialogs
 
                 OctTree octTree = CreateOctree(new Point3D(-lx, -by, -1.5 * (plateWidth + textureDepth)),
           new Point3D(+rx, +ty, 1.5 * (plateWidth + textureDepth)));                // generate side triangles so original points are already in list
-                                                                                    // Point[] clk = OrderClockwise(tmp.ToArray());
-                                                                                    //  tmp = clk.ToList();
+                                                                                    // Point[] clk =
+                                                                                    // OrderClockwise(tmp.ToArray());
+                                                                                    // tmp = clk.ToList();
                 for (int i = 0; i < tmp.Count; i++)
                 {
                     CreateSideFace(tmp, i);
@@ -1087,9 +1120,8 @@ namespace Barnacle.Dialogs
                 {
                     tmp.Add(new System.Windows.Point(innerPolygon[i].X, innerPolygon[i].Y));
                 }
-                // generate side triangles so original points are already in list
-                //  clk = OrderAntiClockwise(tmp.ToArray());
-                //  tmp = clk.ToList();
+                // generate side triangles so original points are already in list clk =
+                // OrderAntiClockwise(tmp.ToArray()); tmp = clk.ToList();
                 for (int i = 0; i < tmp.Count; i++)
                 {
                     CreateSideFace(tmp, i);
@@ -1409,7 +1441,6 @@ namespace Barnacle.Dialogs
                 OctTree octTree = CreateOctree(new Point3D(-lx, -by, -1.5 * (plateWidth + textureDepth)),
           new Point3D(+rx, +ty, 1.5 * (plateWidth + textureDepth)));
 
-                
                 for (int i = 0; i < tmp.Count; i++)
                 {
                     CreateSideFace(tmp, i);
@@ -1456,8 +1487,7 @@ namespace Barnacle.Dialogs
 
                     List<System.Windows.Point> tmp = new List<System.Windows.Point>();
                     InvertVertical(points, tmp);
-                    //  Point[] clk = OrderClockwise(tmp.ToArray());
-                    //  tmp = clk.ToList();
+                    // Point[] clk = OrderClockwise(tmp.ToArray()); tmp = clk.ToList();
                     double lx, rx, ty, by;
                     CalculateExtents(tmp, out lx, out rx, out ty, out by);
                     double shapeHeight = Math.Abs(ty - by);
@@ -1485,7 +1515,8 @@ namespace Barnacle.Dialogs
 
                         hTextureResolution = shapeWidth / (textureManager.PatternWidth);
 
-                        // should check if the original rsolution is smaller, if so add an offset to shift the pattern up or round
+                        // should check if the original rsolution is smaller, if so add an offset to
+                        // shift the pattern up or round
                     }
                     OctTree octTree = CreateOctree(new Point3D(-lx, -by, -1.5 * (plateWidth + textureDepth)),
               new Point3D(+rx, +ty, 1.5 * (plateWidth + textureDepth)));
@@ -1506,7 +1537,7 @@ namespace Barnacle.Dialogs
 
                     ConvexPolygon2D boundary = new ConvexPolygon2D(tmp.ToArray());
                     ConvexPolygon2DHelper interceptor = new ConvexPolygon2DHelper();
-                    //   LoadTextureImage();
+                    // LoadTextureImage();
 
                     double off = 0;
                     int texturexX = 0;
@@ -1590,6 +1621,7 @@ namespace Barnacle.Dialogs
         public bool ClippedSingle
         {
             get { return clippedSingle; }
+
             set
             {
                 if (clippedSingle != value)
@@ -1611,6 +1643,7 @@ namespace Barnacle.Dialogs
         public bool FittedSingle
         {
             get { return fittedSingle; }
+
             set
             {
                 if (fittedSingle != value)
@@ -1632,6 +1665,7 @@ namespace Barnacle.Dialogs
         public bool FittedTile
         {
             get { return fittedTile; }
+
             set
             {
                 if (fittedTile != value)
@@ -1653,6 +1687,7 @@ namespace Barnacle.Dialogs
         public bool ClippedTile
         {
             get { return clippedTile; }
+
             set
             {
                 if (clippedTile != value)

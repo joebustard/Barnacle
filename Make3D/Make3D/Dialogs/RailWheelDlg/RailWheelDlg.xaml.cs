@@ -1,3 +1,20 @@
+/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
 using MakerLib;
 using System.ComponentModel;
 using System.Windows;
@@ -32,6 +49,7 @@ namespace Barnacle.Dialogs
             {
                 return axleBoreRadius;
             }
+
             set
             {
                 if (axleBoreRadius != value)
@@ -52,6 +70,7 @@ namespace Barnacle.Dialogs
             {
                 return flangeRadius;
             }
+
             set
             {
                 if (flangeRadius != value)
@@ -72,6 +91,7 @@ namespace Barnacle.Dialogs
             {
                 return flangeThickness;
             }
+
             set
             {
                 if (flangeThickness != value)
@@ -92,6 +112,7 @@ namespace Barnacle.Dialogs
             {
                 return hubRadius;
             }
+
             set
             {
                 if (hubRadius != value)
@@ -112,6 +133,7 @@ namespace Barnacle.Dialogs
             {
                 return hubThickness;
             }
+
             set
             {
                 if (hubThickness != value)
@@ -132,6 +154,7 @@ namespace Barnacle.Dialogs
             {
                 return mainRadius;
             }
+
             set
             {
                 if (mainRadius != value)
@@ -152,6 +175,7 @@ namespace Barnacle.Dialogs
             {
                 return mainThickness;
             }
+
             set
             {
                 if (mainThickness != value)
@@ -172,6 +196,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -189,6 +214,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -206,6 +232,7 @@ namespace Barnacle.Dialogs
             {
                 return warningText;
             }
+
             set
             {
                 if (warningText != value)

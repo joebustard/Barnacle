@@ -1,3 +1,20 @@
+/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
 using MakerLib;
 using System;
 using System.ComponentModel;
@@ -14,9 +31,11 @@ namespace Barnacle.Dialogs
         private string warningText;
         private bool loaded;
         private double trayThickness;
+
         public double TrayThickness
         {
             get { return trayThickness; }
+
             set
             {
                 if (trayThickness != value)
@@ -27,6 +46,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         private const double minflatLength = 1;
         private const double maxflatLength = 100;
         private double flatLength;
@@ -37,6 +57,7 @@ namespace Barnacle.Dialogs
             {
                 return flatLength;
             }
+
             set
             {
                 if (flatLength != value)
@@ -69,6 +90,7 @@ namespace Barnacle.Dialogs
             {
                 return flatHeight;
             }
+
             set
             {
                 if (flatHeight != value)
@@ -101,6 +123,7 @@ namespace Barnacle.Dialogs
             {
                 return edge;
             }
+
             set
             {
                 if (edge != value)
@@ -133,6 +156,7 @@ namespace Barnacle.Dialogs
             {
                 return pillWidth;
             }
+
             set
             {
                 if (pillWidth != value)
@@ -154,7 +178,9 @@ namespace Barnacle.Dialogs
                 return $"Pill Width must be in the range {minpillWidth} to {maxpillWidth}";
             }
         }
+
         private const double minTrayThickness = 0.1;
+
         public String TrayThicknessToolTip
         {
             get
@@ -162,6 +188,7 @@ namespace Barnacle.Dialogs
                 return $"Tray thickness must be in the range {minTrayThickness} to half Flat Length";
             }
         }
+
         public PillDlg()
         {
             InitializeComponent();
@@ -177,6 +204,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -194,6 +222,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -211,6 +240,7 @@ namespace Barnacle.Dialogs
             {
                 return warningText;
             }
+
             set
             {
                 if (warningText != value)
@@ -235,6 +265,7 @@ namespace Barnacle.Dialogs
         public bool PlainSelected
         {
             get { return plainSelected; }
+
             set
             {
                 if (plainSelected != value)
@@ -256,6 +287,7 @@ namespace Barnacle.Dialogs
         public bool HalfSelected
         {
             get { return halfSelected; }
+
             set
             {
                 if (halfSelected != value)
@@ -273,9 +305,11 @@ namespace Barnacle.Dialogs
         }
 
         private Visibility showTray;
+
         public Visibility ShowTray
         {
             get { return showTray; }
+
             set
             {
                 if (showTray != value)
@@ -285,11 +319,13 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         private bool traySelected;
 
         public bool TraySelected
         {
             get { return traySelected; }
+
             set
             {
                 if (traySelected != value)

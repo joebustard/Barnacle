@@ -1,3 +1,20 @@
+/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
 using MakerLib;
 using System;
 using System.ComponentModel;
@@ -58,6 +75,7 @@ namespace Barnacle.Dialogs
             {
                 return armAngle;
             }
+
             set
             {
                 if (armAngle != value)
@@ -94,6 +112,7 @@ namespace Barnacle.Dialogs
             {
                 return armLength;
             }
+
             set
             {
                 if (armLength != value)
@@ -114,6 +133,7 @@ namespace Barnacle.Dialogs
             {
                 return armThickness;
             }
+
             set
             {
                 if (armThickness != value)
@@ -135,10 +155,13 @@ namespace Barnacle.Dialogs
                 return $"Arm Length must be in the range {minarmLength} to {maxarmLength}";
             }
         }
+
         private Visibility crownVisibility;
+
         public Visibility CrownVisibility
         {
             get { return crownVisibility; }
+
             set
             {
                 if (crownVisibility != value)
@@ -148,10 +171,13 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         private Visibility ridgeVisibility;
+
         public Visibility RidgeVisibility
         {
             get { return ridgeVisibility; }
+
             set
             {
                 if (ridgeVisibility != value)
@@ -161,12 +187,14 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public double CrownRadius
         {
             get
             {
                 return crownRadius;
             }
+
             set
             {
                 if (crownRadius != value)
@@ -195,6 +223,7 @@ namespace Barnacle.Dialogs
             {
                 return currentImage;
             }
+
             set
             {
                 if (currentImage != value)
@@ -211,6 +240,7 @@ namespace Barnacle.Dialogs
             {
                 return flatCrestWidth;
             }
+
             set
             {
                 if (flatCrestWidth != value)
@@ -239,6 +269,7 @@ namespace Barnacle.Dialogs
             {
                 return ridgeLength;
             }
+
             set
             {
                 if (ridgeLength != value)
@@ -275,6 +306,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -292,6 +324,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -309,6 +342,7 @@ namespace Barnacle.Dialogs
             {
                 return warningText;
             }
+
             set
             {
                 if (warningText != value)

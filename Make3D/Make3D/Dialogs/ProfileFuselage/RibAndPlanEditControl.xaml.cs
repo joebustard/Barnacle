@@ -1,4 +1,21 @@
-﻿using Barnacle.LineLib;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using Barnacle.LineLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -129,6 +146,7 @@ namespace Barnacle.Dialogs
                     return "";
                 }
             }
+
             set
             {
                 if (flexiPath != null)
@@ -144,6 +162,7 @@ namespace Barnacle.Dialogs
             {
                 return fName;
             }
+
             set
             {
                 if (fName != value)
@@ -160,6 +179,7 @@ namespace Barnacle.Dialogs
             {
                 return header;
             }
+
             set
             {
                 if (header != value)
@@ -176,6 +196,7 @@ namespace Barnacle.Dialogs
             {
                 return imagePath;
             }
+
             set
             {
                 if (value != imagePath)
@@ -203,6 +224,7 @@ namespace Barnacle.Dialogs
             {
                 return pathText;
             }
+
             set
             {
                 if (pathText != value)
@@ -219,6 +241,7 @@ namespace Barnacle.Dialogs
             {
                 return profilePoints;
             }
+
             set
             {
                 if (profilePoints != value)
@@ -234,6 +257,7 @@ namespace Barnacle.Dialogs
             {
                 return scale;
             }
+
             set
             {
                 if (scale != value)
@@ -251,6 +275,7 @@ namespace Barnacle.Dialogs
             {
                 return scrollX;
             }
+
             set
             {
                 if (scrollX != value)
@@ -267,6 +292,7 @@ namespace Barnacle.Dialogs
             {
                 return scrollY;
             }
+
             set
             {
                 if (scrollY != value)
@@ -283,13 +309,14 @@ namespace Barnacle.Dialogs
             {
                 return selectedPoint;
             }
+
             set
             {
                 if (selectedPoint != value)
                 {
                     selectedPoint = value;
                     NotifyPropertyChanged();
-                    //   ClearPointSelections();
+                    // ClearPointSelections();
                     if (polyPoints != null)
                     {
                         if (selectedPoint >= 0 && selectedPoint < polyPoints.Count)
@@ -309,6 +336,7 @@ namespace Barnacle.Dialogs
             {
                 return workingImage;
             }
+
             set
             {
                 workingImage = value;
@@ -489,7 +517,7 @@ namespace Barnacle.Dialogs
                         }
                     }
                 }
-                //
+
 
                 List<PointF> tmp = new List<PointF>();
 
@@ -511,8 +539,7 @@ namespace Barnacle.Dialogs
 
         public string GenPath()
         {
-            //     PathText = flexiPath.ToPath();
-            //     return PathText;
+            // PathText = flexiPath.ToPath(); return PathText;
             return "";
         }
 
@@ -529,8 +556,7 @@ namespace Barnacle.Dialogs
             if (workingImage != null)
             {
                 PathBackgroundImage.Source = LoadBitmap(workingImage);
-                //   FlexiPathCanvas.Width = workingImage.Width;
-                //    FlexiPathCanvas.Height = workingImage.Height;
+                // FlexiPathCanvas.Width = workingImage.Width; FlexiPathCanvas.Height = workingImage.Height;
             }
         }
 
@@ -805,7 +831,7 @@ namespace Barnacle.Dialogs
             localImage = new BitmapImage();
             localImage.BeginInit();
             localImage.UriSource = fileUri;
-            //    localImage.DecodePixelWidth = 800;
+            // localImage.DecodePixelWidth = 800;
             localImage.EndInit();
             //EditorParameters.Set("ImagePath", f);
             // FlexiPathCanvas.Width = localImage.Width;
@@ -1353,7 +1379,7 @@ namespace Barnacle.Dialogs
                     }
                 }
             }
-            //
+
 
             List<PointF> tmp = new List<PointF>();
 
@@ -1478,7 +1504,7 @@ namespace Barnacle.Dialogs
         {
             XmlElement ele = (XmlElement)parentNode.SelectSingleNode("ImagePath");
             ImagePath = ele.GetAttribute("Path");
-            //  LoadImage(imagePath,false);
+            // LoadImage(imagePath,false);
             scale = Convert.ToDouble(ele.GetAttribute("Scale"));
             scrollX = Convert.ToDouble(ele.GetAttribute("ScrollX"));
             scrollY = Convert.ToDouble(ele.GetAttribute("ScrollY"));
@@ -2044,8 +2070,8 @@ namespace Barnacle.Dialogs
                         }
                     }
 
-                    // only show the points if they are marked as visible
-                    // OR they are orthogonal to the selected one
+                    // only show the points if they are marked as visible OR they are orthogonal to
+                    // the selected one
                     if (polyPoints[i].Visible || (ortho && showOrtho))
                     {
                         if (polyPoints[i].Mode == FlexiPoint.PointMode.Data)
@@ -2187,9 +2213,8 @@ namespace Barnacle.Dialogs
                     }
                     else
                     {
-                        // dont snap position when selecting points as they  may have been positioned between two
-                        // grid points .
-                        // just convert position to mm
+                        // dont snap position when selecting points as they may have been positioned
+                        // between two grid points . just convert position to mm
                         position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
 
                         // find the closest point thats within search radius
@@ -2444,7 +2469,7 @@ namespace Barnacle.Dialogs
             localImage = new BitmapImage();
             localImage.BeginInit();
             localImage.UriSource = fileUri;
-            //    localImage.DecodePixelWidth = 800;
+            // localImage.DecodePixelWidth = 800;
             localImage.EndInit();
             //EditorParameters.Set("ImagePath", f);
             FlexiPathCanvas.Width = localImage.Width;

@@ -1,4 +1,21 @@
-﻿using System;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -102,6 +119,7 @@ namespace Barnacle.Dialogs
         public int CanvasHeight
         {
             get { return canvasHeight; }
+
             set
             {
                 if (canvasHeight != value)
@@ -115,6 +133,7 @@ namespace Barnacle.Dialogs
         public int CanvasWidth
         {
             get { return canvasWidth; }
+
             set
             {
                 if (canvasWidth != value)
@@ -136,6 +155,7 @@ namespace Barnacle.Dialogs
             {
                 return headerText;
             }
+
             set
             {
                 if (headerText != value)
@@ -157,6 +177,7 @@ namespace Barnacle.Dialogs
             {
                 return leftLimit;
             }
+
             set
             {
                 if (leftLimit != value)
@@ -174,6 +195,7 @@ namespace Barnacle.Dialogs
             {
                 return markers;
             }
+
             set
             {
                 if (markers != value)
@@ -188,6 +210,7 @@ namespace Barnacle.Dialogs
         public List<PointF> OutlinePoints
         {
             get { return outlinePoints; }
+
             set
             {
                 if (outlinePoints != value)
@@ -205,6 +228,7 @@ namespace Barnacle.Dialogs
             {
                 return pinPos;
             }
+
             set
             {
                 if (pinPos != value)
@@ -221,6 +245,7 @@ namespace Barnacle.Dialogs
             {
                 return rightLimit;
             }
+
             set
             {
                 if (rightLimit != value)
@@ -234,6 +259,7 @@ namespace Barnacle.Dialogs
         public System.Drawing.Bitmap WorkingImage
         {
             get { return workingImage; }
+
             set
             {
                 if (workingImage != null)
@@ -365,9 +391,8 @@ namespace Barnacle.Dialogs
                     AddCircle((int)lowerPoint.X, (int)lowerPoint.Y, null);
                 }
                 Dimensions.Clear();
-                // update the markers
-                // If there is a selected marker, do it last so it appears in front of the
-                // the others
+                // update the markers If there is a selected marker, do it last so it appears in
+                // front of the the others
                 if (markers != null)
                 {
                     if (convertMarkerPositionToScreen)
@@ -387,8 +412,7 @@ namespace Barnacle.Dialogs
                     }
                 }
 
-                // CanvasWidth = (int)ImageBorder.Width;
-                // CanvasHeight = (int)workingImage.Height;
+                // CanvasWidth = (int)ImageBorder.Width; CanvasHeight = (int)workingImage.Height;
             }
             UpdateCanvas();
         }
@@ -444,9 +468,9 @@ namespace Barnacle.Dialogs
                 renderScale = CalcOutlineScale();
                 if (outlinePoints.Count > 0)
                 {
-                    //    outlineBounds.Left *= sc;
+                    // outlineBounds.Left *= sc;
                     outlineBounds.Top = outlineBounds.Bottom + renderScale * outlineBounds.Height();
-                    //  outlineBounds.Bottom *= sc;
+                    // outlineBounds.Bottom *= sc;
                     outlineBounds.Right = outlineBounds.Left + renderScale * outlineBounds.Width();
 
                     workingImage = new Bitmap((int)(outlineBounds.Right) + imageMargin + XOutlineOffset, (int)(outlineBounds.Top) + YOutlineOffset + imageMargin);

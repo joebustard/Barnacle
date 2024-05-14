@@ -1,4 +1,21 @@
-﻿using Barnacle.Models;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using Barnacle.Models;
 using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
@@ -73,6 +90,7 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             {
                 return polarCamera;
             }
+
             set
             {
                 polarCamera = value;
@@ -102,6 +120,7 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             {
                 return fieldOfView;
             }
+
             set
             {
                 if (fieldOfView != value)
@@ -118,6 +137,7 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             {
                 return lookDirection;
             }
+
             set
             {
                 if (lookDirection != value)
@@ -134,6 +154,7 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             {
                 return meshColour;
             }
+
             set
             {
                 meshColour = value;
@@ -263,6 +284,7 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             rpm.SetPoints(flexiPath.DisplayPointsF());
             ribPlates.Add(rpm);
         }
+
         protected void SetCameraDistance(bool sideView = false)
         {
             Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
@@ -285,14 +307,13 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
         {
             if (i >= 0 && i < ribPlates.Count)
             {
-
                 ribPlates[i].SetPositionAndScale(x + sidePlateModel.LeftOffset, sidePlateModel.MiddleOffset, lower1, upper1, lower2, upper2);
             }
         }
 
         internal void MoveRibsUp(double minY)
         {
-            Vector3D v = new Vector3D(0,minY+ sidePlateModel.MiddleOffset, 0);
+            Vector3D v = new Vector3D(0, minY + sidePlateModel.MiddleOffset, 0);
             for (int i = 0; i < ribPlates.Count; i++)
             {
                 for (int j = 0; j < ribPlates[i].Vertices.Count; j++)
@@ -377,6 +398,7 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             UpdateCameraPos();
             Redisplay();
         }
+
         public List<LetterMarker> markers;
         private bool convertMarkerPositionToScreen;
 
@@ -387,6 +409,7 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             {
                 return markers;
             }
+
             set
             {
                 if (markers != value)
@@ -395,7 +418,6 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
                     convertMarkerPositionToScreen = true;
                     if (markers != null)
                     {
-
                     }
                 }
             }

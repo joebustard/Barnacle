@@ -1,3 +1,20 @@
+/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
 using MakerLib;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -44,6 +61,7 @@ namespace Barnacle.Dialogs
             {
                 return mortarGap;
             }
+
             set
             {
                 if (mortarGap != value)
@@ -64,6 +82,7 @@ namespace Barnacle.Dialogs
             {
                 return roofWidth;
             }
+
             set
             {
                 if (roofWidth != value)
@@ -84,6 +103,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -101,6 +121,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -118,6 +139,7 @@ namespace Barnacle.Dialogs
             {
                 return tileDepth;
             }
+
             set
             {
                 if (tileDepth != value)
@@ -138,6 +160,7 @@ namespace Barnacle.Dialogs
             {
                 return tileHeight;
             }
+
             set
             {
                 if (tileHeight != value)
@@ -158,6 +181,7 @@ namespace Barnacle.Dialogs
             {
                 return tileLength;
             }
+
             set
             {
                 if (tileLength != value)
@@ -178,6 +202,7 @@ namespace Barnacle.Dialogs
             {
                 return warningText;
             }
+
             set
             {
                 if (warningText != value)

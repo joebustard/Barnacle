@@ -1,4 +1,21 @@
-﻿using Microsoft.Win32;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using Microsoft.Win32;
 using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
@@ -39,6 +56,7 @@ namespace Barnacle.Dialogs
         public bool AutoFit
         {
             get { return autoFit; }
+
             set
             {
                 if (autoFit != value)
@@ -77,6 +95,7 @@ namespace Barnacle.Dialogs
             {
                 return backBody;
             }
+
             set
             {
                 if (backBody != value)
@@ -100,6 +119,7 @@ namespace Barnacle.Dialogs
             {
                 return frontBody;
             }
+
             set
             {
                 if (frontBody != value)
@@ -122,6 +142,7 @@ namespace Barnacle.Dialogs
             {
                 return markers;
             }
+
             set
             {
                 if (markers != value)
@@ -137,6 +158,7 @@ namespace Barnacle.Dialogs
             {
                 return numberOfDivisions;
             }
+
             set
             {
                 if (numberOfDivisions != value)
@@ -159,6 +181,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -176,6 +199,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -193,6 +217,7 @@ namespace Barnacle.Dialogs
             {
                 return wholeBody;
             }
+
             set
             {
                 if (wholeBody != value)
@@ -512,16 +537,16 @@ namespace Barnacle.Dialogs
                             // theRibs[0].GenerateProfilePoints();
                             int facesPerRib = theRibs[0].ProfilePoints.Count;
                             int[,] ribvertices = new int[theRibs.Count, facesPerRib];
-                            // there should be a marker and hence a dimension for every rib.
-                            // If ther isn't then somethins wrong
+                            // there should be a marker and hence a dimension for every rib. If ther
+                            // isn't then somethins wrong
                             if (theRibs.Count != topDims.Count)
                             {
                                 System.Diagnostics.Debug.WriteLine($"Ribs {theRibs.Count} TopView Dimensions {topDims.Count}");
                             }
                             else
                             {
-                                // work out the range of faces we are going to do based upon whether we
-                                // are doing the whole model or just fron or back
+                                // work out the range of faces we are going to do based upon whether
+                                // we are doing the whole model or just fron or back
 
                                 // assume its whole model
                                 int start = 0;
@@ -545,7 +570,7 @@ namespace Barnacle.Dialogs
                                 for (int i = 0; i < theRibs.Count; i++)
                                 {
                                     x = TopView.GetXmm(ribXs[i]);
-                                    //
+
                                     if (i == theRibs.Count - 1)
                                     {
                                         rightx = x;
@@ -788,7 +813,7 @@ namespace Barnacle.Dialogs
                 string nme = el.GetAttribute("Header");
                 noteWindow.Message = "Loading Rib " + nme;
                 int pos = Convert.ToInt16(el.GetAttribute("Position"));
-                //    await Task.Run(() => LoadOneRib(nextY, el, nme, pos));
+                // await Task.Run(() => LoadOneRib(nextY, el, nme, pos));
                 LoadOneRib(nextY, el, nme, pos);
                 nextY = 10 - nextY;
             }
@@ -1109,9 +1134,9 @@ namespace Barnacle.Dialogs
             double bry = 0;
             Bitmap bmp = null;
             //get the flexipath from  the top and render the path onto an image
-           // TopViewManager.RenderFlexipath(ref bmp, out tlx, out tly, out brx, out bry);
+            // TopViewManager.RenderFlexipath(ref bmp, out tlx, out tly, out brx, out bry);
             TopView.WorkingImage = bmp;
-           // TopView.SetupImage( tlx, tly, brx, bry);
+            // TopView.SetupImage( tlx, tly, brx, bry);
             TopView.UpdateDisplay();
         }
 
@@ -1123,9 +1148,8 @@ namespace Barnacle.Dialogs
             double bry = 0;
             //get the flexipath from  the side and render the path onto an image
             Bitmap bmp = null;
-           // SideViewManager.RenderFlexipath(ref bmp, out tlx, out tly, out brx, out bry);
-          //  SideView.WorkingImage = bmp;
-          //  SideView.SetupImage(tlx, tly, brx, bry);
+            // SideViewManager.RenderFlexipath(ref bmp, out tlx, out tly, out brx, out bry);
+            // SideView.WorkingImage = bmp; SideView.SetupImage(tlx, tly, brx, bry);
             SideView.UpdateDisplay();
         }
 

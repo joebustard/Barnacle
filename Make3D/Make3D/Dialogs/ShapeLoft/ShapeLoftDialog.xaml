@@ -13,29 +13,68 @@
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
 
-            <RowDefinition Height="30" />
-            <RowDefinition Height="25" />
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <local:ShapeBase Grid.Column="0"
+        <Border Grid.Column="1"
+                Grid.Row="0"
+                Style="{StaticResource ControlBorder}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="25" />
+                </Grid.RowDefinitions>
+            <local:ShapeBase
                          Grid.Row="0"
                          Margin="2,2,2,2"
                          VerticalAlignment="Stretch"
                          x:Name="TopShape" />
-        <local:ShapeBase Grid.Column="0"
+            <local:ShapeBase
                          Grid.Row="1"
                          Margin="2,2,2,2"
                          VerticalAlignment="Stretch"
                          x:Name="BottomShape" />
-        <Border Grid.Column="1"
+                <StackPanel Orientation="Horizontal" Grid.Row="2">
+                    <Label VerticalAlignment="Center" Content="Copy" />
+                    <Button Content="Down" Click="Down_Clicked" Margin="2,2,0,2" />
+                    <Button Content="Up" Click="Up_Clicked" Margin="8,2,0,2" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal"  Grid.Row="3">
+                    <Label  VerticalAlignment="Center" Content="Size" />
+
+                    <Grid Width="200" Margin="8,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0"
+                         TextChanged="SizeX_TextChanged"
+                         x:Name="SizeX" Margin="4,0,0,0" />
+                        <TextBox Grid.Column="1"
+                         TextChanged="SizeY_TextChanged"
+                         x:Name="SizeY" Margin="4,0,0,0" />
+                        <TextBox Grid.Column="2"
+                         TextChanged="SizeZ_TextChanged"
+                         x:Name="SizeZ" Margin="4,0,0,0" />
+                    </Grid>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <GridSplitter Grid.Column="2"  ResizeDirection="Columns" Background="AliceBlue" Width="10" HorizontalAlignment="Stretch" />
+        <Border Grid.Column="3"
                 Grid.Row="0"
-                Grid.RowSpan="3"
+
                 Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"
                         MouseDown="Viewport_MouseDown"
@@ -66,37 +105,7 @@
                 </ModelVisual3D>
             </Viewport3D>
         </Border>
-        <Grid Grid.Row="2">
-            <StackPanel Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Content="Copy" />
-                <Button Content="Down" Click="Down_Clicked" Margin="2,2,0,2" />
-                <Button Content="Up" Click="Up_Clicked" Margin="8,2,0,2" />
-            </StackPanel>
-        </Grid>
-
-            <StackPanel Orientation="Horizontal" Grid.Row="3">
-            <Label Grid.Column="0" VerticalAlignment="Center">
-            Size
-            </Label>
-            <Grid Width="200" Margin="8,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                </Grid.ColumnDefinitions>
-                <TextBox Grid.Column="0"
-                         TextChanged="SizeX_TextChanged"
-                         x:Name="SizeX" />
-                <TextBox Grid.Column="1"
-                         TextChanged="SizeY_TextChanged"
-                         x:Name="SizeY" />
-                <TextBox Grid.Column="2"
-                         TextChanged="SizeZ_TextChanged"
-                         x:Name="SizeZ" />
-            </Grid>
-            </StackPanel>
-
-        <Grid Grid.Column="0"
+        <Grid Grid.Column="1"
               Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
@@ -105,15 +114,15 @@
             </Grid.ColumnDefinitions>
             <CheckBox Content="Floor"
                       Grid.Column="0"
-                      IsChecked="{Binding ShowFloor}" />
+                      IsChecked="{Binding ShowFloor}" VerticalAlignment="Center" />
             <CheckBox Content="Axies"
                       Grid.Column="1"
-                      IsChecked="{Binding ShowAxies}" />
+                      IsChecked="{Binding ShowAxies}" VerticalAlignment="Center" />
             <Button Click="Home_Click"
                     Content="Home"
                     Grid.Column="2" />
         </Grid>
-        <Grid Grid.Column="1"
+        <Grid Grid.Column="3"
               Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />

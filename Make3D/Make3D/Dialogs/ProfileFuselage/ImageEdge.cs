@@ -1,4 +1,21 @@
-﻿using System;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -79,14 +96,9 @@ namespace Barnacle.Dialogs
         internal void Analyse()
         {
             // do the first and last points end on the same y but with an x gap e.g.
-            //               first---------last
-            //               .                  .
-            //              .                      .
-            // if so , this will cause big problems if only the front or back
-            // of the model is wanted so put dummy start and ends very close together
-            // e.g.             .   f l  .
-            //                 .          .
-            //                .            .
+            // first---------last . . . . if so , this will cause big problems if only the front or
+            // back of the model is wanted so put dummy start and ends very close together e.g. . f
+            // l . . . . .
             int l = edgePoints.Count - 1;
             if (edgePoints[0].Y == edgePoints[l].Y)
             {
@@ -99,8 +111,8 @@ namespace Barnacle.Dialogs
             }
             else
             {
-                // This can only mean that the top "line" of the edge is a single pixel.
-                // add a sneaky one to its right
+                // This can only mean that the top "line" of the edge is a single pixel. add a
+                // sneaky one to its right
                 double xm = edgePoints[0].X;
                 edgePoints.Add(new PointF(((float)xm + 0.000001F), edgePoints[0].Y));
             }
@@ -132,8 +144,7 @@ namespace Barnacle.Dialogs
                 }
                 else
                 {
-                    // bottom is a single pixel
-                    // append another one just to its right
+                    // bottom is a single pixel append another one just to its right
                     double xm = edgePoints[bl].X;
                     edgePoints.Insert(bl + 1, new PointF(((float)xm + 0.00001F), edgePoints[bl].Y));
                     br = bl + 1;

@@ -1,3 +1,20 @@
+/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
 using Barnacle.LineLib;
 using PolygonTriangulationLib;
 using System;
@@ -61,6 +78,7 @@ namespace Barnacle.Dialogs
             {
                 return airfoilGroups;
             }
+
             set
             {
                 if (airfoilGroups != value)
@@ -77,6 +95,7 @@ namespace Barnacle.Dialogs
             {
                 return dihedralAngle;
             }
+
             set
             {
                 if (dihedralAngle != value)
@@ -96,6 +115,7 @@ namespace Barnacle.Dialogs
         public int NumDivisions
         {
             get { return numDivisions; }
+
             set
             {
                 if (value < 3 || value > 360)
@@ -119,6 +139,7 @@ namespace Barnacle.Dialogs
             {
                 return rootairfoilNames;
             }
+
             set
             {
                 if (rootairfoilNames != value)
@@ -135,6 +156,7 @@ namespace Barnacle.Dialogs
             {
                 return rootGroup;
             }
+
             set
             {
                 if (rootGroup != value)
@@ -155,6 +177,7 @@ namespace Barnacle.Dialogs
             {
                 return selectedRootAirfoil;
             }
+
             set
             {
                 if (selectedRootAirfoil != value)
@@ -177,6 +200,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -194,6 +218,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -211,6 +236,7 @@ namespace Barnacle.Dialogs
             {
                 return warningText;
             }
+
             set
             {
                 if (warningText != value)
@@ -316,8 +342,7 @@ namespace Barnacle.Dialogs
                 }
                 TriangulatePerimiter(side, ribX[0], true);
 
-                // do we need to close the right
-                // if it was round we might not
+                // do we need to close the right if it was round we might not
                 if (needToCloseRight)
                 {
                     side.Clear();

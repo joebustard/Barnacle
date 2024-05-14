@@ -176,18 +176,18 @@
                                          Label="Cut"
                                          SmallImageSource="/Barnacle;component/Images/Buttons/cut.png"
                                          VerticalAlignment="Top"
-                                         x:Name="CopyButton" />
+                                         x:Name="CopyButton" ToolTip="Cut the selected objects" />
                     <Custom:RibbonButton Command="{Binding CopyCommand}"
                                          HorizontalAlignment="Stretch"
                                          Label="Copy"
                                          SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
                                          VerticalAlignment="Top"
-                                         x:Name="CutButton" />
+                                         x:Name="CutButton" ToolTip="Copy the selected objects" />
                     <Custom:RibbonButton Command="{Binding CloneInPlaceCommand}"
                                          HorizontalAlignment="Stretch"
                                          Label="Clone"
                                          SmallImageSource="/Barnacle;component/Images/Buttons/clone.png"
-                                         ToolTip="Clone in exactly the same same place as the original without moving or rotating anything. Be careful!"
+                                         ToolTip="Clone the selected object in exactly the same same place as the original without moving or rotating anything. Be careful!"
                                          VerticalAlignment="Top"
                                          x:Name="CloneInPlaceButton" />
                     <Custom:RibbonMenuButton  HorizontalAlignment="Stretch"
@@ -197,7 +197,7 @@
                                          HorizontalAlignment="Stretch"
                                          Header="Paste"
                                          ImageSource="/Barnacle;component/Images/Buttons/paste.png"
-                                         ToolTip="Paste at the right of the existing bounds"
+                                         ToolTip="Replace the selected object by the contents of the clipboard, or paste to right/at marker"
                                          VerticalAlignment="Top"
                                          x:Name="PasteButton" />
                         <!--
@@ -215,13 +215,13 @@
                                          Header="Multi Paste"
                                          ImageSource="/Barnacle;component/Images/Buttons/pastemulti.png"
                                          VerticalAlignment="Top"
-                                         x:Name="PasteMultiButton" />
+                                         x:Name="PasteMultiButton" ToolTip="Paste multiple copies of the object in the clipboard in a straight line" />
                         <Custom:RibbonMenuItem Command="{Binding CircularPasteCommand}"
                                          HorizontalAlignment="Stretch"
                                          Header="Circular Paste"
                                          ImageSource="/Barnacle;component/Images/Buttons/pastecircle.png"
                                          VerticalAlignment="Top"
-                                         x:Name="PasteCircularButton" />
+                                         x:Name="PasteCircularButton" ToolTip="Paste multiple copies of the object in the clipboard in a circle" />
                     </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="SelectionGroup"

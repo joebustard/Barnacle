@@ -111,8 +111,8 @@ namespace Barnacle.UserControls
             ShowAppend = false;
             showGrid = GridSettings.GridStyle.Rectangular;
             fixedPathStartPoint = new Point(0, 10);
-            fixedPathMidPoint = new Point(20, 50);
-            fixedPathEndPoint = new Point(0, 90);
+            fixedPathMidPoint = new Point(20, 30);
+            fixedPathEndPoint = new Point(0, 40);
             fixedPolarGridCentre = new Point(0, 50);
             initialPaths = new List<string>();
             IncludeCommonPresets = true;

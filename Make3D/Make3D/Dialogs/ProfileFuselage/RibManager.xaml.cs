@@ -1,4 +1,21 @@
-﻿using Microsoft.Win32;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -55,6 +72,7 @@ namespace Barnacle.Dialogs
             {
                 return controlsEnabled;
             }
+
             set
             {
                 if (controlsEnabled != value)
@@ -71,6 +89,7 @@ namespace Barnacle.Dialogs
             {
                 return modelType;
             }
+
             set
             {
                 if (modelType != value)
@@ -91,6 +110,7 @@ namespace Barnacle.Dialogs
             {
                 return numberOfProfilePoints;
             }
+
             internal set
             {
                 if (value != numberOfProfilePoints)
@@ -119,6 +139,7 @@ namespace Barnacle.Dialogs
             {
                 return ribs;
             }
+
             set
             {
                 if (ribs != value)
@@ -135,6 +156,7 @@ namespace Barnacle.Dialogs
             {
                 return selectedRib;
             }
+
             set
             {
                 if (selectedRib != value)
@@ -416,6 +438,7 @@ namespace Barnacle.Dialogs
         public int SelectedRibIndex
         {
             get { return selectedRibIndex; }
+
             set
             {
                 if (value != selectedRibIndex)

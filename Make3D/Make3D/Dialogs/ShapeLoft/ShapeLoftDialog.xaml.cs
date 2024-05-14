@@ -1,4 +1,21 @@
-﻿using System;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media.Media3D;
@@ -41,6 +58,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -58,6 +76,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -108,131 +127,216 @@ namespace Barnacle.Dialogs
             return res;
         }
 
+        private List<Point> oldBottomPoints;
+        private List<Point> oldTopPoints;
+
         private void OnBottomPointsChanged(List<Point> pnts)
         {
             bottomPoints = pnts;
             Redraw();
+            /*
+            if (oldBottomPoints == null)
+            {
+                bottomPoints = pnts;
+                oldBottomPoints = new List<Point>();
+                foreach (Point p in pnts)
+                {
+                    oldBottomPoints.Add(new Point(p.X, p.Y));
+                }
+                Redraw();
+            }
+            else
+            {
+                bool same = true;
+                foreach (Point p in pnts)
+                {
+                    if (!FindPoint(p, oldBottomPoints))
+                    {
+                        same = false;
+                        break;
+                    }
+                }
+                if (!same)
+                {
+                    oldBottomPoints = new List<Point>();
+                    foreach (Point p in pnts)
+                    {
+                        oldBottomPoints.Add(new Point(p.X, p.Y));
+                    }
+                    Redraw();
+                }
+            }
+            */
+        }
+
+        private bool FindPoint(Point p, List<Point> pnts)
+        {
+            foreach (Point op in pnts)
+            {
+                if (p.X == op.X && p.Y == op.Y)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void OnTopPointsChanged(List<Point> pnts)
         {
             topPoints = pnts;
             Redraw();
+            /*
+            if (oldTopPoints == null)
+            {
+                topPoints = pnts;
+                oldTopPoints = new List<Point>();
+                foreach (Point p in pnts)
+                {
+                    oldTopPoints.Add(new Point(p.X, p.Y));
+                }
+                Redraw();
+            }
+            else
+            {
+                bool same = true;
+                foreach (Point p in pnts)
+                {
+                    if (!FindPoint(p, oldTopPoints))
+                    {
+                        same = false;
+                        break;
+                    }
+                }
+                if (!same)
+                {
+                    oldTopPoints = new List<Point>();
+                    foreach (Point p in pnts)
+                    {
+                        oldTopPoints.Add(new Point(p.X, p.Y));
+                    }
+                    Redraw();
+                }
+            }
+            */
         }
 
         private void Redraw()
         {
             if (topPoints != null && bottomPoints != null)
             {
-                bottomShell.Clear(); ;
-                topShell.Clear();
-                double dTheta = (degreeStep / 360.0) * Math.PI * 2;
-                double dBottom = (Math.PI * 2) / (bottomPoints.Count);
-                double dTop = (Math.PI * 2) / (topPoints.Count);
-                for (double theta = 0; theta < Math.PI * 2; theta += dTheta)
-                {
-                    Point st = new Point(0, 0);
-                    Point nd = new Point(0, 1); ;
-                    int bottomIndex = (int)(theta / dBottom);
-                    if (bottomIndex < bottomPoints.Count - 1)
-                    {
-                        st = bottomPoints[bottomIndex];
-                        nd = bottomPoints[bottomIndex + 1];
-                    }
-                    else
-                    {
-                        st = bottomPoints[bottomIndex];
-                        nd = bottomPoints[0];
-                    }
-
-                    double res = theta - (bottomIndex * dBottom);
-                    double t = 0;
-                    if (res > 0)
-                    {
-                        t = res / dBottom;
-                    }
-                    if (t < 0 || t > 1)
-                    {
-                    }
-
-                    double px = st.X + (t * (nd.X - st.X));
-                    double py = st.Y + (t * (nd.Y - st.Y));
-                    bottomShell.Add(new Point(px, py));
-
-                    int topIndex = (int)(theta / dTop);
-                    if (topIndex < topPoints.Count - 1)
-                    {
-                        st = topPoints[topIndex];
-                        nd = topPoints[topIndex + 1];
-                    }
-                    else
-                    {
-                        st = topPoints[topIndex];
-                        nd = topPoints[0];
-                    }
-
-                    res = theta - (topIndex * dTop);
-                    t = 0;
-                    if (res > 0)
-                    {
-                        t = res / dTop;
-                    }
-                    if (t < 0 || t > 1)
-                    {
-                    }
-                    px = st.X + (t * (nd.X - st.X));
-                    py = st.Y + (t * (nd.Y - st.Y));
-                    topShell.Add(new Point(px, py));
-                }
-                ClearShape();
-
-                int numUp = 10;
-                Vertices.Add(new Point3D(0, 0, 0));
-                for (int i = 0; i < bottomShell.Count; i++)
-                {
-                    double dt = 1.0 / numUp;
-
-                    for (int j = 0; j <= numUp; j++)
-                    {
-                        double t = j * dt;
-
-                        double lx1 = bottomShell[i].X + (t * (topShell[i].X - bottomShell[i].X));
-                        double ly1 = bottomShell[i].Y + (t * (topShell[i].Y - bottomShell[i].Y));
-
-                        Point3D v = new Point3D(lx1 * sizeX / 2, t * sizeY / 2, ly1 * sizeZ / 2);
-                        Vertices.Add(v);
-                    }
-                }
-                Vertices.Add(new Point3D(0, 1 * sizeY / 2, 0));
-                int topPoint = Vertices.Count - 1;
-                Faces.Clear();
-                int offset = numUp + 1;
-                int f = 1;
-                for (int i = 0; i < bottomShell.Count - 1; i++)
-                {
-                    f = i * offset + 1;
-                    Faces.Add(0);
-                    Faces.Add(f);
-                    Faces.Add(f + offset);
-
-                    for (int j = 0; j < numUp; j++)
-                    {
-                        Faces.Add(f);
-                        Faces.Add(f + offset + 1);
-                        Faces.Add(f + offset);
-
-                        Faces.Add(f);
-
-                        Faces.Add(f + 1);
-                        Faces.Add(f + offset + 1);
-                        f++;
-                    }
-                    Faces.Add(f);
-                    Faces.Add(topPoint);
-                    Faces.Add(f + offset);
-                }
-
+                GenerateShape();
                 Redisplay();
+            }
+        }
+
+        private void GenerateShape()
+        {
+            bottomShell.Clear(); ;
+            topShell.Clear();
+            double dTheta = (degreeStep / 360.0) * Math.PI * 2;
+            double dBottom = (Math.PI * 2) / (bottomPoints.Count);
+            double dTop = (Math.PI * 2) / (topPoints.Count);
+            for (double theta = 0; theta < Math.PI * 2; theta += dTheta)
+            {
+                Point st = new Point(0, 0);
+                Point nd = new Point(0, 1); ;
+                int bottomIndex = (int)(theta / dBottom);
+                if (bottomIndex < bottomPoints.Count - 1)
+                {
+                    st = bottomPoints[bottomIndex];
+                    nd = bottomPoints[bottomIndex + 1];
+                }
+                else
+                {
+                    st = bottomPoints[bottomIndex];
+                    nd = bottomPoints[0];
+                }
+
+                double res = theta - (bottomIndex * dBottom);
+                double t = 0;
+                if (res > 0)
+                {
+                    t = res / dBottom;
+                }
+                if (t < 0 || t > 1)
+                {
+                }
+
+                double px = st.X + (t * (nd.X - st.X));
+                double py = st.Y + (t * (nd.Y - st.Y));
+                bottomShell.Add(new Point(px, py));
+
+                int topIndex = (int)(theta / dTop);
+                if (topIndex < topPoints.Count - 1)
+                {
+                    st = topPoints[topIndex];
+                    nd = topPoints[topIndex + 1];
+                }
+                else
+                {
+                    st = topPoints[topIndex];
+                    nd = topPoints[0];
+                }
+
+                res = theta - (topIndex * dTop);
+                t = 0;
+                if (res > 0)
+                {
+                    t = res / dTop;
+                }
+                if (t < 0 || t > 1)
+                {
+                }
+                px = st.X + (t * (nd.X - st.X));
+                py = st.Y + (t * (nd.Y - st.Y));
+                topShell.Add(new Point(px, py));
+            }
+            ClearShape();
+
+            int numUp = 10;
+            Vertices.Add(new Point3D(0, 0, 0));
+            for (int i = 0; i < bottomShell.Count; i++)
+            {
+                double dt = 1.0 / numUp;
+
+                for (int j = 0; j <= numUp; j++)
+                {
+                    double t = j * dt;
+
+                    double lx1 = bottomShell[i].X + (t * (topShell[i].X - bottomShell[i].X));
+                    double ly1 = bottomShell[i].Y + (t * (topShell[i].Y - bottomShell[i].Y));
+
+                    Point3D v = new Point3D(lx1 * sizeX / 2, t * sizeY / 2, ly1 * sizeZ / 2);
+                    Vertices.Add(v);
+                }
+            }
+            Vertices.Add(new Point3D(0, 1 * sizeY / 2, 0));
+            int topPoint = Vertices.Count - 1;
+            Faces.Clear();
+            int offset = numUp + 1;
+            int f = 1;
+            for (int i = 0; i < bottomShell.Count - 1; i++)
+            {
+                f = i * offset + 1;
+                Faces.Add(0);
+                Faces.Add(f);
+                Faces.Add(f + offset);
+
+                for (int j = 0; j < numUp; j++)
+                {
+                    Faces.Add(f);
+                    Faces.Add(f + offset + 1);
+                    Faces.Add(f + offset);
+
+                    Faces.Add(f);
+
+                    Faces.Add(f + 1);
+                    Faces.Add(f + offset + 1);
+                    f++;
+                }
+                Faces.Add(f);
+                Faces.Add(topPoint);
+                Faces.Add(f + offset);
             }
         }
 

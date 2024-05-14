@@ -1,4 +1,21 @@
-﻿using Barnacle.Object3DLib;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using Barnacle.Object3DLib;
 using EarClipperLib;
 using PolygonTriangulationLib;
 using System;
@@ -76,6 +93,7 @@ namespace Barnacle.Dialogs
             {
                 return airfoilGroups;
             }
+
             set
             {
                 if (airfoilGroups != value)
@@ -92,6 +110,7 @@ namespace Barnacle.Dialogs
             {
                 return airfoilNames;
             }
+
             set
             {
                 if (airfoilNames != value)
@@ -108,6 +127,7 @@ namespace Barnacle.Dialogs
             {
                 return bladeAngle;
             }
+
             set
             {
                 if (bladeAngle != value)
@@ -126,6 +146,7 @@ namespace Barnacle.Dialogs
             {
                 return bladeLength;
             }
+
             set
             {
                 if (bladeLength != value)
@@ -143,6 +164,7 @@ namespace Barnacle.Dialogs
             {
                 return bladeMid;
             }
+
             set
             {
                 if (bladeMid != value)
@@ -160,6 +182,7 @@ namespace Barnacle.Dialogs
             {
                 return bladeRoot;
             }
+
             set
             {
                 if (bladeRoot != value)
@@ -177,6 +200,7 @@ namespace Barnacle.Dialogs
             {
                 return bladeTip;
             }
+
             set
             {
                 if (bladeTip != value)
@@ -194,6 +218,7 @@ namespace Barnacle.Dialogs
             {
                 return domedHub;
             }
+
             set
             {
                 if (domedHub != value)
@@ -211,6 +236,7 @@ namespace Barnacle.Dialogs
             {
                 return flatHub;
             }
+
             set
             {
                 if (flatHub != value)
@@ -228,6 +254,7 @@ namespace Barnacle.Dialogs
             {
                 return hubHeight;
             }
+
             set
             {
                 if (hubHeight != value)
@@ -245,6 +272,7 @@ namespace Barnacle.Dialogs
             {
                 return hubOffset;
             }
+
             set
             {
                 hubOffset = value;
@@ -259,6 +287,7 @@ namespace Barnacle.Dialogs
             {
                 return hubRadius;
             }
+
             set
             {
                 if (hubRadius != value)
@@ -276,6 +305,7 @@ namespace Barnacle.Dialogs
             {
                 return midOffset;
             }
+
             set
             {
                 midOffset = value;
@@ -290,6 +320,7 @@ namespace Barnacle.Dialogs
             {
                 return numberOfBlades;
             }
+
             set
             {
                 if (numberOfBlades != value)
@@ -310,6 +341,7 @@ namespace Barnacle.Dialogs
             {
                 return rootGroup;
             }
+
             set
             {
                 if (rootGroup != value)
@@ -334,6 +366,7 @@ namespace Barnacle.Dialogs
             {
                 return rootOffset;
             }
+
             set
             {
                 if (rootOffset != value)
@@ -351,6 +384,7 @@ namespace Barnacle.Dialogs
             {
                 return selectedAirfoil;
             }
+
             set
             {
                 if (selectedAirfoil != value)
@@ -368,6 +402,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -385,6 +420,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -402,6 +438,7 @@ namespace Barnacle.Dialogs
             {
                 return spokeRadius;
             }
+
             set
             {
                 spokeRadius = value;
@@ -426,7 +463,7 @@ namespace Barnacle.Dialogs
             for (double t = 0; t < 0.5; t += stepSize)
             {
                 Point elp = GetEllipsePoint(mainRad, sideRad, t);
-                //  Point3D p = new Point3D(tX + elp.X + mainRad, tY, tZ + elp.Y);
+                // Point3D p = new Point3D(tX + elp.X + mainRad, tY, tZ + elp.Y);
                 Point3D p = new Point3D(elp.X, tY, elp.Y);
                 tipEdge.Add(p);
             }

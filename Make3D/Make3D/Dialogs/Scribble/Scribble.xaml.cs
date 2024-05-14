@@ -1,4 +1,21 @@
-﻿using Barnacle.LineLib;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using Barnacle.LineLib;
 using Barnacle.Models;
 using Microsoft.Win32;
 using PolygonTriangulationLib;
@@ -77,6 +94,7 @@ namespace Barnacle.Dialogs
             {
                 return hollowShape;
             }
+
             set
             {
                 if (hollowShape != value)
@@ -103,6 +121,7 @@ namespace Barnacle.Dialogs
             {
                 return lineShape;
             }
+
             set
             {
                 if (lineShape != value)
@@ -129,6 +148,7 @@ namespace Barnacle.Dialogs
             {
                 return polyPoints;
             }
+
             set
             {
                 if (value != polyPoints)
@@ -145,6 +165,7 @@ namespace Barnacle.Dialogs
             {
                 return selectedPoint;
             }
+
             set
             {
                 if (selectedPoint != value)
@@ -171,6 +192,7 @@ namespace Barnacle.Dialogs
             {
                 return selectionMode;
             }
+
             set
             {
                 if (value != selectionMode)
@@ -187,6 +209,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -204,6 +227,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -221,6 +245,7 @@ namespace Barnacle.Dialogs
             {
                 return showOrtho;
             }
+
             set
             {
                 if (value != showOrtho)
@@ -239,6 +264,7 @@ namespace Barnacle.Dialogs
             {
                 return showWidth;
             }
+
             set
             {
                 if (showWidth != value)
@@ -255,6 +281,7 @@ namespace Barnacle.Dialogs
             {
                 return solidShape;
             }
+
             set
             {
                 if (solidShape != value)
@@ -272,6 +299,7 @@ namespace Barnacle.Dialogs
             {
                 return wallWidth;
             }
+
             set
             {
                 if (wallWidth != value)
@@ -328,9 +356,7 @@ namespace Barnacle.Dialogs
                 }
                 else
                 {
-                    //                   flexiPath.AddLine(position);
-                    //                   PointGrid.ItemsSource = Points;
-                    //                   CollectionViewSource.GetDefaultView(Points).Refresh();
+                    // flexiPath.AddLine(position); PointGrid.ItemsSource = Points; CollectionViewSource.GetDefaultView(Points).Refresh();
                 }
                 added = true;
             }
@@ -389,7 +415,7 @@ namespace Barnacle.Dialogs
                     //else
                     //      {
                     InsertLineSegment(found, position);
-                    //       }
+                    // }
 
                     PointGrid.ItemsSource = Points;
                     CollectionViewSource.GetDefaultView(Points).Refresh();
@@ -577,8 +603,8 @@ namespace Barnacle.Dialogs
                         }
                     }
 
-                    // only show the points if they are marked as visible
-                    // OR they are orthogonal to the selected one
+                    // only show the points if they are marked as visible OR they are orthogonal to
+                    // the selected one
                     if (polyPoints[i].Visible || (ortho && showOrtho))
                     {
                         if (polyPoints[i].Mode == FlexiPoint.PointMode.Data)
@@ -809,7 +835,7 @@ namespace Barnacle.Dialogs
             innerPolygon[0] = new PointF((float)opf.X, (float)opf.Y);
             opf = Perpendicular(new System.Windows.Point(outerPolygon[outerPolygon.Count - 2].X, outerPolygon[outerPolygon.Count - 2].Y), new System.Windows.Point(outerPolygon[outerPolygon.Count - 1].X, outerPolygon[outerPolygon.Count - 1].Y), 1, -wallWidth);
             innerPolygon[innerPolygon.Count - 1] = new PointF((float)opf.X, (float)opf.Y);
-            //  outerPolygon = LineUtils.GetEnlargedPolygon(outerPolygon, (float)wallWidth / 2.0F);
+            // outerPolygon = LineUtils.GetEnlargedPolygon(outerPolygon, (float)wallWidth / 2.0F);
             // innerPolygon = LineUtils.GetEnlargedPolygon(innerPolygon, -(float)wallWidth / 2.0F);
             tmp.Clear();
             for (int i = outerPolygon.Count - 1; i >= 0; i--)
@@ -1080,7 +1106,7 @@ namespace Barnacle.Dialogs
             localImage = new BitmapImage();
             localImage.BeginInit();
             localImage.UriSource = fileUri;
-            //    localImage.DecodePixelWidth = 800;
+            // localImage.DecodePixelWidth = 800;
             localImage.EndInit();
             EditorParameters.Set("ImagePath", f);
             MainCanvas.Width = localImage.Width;

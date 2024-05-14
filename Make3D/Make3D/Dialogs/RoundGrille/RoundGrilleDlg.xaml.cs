@@ -1,3 +1,20 @@
+/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
 using MakerLib;
 using System;
 using System.ComponentModel;
@@ -24,6 +41,7 @@ namespace Barnacle.Dialogs
             {
                 return grilleRadius;
             }
+
             set
             {
                 if (grilleRadius != value)
@@ -89,6 +107,7 @@ namespace Barnacle.Dialogs
             {
                 return grillWidth;
             }
+
             set
             {
                 if (grillWidth != value)
@@ -119,6 +138,7 @@ namespace Barnacle.Dialogs
             {
                 return makeEdge;
             }
+
             set
             {
                 if (makeEdge != value)
@@ -148,6 +168,7 @@ namespace Barnacle.Dialogs
             {
                 return edgeThickness;
             }
+
             set
             {
                 if (edgeThickness != value)
@@ -180,6 +201,7 @@ namespace Barnacle.Dialogs
             {
                 return verticalBars;
             }
+
             set
             {
                 if (verticalBars != value)
@@ -225,6 +247,7 @@ namespace Barnacle.Dialogs
             {
                 return verticalBarThickness;
             }
+
             set
             {
                 if (verticalBarThickness != value)
@@ -296,6 +319,7 @@ namespace Barnacle.Dialogs
             {
                 return horizontalBars;
             }
+
             set
             {
                 if (horizontalBars != value)
@@ -337,6 +361,7 @@ namespace Barnacle.Dialogs
             {
                 return horizontalBarThickness;
             }
+
             set
             {
                 if (horizontalBarThickness != value)
@@ -383,6 +408,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -400,6 +426,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -417,6 +444,7 @@ namespace Barnacle.Dialogs
             {
                 return warningText;
             }
+
             set
             {
                 if (warningText != value)
@@ -489,7 +517,7 @@ namespace Barnacle.Dialogs
 
             GrilleRadius = EditorParameters.GetDouble("GrilleRadius", 30);
 
-            //    GrillHeight = EditorParameters.GetDouble("GrillHeight", 40);
+            // GrillHeight = EditorParameters.GetDouble("GrillHeight", 40);
             GrillWidth = EditorParameters.GetDouble("GrillWidth", 5);
 
             MakeEdge = EditorParameters.GetBoolean("MakeEdge", true);
@@ -510,7 +538,7 @@ namespace Barnacle.Dialogs
             // save the parameters for the tool
 
             EditorParameters.Set("GrilleRadius", GrilleRadius.ToString());
-            //  EditorParameters.Set("GrillHeight", GrillHeight.ToString());
+            // EditorParameters.Set("GrillHeight", GrillHeight.ToString());
             EditorParameters.Set("GrillWidth", GrillWidth.ToString());
             EditorParameters.Set("MakeEdge", MakeEdge.ToString());
             EditorParameters.Set("EdgeThickness", EdgeThickness.ToString());

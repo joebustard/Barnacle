@@ -1,4 +1,21 @@
-﻿using PolygonTriangulationLib;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -11,10 +28,12 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
         public float MiddleOffset { get; set; } = 0;
         public double XPosition { get; set; }
         public double YPosition { get; set; }
+
         public void Log(string s)
         {
             System.Diagnostics.Debug.WriteLine(s);
         }
+
         public void MakeFaces(List<PointF> dp)
         {
             float left = float.MaxValue;
@@ -30,7 +49,7 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
             }
             float dx = (right - left) / 2;
             float dy = (top - bottom);
-           
+
             points = new List<PointF>();
             foreach (PointF p in dp)
             {
@@ -72,7 +91,6 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
             }
         }
 
-
         private void TriangulateSide(List<PointF> points, bool invert)
         {
             TriangulationPolygon ply = new TriangulationPolygon();
@@ -81,9 +99,9 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
             List<Triangle> tris = ply.Triangulate();
             foreach (Triangle t in tris)
             {
-                int c0 = AddVertice(new Point3D(XPosition, t.Points[0].Y +  YPosition, t.Points[0].X));
-                int c1 = AddVertice(new Point3D(XPosition, t.Points[1].Y +  YPosition, t.Points[1].X));
-                int c2 = AddVertice(new Point3D(XPosition, t.Points[2].Y +  YPosition, t.Points[2].X));
+                int c0 = AddVertice(new Point3D(XPosition, t.Points[0].Y + YPosition, t.Points[0].X));
+                int c1 = AddVertice(new Point3D(XPosition, t.Points[1].Y + YPosition, t.Points[1].X));
+                int c2 = AddVertice(new Point3D(XPosition, t.Points[2].Y + YPosition, t.Points[2].X));
                 if (invert)
                 {
                     Faces.Add(c0);
@@ -99,16 +117,15 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
             }
         }
 
-        internal void SetPositionAndScale(double x, float yPosition,double lower1, double upper1, double lower2, double upper2)
+        internal void SetPositionAndScale(double x, float yPosition, double lower1, double upper1, double lower2, double upper2)
         {
-            
             XPosition = x;
             Log($"RibPlateModel xposition {XPosition}");
             YPosition = yPosition;
             float topDim = (float)(upper1 - lower1);
             float sideDim = (float)(upper2 - lower2);
             List<PointF> dp = new List<PointF>();
-            foreach( PointF p in rawPoints)
+            foreach (PointF p in rawPoints)
             {
                 PointF np = new PointF();
                 np.X = (p.X * topDim) + (float)lower1;

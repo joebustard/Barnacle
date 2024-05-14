@@ -1,4 +1,21 @@
-﻿using System;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -47,6 +64,7 @@ namespace Barnacle.Dialogs
             {
                 return rotationDegrees;
             }
+
             set
             {
                 rotationDegrees = value;
@@ -90,6 +108,7 @@ namespace Barnacle.Dialogs
                 GenerateDefaultPoints();
             }
             Redraw();
+            NotifyPointsChanged();
         }
 
         private void OnNumberOfPointsChanged(double i)
@@ -100,6 +119,7 @@ namespace Barnacle.Dialogs
                 NumberOfPoints = (int)i;
                 GenerateDefaultPoints();
                 Redraw();
+                NotifyPointsChanged();
             }
         }
 
@@ -119,6 +139,7 @@ namespace Barnacle.Dialogs
             }
             GeneratePoints();
             Redraw();
+            NotifyPointsChanged();
         }
 
         private void Redraw()
@@ -146,6 +167,10 @@ namespace Barnacle.Dialogs
             el.Fill = Brushes.Black;
 
             PointCanvas.Children.Add(el);
+        }
+
+        private void NotifyPointsChanged()
+        {
             if (OnPointsChanged != null)
             {
                 OnPointsChanged(Points);
@@ -241,6 +266,7 @@ namespace Barnacle.Dialogs
             RotatePoints(-1);
             GeneratePoints();
             Redraw();
+            NotifyPointsChanged();
         }
 
         private void RotatePoints(double v)
@@ -258,6 +284,7 @@ namespace Barnacle.Dialogs
                     rotationDegrees += v;
                 }
             }
+            NotifyPointsChanged();
         }
 
         private void RotatePlus_Click_1(object sender, RoutedEventArgs e)
@@ -265,6 +292,7 @@ namespace Barnacle.Dialogs
             RotatePoints(1);
             GeneratePoints();
             Redraw();
+            NotifyPointsChanged();
         }
 
         private void RotateZero_Click(object sender, RoutedEventArgs e)
@@ -272,6 +300,7 @@ namespace Barnacle.Dialogs
             RotatePoints(-rotationDegrees);
             GeneratePoints();
             Redraw();
+            NotifyPointsChanged();
         }
 
         private void PointCanvas_MouseDown(object sender, MouseButtonEventArgs e)
@@ -312,6 +341,7 @@ namespace Barnacle.Dialogs
             }
             GeneratePoints();
             Redraw();
+            NotifyPointsChanged();
         }
 
         internal string GetDistances()
@@ -348,20 +378,24 @@ namespace Barnacle.Dialogs
                         int d = (int)(Math.Round(dist));
                         dist = (double)d / 10;
                     }
-                    if (!linkPoints)
+                    if (pointDistance[selectedPoint] != dist)
                     {
-                        pointDistance[selectedPoint] = dist;
-                    }
-                    else
-                    {
-                        for (int i = 0; i < Points.Count; i++)
+                        if (!linkPoints)
                         {
-                            pointDistance[i] = dist;
+                            pointDistance[selectedPoint] = dist;
                         }
+                        else
+                        {
+                            for (int i = 0; i < Points.Count; i++)
+                            {
+                                pointDistance[i] = dist;
+                            }
+                        }
+                        DistanceLabel.Content = pointDistance[selectedPoint].ToString("F3");
+                        GeneratePoints();
+                        Redraw();
+                        NotifyPointsChanged();
                     }
-                    DistanceLabel.Content = pointDistance[selectedPoint].ToString("F3");
-                    GeneratePoints();
-                    Redraw();
                 }
             }
             else

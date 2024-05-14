@@ -1,4 +1,21 @@
-﻿using PolygonTriangulationLib;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -9,9 +26,8 @@ using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs.RibbedFuselage.Models
 {
-    class SidePlateModel : PlateModel
+    internal class SidePlateModel : PlateModel
     {
-
         private void TriangulateSide(List<PointF> points, bool invert)
         {
             TriangulationPolygon ply = new TriangulationPolygon();
@@ -37,12 +53,15 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
                 }
             }
         }
+
         public float MiddleOffset { get; set; } = 0;
         public float LeftOffset { get; private set; }
+
         public void Log(string s)
         {
             System.Diagnostics.Debug.WriteLine(s);
         }
+
         internal override void SetPoints(List<PointF> dp)
         {
             float left = float.MaxValue;
@@ -68,12 +87,11 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
                 float xn = p.X - left - dx;
                 Log($"{xn},{(-(p.Y - bottom) + dy)}");
                 LeftOffset = Math.Min(LeftOffset, xn);
-                points.Add(new PointF(xn, -(p.Y - bottom)+dy));
+                points.Add(new PointF(xn, -(p.Y - bottom) + dy));
             }
             ClearShape();
 
             TriangulateSide(points, false);
-
         }
     }
 }

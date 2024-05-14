@@ -1,3 +1,20 @@
+/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
 using Barnacle.Models.BufferedPolyline;
 using OctTreeLib;
 using PolygonTriangulationLib;
@@ -262,19 +279,16 @@ namespace Barnacle.Dialogs
                     /*
                     if (PathEditor.LocalImage == null)
                     {
-                        
                     }
                     else
                     {
-                        
                         for (int i = 0; i < outline.Count; i++)
                         {
                             double x = PathEditor.ToMM(outline[i].X);
                             double y = PathEditor.ToMM(top - outline[i].Y);
-                            
+
                             tmp.Add(new System.Windows.Point(x, y));
                         }
-                        
                     }
                     */
                     double lx, rx, ty, by;
@@ -334,21 +348,18 @@ namespace Barnacle.Dialogs
             {
                 PathEditor.FromString(s);
             }
-
         }
 
         private void PathPointsChanged(List<Point> points)
         {
-       
-                pathPoints.Clear();
-                foreach (Point p in points)
-                {
-                    pathPoints.Insert(0, new Point(p.X, p.Y));
-                }
+            pathPoints.Clear();
+            foreach (Point p in points)
+            {
+                pathPoints.Insert(0, new Point(p.X, p.Y));
+            }
 
-                GenerateShape();
-                Redisplay();
-            
+            GenerateShape();
+            Redisplay();
         }
 
         private void SaveEditorParmeters()
@@ -375,7 +386,7 @@ namespace Barnacle.Dialogs
             WarningText = "";
             // should flexi control give us live point updates while lines are dragged. Computing
             // new line costs too much so , no, instead wait until mouse up
-            
+
             PathEditor.OpenEndedPath = true;
             LoadEditorParameters();
 

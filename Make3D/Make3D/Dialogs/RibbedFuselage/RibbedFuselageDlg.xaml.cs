@@ -1,4 +1,21 @@
-﻿using Barnacle.Dialogs.RibbedFuselage.Models;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using Barnacle.Dialogs.RibbedFuselage.Models;
 using Barnacle.LineLib;
 using Barnacle.RibbedFuselage.Models;
 
@@ -36,6 +53,7 @@ namespace Barnacle.Dialogs
         private String topImage;
         private string topPath;
         private bool wholeBody;
+
         public RibbedFuselageDlg()
         {
             InitializeComponent();
@@ -67,6 +85,7 @@ namespace Barnacle.Dialogs
         public bool AutoFit
         {
             get { return autoFit; }
+
             set
             {
                 autoFit = value;
@@ -79,6 +98,7 @@ namespace Barnacle.Dialogs
         public bool BackBody
         {
             get { return backBody; }
+
             set
             {
                 backBody = value;
@@ -93,6 +113,7 @@ namespace Barnacle.Dialogs
         public bool FrontBody
         {
             get { return frontBody; }
+
             set
             {
                 frontBody = value;
@@ -109,6 +130,7 @@ namespace Barnacle.Dialogs
         public int NumberOfDivisions
         {
             get { return numberOfDivisions; }
+
             set
             {
                 if (numberOfDivisions != value && value >= 3 && value <= 360)
@@ -119,6 +141,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public RelayCommand RibCommand { get; set; }
 
         public ObservableCollection<RibImageDetailsModel> Ribs
@@ -129,6 +152,7 @@ namespace Barnacle.Dialogs
         public int SelectedRibIndex
         {
             get { return selectedRibIndex; }
+
             set
             {
                 if (value != selectedRibIndex)
@@ -143,6 +167,7 @@ namespace Barnacle.Dialogs
         public String SideImage
         {
             get { return sideImage; }
+
             set
             {
                 if (sideImage != value)
@@ -158,6 +183,7 @@ namespace Barnacle.Dialogs
         public string SidePath
         {
             get { return sidePath; }
+
             set
             {
                 if (sidePath != value)
@@ -179,6 +205,7 @@ namespace Barnacle.Dialogs
         public String TopImage
         {
             get { return topImage; }
+
             set
             {
                 if (topImage != value)
@@ -194,6 +221,7 @@ namespace Barnacle.Dialogs
         public string TopPath
         {
             get { return topPath; }
+
             set
             {
                 if (string.Compare(topPath, value) != 0)
@@ -213,6 +241,7 @@ namespace Barnacle.Dialogs
         public bool WholeBody
         {
             get { return wholeBody; }
+
             set
             {
                 wholeBody = value;
@@ -223,11 +252,13 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         internal double HorizontalResolution { get; set; }
 
         internal RibImageDetailsModel SelectedRib
         {
             get { return selectedRib; }
+
             set
             {
                 if (selectedRib != value)
@@ -265,8 +296,9 @@ namespace Barnacle.Dialogs
                         List<double> ribXs = new List<double>();
                         List<Dimension> topDims = new List<Dimension>();
                         List<Dimension> sideDims = new List<Dimension>();
-                        // first get the x positions of the ribs and the height and width at that position from the top and side views.
-                        // generate the profile points for the ribs at the same time.
+                        // first get the x positions of the ribs and the height and width at that
+                        // position from the top and side views. generate the profile points for the
+                        // ribs at the same time.
                         for (int i = 0; i < fuselageData.Ribs.Count; i++)
                         {
                             double x = fuselageData.Markers[i].Position;
@@ -283,8 +315,9 @@ namespace Barnacle.Dialogs
                             {
                                 string prevPath = generatingRibs[generatingRibs.Count - 1].FlexiPathText;
 
-                                // if the path for the current rib is the same as the last one and they are reasonable difference apart
-                                // full the gap with with some other virtual ribs
+                                // if the path for the current rib is the same as the last one and
+                                // they are reasonable difference apart full the gap with with some
+                                // other virtual ribs
                                 if (cpPath == prevPath && x - prevX > autofirDx)
                                 {
                                     double nx = prevX + autofirDx;
@@ -299,7 +332,8 @@ namespace Barnacle.Dialogs
 
                             generatingRibs.Add(cp);
 
-                            // calculate the top and side dimensions from the images at the ribs given position
+                            // calculate the top and side dimensions from the images at the ribs
+                            // given position
                             var dp1 = topViewFlexiPath.GetUpperAndLowerPoints(x);
                             topDims.Add(new Dimension(new System.Windows.Point(dp1.X, dp1.Lower), new System.Windows.Point(dp1.X, dp1.Upper)));
                             dp1 = sideViewFlexiPath.GetUpperAndLowerPoints(x);
@@ -436,8 +470,9 @@ namespace Barnacle.Dialogs
                     List<Dimension> topDims = new List<Dimension>();
                     List<Dimension> sideDims = new List<Dimension>();
 
-                    // first get the x positions of the ribs and the height and width at that position from the top and side views.
-                    // generate the profile points for the ribs at the same time.
+                    // first get the x positions of the ribs and the height and width at that
+                    // position from the top and side views. generate the profile points for the
+                    // ribs at the same time.
                     for (int i = 0; i < fuselageData.Ribs.Count; i++)
                     {
                         double x = fuselageData.Markers[i].Position;
@@ -456,7 +491,6 @@ namespace Barnacle.Dialogs
                         minY = Math.Min(minY, dp2.Lower);
 
                         ThreeDView.SetRibPosition(i, dp1.X - ribXs[0], dp1.Lower, dp1.Upper, dp2.Lower, dp2.Upper);
-
                     }
 
                     ThreeDView.MoveRibsUp(minY);
@@ -533,17 +567,16 @@ namespace Barnacle.Dialogs
             // the indices of all the points generated for the shape
             int[,] ribvertices = new int[generatingRibs.Count, facesPerRib];
 
-            // there should be a marker and hence a dimension for every rib.
-            // If ther isn't then somethins wrong
+            // there should be a marker and hence a dimension for every rib. If ther isn't then
+            // somethins wrong
             if (generatingRibs.Count != topDims.Count)
             {
                 System.Diagnostics.Debug.WriteLine($"Ribs {generatingRibs.Count} TopView Dimensions {topDims.Count}");
             }
             else
             {
-
-                // work out the range of faces we are going to do based upon whether we
-                // are doing the whole model or just front or back
+                // work out the range of faces we are going to do based upon whether we are doing
+                // the whole model or just front or back
 
                 // assume its whole model
                 int start = 0;
@@ -563,9 +596,8 @@ namespace Barnacle.Dialogs
                 List<PointF> leftEdge = new List<PointF>();
                 List<PointF> rightEdge = new List<PointF>();
 
-                // go through all the profile points for all the ribs,
-                // converting to a 3d position
-              
+                // go through all the profile points for all the ribs, converting to a 3d position
+
                 double x = ribXs[0];
                 double leftx = x;
                 double rightx = x;
@@ -573,7 +605,6 @@ namespace Barnacle.Dialogs
                 int vindex = 0;
                 for (int i = 0; i < generatingRibs.Count; i++)
                 {
-                  
                     x = ribXs[i];
                     // if this is the last rib count it as the right edge and record its position
                     if (i == generatingRibs.Count - 1)
@@ -589,11 +620,11 @@ namespace Barnacle.Dialogs
                             PointF pnt = generatingRibs[i].ProfilePoints[proind];
 
                             double v = (double)pnt.X * topDims[i].Height;
-                           
+
                             double z = v + topDims[i].P1.Y;
 
                             v = (double)pnt.Y * sideDims[i].Height;
-                           
+
                             double y = -(v + sideDims[i].P1.Y);
                             vert = AddVertice(Vertices, x, y, z);
                             ribvertices[i, vindex] = vert;
@@ -615,9 +646,9 @@ namespace Barnacle.Dialogs
                 }
                 facesPerRib = leftEdge.Count;
 
-                // Vertices now has all the points.
-                // ribvertices has a row for each rib, and its columns are the indices of the 3d points
-                // So now add triangle faces for consecutive pairs of points on each rib and the one after it.
+                // Vertices now has all the points. ribvertices has a row for each rib, and its
+                // columns are the indices of the 3d points So now add triangle faces for
+                // consecutive pairs of points on each rib and the one after it.
                 for (int ribIndex = 0; ribIndex < generatingRibs.Count - 1; ribIndex++)
                 {
                     for (int pIndex = 0; pIndex < facesPerRib; pIndex++)
@@ -1000,7 +1031,6 @@ namespace Barnacle.Dialogs
             TopView.Markers = GetMarkers();
             SideView.Markers = GetMarkers();
             ThreeDView.Markers = GetMarkers();
-
         }
 
         private void UpdateModel()
@@ -1011,6 +1041,7 @@ namespace Barnacle.Dialogs
                 Redisplay();
             }
         }
+
         private void ViewTabChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             System.Windows.Controls.TabControl tc = sender as System.Windows.Controls.TabControl;
