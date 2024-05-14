@@ -1,4 +1,21 @@
-﻿using Barnacle.Object3DLib;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using Barnacle.Object3DLib;
 using System.Collections.Generic;
 using System.Windows.Media.Media3D;
 
@@ -31,6 +48,7 @@ namespace Barnacle.Dialogs.MeshEditor
             {
                 return model;
             }
+
             set
             {
                 if (model != value)
@@ -188,8 +206,7 @@ namespace Barnacle.Dialogs.MeshEditor
 
         private void SetModelMaterials()
         {
-            // don't try to update model materials if one of them isn't
-            // defined yet
+            // don't try to update model materials if one of them isn't defined yet
             if (model != null && SelectedMaterial != null)
             {
                 if (selected)

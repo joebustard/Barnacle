@@ -6,4 +6,6 @@
   <BuildPlate PrinterName="(70 x 120)" Length="70" Width="120" Height="160" Colour="#FF5F9EA0" BorderThickness="5" />
   <BuildPlate PrinterName="(70 x 130)" Length="70" Width="130" Height="160" Colour="#FF5F9EA0" BorderThickness="5" />
   <BuildPlate PrinterName="(70 x 135)" Length="70" Width="135" Height="160" Colour="#FF5F9EA0" BorderThickness="5" />
+  <BuildPlate PrinterName="(230 x 230)" Length="230" Width="230" Height="230" Colour="#FF5F9EA0" BorderThickness="5" />
+  <BuildPlate PrinterName="(235 x 235)" Length="235" Width="235" Height="235" Colour="#FF5F9EA0" BorderThickness="5" />
 </PlateDefinitions>

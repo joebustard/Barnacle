@@ -1,4 +1,21 @@
-﻿using Barnacle.Object3DLib;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -56,6 +73,7 @@ namespace Barnacle.Dialogs.Figure
         public Point3D EndPosition
         {
             get => endPos;
+
             set
             {
                 if (value != endPos)
@@ -77,6 +95,7 @@ namespace Barnacle.Dialogs.Figure
             {
                 return height;
             }
+
             set
             {
                 if (height != value)
@@ -92,6 +111,7 @@ namespace Barnacle.Dialogs.Figure
             {
                 return length;
             }
+
             set
             {
                 if (length != value)
@@ -108,6 +128,7 @@ namespace Barnacle.Dialogs.Figure
         public Point3D MidPosition
         {
             get => midPos;
+
             set
             {
                 if (value != midPos)
@@ -129,6 +150,7 @@ namespace Barnacle.Dialogs.Figure
         public Point3D StartPosition
         {
             get => startPos;
+
             set
             {
                 if (value != startPos)
@@ -145,6 +167,7 @@ namespace Barnacle.Dialogs.Figure
         public double XRot
         {
             get => xrot;
+
             set
             {
                 if (xrot != value)
@@ -158,6 +181,7 @@ namespace Barnacle.Dialogs.Figure
         public double YRot
         {
             get => yrot;
+
             set
             {
                 if (yrot != value)
@@ -171,6 +195,7 @@ namespace Barnacle.Dialogs.Figure
         public double ZRot
         {
             get => zrot;
+
             set
             {
                 if (zrot != value)
@@ -413,8 +438,7 @@ namespace Barnacle.Dialogs.Figure
             bool changed = false;
             if (Name == boneName)
             {
-                // only change if values differ as we don't want to keep
-                // redrawing during set up
+                // only change if values differ as we don't want to keep redrawing during set up
                 if (FigureLScale != lScale || FigureWScale != wScale || FigureHScale != hScale)
                 {
                     FigureLScale = lScale;

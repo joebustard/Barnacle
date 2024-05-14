@@ -1,3 +1,20 @@
+/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
 using MakerLib;
 using Microsoft.Win32;
 using System;
@@ -25,6 +42,7 @@ namespace Barnacle.Dialogs
         public bool LimitRunLengths
         {
             get { return limitRunLengths; }
+
             set
             {
                 if (value != limitRunLengths)
@@ -41,6 +59,7 @@ namespace Barnacle.Dialogs
         public int MaxRunLength
         {
             get { return maxRunLength; }
+
             set
             {
                 if (maxRunLength != value)
@@ -58,6 +77,7 @@ namespace Barnacle.Dialogs
             {
                 return plagueThickness;
             }
+
             set
             {
                 if (plagueThickness != value)
@@ -88,6 +108,7 @@ namespace Barnacle.Dialogs
             {
                 return plaqueImagePath;
             }
+
             set
             {
                 if (plaqueImagePath != value)
@@ -122,6 +143,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -139,6 +161,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -156,6 +179,7 @@ namespace Barnacle.Dialogs
             {
                 return warningText;
             }
+
             set
             {
                 if (warningText != value)
@@ -178,6 +202,7 @@ namespace Barnacle.Dialogs
         public double SolidLength
         {
             get { return solidLength; }
+
             set
             {
                 if (value != solidLength)
@@ -276,6 +301,7 @@ namespace Barnacle.Dialogs
         public ImageSource PlaqueImage
         {
             get { return plaqueImage; }
+
             set
             {
                 if (value != plaqueImage)
@@ -305,13 +331,12 @@ namespace Barnacle.Dialogs
             // changed within a BeginInit/EndInit block.
             grayBitmapSource.BeginInit();
 
-            // Use the BitmapSource object defined above as the source for this new
-            // BitmapSource (chain the BitmapSource objects together).
+            // Use the BitmapSource object defined above as the source for this new BitmapSource
+            // (chain the BitmapSource objects together).
             grayBitmapSource.Source = bitmap;
 
-            // Key of changing the bitmap format is DesitnationFormat property of BitmapSource.
-            // It is a type of PixelFormat. FixelFormat has dozens of options to set
-            // bitmap formatting.
+            // Key of changing the bitmap format is DesitnationFormat property of BitmapSource. It
+            // is a type of PixelFormat. FixelFormat has dozens of options to set bitmap formatting.
             grayBitmapSource.DestinationFormat = PixelFormats.Gray32Float;
             grayBitmapSource.EndInit();
 

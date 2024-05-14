@@ -1,4 +1,21 @@
-﻿using System.Collections.Generic;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -6,8 +23,7 @@ namespace Barnacle.Dialogs.MeshEditor
 {
     internal class MeshOctNode
     {
-        // The whole list of All the points.
-        // This list is shared by all the nodes
+        // The whole list of All the points. This list is shared by all the nodes
         public static List<MeshVertex> AllPoints;
 
         // the subnodes of this node
@@ -25,8 +41,7 @@ namespace Barnacle.Dialogs.MeshEditor
 
         public Point3D Low { get; set; }
 
-        // The indices of the vertices contained in AllPoints that are within the bounds
-        // of this node
+        // The indices of the vertices contained in AllPoints that are within the bounds of this node
         public Int32Collection PointsInOctNode { get; set; }
 
         public void Create(Int32Collection pntsInThisNode, Point3D low, Point3D high, int depth)
@@ -40,8 +55,7 @@ namespace Barnacle.Dialogs.MeshEditor
 
         public void Split()
         {
-            // if we havn't reached the max depth and there are lots of points
-            // then make 8 sub nodes
+            // if we havn't reached the max depth and there are lots of points then make 8 sub nodes
             if (Depth < MaxTreeDepth && PointsInOctNode.Count > MaxPointsPerNode)
             {
                 // Lots of points so subdivide this node into eight

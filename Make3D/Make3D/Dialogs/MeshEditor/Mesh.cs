@@ -1,4 +1,21 @@
-﻿using Barnacle.Object3DLib;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
 using System.Windows.Media;
@@ -502,8 +519,8 @@ namespace Barnacle.Dialogs.MeshEditor
             List<MeshTriangle> trisToMove = new List<MeshTriangle>();
             for (int i = 0; i < selectedPoints.Count; i++)
             {
-                // create a normal for the point that is the average
-                // of all the normals of triangles that refer to it
+                // create a normal for the point that is the average of all the normals of triangles
+                // that refer to it
                 Vector3D pointNormal = new Vector3D(0, 0, 0);
                 int pIndex = selectedPoints[i];
                 Log($"Move Control Point {pIndex}");
@@ -778,9 +795,8 @@ namespace Barnacle.Dialogs.MeshEditor
                     mt.Selected = false;
                 }
             }
-            // recalculate the mid points but only for the ones we are going to smooth
-            // Others keep the same midpoints they had last time
-            // Cant calculate the edge split points until then
+            // recalculate the mid points but only for the ones we are going to smooth Others keep
+            // the same midpoints they had last time Cant calculate the edge split points until then
             foreach (MeshTriangle mt in trisToSmooth)
             {
                 mt.CalculateMidPoint(Vertices);

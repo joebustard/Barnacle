@@ -1,4 +1,21 @@
-﻿using System.Collections.Generic;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -36,8 +53,7 @@ namespace asdflibrary
         {
             if (OnCalculateDistance != null)
             {
-                // set the coordinates of the root node from the bounds passed in
-                // bottom
+                // set the coordinates of the root node from the bounds passed in bottom
                 FieldPoint p0 = new FieldPoint(lowx, lowy, lowz, OnCalculateDistance(lowx, lowy, lowz));
                 FieldPoint p1 = new FieldPoint(lowx, lowy, highz, OnCalculateDistance(lowx, lowy, highz));
                 FieldPoint p2 = new FieldPoint(highx, lowy, highz, OnCalculateDistance(lowx, lowy, highz));

@@ -1,3 +1,20 @@
+/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
 using Barnacle.Models;
 using Barnacle.Object3DLib;
 using PolygonTriangulationLib;
@@ -24,6 +41,7 @@ namespace Barnacle.Dialogs
         private string warningText;
         private bool planeSelected;
         private DpiScale dpi;
+
         public CutHorizontalPlaneDlg()
         {
             InitializeComponent();
@@ -36,11 +54,11 @@ namespace Barnacle.Dialogs
             dpi = VisualTreeHelper.GetDpi(this);
         }
 
-
         private void Viewport_MouseUp(object sender, System.Windows.Input.MouseEventArgs e)
         {
             planeSelected = true;
         }
+
         protected override void Viewport_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
         {
             Viewport3D vp = sender as Viewport3D;
@@ -77,10 +95,10 @@ namespace Barnacle.Dialogs
                     double dy = pn.Y - oldMousePos.Y;
                     if (planeSelected)
                     {
-                     double ny = PlaneLevel - (dy / dpi.PixelsPerInchY * 25.4);
-                        if ( ny < 0)
+                        double ny = PlaneLevel - (dy / dpi.PixelsPerInchY * 25.4);
+                        if (ny < 0)
                         {
-                            ny =0;
+                            ny = 0;
                         }
                         else if (ny > bounds.Height)
                         {
@@ -105,6 +123,7 @@ namespace Barnacle.Dialogs
             {
                 return planeLevel;
             }
+
             set
             {
                 if (planeLevel != value)
@@ -138,6 +157,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -155,6 +175,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -172,6 +193,7 @@ namespace Barnacle.Dialogs
             {
                 return warningText;
             }
+
             set
             {
                 if (warningText != value)
@@ -231,16 +253,13 @@ namespace Barnacle.Dialogs
 
         private void GenerateShape()
         {
-
         }
-
 
         private void ResetDefaults(object sender, RoutedEventArgs e)
         {
             SetDefaults();
             UpdateDisplay();
         }
-
 
         private void SetDefaults()
         {
@@ -294,12 +313,11 @@ namespace Barnacle.Dialogs
             {
                 foreach (Point3D p in OriginalVertices)
                 {
-                    
                     bounds.Adjust(p);
                 }
             }
            */
-          
+
             CentreVertices();
         }
 
@@ -461,11 +479,10 @@ namespace Barnacle.Dialogs
                     moreLoops = true;
                 }
             }
-            
+
             Point3DCollection allPoints = Vertices;
             Vertices = new Point3DCollection();
             ClearShape();
-            
 
             foreach (int j in newFaces)
             {

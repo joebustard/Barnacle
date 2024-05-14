@@ -1,4 +1,21 @@
-﻿using Barnacle.Dialogs.Figure;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using Barnacle.Dialogs.Figure;
 using Barnacle.Models;
 using Barnacle.Models.Adorners;
 using Barnacle.Object3DLib;
@@ -25,8 +42,7 @@ namespace Barnacle.Dialogs
         private List<String> allBoneNames;
         private List<string> availableFigureModels = new List<string>();
 
-        // Yes this tool does have its own doucment.
-        // Its used to load the models that will be available
+        // Yes this tool does have its own doucment. Its used to load the models that will be available
         private Document document;
 
         private bool editLimits;
@@ -124,6 +140,7 @@ namespace Barnacle.Dialogs
             {
                 return modelAssignments;
             }
+
             set
             {
                 if (value != modelAssignments)
@@ -140,6 +157,7 @@ namespace Barnacle.Dialogs
             {
                 return availableFigureModels;
             }
+
             set
             {
                 if (availableFigureModels != value)
@@ -156,6 +174,7 @@ namespace Barnacle.Dialogs
             {
                 return editLimits;
             }
+
             set
             {
                 if (editLimits != value)
@@ -180,6 +199,7 @@ namespace Barnacle.Dialogs
             {
                 return figureModels;
             }
+
             set
             {
                 if (figureModels != value)
@@ -196,6 +216,7 @@ namespace Barnacle.Dialogs
             {
                 return limitsVisible;
             }
+
             set
             {
                 if (limitsVisible != value)
@@ -212,6 +233,7 @@ namespace Barnacle.Dialogs
             {
                 return maxiumXRot;
             }
+
             set
             {
                 if (maxiumXRot != value)
@@ -232,6 +254,7 @@ namespace Barnacle.Dialogs
             {
                 return maxiumYRot;
             }
+
             set
             {
                 if (maxiumYRot != value)
@@ -252,6 +275,7 @@ namespace Barnacle.Dialogs
             {
                 return maxiumZRot;
             }
+
             set
             {
                 if (maxiumZRot != value)
@@ -272,6 +296,7 @@ namespace Barnacle.Dialogs
             {
                 return minimumXRot;
             }
+
             set
             {
                 if (minimumXRot != value)
@@ -292,6 +317,7 @@ namespace Barnacle.Dialogs
             {
                 return minimumYRot;
             }
+
             set
             {
                 if (minimumYRot != value)
@@ -312,6 +338,7 @@ namespace Barnacle.Dialogs
             {
                 return minimumZRot;
             }
+
             set
             {
                 if (minimumZRot != value)
@@ -332,6 +359,7 @@ namespace Barnacle.Dialogs
             {
                 return selectedBoneName;
             }
+
             set
             {
                 if (selectedBoneName != value)
@@ -354,6 +382,7 @@ namespace Barnacle.Dialogs
             {
                 return selectedHeight;
             }
+
             set
             {
                 if (selectedHeight != value)
@@ -376,6 +405,7 @@ namespace Barnacle.Dialogs
             {
                 return selectedLength;
             }
+
             set
             {
                 if (selectedLength != value)
@@ -398,6 +428,7 @@ namespace Barnacle.Dialogs
             {
                 return selectedTabItem;
             }
+
             set
             {
                 if (selectedTabItem != value)
@@ -415,6 +446,7 @@ namespace Barnacle.Dialogs
             {
                 return selectedWidth;
             }
+
             set
             {
                 if (selectedWidth != value)
@@ -437,6 +469,7 @@ namespace Barnacle.Dialogs
             {
                 return selectedXRot;
             }
+
             set
             {
                 if (selectedXRot != value)
@@ -459,6 +492,7 @@ namespace Barnacle.Dialogs
             {
                 return selectedYRot;
             }
+
             set
             {
                 if (selectedYRot != value)
@@ -481,6 +515,7 @@ namespace Barnacle.Dialogs
             {
                 return selectedZRot;
             }
+
             set
             {
                 if (selectedZRot != value)
@@ -503,6 +538,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -520,6 +556,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -751,10 +788,10 @@ namespace Barnacle.Dialogs
 
         private void CreateJointModel(List<BoneDisplayRecord> brecs, Bone bn, Point3DCollection parentPnts)
         {
-            //    Log($"CreateJoint Model {bn.FigureModelName}");
+            // Log($"CreateJoint Model {bn.FigureModelName}");
             if (parentPnts != null)
             {
-                //  Log($" link parentPoints {bn.FigureModelName}");
+                // Log($" link parentPoints {bn.FigureModelName}");
                 if (bn.DisplayRecord != null)
                 {
                     GenerateJoint(parentPnts, bn.DisplayRecord);
@@ -850,8 +887,7 @@ namespace Barnacle.Dialogs
             {
                 CreateBoneModel(p, true);
             }
-            // can only do the joints AFTER we have done the bones
-            // also exclude the root.
+            // can only do the joints AFTER we have done the bones also exclude the root.
 
             foreach (Bone bn in skeleton.SubBones)
             {
@@ -1046,10 +1082,9 @@ namespace Barnacle.Dialogs
         {
             // Just in case
             document.Clear();
-            // the data folder has a sub folder called figure.
-            // Look in there and insert the entire contents of any model files
-            // Note that we have to insert, not load.
-            // If the files have duplicate part names, things will get tricky
+            // the data folder has a sub folder called figure. Look in there and insert the entire
+            // contents of any model files Note that we have to insert, not load. If the files have
+            // duplicate part names, things will get tricky
             String pth = AppDomain.CurrentDomain.BaseDirectory + "data\\figure";
             if (Directory.Exists(pth))
             {

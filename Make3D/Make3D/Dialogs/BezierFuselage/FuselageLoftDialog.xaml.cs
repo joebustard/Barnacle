@@ -1,4 +1,21 @@
-﻿using Microsoft.Win32;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -43,6 +60,7 @@ namespace Barnacle.Dialogs
             {
                 return bulkHeads;
             }
+
             set
             {
                 if (bulkHeads != value)
@@ -59,6 +77,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -76,6 +95,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -280,8 +300,8 @@ namespace Barnacle.Dialogs
             if (bulkHeads != null && bulkHeads.Count > 0 && bulkHeads[bulkHeads.Count - 1].BzLines[0] != null)
             {
                 int pointsPerBulkHead = PointsPerBulkHead();
-                // create a place to store the indices of the vertices for each bulkhead.
-                // Used to make the triangles
+                // create a place to store the indices of the vertices for each bulkhead. Used to
+                // make the triangles
                 indexFrame = new int[bulkHeads.Count, pointsPerBulkHead];
                 ClearShape();
 

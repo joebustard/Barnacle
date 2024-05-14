@@ -1,4 +1,21 @@
-﻿using Barnacle.Dialogs.MeshEditor;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using Barnacle.Dialogs.MeshEditor;
 using Barnacle.Models;
 using Barnacle.Models.Adorners;
 using Barnacle.Object3DLib;
@@ -18,9 +35,9 @@ namespace Barnacle.Dialogs
     {
         private Int32Collection editingFaceIndices;
 
-        // these are the points and indices of the shape we are editing.
-        // We can't use the normal Mesh and Faces as these will be be used for the "soper Mesh"
-        // of wire frame rects and selectable points.
+        // these are the points and indices of the shape we are editing. We can't use the normal
+        // Mesh and Faces as these will be be used for the "soper Mesh" of wire frame rects and
+        // selectable points.
         private Point3DCollection editingPoints;
 
         private Point lastMousePos;
@@ -57,6 +74,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -74,6 +92,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -91,6 +110,7 @@ namespace Barnacle.Dialogs
             {
                 return showWireFrame;
             }
+
             set
             {
                 if (showWireFrame != value)
@@ -281,7 +301,7 @@ namespace Barnacle.Dialogs
         private void DivideLong_Click(object sender, RoutedEventArgs e)
         {
             mesh.DivideLongSideSelectedFaces();
-            //     GenerateSuperMesh();
+            // GenerateSuperMesh();
             Redisplay();
         }
 
@@ -485,8 +505,7 @@ namespace Barnacle.Dialogs
         {
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
-            // we should have been loaded with an editing mesh.
-            // If not create base one
+            // we should have been loaded with an editing mesh. If not create base one
             if (editingPoints.Count == 0)
             {
                 double radius = 30;

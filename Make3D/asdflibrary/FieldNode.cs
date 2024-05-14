@@ -1,4 +1,21 @@
-﻿using System;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using System;
 
 namespace asdflibrary
 {
@@ -70,14 +87,13 @@ namespace asdflibrary
                     result = centre;
                 }
 
-                // if it doesn't belong to the current node maybe its in  one of the subnodes
+                // if it doesn't belong to the current node maybe its in one of the subnodes
 
                 int subnode = -1;
                 // is it above or below the centre
                 if (y < AdaptiveSignedDistanceField.allFieldPoints[centre].y)
                 {
-                    // below
-                    // is it front or behind the centre
+                    // below is it front or behind the centre
                     if (z < AdaptiveSignedDistanceField.allFieldPoints[centre].z)
                     {
                         if (x < AdaptiveSignedDistanceField.allFieldPoints[centre].x)
@@ -108,8 +124,7 @@ namespace asdflibrary
                 }
                 else
                 {
-                    // above
-                    // is it front or behind the centre
+                    // above is it front or behind the centre
                     if (z < AdaptiveSignedDistanceField.allFieldPoints[centre].z)
                     {
                         if (x < AdaptiveSignedDistanceField.allFieldPoints[centre].x)
@@ -290,8 +305,7 @@ namespace asdflibrary
             float cx = lx + (hx - lx) / 2.0F;
             float cy = ly + (hy - ly) / 2.0F;
             float cz = lz + (hz - lz) / 2.0F;
-            // the centre point should not exist already
-            // but a quick check wont hurt
+            // the centre point should not exist already but a quick check wont hurt
             int ci = FindFieldPoint(cx, cy, cz);
             if (ci == -1)
             {
@@ -319,8 +333,7 @@ namespace asdflibrary
             float cy = ly + (hy - ly) / 2.0F;
             float cz = lz + (hz - lz) / 2.0F;
 
-            // the centre point should not exist already
-            // but a quick check wont hurt
+            // the centre point should not exist already but a quick check wont hurt
             int ci = FindFieldPoint(cx, cy, cz);
             if (ci == -1)
             {

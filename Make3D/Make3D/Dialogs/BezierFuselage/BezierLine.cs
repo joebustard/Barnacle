@@ -1,4 +1,21 @@
-﻿using System;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using System;
 
 using System.Windows;
 
@@ -32,6 +49,18 @@ namespace Barnacle.Dialogs
         public Point P1 { get; set; }
         public Point P2 { get; set; }
         public Point P3 { get; set; }
+
+        public void FromString(string s)
+        {
+            string[] res = s.Split(',');
+            if (res.GetLength(0) == 8)
+            {
+                P0 = new Point(Convert.ToDouble(res[0]), Convert.ToDouble(res[1]));
+                P1 = new Point(Convert.ToDouble(res[2]), Convert.ToDouble(res[3]));
+                P2 = new Point(Convert.ToDouble(res[4]), Convert.ToDouble(res[5]));
+                P3 = new Point(Convert.ToDouble(res[6]), Convert.ToDouble(res[7]));
+            }
+        }
 
         public Point GetCoord(double t, bool addOffset = true)
         {
@@ -76,6 +105,7 @@ namespace Barnacle.Dialogs
             P2 = new Point(x2, y2);
             P3 = new Point(x3, y3);
         }
+
         public override string ToString()
         {
             string res = "";
@@ -84,18 +114,6 @@ namespace Barnacle.Dialogs
             res += P2.X.ToString() + "," + P2.Y.ToString() + ",";
             res += P3.X.ToString() + "," + P3.Y.ToString();
             return res;
-        }
-
-        public void FromString( string s)
-        {
-            string []res = s.Split(',');
-            if (res.GetLength(0) == 8)
-            {
-                P0 = new Point(Convert.ToDouble(res[0]), Convert.ToDouble(res[1]));
-                P1 = new Point(Convert.ToDouble(res[2]), Convert.ToDouble(res[3]));
-                P2 = new Point(Convert.ToDouble(res[4]), Convert.ToDouble(res[5]));
-                P3 = new Point(Convert.ToDouble(res[6]), Convert.ToDouble(res[7]));
-            }
         }
     }
 }

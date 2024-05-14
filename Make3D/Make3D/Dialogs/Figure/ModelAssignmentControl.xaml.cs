@@ -1,4 +1,21 @@
-﻿using System;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -39,6 +56,7 @@ namespace Barnacle.Dialogs.Figure
             {
                 return availableFigureNames;
             }
+
             set
             {
                 if (availableFigureNames != value)
@@ -55,6 +73,7 @@ namespace Barnacle.Dialogs.Figure
             {
                 return boneName;
             }
+
             set
             {
                 if (boneName != value)
@@ -78,6 +97,7 @@ namespace Barnacle.Dialogs.Figure
                 }
                 return figureName;
             }
+
             set
             {
                 if (figureName != value)
@@ -95,6 +115,7 @@ namespace Barnacle.Dialogs.Figure
             {
                 return hScale;
             }
+
             set
             {
                 if (hScale != value)
@@ -115,6 +136,7 @@ namespace Barnacle.Dialogs.Figure
             {
                 return lScale;
             }
+
             set
             {
                 if (lScale != value)
@@ -135,6 +157,7 @@ namespace Barnacle.Dialogs.Figure
             {
                 return wScale;
             }
+
             set
             {
                 if (wScale != value)

@@ -1,3 +1,20 @@
+/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
 using asdflibrary;
 using Barnacle.Dialogs.ClaySculpt;
 using Barnacle.Dialogs.WireFrame;
@@ -53,6 +70,7 @@ namespace Barnacle.Dialogs
         public bool Symetric
         {
             get { return symetric; }
+
             set
             {
                 if (symetric = value)
@@ -129,6 +147,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -146,6 +165,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -163,6 +183,7 @@ namespace Barnacle.Dialogs
             {
                 return toolInverse;
             }
+
             set
             {
                 if (toolInverse != value)
@@ -190,6 +211,7 @@ namespace Barnacle.Dialogs
         public string ToolShape
         {
             get { return toolShape; }
+
             set
             {
                 if (toolShape != value)
@@ -224,6 +246,7 @@ namespace Barnacle.Dialogs
         public ObservableCollection<String> ToolShapeItems
         {
             get { return toolShapeItems; }
+
             set
             {
                 if (toolShapeItems != value)
@@ -246,6 +269,7 @@ namespace Barnacle.Dialogs
             {
                 return toolsSize;
             }
+
             set
             {
                 if (toolsSize != value)
@@ -274,6 +298,7 @@ namespace Barnacle.Dialogs
             {
                 return toolStrength;
             }
+
             set
             {
                 if (toolStrength != value)
@@ -284,7 +309,7 @@ namespace Barnacle.Dialogs
                         strength = toolStrength / 10.0;
                         if (tool != null)
                         {
-                            //        SetSphere(tool, 5, 5, 5, 4 * strength);
+                            // SetSphere(tool, 5, 5, 5, 4 * strength);
                         }
                         NotifyPropertyChanged();
                     }
@@ -306,6 +331,7 @@ namespace Barnacle.Dialogs
             {
                 return warningText;
             }
+
             set
             {
                 if (warningText != value)
@@ -374,7 +400,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        //  private void CreateMarker(PlanktonVertex p, Color cl)
+        // private void CreateMarker(PlanktonVertex p, Color cl)
         private void CreateMarker(Vertex p, Color cl)
         {
             MeshGeometry3D mesh = MeshUtils.MakeBorder(p.X, p.Y, p.Z, 2);
@@ -477,7 +503,7 @@ namespace Barnacle.Dialogs
             int s = he.StartVertex;
             he = pmesh.HalfEdges[he.Next];
             int e = he.StartVertex;
-            //  PlanktonVertex ve = pmesh.Vertices[s];
+            // PlanktonVertex ve = pmesh.Vertices[s];
             Vertex ve = pmesh.Vertices[s];
             Point3D position1 = new Point3D(ve.X, ve.Y, ve.Z);
 
@@ -622,7 +648,7 @@ namespace Barnacle.Dialogs
                 pmesh.ToSoup(Vertices, Faces);
             }
 
-            //  CentreVertices();
+            // CentreVertices();
         }
 
         private void LoadEditorParameters()
@@ -700,12 +726,12 @@ namespace Barnacle.Dialogs
             ToolShape = ToolShapeItems[0];
             Point3DCollection cubeVertices = new Point3DCollection();
             Int32Collection cubeFaces = new Int32Collection();
-            //  GenerateSphere(cubeVertices, cubeFaces, new Point3D(0, 0, 0), 50, 5, 5);
+            // GenerateSphere(cubeVertices, cubeFaces, new Point3D(0, 0, 0), 50, 5, 5);
 
             IcoSphereCreator ico = new IcoSphereCreator();
             ico.Create(4, ref cubeVertices, ref cubeFaces, 100);
 
-            //  pmesh = new PlanktonMesh(cubeVertices, cubeFaces);
+            // pmesh = new PlanktonMesh(cubeVertices, cubeFaces);
 
             pmesh = new Mesh(cubeVertices, cubeFaces);
             loaded = true;

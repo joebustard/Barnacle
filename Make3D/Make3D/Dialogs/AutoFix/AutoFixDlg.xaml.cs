@@ -1,4 +1,21 @@
-﻿using Barnacle.Models;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using Barnacle.Models;
 using Barnacle.Object3DLib;
 using Barnacle.ViewModels;
 using FixLib;
@@ -39,6 +56,7 @@ namespace Barnacle.Dialogs
         public bool CanClose
         {
             get { return canClose; }
+
             set
             {
                 canClose = value;
@@ -49,6 +67,7 @@ namespace Barnacle.Dialogs
         public bool CanFix
         {
             get { return canFix; }
+
             set
             {
                 canFix = value;
@@ -59,6 +78,7 @@ namespace Barnacle.Dialogs
         public bool RemoveDuplicates
         {
             get { return removeDuplicates; }
+
             set
             {
                 if (removeDuplicates != value)
@@ -72,6 +92,7 @@ namespace Barnacle.Dialogs
         public bool RemoveHoles
         {
             get { return removeHoles; }
+
             set
             {
                 if (removeHoles != value)
@@ -85,6 +106,7 @@ namespace Barnacle.Dialogs
         public string ResultsText
         {
             get { return resultsText; }
+
             set
             {
                 if (resultsText != value)
