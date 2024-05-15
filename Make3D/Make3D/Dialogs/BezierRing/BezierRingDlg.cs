@@ -50,6 +50,7 @@ Brushes.Green
         private double cx;
         private double cy;
         private bool linkPoints;
+        private bool loaded;
         private double maxRadius;
         private List<double> pointAngles;
         private List<double> pointDistance;
@@ -63,6 +64,22 @@ Brushes.Green
 
         private double sweepDegrees;
 
+        public double RingRadius
+        {
+            get { return ringRadius; }
+
+            set
+            {
+                if (value != ringRadius)
+                {
+                    ringRadius = value;
+                    NotifyPropertyChanged();
+                    GenerateRing();
+                    Redisplay();
+                }
+            }
+        }
+
         public BezierRingDlg()
         {
             InitializeComponent();
@@ -75,15 +92,7 @@ Brushes.Green
             pointAngles = new List<double>();
             pointDistance = new List<double>();
             bzlines = new BezierLine[4];
-            snapPoint = false;
-            linkPoints = false;
-            GenerateDefaultPoints();
-            ringRadius = 10;
-            profileHeight = 10;
-            profileWidth = 10;
-            sweepDegrees = 360;
-            rotDivisions = 19;
-            bezierDivisions = 40;
+            SetDefaults();
             ModelGroup = MyModelGroup;
         }
 
@@ -266,7 +275,7 @@ Brushes.Green
             ControlPoints.Add(bzlines[3].P2);
         }
 
-        public void Redraw()
+        public void RedrawBezierCanvas()
         {
             cx = PointCanvas.ActualWidth / 2.0;
             cy = PointCanvas.ActualHeight / 2.0;
@@ -282,6 +291,14 @@ Brushes.Green
             DisplayPoints();
 
             DrawCentreMark();
+        }
+
+        protected override void Ok_Click(object sender, RoutedEventArgs e)
+        {
+            SaveEditorParameters();
+
+            DialogResult = true;
+            Close();
         }
 
         private void AddCircle(double px, double py, double rad, SolidColorBrush br)
@@ -455,6 +472,22 @@ Brushes.Green
             }
         }
 
+        private void LoadEditorParameters()
+        {
+            SweepDegrees = EditorParameters.GetDouble("SweepDegrees", 360);
+            RotDivisions = EditorParameters.GetInt("RotDivisions", 20);
+            BezierDivisions = EditorParameters.GetInt("BezierDivisions", 20);
+            RingRadius = EditorParameters.GetInt("RingRadius", 10);
+            string s = EditorParameters.Get("L0");
+            if (s != "")
+            {
+                bzlines[0].FromString(s);
+                bzlines[1].FromString(EditorParameters.Get("L1"));
+                bzlines[2].FromString(EditorParameters.Get("L2"));
+                bzlines[3].FromString(EditorParameters.Get("L3"));
+            }
+        }
+
         private void MoveSelected(MouseEventArgs e)
         {
             Point position = e.GetPosition(PointCanvas);
@@ -483,7 +516,7 @@ Brushes.Green
 
                 GeneratePoints();
                 GenerateRing();
-                Redraw();
+                RedrawBezierCanvas();
             }
         }
 
@@ -577,7 +610,7 @@ Brushes.Green
                     break;
             }
             GenerateRing();
-            Redraw();
+            RedrawBezierCanvas();
         }
 
         private void PointCanvas_MouseDown(object sender, MouseButtonEventArgs e)
@@ -648,11 +681,48 @@ Brushes.Green
             selectedPoint = -1;
         }
 
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
+            GenerateRing();
+            Redisplay();
+            RedrawBezierCanvas();
+            NotifyPropertyChanged("BezierDivisions");
+            NotifyPropertyChanged("RotDivisions");
+            NotifyPropertyChanged("SweepDegrees");
+            NotifyPropertyChanged("RingRadius");
+        }
+
+        private void SaveEditorParameters()
+        {
+            EditorParameters.Set("SweepDegrees", SweepDegrees.ToString());
+            EditorParameters.Set("RotDivisions", RotDivisions.ToString());
+            EditorParameters.Set("BezierDivisions", BezierDivisions.ToString());
+            EditorParameters.Set("RingRadius", RingRadius.ToString());
+            EditorParameters.Set("L0", bzlines[0].ToString());
+            EditorParameters.Set("L1", bzlines[1].ToString());
+            EditorParameters.Set("L2", bzlines[2].ToString());
+            EditorParameters.Set("L3", bzlines[3].ToString());
+        }
+
+        private void SetDefaults()
+        {
+            loaded = false;
+            snapPoint = false;
+            linkPoints = false;
+            GenerateDefaultPoints();
+            ringRadius = 10;
+            profileHeight = 10;
+            profileWidth = 10;
+            sweepDegrees = 360;
+            rotDivisions = 20;
+            bezierDivisions = 20;
+            loaded = true;
+        }
+
         private void UserControl_GotFocus(object sender, RoutedEventArgs e)
         {
         }
-
-        private bool loaded;
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -666,43 +736,9 @@ Brushes.Green
             }
             loaded = true;
             GenerateRing();
-            Redraw();
+            RedrawBezierCanvas();
             Redisplay();
             UpdateCameraPos();
-        }
-
-        private void LoadEditorParameters()
-        {
-            SweepDegrees = EditorParameters.GetDouble("SweepDegrees", 360);
-            RotDivisions = EditorParameters.GetInt("RotDivisions", 20);
-            BezierDivisions = EditorParameters.GetInt("BezierDivisions", 20);
-            string s = EditorParameters.Get("L0");
-            if (s != "")
-            {
-                bzlines[0].FromString(s);
-                bzlines[1].FromString(EditorParameters.Get("L1"));
-                bzlines[2].FromString(EditorParameters.Get("L2"));
-                bzlines[3].FromString(EditorParameters.Get("L3"));
-            }
-        }
-
-        protected override void Ok_Click(object sender, RoutedEventArgs e)
-        {
-            SaveEditorParameters();
-
-            DialogResult = true;
-            Close();
-        }
-
-        private void SaveEditorParameters()
-        {
-            EditorParameters.Set("SweepDegrees", SweepDegrees.ToString());
-            EditorParameters.Set("RotDivisions", RotDivisions.ToString());
-            EditorParameters.Set("BezierDivisions", BezierDivisions.ToString());
-            EditorParameters.Set("L0", bzlines[0].ToString());
-            EditorParameters.Set("L1", bzlines[1].ToString());
-            EditorParameters.Set("L2", bzlines[2].ToString());
-            EditorParameters.Set("L3", bzlines[3].ToString());
         }
     }
 }

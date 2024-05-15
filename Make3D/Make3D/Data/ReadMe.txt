@@ -22,6 +22,7 @@ Added
 	Show the top of the build volume for the selected printer (in addition to the existing floor marker)
 	Backup menu option on File Menu. If the project has a Backup folder, then the main project files are zipped into Backup/<projname>_<date>_<time>.zip
 	First cut of a bezier surface tool
+	"Reset to defaults" added to ring lofting
 
 Fixed
 	Prevent preset names being loaded twice in flexipathcontrol 
@@ -38,7 +39,7 @@ Changed
 	Deleted the commands folder from the templates.
 	Switch from CuraEngine 4 to CuraEngine 5 for integrated slicing (This still needs improving)
     Default slice Z Seam type to random
-	Allow Vase loft to use preset path strings
+	Allow Vase loft to use preset path strings. Reduced the height of the default vase loft profile
 	Tie the error reporting of unknown primitive types in the Limpet function Make() directly to the primitive factory.
 	Replaced the pathloft algorithm completely from sdf to bufferedpolyline. Improves speed of path lofting dramatically
 
