@@ -274,27 +274,19 @@ namespace Barnacle.ViewModels
                 }
                 int numPoints = ob.RelativeObjectVertices.Count;
                 int numFaces = ob.TriangleIndices.Count;
+                bool addFaces = false;
                 switch (s.ToLower())
                 {
                     case "left":
                         {
-                            double ox = 2 * bnds.Lower.X;
+                            double ox = 2 * bnds.Lower.X - 0.1;
                             for (int i = 0; i < numPoints; i++)
                             {
                                 P3D op = ob.RelativeObjectVertices[i];
                                 P3D np = new P3D(ox - op.X, op.Y, op.Z);
                                 ob.RelativeObjectVertices.Add(np);
                             }
-
-                            for (int f = 0; f < numFaces; f += 3)
-                            {
-                                int v0 = ob.TriangleIndices[f] + numPoints;
-                                int v1 = ob.TriangleIndices[f + 1] + numPoints;
-                                int v2 = ob.TriangleIndices[f + 2] + numPoints;
-                                ob.TriangleIndices.Add(v0);
-                                ob.TriangleIndices.Add(v2);
-                                ob.TriangleIndices.Add(v1);
-                            }
+                            addFaces = true;
                         }
                         break;
 
@@ -307,16 +299,7 @@ namespace Barnacle.ViewModels
                                 P3D np = new P3D(ox - op.X, op.Y, op.Z);
                                 ob.RelativeObjectVertices.Add(np);
                             }
-
-                            for (int f = 0; f < numFaces; f += 3)
-                            {
-                                int v0 = ob.TriangleIndices[f] + numPoints;
-                                int v1 = ob.TriangleIndices[f + 1] + numPoints;
-                                int v2 = ob.TriangleIndices[f + 2] + numPoints;
-                                ob.TriangleIndices.Add(v0);
-                                ob.TriangleIndices.Add(v2);
-                                ob.TriangleIndices.Add(v1);
-                            }
+                            addFaces = true;
                         }
                         break;
 
@@ -329,16 +312,7 @@ namespace Barnacle.ViewModels
                                 P3D np = new P3D(op.X, op.Y, oz - op.Z);
                                 ob.RelativeObjectVertices.Add(np);
                             }
-
-                            for (int f = 0; f < numFaces; f += 3)
-                            {
-                                int v0 = ob.TriangleIndices[f] + numPoints;
-                                int v1 = ob.TriangleIndices[f + 1] + numPoints;
-                                int v2 = ob.TriangleIndices[f + 2] + numPoints;
-                                ob.TriangleIndices.Add(v0);
-                                ob.TriangleIndices.Add(v2);
-                                ob.TriangleIndices.Add(v1);
-                            }
+                            addFaces = true;
                         }
                         break;
 
@@ -351,18 +325,47 @@ namespace Barnacle.ViewModels
                                 P3D np = new P3D(op.X, op.Y, oz - op.Z);
                                 ob.RelativeObjectVertices.Add(np);
                             }
-
-                            for (int f = 0; f < numFaces; f += 3)
-                            {
-                                int v0 = ob.TriangleIndices[f] + numPoints;
-                                int v1 = ob.TriangleIndices[f + 1] + numPoints;
-                                int v2 = ob.TriangleIndices[f + 2] + numPoints;
-                                ob.TriangleIndices.Add(v0);
-                                ob.TriangleIndices.Add(v2);
-                                ob.TriangleIndices.Add(v1);
-                            }
+                            addFaces = true;
                         }
                         break;
+
+                    case "up":
+                        {
+                            double oy = 2 * bnds.Upper.Y;
+                            for (int i = 0; i < numPoints; i++)
+                            {
+                                P3D op = ob.RelativeObjectVertices[i];
+                                P3D np = new P3D(op.X, oy - op.Y, op.Z);
+                                ob.RelativeObjectVertices.Add(np);
+                            }
+                            addFaces = true;
+                        }
+                        break;
+
+                    case "down":
+                        {
+                            double oy = 2 * bnds.Lower.Y;
+                            for (int i = 0; i < numPoints; i++)
+                            {
+                                P3D op = ob.RelativeObjectVertices[i];
+                                P3D np = new P3D(op.X, oy - op.Y, op.Z);
+                                ob.RelativeObjectVertices.Add(np);
+                            }
+                            addFaces = true;
+                        }
+                        break;
+                }
+                if (addFaces)
+                {
+                    for (int f = 0; f < numFaces; f += 3)
+                    {
+                        int v0 = ob.TriangleIndices[f] + numPoints;
+                        int v1 = ob.TriangleIndices[f + 1] + numPoints;
+                        int v2 = ob.TriangleIndices[f + 2] + numPoints;
+                        ob.TriangleIndices.Add(v0);
+                        ob.TriangleIndices.Add(v2);
+                        ob.TriangleIndices.Add(v1);
+                    }
                 }
                 RemoveDuplicateVertices(ob);
                 ob.Remesh();
@@ -382,6 +385,8 @@ namespace Barnacle.ViewModels
 
         private void FixHoles(object param)
         {
+            var tokenSource = new CancellationTokenSource();
+            var token = tokenSource.Token;
             if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
             {
                 Object3D ob = selectedObjectAdorner.SelectedObjects[0];
@@ -397,7 +402,7 @@ namespace Barnacle.ViewModels
                         do
                         {
                             HoleFinder hf = new HoleFinder(ob.RelativeObjectVertices, ob.TriangleIndices);
-                            res = hf.FindHoles();
+                            res = hf.FindHoles(token);
                             if (totalFound == -1)
                             {
                                 totalFound = res.Item1;
@@ -413,7 +418,7 @@ namespace Barnacle.ViewModels
                     else
                     {
                         HoleFinder hf = new HoleFinder(ob.RelativeObjectVertices, ob.TriangleIndices);
-                        res = hf.FindHoles();
+                        res = hf.FindHoles(token);
                         totalFound = res.Item1;
                         totalFixed += res.Item2;
                     }
@@ -448,7 +453,7 @@ namespace Barnacle.ViewModels
                     o.Name = Document.DuplicateName(o.Name);
 
                     o.Remesh();
-                    //  o.MoveToFloor();
+                    // o.MoveToFloor();
                     o.CalcScale(false);
                     allBounds += o.AbsoluteBounds;
                     GeometryModel3D gm = GetMesh(o);
@@ -553,6 +558,7 @@ namespace Barnacle.ViewModels
             {
                 return lookDirection;
             }
+
             set
             {
                 if (lookDirection != value)
@@ -572,6 +578,7 @@ namespace Barnacle.ViewModels
             {
                 return modelItems;
             }
+
             set
             {
                 if (modelItems != value)
@@ -602,8 +609,7 @@ namespace Barnacle.ViewModels
         }
 
         /// <summary>
-        /// Regenerate display in response to something outside this view model
-        /// requesting it
+        /// Regenerate display in response to something outside this view model requesting it
         /// </summary>
         /// <param name="param"></param>
         public void OnRefreshAdorners(object param)
@@ -651,10 +657,9 @@ namespace Barnacle.ViewModels
         }
 
         /// <summary>
-        /// Regenerate the main display list. That is all the
-        /// things that are to be shown in the main area. This will
-        /// most likely be trigged by something happening in this viewmodel rather
-        /// than elsewhere
+        /// Regenerate the main display list. That is all the things that are to be shown in the
+        /// main area. This will most likely be trigged by something happening in this viewmodel
+        /// rather than elsewhere
         /// </summary>
         public void RegenerateDisplayList()
         {/*
@@ -684,8 +689,7 @@ namespace Barnacle.ViewModels
                 allBounds.Zero();
                 modelItems.Clear();
 
-                // GeometryModel3D gmcb = GetMesh(cb);
-                //   modelItems.Add(gmcb);
+                // GeometryModel3D gmcb = GetMesh(cb); modelItems.Add(gmcb);
                 if (showFloor)
                 {
                     modelItems.Add(floor.FloorMesh);
@@ -1320,13 +1324,13 @@ namespace Barnacle.ViewModels
                     break;
 
                 case Key.F8:
-                { 
-                    handled = true;
-                    RotateCamera(0.0, 0.5);
+                    {
+                        handled = true;
+                        RotateCamera(0.0, 0.5);
                     }
                     break;
             }
-            return handled ;
+            return handled;
         }
 
         internal void KeyUp(Key key, bool shift, bool ctrl)
@@ -1573,7 +1577,7 @@ namespace Barnacle.ViewModels
                 {
                     ob.TriangleIndices.Add(i);
                 }
-                //   RemoveDuplicateVertices(ob);
+                // RemoveDuplicateVertices(ob);
                 ob.Remesh();
             }
         }
@@ -1594,7 +1598,7 @@ namespace Barnacle.ViewModels
                 double midX = bns.MidPoint().X;
                 double midY = bns.MidPoint().Y;
                 double midZ = bns.MidPoint().Z;
-                // adorner  should already have the bounds of the selected objects
+                // adorner should already have the bounds of the selected objects
 
                 for (int i = 1; i < selectedObjectAdorner.SelectedObjects.Count; i++)
                 {
@@ -1800,7 +1804,7 @@ namespace Barnacle.ViewModels
                         forces[i] = (double)(i * i) / limit;
                     }
                 }
-                //
+
                 switch (ori)
                 {
                     case "XDown":
@@ -2408,8 +2412,8 @@ namespace Barnacle.ViewModels
             {
                 if (control)
                 {
-                    // do we already have an existing dimensionadorner, if so
-                    // assume we are changing the second point
+                    // do we already have an existing dimensionadorner, if so assume we are changing
+                    // the second point
                     if (selectedObjectAdorner != null && selectedObjectAdorner is DimensionAdorner)
                     {
                         (selectedObjectAdorner as DimensionAdorner).SecondPoint(hitPos, object3D);
@@ -2608,8 +2612,7 @@ namespace Barnacle.ViewModels
 
         private void LoadingNewFile(object param)
         {
-            // about to switch files
-            // dont leave the adorners hanging around
+            // about to switch files dont leave the adorners hanging around
 
             if (selectedObjectAdorner != null)
             {
@@ -3111,7 +3114,6 @@ namespace Barnacle.ViewModels
                                         {
                                             ry += Math.PI;
                                         }
-
                                     }
 
                                     if (dlg.DirectionY.IsChecked == true)
@@ -3123,20 +3125,18 @@ namespace Barnacle.ViewModels
                                         {
                                             rx += Math.PI;
                                         }
-
                                     }
 
                                     if (dlg.DirectionZ.IsChecked == true)
                                     {
                                         o.Position = new Point3D(cx + o.AbsoluteBounds.Width / 2 + x, cy + o.AbsoluteBounds.Height / 2 + y, cz);
-                                       // rz = theta;
-                                       //rz = (Math.PI / 2) + theta;
-                                        rz = 3 * Math.PI /2  + theta;
+                                        // rz = theta;
+                                        //rz = (Math.PI / 2) + theta;
+                                        rz = 3 * Math.PI / 2 + theta;
                                         if (dlg.FaceIn.IsChecked == true)
                                         {
                                             rz += Math.PI;
                                         }
-
                                     }
 
                                     o.CalcScale(false);
@@ -3145,9 +3145,9 @@ namespace Barnacle.ViewModels
                                     {
                                         o.RotateRad(new Point3D(rx, ry, rz));
                                     }
-                                   
+
                                     o.Remesh();
-                                    
+
                                     if (dlg.DirectionX.IsChecked == true)
                                     {
                                         o.MoveToFloor();
@@ -3944,8 +3944,8 @@ namespace Barnacle.ViewModels
             RecalculateAllBounds();
             selectedObjectAdorner?.Clear();
             Point collectionCentre = new Point(0, 0);
-            // if we have more than one object being pasted at the marker
-            // we want to keep the relative positions the same as the original but treat the marker as there new centre.
+            // if we have more than one object being pasted at the marker we want to keep the
+            // relative positions the same as the original but treat the marker as there new centre.
             // If there is only one object, it should just be positioned directly at the marker
             if (ObjectClipboard.Items.Count > 1)
             {
@@ -3966,7 +3966,7 @@ namespace Barnacle.ViewModels
                 }
                 if (o is Group3D)
                 {
-                    //    (o as Group3D).Init();
+                    // (o as Group3D).Init();
                 }
 
                 if (ObjectClipboard.Items.Count > 1)
@@ -4869,16 +4869,17 @@ namespace Barnacle.ViewModels
                 {
                     case "X":
                         {
-                            // move the clipbox so its front is positioned exactly on the middle x line of the ob.
-                            // Note you can't rely on the origin position being in the middle so you have to find it
+                            // move the clipbox so its front is positioned exactly on the middle x
+                            // line of the ob. Note you can't rely on the origin position being in
+                            // the middle so you have to find it
                             Point3D obMid = ob.AbsoluteBounds.MidPoint();
                             double x = obMid.X;
                             double y = obMid.Y;
                             double z = obMid.Z - (clipBox.Scale.Z / 2);
                             clipBox.Position = new Point3D(x, y, z);
                             clipBox.Remesh();
-                            // now clipbox should sitting over all the points we want to remove.
-                            // so do a group difference
+                            // now clipbox should sitting over all the points we want to remove. so
+                            // do a group difference
                             Group3D grp = new Group3D();
 
                             grp.LeftObject = ob;
@@ -4893,8 +4894,8 @@ namespace Barnacle.ViewModels
                             z = obMid.Z + (clipBox.Scale.Z / 2);
                             clipBox.Position = new Point3D(x, y, z);
                             clipBox.Remesh();
-                            // now clipbox should sitting over all the points we want to remove.
-                            // so do a group difference
+                            // now clipbox should sitting over all the points we want to remove. so
+                            // do a group difference
                             grp = new Group3D();
 
                             grp.LeftObject = ob;
@@ -4921,8 +4922,8 @@ namespace Barnacle.ViewModels
                             double z = obMid.Z;
                             clipBox.Position = new Point3D(x, y, z);
                             clipBox.Remesh();
-                            // now clipbox should sitting over all the points we want to remove.
-                            // so do a group difference
+                            // now clipbox should sitting over all the points we want to remove. so
+                            // do a group difference
                             Group3D grp = new Group3D();
 
                             grp.LeftObject = ob;
@@ -4937,8 +4938,8 @@ namespace Barnacle.ViewModels
                             y = obMid.Y + (clipBox.Scale.Y / 2);
                             clipBox.Position = new Point3D(x, y, z);
                             clipBox.Remesh();
-                            // now clipbox should sitting over all the points we want to remove.
-                            // so do a group difference
+                            // now clipbox should sitting over all the points we want to remove. so
+                            // do a group difference
                             grp = new Group3D();
 
                             grp.LeftObject = ob;
@@ -4966,8 +4967,8 @@ namespace Barnacle.ViewModels
                             double z = obMid.Z;
                             clipBox.Position = new Point3D(x, y, z);
                             clipBox.Remesh();
-                            // now clipbox should sitting over all the points we want to remove.
-                            // so do a group difference
+                            // now clipbox should sitting over all the points we want to remove. so
+                            // do a group difference
                             Group3D grp = new Group3D();
 
                             grp.LeftObject = ob;
@@ -4982,8 +4983,8 @@ namespace Barnacle.ViewModels
                             x = obMid.X + (clipBox.Scale.X / 2);
                             clipBox.Position = new Point3D(x, y, z);
                             clipBox.Remesh();
-                            // now clipbox should sitting over all the points we want to remove.
-                            // so do a group difference
+                            // now clipbox should sitting over all the points we want to remove. so
+                            // do a group difference
                             grp = new Group3D();
 
                             grp.LeftObject = ob;

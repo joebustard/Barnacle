@@ -23,6 +23,7 @@ Added
 	Backup menu option on File Menu. If the project has a Backup folder, then the main project files are zipped into Backup/<projname>_<date>_<time>.zip
 	First cut of a bezier surface tool
 	"Reset to defaults" added to ring lofting
+	Mirror p/down
 
 Fixed
 	Prevent preset names being loaded twice in flexipathcontrol 
