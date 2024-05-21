@@ -45,10 +45,10 @@
                         No. of Points
                     </Label>
                     <Slider
-                    Width="200"
-                    Maximum="10"
-                    Minimum="2"
-                    Value="{Binding NumberOfPoints}" />
+                        Width="200"
+                        Maximum="10"
+                        Minimum="2"
+                        Value="{Binding NumberOfPoints}" />
                     <TextBox Width="50" Text="{Binding NumberOfPoints}" />
                 </StackPanel>
                 <StackPanel Grid.Row="3" Orientation="Horizontal">
@@ -56,10 +56,10 @@
                         Centre Radius
                     </Label>
                     <Slider
-                    Width="200"
-                    Maximum="100"
-                    Minimum="1"
-                    Value="{Binding CentreRadius}" />
+                        Width="200"
+                        Maximum="100"
+                        Minimum="1"
+                        Value="{Binding CentreRadius}" />
                     <TextBox Width="50" Text="{Binding CentreRadius}" />
                 </StackPanel>
                 <StackPanel Grid.Row="5" Orientation="Horizontal">
@@ -67,10 +67,10 @@
                         Point Length
                     </Label>
                     <Slider
-                    Width="200"
-                    Maximum="100"
-                    Minimum="1"
-                    Value="{Binding PointLength}" />
+                        Width="200"
+                        Maximum="100"
+                        Minimum="1"
+                        Value="{Binding PointLength}" />
                     <TextBox Width="50" Text="{Binding PointLength}" />
                 </StackPanel>
                 <StackPanel Grid.Row="7" Orientation="Horizontal">
@@ -78,10 +78,10 @@
                         Thickness
                     </Label>
                     <Slider
-                    Width="200"
-                    Maximum="100"
-                    Minimum="1"
-                    Value="{Binding Thickness}" />
+                        Width="200"
+                        Maximum="100"
+                        Minimum="1"
+                        Value="{Binding Thickness}" />
                     <TextBox Width="50" Text="{Binding Thickness}" />
                 </StackPanel>
                 <StackPanel Grid.Row="9" Orientation="Horizontal">
@@ -89,22 +89,27 @@
                         Flat
                     </RadioButton>
                     <RadioButton
-                    Margin="10,0,0,0"
-                    GroupName="FacetGroup"
-                    IsChecked="{Binding FacetChecked}">
+                        Margin="10,0,0,0"
+                        GroupName="FacetGroup"
+                        IsChecked="{Binding FacetChecked}">
                         Facetted
                     </RadioButton>
                     <RadioButton
-                    Margin="10,0,0,0"
-                    GroupName="FacetGroup"
-                    IsChecked="{Binding Facet2Checked}">
+                        Margin="10,0,0,0"
+                        GroupName="FacetGroup"
+                        IsChecked="{Binding Facet2Checked}">
                         Facetted 2
                     </RadioButton>
                 </StackPanel>
                 <StackPanel Grid.Row="9" Orientation="Horizontal" />
             </Grid>
         </Border>
-        <GridSplitter Grid.Column="2" ResizeDirection="Columns" Background="AliceBlue" Width="10" HorizontalAlignment="Stretch" />
+        <GridSplitter
+            Grid.Column="2"
+            Width="10"
+            HorizontalAlignment="Stretch"
+            Background="AliceBlue"
+            ResizeDirection="Columns" />
         <Border
             Grid.Row="0"
             Grid.Column="3"
@@ -151,12 +156,14 @@
                 </Grid.ColumnDefinitions>
                 <CheckBox
                     Grid.Column="0"
+                    VerticalAlignment="Center"
                     Content="Floor"
-                    IsChecked="{Binding ShowFloor}" VerticalAlignment="Center" />
+                    IsChecked="{Binding ShowFloor}" />
                 <CheckBox
                     Grid.Column="1"
+                    VerticalAlignment="Center"
                     Content="Axies"
-                    IsChecked="{Binding ShowAxies}" VerticalAlignment="Center" />
+                    IsChecked="{Binding ShowAxies}" />
                 <Button
                     Grid.Column="2"
                     Click="Home_Click"

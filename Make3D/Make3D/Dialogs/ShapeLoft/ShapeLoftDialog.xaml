@@ -32,12 +32,12 @@
                     <RowDefinition Height="30" />
                     <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
-            <local:ShapeBase
+                <local:ShapeBase
                          Grid.Row="0"
                          Margin="2,2,2,2"
                          VerticalAlignment="Stretch"
                          x:Name="TopShape" />
-            <local:ShapeBase
+                <local:ShapeBase
                          Grid.Row="1"
                          Margin="2,2,2,2"
                          VerticalAlignment="Stretch"
@@ -71,7 +71,7 @@
             </Grid>
         </Border>
 
-        <GridSplitter Grid.Column="2"  ResizeDirection="Columns" Background="AliceBlue" Width="10" HorizontalAlignment="Stretch" />
+        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
         <Border Grid.Column="3"
                 Grid.Row="0"
 

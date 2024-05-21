@@ -57,7 +57,7 @@
                 <Image Grid.Row="6" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding PlaqueImage}" />
             </Grid>
         </Border>
-        <GridSplitter Grid.Column="2" ResizeDirection="Columns" Background="AliceBlue" Width="10" HorizontalAlignment="Stretch" />
+        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
         <Border Grid.Row ="0" Grid.Column="3" Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">

@@ -10,7 +10,12 @@
         <SolidColorBrush x:Key="ControlBackBrush" Color="AliceBlue" />
         <SolidColorBrush x:Key="WindowBackBrush" Color="AliceBlue" />
         <SolidColorBrush x:Key="WarningColour" Color="OrangeRed" />
-
+        <Style x:Key="GridSplitterStyle" TargetType="GridSplitter">
+            <Setter Property="Background" Value="{StaticResource ControlBackBrush}" />
+            <Setter Property="Width" Value="10" />
+            <Setter Property="ResizeDirection" Value="Columns" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
         <Style x:Key="RoundedButton" TargetType="Button">
             <Setter Property="Background" Value="{StaticResource ControlBackBrush}" />
             <Setter Property="TextBlock.TextAlignment" Value="Center" />
@@ -50,7 +55,6 @@
                                 <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
                             </Trigger>
 
-
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter Property="Background" Value="#FFF4F4F4" />
                                 <Setter Property="BorderBrush" Value="#FFADB2B5" />
@@ -82,7 +86,6 @@
                         Color="Black" />
                 </Setter.Value>
             </Setter>
-
         </Style>
         <Style
             x:Key="LargeImageButton"

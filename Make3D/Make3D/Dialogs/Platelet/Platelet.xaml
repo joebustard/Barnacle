@@ -24,7 +24,7 @@
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <GridSplitter Grid.Column="2" ResizeDirection="Columns" Background="AliceBlue" Width="10" HorizontalAlignment="Stretch" />
+        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
         <Border
             Grid.Row="0"
             Grid.Column="3"

@@ -1,10 +1,6 @@
 using MakerLib;
-using System;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media.Media3D;
-using System.Windows.Threading;
 
 namespace Barnacle.Dialogs
 {
@@ -13,13 +9,108 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class SymbolDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private string warningText;
-        private bool loaded;
-
-        private const double minsymbolLength = 5;
         private const double maxsymbolLength = 200;
-        private double symbolLength;
+        private const double minsymbolLength = 5;
+        private bool loaded;
+        private string oldFont = "";
+        private string oldSymbol = "";
+        private Visibility show3D;
+        private Visibility showBusy;
+        private string symbolCode;
         private string symbolFont;
+        private double symbolLength;
+        private string warningText;
+
+        public SymbolDlg()
+        {
+            InitializeComponent();
+            ToolName = "Symbol";
+            DataContext = this;
+            ModelGroup = MyModelGroup;
+            loaded = false;
+        }
+
+        public Visibility Show3D
+        {
+            get { return show3D; }
+
+            set
+            {
+                if (show3D != value)
+                {
+                    show3D = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public override bool ShowAxies
+        {
+            get
+            {
+                return showAxies;
+            }
+
+            set
+            {
+                if (showAxies != value)
+                {
+                    showAxies = value;
+                    NotifyPropertyChanged();
+                    Redisplay();
+                }
+            }
+        }
+
+        public Visibility ShowBusy
+        {
+            get { return showBusy; }
+
+            set
+            {
+                if (showBusy != value)
+                {
+                    showBusy = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public override bool ShowFloor
+        {
+            get
+            {
+                return showFloor;
+            }
+
+            set
+            {
+                if (showFloor != value)
+                {
+                    showFloor = value;
+                    NotifyPropertyChanged();
+                    Redisplay();
+                }
+            }
+        }
+
+        public string SymbolCode
+        {
+            get
+            {
+                return symbolCode;
+            }
+
+            set
+            {
+                if (symbolCode != value)
+                {
+                    symbolCode = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
 
         public string SymbolFont
         {
@@ -53,103 +144,6 @@ namespace Barnacle.Dialogs
                     {
                         WarningText = $"Symbol Length must be in the range {minsymbolLength} to {maxsymbolLength}";
                     }
-                }
-            }
-        }
-
-        private Visibility show3D;
-
-        public Visibility Show3D
-        {
-            get { return show3D; }
-
-            set
-            {
-                if (show3D != value)
-                {
-                    show3D = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private Visibility showBusy;
-
-        public Visibility ShowBusy
-        {
-            get { return showBusy; }
-
-            set
-            {
-                if (showBusy != value)
-                {
-                    showBusy = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private string symbolCode;
-
-        public string SymbolCode
-        {
-            get
-            {
-                return symbolCode;
-            }
-
-            set
-            {
-                if (symbolCode != value)
-                {
-                    symbolCode = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
-            }
-        }
-
-        public SymbolDlg()
-        {
-            InitializeComponent();
-            ToolName = "Symbol";
-            DataContext = this;
-            ModelGroup = MyModelGroup;
-            loaded = false;
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
                 }
             }
         }
@@ -189,9 +183,6 @@ namespace Barnacle.Dialogs
             CentreVertices();
         }
 
-        private string oldSymbol = "";
-        private string oldFont = "";
-
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
@@ -200,12 +191,32 @@ namespace Barnacle.Dialogs
             SymbolLength = EditorParameters.GetDouble("SymbolLength", 25);
         }
 
+        private void OnSymbolChanged(string symbol, string fontName)
+        {
+            SymbolFont = fontName;
+            SymbolCode = symbol;
+        }
+
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
+            UpdateDisplay();
+        }
+
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
             EditorParameters.Set("SymbolCode", SymbolCode.ToString());
             EditorParameters.Set("SymbolFont", SymbolFont.ToString());
             EditorParameters.Set("SymbolLength", SymbolLength.ToString());
+        }
+
+        private void SetDefaults()
+        {
+            loaded = false;
+            SymbolCode = "A";
+
+            loaded = true;
         }
 
         private void UpdateDisplay()
@@ -230,26 +241,6 @@ namespace Barnacle.Dialogs
             SymbolSelection.OnSymbolChanged = OnSymbolChanged;
             ShowBusy = Visibility.Hidden;
             Show3D = Visibility.Visible;
-        }
-
-        private void OnSymbolChanged(string symbol, string fontName)
-        {
-            SymbolFont = fontName;
-            SymbolCode = symbol;
-        }
-
-        private void SetDefaults()
-        {
-            loaded = false;
-            SymbolCode = "A";
-
-            loaded = true;
-        }
-
-        private void ResetDefaults(object sender, RoutedEventArgs e)
-        {
-            SetDefaults();
-            UpdateDisplay();
         }
     }
 }

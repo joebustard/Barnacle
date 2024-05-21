@@ -1210,7 +1210,7 @@
                 </TabItem>
             </TabControl>
 
-            <GridSplitter Grid.Column="1" ResizeDirection="Columns" Background="CadetBlue" Width="15" HorizontalAlignment="Stretch" />
+            <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
             <ScrollViewer Grid.Column="2" HorizontalAlignment="Stretch"
                               HorizontalScrollBarVisibility="Auto"
                               VerticalAlignment="Stretch"

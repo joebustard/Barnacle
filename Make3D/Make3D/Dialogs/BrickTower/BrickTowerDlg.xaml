@@ -20,84 +20,92 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Row="0" Grid.Column="1">
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-            </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1" Orientation="Horizontal">
-                <Label Width="100" VerticalAlignment="Center">Brick Length</Label>
-                <TextBox
-                    Width="150"
-                    Margin="8,0,0,0"
-                    Text="{Binding BrickLength}" />
-            </StackPanel>
-            <StackPanel Grid.Row="2" Orientation="Horizontal">
-                <Label Width="100" VerticalAlignment="Center">Brick Height</Label>
-                <TextBox
-                    Width="150"
-                    Margin="8,0,0,0"
-                    Text="{Binding BrickHeight}" />
-            </StackPanel>
-            <StackPanel Grid.Row="3" Orientation="Horizontal">
-                <Label Width="100" VerticalAlignment="Center">Brick Width</Label>
-                <TextBox
-                    Width="150"
-                    Margin="8,0,0,0"
-                    Text="{Binding BrickWidth}" />
-            </StackPanel>
-            <StackPanel Grid.Row="4" Orientation="Horizontal">
-                <Label Width="100" VerticalAlignment="Center">Gap Length</Label>
-                <TextBox
-                    Width="150"
-                    Margin="8,0,0,0"
-                    Text="{Binding GapLength}" />
-            </StackPanel>
-            <StackPanel Grid.Row="5" Orientation="Horizontal">
-                <Label Width="100" VerticalAlignment="Center">Gap Depth</Label>
-                <TextBox
-                    Width="150"
-                    Margin="8,0,0,0"
-                    Text="{Binding GapDepth}" />
-            </StackPanel>
-            <StackPanel Grid.Row="6" Orientation="Horizontal">
-                <Label Width="100" VerticalAlignment="Center">Tower Radius</Label>
-                <TextBox
-                    Width="150"
-                    Margin="8,0,0,0"
-                    Text="{Binding TowerRadius}"
-                    ToolTip="{Binding TowerRadiusToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="7" Orientation="Horizontal">
-                <Label Width="100" VerticalAlignment="Center">Tower Height</Label>
-                <TextBox
-                    Width="150"
-                    Margin="8,0,0,0"
-                    Text="{Binding TowerHeight}"
-                    ToolTip="{Binding TowerHeightToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="9" Orientation="Horizontal">
-                <Label
-                    VerticalAlignment="Center"
-                    Content="{Binding WarningText}"
-                    FontSize="18"
-                    Foreground="{StaticResource WarningColour}" />
-            </StackPanel>
-        </Grid>
         <Border
             Grid.Row="0"
-            Grid.Column="2"
+            Grid.Column="1"
+            Style="{StaticResource ControlBorder}">
+            <Grid>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">Brick Length</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding BrickLength}" />
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">Brick Height</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding BrickHeight}" />
+                </StackPanel>
+                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">Brick Width</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding BrickWidth}" />
+                </StackPanel>
+                <StackPanel Grid.Row="4" Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">Gap Length</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding GapLength}" />
+                </StackPanel>
+                <StackPanel Grid.Row="5" Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">Gap Depth</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding GapDepth}" />
+                </StackPanel>
+                <StackPanel Grid.Row="6" Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">Tower Radius</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding TowerRadius}"
+                        ToolTip="{Binding TowerRadiusToolTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="7" Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">Tower Height</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding TowerHeight}"
+                        ToolTip="{Binding TowerHeightToolTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="9" Orientation="Horizontal">
+                    <Label
+                        VerticalAlignment="Center"
+                        Content="{Binding WarningText}"
+                        FontSize="18"
+                        Foreground="{StaticResource WarningColour}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
+        <Border
+            Grid.Row="0"
+            Grid.Column="3"
             Style="{StaticResource ControlBorder}">
             <Viewport3D
                 Name="viewport3D1"
@@ -159,7 +167,7 @@
                 Content="Home" />
         </Grid>
 
-        <Grid Grid.Row="1" Grid.Column="2">
+        <Grid Grid.Row="1" Grid.Column="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="80" />
