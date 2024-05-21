@@ -30,27 +30,7 @@
                 <RowDefinition />
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
-            <!--
-            <StackPanel Grid.Row="1" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">SymbolLength</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding SymbolLength}" Width="150" ToolTip="{Binding SymbolLengthToolTip}" />
 
-                <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameters to their defaults" Click="ResetDefaults" />
-            </StackPanel>
-            <StackPanel Grid.Row="2" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">SymbolHeight</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding SymbolHeight}" Width="150" ToolTip="{Binding SymbolHeightToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="3" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">SymbolWidth</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding SymbolWidth}" Width="150" ToolTip="{Binding SymbolWidthToolTip}" />
-            </StackPanel>
-
-            <StackPanel Grid.Row="4" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
-            </StackPanel>
-             <gc:SymbolSelector Grid.Row="5" x:Name="SymbolSelection" />
-            -->
             <gc:SymbolSelector Grid.Row="1" Grid.RowSpan="5" x:Name="SymbolSelection" />
             <StackPanel Grid.Row="6" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="Length" FontSize="12" />

@@ -24,6 +24,7 @@ namespace Barnacle.Dialogs
         public string SymbolFont
         {
             get { return symbolFont; }
+
             set
             {
                 if (value != symbolFont)
@@ -36,6 +37,7 @@ namespace Barnacle.Dialogs
         public double SymbolLength
         {
             get { return symbolLength; }
+
             set
             {
                 if (value != symbolLength)
@@ -60,6 +62,7 @@ namespace Barnacle.Dialogs
         public Visibility Show3D
         {
             get { return show3D; }
+
             set
             {
                 if (show3D != value)
@@ -75,6 +78,7 @@ namespace Barnacle.Dialogs
         public Visibility ShowBusy
         {
             get { return showBusy; }
+
             set
             {
                 if (showBusy != value)
@@ -93,6 +97,7 @@ namespace Barnacle.Dialogs
             {
                 return symbolCode;
             }
+
             set
             {
                 if (symbolCode != value)
@@ -119,6 +124,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -136,6 +142,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -153,6 +160,7 @@ namespace Barnacle.Dialogs
             {
                 return warningText;
             }
+
             set
             {
                 if (warningText != value)
@@ -204,12 +212,7 @@ namespace Barnacle.Dialogs
         {
             if (loaded)
             {
-                DateTime start = DateTime.Now;
-
                 GenerateShape();
-                DateTime end = DateTime.Now;
-                TimeSpan ts = end - start;
-                Debug($"Update display took {ts.TotalSeconds} seconds");
                 Redisplay();
             }
         }
