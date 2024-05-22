@@ -22,11 +22,13 @@
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <Border Background="Transparent"
-                Grid.Column="0"
+                Grid.Column="1"
                 Grid.Row="0"
                 Style="{StaticResource ControlBorder}">
             <Grid Grid.Column="0"
@@ -69,33 +71,30 @@
                              Width="50" Margin="8,0,0,0" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="3">
-                    <Label Content="Select" VerticalAlignment="Center" Width="100"/>
-                    <Button x:Name="SelectAll" Margin="4,2,0,0" Content="All" Click="SelectAll_Click"/>
-                    <Button x:Name="SelectNone" Margin="4,2,0,0" Content="None" Click="SelectNone_Click"/>
-                    <Button x:Name="SelectRow" Margin="4,2,0,0" Content="Row" Click="SelectRow_Click"/>
-                    <Button x:Name="SelectCol" Margin="4,2,0,0" Content="Column" Click="SelectCol_Click"/>
+                    <Label Content="Select" VerticalAlignment="Center" Width="100" />
+                    <Button x:Name="SelectAll" Margin="4,2,0,0" Content="All" Click="SelectAll_Click" />
+                    <Button x:Name="SelectNone" Margin="4,2,0,0" Content="None" Click="SelectNone_Click" />
+                    <Button x:Name="SelectRow" Margin="4,2,0,0" Content="Row" Click="SelectRow_Click" />
+                    <Button x:Name="SelectCol" Margin="4,2,0,0" Content="Column" Click="SelectCol_Click" />
                 </StackPanel>
                 <StackPanel Grid.Row="4" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="100" Content="Reset"/>
+                    <Label VerticalAlignment="Center" Width="100" Content="Reset" />
 
                     <Button Click="ResetControlPoints_Click"
-                            Margin="4,2,0,0" Content="Flat"/>
+                            Margin="4,2,0,0" Content="Flat" />
 
                     <Button Click="ResetControlPointsDisk_Click"
-                            Margin="4,2,0,0" Content="Disk"/>
+                            Margin="4,2,0,0" Content="Disk" />
                     <Button Click="ResetControlPointsBow_Click"
-                            Margin="4,2,0,0" Content="Bow"/>
+                            Margin="4,2,0,0" Content="Bow" />
                     <Button Click="ResetControlPointsTube_Click"
                             Margin="4,2,0,0">
                         Tube
                     </Button>
                 </StackPanel>
-                
 
                 <StackPanel Grid.Row="5"
                             Orientation="Horizontal">
-
-                   
                 </StackPanel>
                 <StackPanel Grid.Row="7"
                             Orientation="Horizontal">
@@ -190,8 +189,9 @@
                 </StackPanel>
             </Grid>
         </Border>
+        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
         <Border Focusable="True"
-                Grid.Column="1"
+                Grid.Column="3"
                 Grid.Row="0"
                 KeyDown="Grid_KeyDown"
                 Style="{StaticResource ControlBorder}"
@@ -234,7 +234,7 @@
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
         </Grid>
-        <Grid Grid.Column="0"
+        <Grid Grid.Column="1"
               Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
@@ -253,7 +253,7 @@
                     Content="Home"
                     Grid.Column="2" />
         </Grid>
-        <Grid Grid.Column="1"
+        <Grid Grid.Column="3"
               Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />

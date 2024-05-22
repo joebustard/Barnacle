@@ -20,153 +20,158 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="450" />
+            <ColumnDefinition Width="10" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="1"
-              Grid.Row="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
-            </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0"
+        <Border Grid.Column="1"
+                Grid.Row="0"
+                Style="{StaticResource ControlBorder}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0"
                         Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
+                    <Label VerticalAlignment="Center"
                        Width="80">
-                    Model
-                </Label>
-                <RadioButton Content="Whole"
+                        Model
+                    </Label>
+                    <RadioButton Content="Whole"
                              GroupName="ModelButGroup"
                              IsChecked="{Binding WholeModelChecked}"
                              VerticalAlignment="Center" />
-                <RadioButton Content="Top"
+                    <RadioButton Content="Top"
                              GroupName="ModelButGroup"
                              IsChecked="{Binding TopModelChecked}"
                              Margin="10,0"
                              VerticalAlignment="Center" />
-                <RadioButton Content="Bottom"
+                    <RadioButton Content="Bottom"
                              GroupName="ModelButGroup"
                              IsChecked="{Binding BottomModelChecked}"
                              Margin="10,0"
                              VerticalAlignment="Center" />
-            </StackPanel>
-            <StackPanel Grid.Row="1"
+                </StackPanel>
+                <StackPanel Grid.Row="1"
                         Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
+                    <Label VerticalAlignment="Center"
                        Width="80">
-                    Wing Shape
-                </Label>
-                <ComboBox ItemsSource="{Binding ShapeNames}"
+                        Wing Shape
+                    </Label>
+                    <ComboBox ItemsSource="{Binding ShapeNames}"
                           Margin="0,0,10,0"
                           SelectedItem="{Binding SelectedShape}"
                           Width="100" />
-                <Label VerticalAlignment="Center"
+                    <Label VerticalAlignment="Center"
                        Width="80">
-                    Tip Shape
-                </Label>
-                <ComboBox ItemsSource="{Binding TipShapeNames}"
+                        Tip Shape
+                    </Label>
+                    <ComboBox ItemsSource="{Binding TipShapeNames}"
                           Margin="0,0,10,0"
                           SelectedItem="{Binding SelectedTipShape}"
                           Width="100" />
-            </StackPanel>
-            <StackPanel Grid.Row="2"
+                </StackPanel>
+                <StackPanel Grid.Row="2"
                         Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
+                    <Label VerticalAlignment="Center"
                        Width="80">
-                    Span
-                </Label>
-                <TextBox Text="{Binding Span}"
+                        Span
+                    </Label>
+                    <TextBox Text="{Binding Span}"
                          VerticalAlignment="Center"
                          Width="30" />
-                <Label Margin="8,0,0,0"
+                    <Label Margin="8,0,0,0"
                        VerticalAlignment="Center"
                        Width="80">
-                    Root Length
-                </Label>
-                <TextBox Margin="0,0,8,0"
+                        Root Length
+                    </Label>
+                    <TextBox Margin="0,0,8,0"
                          Text="{Binding RootLength}"
                          VerticalAlignment="Center"
                          Width="30" />
-                <Label VerticalAlignment="Center"
+                    <Label VerticalAlignment="Center"
                        Visibility="{Binding TipControlsVisible}"
                        Width="80">
-                    Tip Length
-                </Label>
-                <TextBox Text="{Binding TipLength}"
+                        Tip Length
+                    </Label>
+                    <TextBox Text="{Binding TipLength}"
                          VerticalAlignment="Center"
                          Visibility="{Binding TipControlsVisible}"
                          Width="30" />
-            </StackPanel>
+                </StackPanel>
 
-            <StackPanel Grid.Row="3"
+                <StackPanel Grid.Row="3"
                         Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
+                    <Label VerticalAlignment="Center"
                        Width="80">
-                    Profile
-                </Label>
-                <ComboBox ItemsSource="{Binding AirfoilGroups}"
+                        Profile
+                    </Label>
+                    <ComboBox ItemsSource="{Binding AirfoilGroups}"
                           Margin="0,0,10,0"
                           SelectedItem="{Binding RootGroup}"
                           VerticalAlignment="Center"
                           Width="100" />
-                <ComboBox ItemsSource="{Binding RootAirfoilNames}"
+                    <ComboBox ItemsSource="{Binding RootAirfoilNames}"
                           Margin="0,0,10,0"
                           SelectedItem="{Binding SelectedRootAirfoil}"
                           VerticalAlignment="Center"
                           Width="100" />
-            </StackPanel>
-            <uc:AeroProfileDisplayer Margin="80,0,0,0" x:Name="RootDisplay" Grid.Row="4" Grid.RowSpan="2" Width="280" HorizontalAlignment="Left" />
-            <StackPanel Grid.Row="6"
+                </StackPanel>
+                <uc:AeroProfileDisplayer Margin="80,0,0,0" x:Name="RootDisplay" Grid.Row="4" Grid.RowSpan="2" Width="280" HorizontalAlignment="Left" />
+                <StackPanel Grid.Row="6"
                         Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
+                    <Label VerticalAlignment="Center"
                        Width="80">
-                    No. Of Struts
-                </Label>
-                <TextBox Margin="0,0,8,0"
+                        No. Of Struts
+                    </Label>
+                    <TextBox Margin="0,0,8,0"
                          Text="{Binding NumStruts}"
                          VerticalAlignment="Center"
                          Width="30" />
-                <Label VerticalAlignment="Center"
+                    <Label VerticalAlignment="Center"
                        Width="80">
-                    Dip ( % )
-                </Label>
-                <TextBox Text="{Binding DipPercent}"
+                        Dip ( % )
+                    </Label>
+                    <TextBox Text="{Binding DipPercent}"
                          VerticalAlignment="Center"
                          Width="30" />
-            </StackPanel>
-            <StackPanel Grid.Row="7"
+                </StackPanel>
+                <StackPanel Grid.Row="7"
                         Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
+                    <Label VerticalAlignment="Center"
                        Visibility="{Binding SweepControlsVisible}"
                        Width="80">
-                    Sweep Angle
-                </Label>
-                <TextBox Text="{Binding SweepAngle}"
+                        Sweep Angle
+                    </Label>
+                    <TextBox Text="{Binding SweepAngle}"
                          VerticalAlignment="Center"
                          Visibility="{Binding SweepControlsVisible}"
                          Width="30" />
-            </StackPanel>
-            <StackPanel Grid.Row="8"
+                </StackPanel>
+                <StackPanel Grid.Row="8"
                         Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
+                    <Label VerticalAlignment="Center"
                        Width="80">
-                    Dihedral
-                </Label>
-                <TextBox Text="{Binding DihedralAngle}"
+                        Dihedral
+                    </Label>
+                    <TextBox Text="{Binding DihedralAngle}"
                          VerticalAlignment="Center"
                          Width="30" />
-            </StackPanel>
-        </Grid>
-        <Border Grid.Column="2"
+                </StackPanel>
+            </Grid>
+        </Border>
+        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
+        <Border Grid.Column="3"
                 Grid.Row="0"
                 Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"
@@ -220,7 +225,7 @@
                         Content="Home"
                         Grid.Column="2" />
             </Grid>
-            <Grid Grid.Column="2">
+            <Grid Grid.Column="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition Width="80" />

@@ -23,6 +23,7 @@ using HoleLibrary;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Media3D;
@@ -37,6 +38,7 @@ namespace Barnacle.Dialogs
     {
         private bool canClose;
         private bool canFix;
+        private bool canStop;
         private bool removeDuplicates;
         private bool removeHoles;
         private string resultsText;
@@ -47,8 +49,9 @@ namespace Barnacle.Dialogs
             DataContext = this;
             removeHoles = true;
             removeDuplicates = true;
-            CanFix = true;
-            CanClose = true;
+            canFix = true;
+            canClose = true;
+            canStop = false;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -59,8 +62,25 @@ namespace Barnacle.Dialogs
 
             set
             {
-                canClose = value;
-                NotifyPropertyChanged();
+                if (canClose != value)
+                {
+                    canClose = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool CanStop
+        {
+            get { return canStop; }
+
+            set
+            {
+                if (canStop != value)
+                {
+                    canStop = value;
+                    NotifyPropertyChanged();
+                }
             }
         }
 
@@ -70,8 +90,11 @@ namespace Barnacle.Dialogs
 
             set
             {
-                canFix = value;
-                NotifyPropertyChanged();
+                if (canFix != value)
+                {
+                    canFix = value;
+                    NotifyPropertyChanged();
+                }
             }
         }
 
@@ -141,7 +164,7 @@ namespace Barnacle.Dialogs
                 }));
         }
 
-        private async Task AutoFixDocument(string fullPath)
+        private async Task AutoFixDocument(string fullPath, CancellationToken token)
         {
             AppendResults($"{fullPath}");
             Document doc = new Document();
@@ -149,12 +172,21 @@ namespace Barnacle.Dialogs
             doc.Load(fullPath);
             foreach (Object3D ob in doc.Content)
             {
-                AppendResults($" {ob.Name}");
-                if (removeDuplicates) RemoveDuplicateVertices(ob);
-                if (removeHoles) FixHoles(ob);
+                if (!token.IsCancellationRequested)
+                {
+                    AppendResults($" {ob.Name}");
+                    if (removeDuplicates)
+                    {
+                        RemoveDuplicateVertices(ob, token);
+                    }
+                    if (removeHoles) FixHoles(ob, token);
+                }
             }
-            AppendResults($"");
-            doc.Save(fullPath);
+            if (!token.IsCancellationRequested)
+            {
+                AppendResults($"");
+                doc.Save(fullPath);
+            }
             doc.Clear();
         }
 
@@ -173,43 +205,64 @@ namespace Barnacle.Dialogs
             Close();
         }
 
-        private void FixHoles(Object3D ob)
+        private void FixHoles(Object3D ob, CancellationToken token)
         {
-            HoleFinder hf = new HoleFinder(ob.RelativeObjectVertices, ob.TriangleIndices);
-            Tuple<int, int> res = hf.FindHoles();
-
-            ob.Remesh();
-
-            ob.CalcScale(false);
-            if (res.Item1 > 0)
+            if (!token.IsCancellationRequested)
             {
-                AppendResults($"    Found {res.Item1.ToString()} holes, Filled {res.Item2.ToString()}");
+                HoleFinder hf = new HoleFinder(ob.RelativeObjectVertices, ob.TriangleIndices, token);
+                Tuple<int, int> res = hf.FindHoles(token);
+
+                ob.Remesh();
+
+                ob.CalcScale(false);
+                if (res.Item1 > 0)
+                {
+                    AppendResults($"    Found {res.Item1.ToString()} holes, Filled {res.Item2.ToString()}");
+                }
             }
         }
 
-        private void RemoveDuplicateVertices(Object3D ob)
+        private void RemoveDuplicateVertices(Object3D ob, CancellationToken token)
         {
-            int numberRemoved = ob.RelativeObjectVertices.Count;
-            Fixer checker = new Fixer();
-            Point3DCollection points = new Point3DCollection();
-            PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, points);
-
-            checker.RemoveDuplicateVertices(points, ob.TriangleIndices);
-            PointUtils.PointCollectionToP3D(checker.Vertices, ob.RelativeObjectVertices);
-            ob.TriangleIndices = checker.Faces;
-            ob.Remesh();
-            numberRemoved -= ob.RelativeObjectVertices.Count;
-            if (numberRemoved > 0)
+            if (!token.IsCancellationRequested)
             {
-                AppendResults($"    Removed {numberRemoved} vertices");
+                int numberRemoved = ob.RelativeObjectVertices.Count;
+                Fixer checker = new Fixer();
+                if (!token.IsCancellationRequested)
+                {
+                    Point3DCollection points = new Point3DCollection();
+                    PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, points);
+                    if (!token.IsCancellationRequested)
+                    {
+                        checker.RemoveDuplicateVerticesCancellable(points, ob.TriangleIndices, token);
+                        if (!token.IsCancellationRequested)
+                        {
+                            PointUtils.PointCollectionToP3D(checker.Vertices, ob.RelativeObjectVertices);
+
+                            ob.TriangleIndices = checker.Faces;
+                            ob.Remesh();
+                            numberRemoved -= ob.RelativeObjectVertices.Count;
+                            if (numberRemoved > 0)
+                            {
+                                AppendResults($"    Removed {numberRemoved} vertices");
+                            }
+                        }
+                    }
+                }
             }
         }
+
+        private CancellationTokenSource tokenSource;
+        private CancellationToken token;
 
         private async void StartClicked(object sender, RoutedEventArgs e)
         {
             ClearResults();
             CanClose = false;
             CanFix = false;
+            CanStop = true;
+            tokenSource = new CancellationTokenSource();
+            token = tokenSource.Token;
             string original = BaseViewModel.Document.FilePath;
             if (BaseViewModel.Document.Dirty)
             {
@@ -224,13 +277,27 @@ namespace Barnacle.Dialogs
             String pth = BaseViewModel.Project.BaseFolder;
             foreach (string fullPath in filenames)
             {
-                await Task.Run(() => AutoFixDocument(fullPath));
+                if (!token.IsCancellationRequested)
+                {
+                    await Task.Run(() => AutoFixDocument(fullPath, token), token);
+                }
             }
 
             BaseViewModel.Document.Load(original);
             AppendResults("Done");
             CanClose = true;
             CanFix = true;
+            CanStop = false;
+            e.Handled = true;
+        }
+
+        private void StopClicked(object sender, RoutedEventArgs e)
+        {
+            if (tokenSource != null)
+            {
+                tokenSource.Cancel();
+                AppendResults("Cancelled");
+            }
         }
     }
 }

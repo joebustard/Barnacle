@@ -1,6 +1,7 @@
 ﻿using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Windows.Media;
 
 namespace HoleLibrary
@@ -11,7 +12,7 @@ namespace HoleLibrary
         public Int32Collection MeshFaces;
         public List<P3D> Points;
 
-        //  private List<Edge> edges;
+        // private List<Edge> edges;
         private EdgeTree edgeTree;
 
         public HoleFinder(List<P3D> meshPoints, Int32Collection mf)
@@ -46,12 +47,48 @@ namespace HoleLibrary
             }
         }
 
-        public Tuple<int, int> FindHoles()
+        public HoleFinder(List<P3D> meshPoints, Int32Collection mf, CancellationToken token)
+        {
+            Points = meshPoints;
+            MeshFaces = mf;
+            P3D centre = new P3D(0, 0, 0);
+            if (Points.Count > 0)
+            {
+                foreach (P3D p in Points)
+                {
+                    centre.X += p.X;
+                    centre.Y += p.Y;
+                    centre.Z += p.Z;
+                    if (token.IsCancellationRequested)
+                    {
+                        break;
+                    }
+                }
+                centre.X = centre.X / Points.Count;
+                centre.Y = centre.Y / Points.Count;
+                centre.Z = centre.Z / Points.Count;
+                faces = new List<Face>();
+
+                edgeTree = new EdgeTree();
+                edgeTree.Vertices = meshPoints;
+                edgeTree.CentrePoint = centre;
+                for (int i = 0; i <= mf.Count - 3 && !token.IsCancellationRequested; i += 3)
+                {
+                    Face nf = new Face(mf[i],
+                        mf[i + 1],
+                        mf[i + 2],
+                        edgeTree);
+                    faces.Add(nf);
+                }
+            }
+        }
+
+        public Tuple<int, int> FindHoles(CancellationToken token)
         {
             int foundHoles = 0;
             int fixedHoles = 0;
             List<Edge> duffEdges = new List<Edge>();
-            //FetchDuff(edges, duffEdges);
+
             for (int r = 0; r < 3; r++)
             {
                 for (int c = 0; c < 3; c++)
@@ -65,12 +102,8 @@ namespace HoleLibrary
 
             bool more = (duffEdges.Count >= 3);
             List<int> holePoints = new List<int>();
-            while (more)
+            while (more && !token.IsCancellationRequested)
             {
-                //  List<Edge> hole = new List<Edge>();
-
-                //   hole.Add(duffEdges[0]);
-
                 int holeS = duffEdges[0].Start;
                 int holeE = duffEdges[0].End;
                 duffEdges.RemoveAt(0);
@@ -82,10 +115,10 @@ namespace HoleLibrary
 
                 int maxi = duffEdges.Count;
                 bool found = true;
-                while (!closed && found)
+                while (!closed && found && !token.IsCancellationRequested)
                 {
                     found = false;
-                    for (int i = 0; i < maxi; i++)
+                    for (int i = 0; i < maxi && !token.IsCancellationRequested; i++)
                     {
                         if (i < duffEdges.Count)
                         {
@@ -95,7 +128,6 @@ namespace HoleLibrary
                                 holeE = duffEdges[i].End;
                                 holePoints.Add(holeE);
 
-                                //      hole.Add(duffEdges[i]);
                                 duffEdges.RemoveAt(i);
                                 found = true;
                             }
@@ -105,7 +137,6 @@ namespace HoleLibrary
                                 holeS = duffEdges[i].Start;
                                 holePoints.Insert(0, holeS);
 
-                                //        hole.Add(duffEdges[i]);
                                 duffEdges.RemoveAt(i);
                                 found = true;
                             }
@@ -115,7 +146,6 @@ namespace HoleLibrary
                                 holeE = duffEdges[i].Start;
                                 holePoints.Add(holeE);
 
-                                //            hole.Add(duffEdges[i]);
                                 duffEdges.RemoveAt(i);
                                 found = true;
                             }
@@ -125,7 +155,6 @@ namespace HoleLibrary
                                 holeS = duffEdges[i].End;
                                 holePoints.Insert(0, holeS);
 
-                                //         hole.Add(duffEdges[i]);
                                 duffEdges.RemoveAt(i);
                                 found = true;
                             }
@@ -221,8 +250,8 @@ namespace HoleLibrary
                                 // add it as new point
                                 Points.Add(new P3D(cx, cy, cz));
 
-                                // create a simple triangle from each edge to the centroid.
-                                // I know this  isn't brilliant!
+                                // create a simple triangle from each edge to the centroid. I know
+                                // this isn't brilliant!
                                 int cn = Points.Count - 1;
                                 int j = holePoints.Count - 1;
                                 while (j > 0)

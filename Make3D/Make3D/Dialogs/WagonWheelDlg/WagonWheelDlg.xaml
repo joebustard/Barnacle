@@ -128,7 +128,7 @@
                 </StackPanel>
             </Grid>
         </Border>
-        <GridSplitter Grid.Column="2" ResizeDirection="Columns" Background="AliceBlue" Width="10" HorizontalAlignment="Stretch" />
+         <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
         <Border Grid.Column="3"
                 Grid.Row="0"
                 Style="{StaticResource ControlBorder}">

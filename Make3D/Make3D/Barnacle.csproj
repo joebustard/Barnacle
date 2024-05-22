@@ -266,9 +266,6 @@
     <Compile Include="Dialogs\Squirkle\CornerShape.xaml.cs">
       <DependentUpon>CornerShape.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\Scribble\Scribble.xaml.cs">
-      <DependentUpon>Scribble.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Dialogs\ShapeLoft\ShapeBase.xaml.cs" />
     <Compile Include="Dialogs\ShapeLoft\ShapeLoftDialog.xaml.cs" />
     <Compile Include="Dialogs\SpurGear\SpurGearDialog.xaml.cs">
@@ -739,10 +736,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\Squirkle\CornerShape.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dialogs\Scribble\Scribble.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1384,6 +1377,8 @@
     <Resource Include="Images\Buttons\StoneWall.png" />
     <Resource Include="Images\Buttons\BrickTower.png" />
     <Resource Include="Images\Buttons\ShapedTiledRoof.png" />
+    <Resource Include="Images\Buttons\MirrorDown.png" />
+    <Resource Include="Images\Buttons\MirrorUp.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

@@ -14,69 +14,73 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="1" Grid.Row="0">
+        <Border Grid.Row ="0" Grid.Column="1" Style="{StaticResource ControlBorder}">
+            <Grid>
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="100" />
-            </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Box Length</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding BoxLength}" Width="150" ToolTip="{Binding BoxLengthToolTip}" />
-                <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameers to their defaults" Click="ResetDefaults" />
-            </StackPanel>
-            <StackPanel Grid.Row="2" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Box Height</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding BoxHeight}" Width="150" ToolTip="{Binding BoxHeightToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="3" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Box Width</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding BoxWidth}" Width="150" ToolTip="{Binding BoxWidthToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="4" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Base Thickness</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding BaseThickness}" Width="150" ToolTip="{Binding BaseThicknessToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="5" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Left Thickness</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding LeftThickness}" Width="150" ToolTip="{Binding LeftThicknessToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="6" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Right Thickness</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding RightThickness}" Width="150" ToolTip="{Binding RightThicknessToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="7" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Front Thickness</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding FrontThickness}" Width="150" ToolTip="{Binding FrontThicknessToolTip}" />
-            </StackPanel>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="100" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Width="100">Box Length</Label>
+                    <TextBox Margin="8,0,0,0" Text="{Binding BoxLength}" Width="150" ToolTip="{Binding BoxLengthToolTip}" />
+                    <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameers to their defaults" Click="ResetDefaults" />
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Width="100">Box Height</Label>
+                    <TextBox Margin="8,0,0,0" Text="{Binding BoxHeight}" Width="150" ToolTip="{Binding BoxHeightToolTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Width="100">Box Width</Label>
+                    <TextBox Margin="8,0,0,0" Text="{Binding BoxWidth}" Width="150" ToolTip="{Binding BoxWidthToolTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="4" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Width="100">Base Thickness</Label>
+                    <TextBox Margin="8,0,0,0" Text="{Binding BaseThickness}" Width="150" ToolTip="{Binding BaseThicknessToolTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="5" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Width="100">Left Thickness</Label>
+                    <TextBox Margin="8,0,0,0" Text="{Binding LeftThickness}" Width="150" ToolTip="{Binding LeftThicknessToolTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="6" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Width="100">Right Thickness</Label>
+                    <TextBox Margin="8,0,0,0" Text="{Binding RightThickness}" Width="150" ToolTip="{Binding RightThicknessToolTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="7" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Width="100">Front Thickness</Label>
+                    <TextBox Margin="8,0,0,0" Text="{Binding FrontThickness}" Width="150" ToolTip="{Binding FrontThicknessToolTip}" />
+                </StackPanel>
 
-            <StackPanel Grid.Row="8" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Back Thickness</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding BackThickness}" Width="150" ToolTip="{Binding BackThicknessToolTip}" />
-            </StackPanel>
+                <StackPanel Grid.Row="8" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Width="100">Back Thickness</Label>
+                    <TextBox Margin="8,0,0,0" Text="{Binding BackThickness}" Width="150" ToolTip="{Binding BackThicknessToolTip}" />
+                </StackPanel>
 
-            <StackPanel Grid.Row="9" Orientation="Horizontal">
-                <!--
+                <StackPanel Grid.Row="9" Orientation="Horizontal">
+                    <!--
                 <Label VerticalAlignment="Center"  FontSize="16" Foreground="{StaticResource WarningColour}">
                     <Label.Content>
                         <AccessText TextWrapping="Wrap" Text="{Binding WarningText}" />
                     </Label.Content>
                 </Label>
                 -->
-                <TextBlock FontSize="16" Foreground="{StaticResource WarningColour}" Text="{Binding WarningText}" TextWrapping="Wrap" />
-            </StackPanel>
-        </Grid>
-        <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
+                    <TextBlock FontSize="16" Foreground="{StaticResource WarningColour}" Text="{Binding WarningText}" TextWrapping="Wrap" />
+                </StackPanel>
+            </Grid>
+        </Border>
+        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
+        <Border Grid.Row ="0" Grid.Column="3" Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 
@@ -120,7 +124,7 @@
             <Button Content="Home" Grid.Column="2" Click="Home_Click" />
         </Grid>
 
-        <Grid Grid.Column="2" Grid.Row="1">
+        <Grid Grid.Column="3" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="80" />

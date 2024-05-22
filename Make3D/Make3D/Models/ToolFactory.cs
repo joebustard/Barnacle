@@ -49,7 +49,7 @@ namespace Barnacle.Models
 
                 case "ClaySculpt":
                     res = new ClaySculptDlg();
-                    //   res = new MeshEditorDlg();
+                    // res = new MeshEditorDlg();
                     break;
 
                 case "CurvedFunnel":
@@ -131,10 +131,6 @@ namespace Barnacle.Models
 
                 case "Reuleaux":
                     res = new ReuleauxDlg();
-                    break;
-
-                case "Scribble":
-                    res = new ScribbleDlg();
                     break;
 
                 case "ShapedBrickWall":

@@ -65,13 +65,12 @@ WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush 
             </Grid>
         </Border>
         <Border Grid.Column="1"
-                Grid.ColumnSpan="1"
                 Grid.Row="1"
                 Style="{StaticResource ControlBorder}">
 
             <ctrls:FlexiPathEditorControl x:Name="PathEditor" FixedEndPath="True" />
         </Border>
-        <GridSplitter Grid.Column="2" Grid.RowSpan="2" ResizeDirection="Columns" Background="AliceBlue" Width="10" HorizontalAlignment="Stretch" />
+        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" Grid.RowSpan="2" />
         <Border Grid.Row ="0" Grid.Column="3"  Grid.RowSpan="2" Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.RowDefinitions>
