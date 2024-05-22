@@ -1,5 +1,4 @@
-﻿using MakerLib;
-using System;
+﻿using System;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -7,7 +6,23 @@ namespace Barnacle.Models
 {
     public partial class Grid3D
     {
+        private Model3DGroup group;
         private double length = 210;
+
+        public Grid3D()
+        {
+            group = new Model3DGroup();
+            Size = 210;
+            DefineModel(group);
+        }
+
+        public Model3DGroup Group
+        {
+            get
+            {
+                return group;
+            }
+        }
 
         public double Size
         {
@@ -24,119 +39,16 @@ namespace Barnacle.Models
                 }
             }
         }
-
-        private Model3DGroup group;
-
-        public Model3DGroup Group
+        internal bool Matches(GeometryModel3D geo)
         {
-            get
+            foreach (GeometryModel3D gm in group.Children)
             {
-                return group;
-            }
-        }
-
-        public Grid3D()
-        {
-            group = new Model3DGroup();
-            Size = 210;
-            DefineModel(group);
-        }
-
-        private void DefineModel(Model3DGroup group)
-        {
-            group.Children.Clear();
-            //DefineText("Barnacle", group);
-            DefineText( group);
-            for (double x = -length; x <= length; x += 1)
-            {
-                MeshGeometry3D xmesh = MakeCubeMesh(0, 0, 0, 1);
-                xmesh.ApplyTransformation(new ScaleTransform3D(0.05, 0.1, 2 * length));
-                xmesh.ApplyTransformation(new TranslateTransform3D(x, 0, 0));
-                Material xmaterial = new DiffuseMaterial(Brushes.LightBlue);
-                GeometryModel3D xmodel = new GeometryModel3D(xmesh, xmaterial);
-                group.Children.Add(xmodel);
-            }
-
-            for (double z = -length; z <= length; z += 1)
-            {
-                MeshGeometry3D xmesh = MakeCubeMesh(0, 0, 0, 1);
-                xmesh.ApplyTransformation(new ScaleTransform3D(2 * length, 0.1, 0.05));
-                xmesh.ApplyTransformation(new TranslateTransform3D(0, 0, z));
-                Material xmaterial = new DiffuseMaterial(Brushes.LightBlue);
-                GeometryModel3D xmodel = new GeometryModel3D(xmesh, xmaterial);
-                group.Children.Add(xmodel);
-            }
-
-            for (double x = -length; x <= length; x += 10)
-            {
-                MeshGeometry3D xmesh = MakeCubeMesh(0, 0, 0, 1);
-                xmesh.ApplyTransformation(new ScaleTransform3D(0.5, 0.1, 2 * length));
-                xmesh.ApplyTransformation(new TranslateTransform3D(x, 0, 0));
-                Material xmaterial = new DiffuseMaterial(Brushes.CadetBlue);
-                GeometryModel3D xmodel = new GeometryModel3D(xmesh, xmaterial);
-                group.Children.Add(xmodel);
-            }
-
-            for (double z = -length; z <= length; z += 10)
-            {
-                MeshGeometry3D xmesh = MakeCubeMesh(0, 0, 0, 1);
-                xmesh.ApplyTransformation(new ScaleTransform3D(2 * length, 0.1, 0.5));
-                xmesh.ApplyTransformation(new TranslateTransform3D(0, 0, z));
-                Material xmaterial = new DiffuseMaterial(Brushes.CadetBlue);
-                GeometryModel3D xmodel = new GeometryModel3D(xmesh, xmaterial);
-                group.Children.Add(xmodel);
-            }
-        }
-        private void DefineText( Model3DGroup group)
-        {
-            Point3DCollection Vertices = new Point3DCollection();
-            Int32Collection Faces = new Int32Collection();
-
-            for ( int i = 0; i < tpnts.GetLength(0); i+= 3)
-            {
-                Vertices.Add(new Point3D(tpnts[i], tpnts[i + 1], tpnts[i + 2]+95));
-            }
-            for ( int i = 0; i <fnums.GetLength(0); i ++)
-            {
-                Faces.Add(fnums[i]);
-            }
-
-            GeometryModel3D gm = GetModel(Vertices, Faces);
-            group.Children.Add(gm);
-        }
-        private void DefineText(string text, Model3DGroup group)
-        {
-            if (text != null && text != "")
-            {
-                TextMaker mk = new TextMaker(text, "Tahoma", 70, 0.2, true, false, false);
-                Point3DCollection Vertices = new Point3DCollection();
-                Int32Collection Faces = new Int32Collection();
-                mk.Generate(Vertices, Faces);
-                Vector3D v = new Vector3D(-35, 0.1, 80);
-                for (int i = 0; i < Vertices.Count; i++)
+                if (gm == geo)
                 {
-                    Vertices[i] += v;
+                    return true;
                 }
-                /*
-                string tmp = @"
-                Point3DCollection BarnacleTextVertices = new Point3DCollection();
-                Int32Collection BarnacleTextFaces = new Int32Collection();
-                ";
-                for(int i = 0; i < Vertices.Count; i++)
-                {
-                    tmp += $"BarnacleTextVertices.Add(new Point3D({Vertices[i].X},{Vertices[i].Y},{Vertices[i].Z});\r\n";
-                }
-
-                for (int i = 0; i < Faces.Count; i++)
-                {
-                    tmp += $"BarnacleTextFaces.Add({Faces[i]});\r\n";
-                }
-                
-                System.IO.File.WriteAllText("c:\\tmp\\btext.txt", tmp);
-                */
-                GeometryModel3D gm = GetModel(Vertices, Faces);
-                group.Children.Add(gm);
             }
+            return false;
         }
 
         protected GeometryModel3D GetModel(Point3DCollection Vertices, Int32Collection Faces)
@@ -161,79 +73,102 @@ namespace Barnacle.Models
             return gm;
         }
 
-        // Make a mesh containing a cube centered at this point.
-        private MeshGeometry3D MakeCubeMesh(double x, double y, double z, double width)
+        private void AddCubeMesh(MeshGeometry3D mesh, double x, double y, double z, double l, double h, double w)
         {
-            // Create the geometry.
-            MeshGeometry3D mesh = new MeshGeometry3D();
-
             // Define the positions.
-            width /= 2;
+            l /= 2;
+            h = h / 2;
+            w = w / 2;
             Point3D[] points =
             {
-                new Point3D(x - width, y - width, z - width),
-                new Point3D(x + width, y - width, z - width),
-                new Point3D(x + width, y - width, z + width),
-                new Point3D(x - width, y - width, z + width),
-                new Point3D(x - width, y - width, z + width),
-                new Point3D(x + width, y - width, z + width),
-                new Point3D(x + width, y + width, z + width),
-                new Point3D(x - width, y + width, z + width),
-                new Point3D(x + width, y - width, z + width),
-                new Point3D(x + width, y - width, z - width),
-                new Point3D(x + width, y + width, z - width),
-                new Point3D(x + width, y + width, z + width),
-                new Point3D(x + width, y + width, z + width),
-                new Point3D(x + width, y + width, z - width),
-                new Point3D(x - width, y + width, z - width),
-                new Point3D(x - width, y + width, z + width),
-                new Point3D(x - width, y - width, z + width),
-                new Point3D(x - width, y + width, z + width),
-                new Point3D(x - width, y + width, z - width),
-                new Point3D(x - width, y - width, z - width),
-                new Point3D(x - width, y - width, z - width),
-                new Point3D(x - width, y + width, z - width),
-                new Point3D(x + width, y + width, z - width),
-                new Point3D(x + width, y - width, z - width),
+                new Point3D(x - l, y - h, z - w),//0
+                new Point3D(x + l, y - h, z - w),//1
+                new Point3D(x + l, y - h, z + w),//2
+                new Point3D(x - l, y - h, z + w),//3
+
+                new Point3D(x - l, y + h, z - w),//4
+                new Point3D(x + l, y + h, z - w),//5
+                new Point3D(x + l, y + h, z + w),//6
+                new Point3D(x - l, y + h, z + w),//7
             };
+            int startPoint = mesh.Positions.Count;
             foreach (Point3D point in points) mesh.Positions.Add(point);
 
             // Define the triangles.
             Tuple<int, int, int>[] triangles =
             {
                  new Tuple<int, int, int>(0, 1, 2),
-                 new Tuple<int, int, int>(2, 3, 0),
-                 new Tuple<int, int, int>(4, 5, 6),
-                 new Tuple<int, int, int>(6, 7, 4),
-                 new Tuple<int, int, int>(8, 9, 10),
-                 new Tuple<int, int, int>(10, 11, 8),
-                 new Tuple<int, int, int>(12, 13, 14),
-                 new Tuple<int, int, int>(14, 15, 12),
-                 new Tuple<int, int, int>(16, 17, 18),
-                 new Tuple<int, int, int>(18, 19, 16),
-                 new Tuple<int, int, int>(20, 21, 22),
-                 new Tuple<int, int, int>(22, 23, 20),
+                 new Tuple<int, int, int>(0, 2, 3),
+                 new Tuple<int, int, int>(4, 6, 5),
+                 new Tuple<int, int, int>(4, 7, 6),
             };
             foreach (Tuple<int, int, int> tuple in triangles)
             {
-                mesh.TriangleIndices.Add(tuple.Item1);
-                mesh.TriangleIndices.Add(tuple.Item2);
-                mesh.TriangleIndices.Add(tuple.Item3);
+                mesh.TriangleIndices.Add(tuple.Item1 + startPoint);
+                mesh.TriangleIndices.Add(tuple.Item2 + startPoint);
+                mesh.TriangleIndices.Add(tuple.Item3 + startPoint);
             }
-
-            return mesh;
         }
 
-        internal bool Matches(GeometryModel3D geo)
+        private void DefineModel(Model3DGroup group)
         {
-            foreach (GeometryModel3D gm in group.Children)
+            group.Children.Clear();
+            MeshGeometry3D mmMesh = new MeshGeometry3D();
+
+            DefineText(group);
+            int count = 0;
+            for (double x = -length; x <= length; x += 1)
             {
-                if (gm == geo)
+                if (count % 10 != 0)
                 {
-                    return true;
+                    AddCubeMesh(mmMesh, x, 0, 0, 0.25, 0.15, 2 * length);
                 }
+                count++;
             }
-            return false;
+            count = 0;
+            for (double z = -length; z <= length; z += 1)
+            {
+                if (count % 10 != 0)
+                {
+                    AddCubeMesh(mmMesh, 0, 0, z, 2 * length, 0.15, 0.25);
+                }
+                count++;
+            }
+            Material mmMaterial = new DiffuseMaterial(Brushes.LightBlue);
+            GeometryModel3D mmModel = new GeometryModel3D(mmMesh, mmMaterial);
+            group.Children.Add(mmModel);
+
+            MeshGeometry3D cmMesh = new MeshGeometry3D();
+            for (double x = -length; x <= length; x += 10)
+            {
+                AddCubeMesh(cmMesh, x, 0, 0, 0.5, 0.2, 2 * length);
+            }
+
+            for (double z = -length; z <= length; z += 10)
+            {
+                AddCubeMesh(cmMesh, 0, 0, z, 2 * length, 0.2, 0.5);
+            }
+            Material cmmaterial = new DiffuseMaterial(Brushes.CadetBlue);
+            GeometryModel3D cmmodel = new GeometryModel3D(cmMesh, cmmaterial);
+            group.Children.Add(cmmodel);
+        }
+
+        private void DefineText(Model3DGroup group)
+        {
+            Point3DCollection Vertices = new Point3DCollection();
+            Int32Collection Faces = new Int32Collection();
+
+            for (int i = 0; i < tpnts.GetLength(0); i += 3)
+            {
+                Vertices.Add(new Point3D(tpnts[i], tpnts[i + 1], tpnts[i + 2] + 95));
+            }
+            for (int i = 0; i < fnums.GetLength(0); i++)
+            {
+                Faces.Add(fnums[i]);
+            }
+
+            GeometryModel3D gm = GetModel(Vertices, Faces);
+            group.Children.Add(gm);
         }
     }
 }

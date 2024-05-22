@@ -24,7 +24,9 @@
           MouseWheel="Grid_MouseWheel">
         <Viewport3D Name="viewport3D1"
                     KeyDown="UserControl_KeyDown"
-                    KeyUp="UserControl_KeyUp">
+                    KeyUp="UserControl_KeyUp" ClipToBounds="False">
+            
+
             <Viewport3D.Camera>
                 <PerspectiveCamera LookDirection="{Binding LookDirection}"
                                    Position="{Binding CameraPos}"
