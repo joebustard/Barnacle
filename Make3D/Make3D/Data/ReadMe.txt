@@ -24,6 +24,7 @@ Added
 	First cut of a bezier surface tool
 	"Reset to defaults" added to ring lofting
 	Mirror p/down
+	Some presets for aircraft wing shapes.
 
 Fixed
 	Prevent preset names being loaded twice in flexipathcontrol 

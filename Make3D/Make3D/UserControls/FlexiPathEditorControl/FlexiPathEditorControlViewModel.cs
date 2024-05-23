@@ -837,6 +837,8 @@ namespace Barnacle.UserControls
                     dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PresetPaths.txt";
                     LoadPresetFile(dataPath, true);
                 }
+                dataPath = AppDomain.CurrentDomain.BaseDirectory + "data\\" + ToolName + "PresetPaths.txt";
+                LoadPresetFile(dataPath, false);
                 dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\" + ToolName + "PresetPaths.txt";
                 LoadPresetFile(dataPath, true);
 
