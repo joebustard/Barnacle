@@ -1,294 +1,302 @@
-<local:BaseModellerDialog Background="{StaticResource WindowBackBrush }"
-                          Loaded="Window_Loaded"
-                          mc:Ignorable="d"
-                          Title="Propeller"
-                          WindowStartupLocation="CenterOwner"
-                          x:Class="Barnacle.Dialogs.Propeller"
-                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                          xmlns:local="clr-namespace:Barnacle.Dialogs"
-                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                          Width="800"
-                          Height="450">
+<local:BaseModellerDialog
+    x:Class="Barnacle.Dialogs.Propeller"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Propeller"
+    Width="800"
+    Height="500"
+    Background="{StaticResource WindowBackBrush}"
+    Loaded="Window_Loaded"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0"
-              Grid.Row="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-            </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1"
-                        Orientation="Horizontal">
-                <Label Width="100">
-                    No. of Blades
-                </Label>
-                <Slider Maximum="8"
+        <Border
+            Grid.Row="0"
+            Grid.Column="1"
+            Style="{StaticResource ControlBorder}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Label Width="100">
+                        No. of Blades
+                    </Label>
+                    <Slider
+                        Width="200"
+                        Maximum="8"
                         Minimum="2"
-                        Value="{Binding NumberOfBlades}"
-                        Width="200" />
-                <TextBox Text="{Binding NumberOfBlades}"
-                         Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="2"
-                        Orientation="Horizontal">
-                <Label Width="100">
-                    Blade Length
-                </Label>
-                <Slider Maximum="100"
+                        Value="{Binding NumberOfBlades}" />
+                    <TextBox Width="50" Text="{Binding NumberOfBlades}" />
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <Label Width="100">
+                        Blade Length
+                    </Label>
+                    <Slider
+                        Width="200"
+                        Maximum="100"
                         Minimum="10"
-                        Value="{Binding BladeLength}"
-                        Width="200" />
-                <TextBox Text="{Binding BladeLength}"
-                         Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="3"
-                        Orientation="Horizontal">
-                <Label Width="100">
-                    Root Offset
-                </Label>
-                <Slider Maximum="100"
+                        Value="{Binding BladeLength}" />
+                    <TextBox Width="50" Text="{Binding BladeLength}" />
+                </StackPanel>
+                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                    <Label Width="100">
+                        Root Offset
+                    </Label>
+                    <Slider
+                        Width="200"
+                        Maximum="100"
                         Minimum="0"
-                        Value="{Binding RootOffset}"
-                        Width="200" />
-                <TextBox Text="{Binding RootOffset}"
-                         Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="4"
-                        Orientation="Horizontal">
-                <Label Width="100">
-                    Mid Offset
-                </Label>
-                <Slider Maximum="20"
+                        Value="{Binding RootOffset}" />
+                    <TextBox Width="50" Text="{Binding RootOffset}" />
+                </StackPanel>
+                <StackPanel Grid.Row="4" Orientation="Horizontal">
+                    <Label Width="100">
+                        Mid Offset
+                    </Label>
+                    <Slider
+                        Width="200"
+                        Maximum="20"
                         Minimum="5"
-                        Value="{Binding MidOffset}"
-                        Width="200" />
-                <TextBox Text="{Binding MidOffset}"
-                         Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="5"
-                        Orientation="Horizontal">
-                <Label Width="100">
-                    Balde Root
-                </Label>
-                <Slider Maximum="20"
+                        Value="{Binding MidOffset}" />
+                    <TextBox Width="50" Text="{Binding MidOffset}" />
+                </StackPanel>
+                <StackPanel Grid.Row="5" Orientation="Horizontal">
+                    <Label Width="100">
+                        Balde Root
+                    </Label>
+                    <Slider
+                        Width="200"
+                        Maximum="20"
                         Minimum="5"
-                        Value="{Binding BladeRoot}"
-                        Width="200" />
-                <TextBox Text="{Binding BladeRoot}"
-                         Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="6"
-                        Orientation="Horizontal">
-                <Label Width="100">
-                    Blade Mid
-                </Label>
-                <Slider Maximum="20"
+                        Value="{Binding BladeRoot}" />
+                    <TextBox Width="50" Text="{Binding BladeRoot}" />
+                </StackPanel>
+                <StackPanel Grid.Row="6" Orientation="Horizontal">
+                    <Label Width="100">
+                        Blade Mid
+                    </Label>
+                    <Slider
+                        Width="200"
+                        Maximum="20"
                         Minimum="5"
-                        Value="{Binding BladeMid}"
-                        Width="200" />
-                <TextBox Text="{Binding BladeMid}"
-                         Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="7"
-                        Orientation="Horizontal">
-                <Label Width="100">
-                    Blade Tip
-                </Label>
-                <Slider Maximum="20"
+                        Value="{Binding BladeMid}" />
+                    <TextBox Width="50" Text="{Binding BladeMid}" />
+                </StackPanel>
+                <StackPanel Grid.Row="7" Orientation="Horizontal">
+                    <Label Width="100">
+                        Blade Tip
+                    </Label>
+                    <Slider
+                        Width="200"
+                        Maximum="20"
                         Minimum="5"
-                        Value="{Binding BladeTip}"
-                        Width="200" />
-                <TextBox Text="{Binding BladeTip}"
-                         Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="8"
-                        Orientation="Horizontal">
-                <Label Width="100">
-                    Blade Angle
-                </Label>
-                <Slider Maximum="90"
+                        Value="{Binding BladeTip}" />
+                    <TextBox Width="50" Text="{Binding BladeTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="8" Orientation="Horizontal">
+                    <Label Width="100">
+                        Blade Angle
+                    </Label>
+                    <Slider
+                        Width="200"
+                        Maximum="90"
                         Minimum="0"
-                        Value="{Binding BladeAngle}"
-                        Width="200" />
-                <TextBox Text="{Binding BladeAngle}"
-                         Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="9"
-                        Orientation="Horizontal">
-                <Label Width="100">
-                    Blade Profile
-                </Label>
-                <ComboBox ItemsSource="{Binding AirfoilGroups}"
-                          Margin="0,0,10,0"
-                          SelectedItem="{Binding RootGroup}"
-                          VerticalAlignment="Center"
-                          Width="100" />
-                <ComboBox ItemsSource="{Binding AirfoilNames}"
-                          Margin="0,0,10,0"
-                          SelectedItem="{Binding SelectedAirfoil}"
-                          VerticalAlignment="Center"
-                          Width="100" />
-            </StackPanel>
-            <StackPanel Grid.Row="10"
-                        Orientation="Horizontal">
-                <Label Width="100">
-                    Hub Type
-                </Label>
-                <RadioButton GroupName="HubGroup"
-                             IsChecked="{Binding FlatHub}"
-                             Margin="8,0,0,0"
-                             VerticalAlignment="Center">
-                    Flat
-                </RadioButton>
-                <RadioButton GroupName="HubGroup"
-                             IsChecked="{Binding DomedHub}"
-                             Margin="8,0,0,0"
-                             VerticalAlignment="Center">
-                    Domed
-                </RadioButton>
-            </StackPanel>
-            <StackPanel Grid.Row="11"
-                        Orientation="Horizontal">
-                <Label Width="100">
-                    Hub Radius
-                </Label>
-                <Slider Maximum="100"
+                        Value="{Binding BladeAngle}" />
+                    <TextBox Width="50" Text="{Binding BladeAngle}" />
+                </StackPanel>
+                <StackPanel Grid.Row="9" Orientation="Horizontal">
+                    <Label Width="100">
+                        Blade Profile
+                    </Label>
+                    <ComboBox
+                        Width="100"
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Center"
+                        ItemsSource="{Binding AirfoilGroups}"
+                        SelectedItem="{Binding RootGroup}" />
+                    <ComboBox
+                        Width="100"
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Center"
+                        ItemsSource="{Binding AirfoilNames}"
+                        SelectedItem="{Binding SelectedAirfoil}" />
+                </StackPanel>
+                <StackPanel Grid.Row="10" Orientation="Horizontal">
+                    <Label Width="100">
+                        Hub Type
+                    </Label>
+                    <RadioButton
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center"
+                        GroupName="HubGroup"
+                        IsChecked="{Binding FlatHub}">
+                        Flat
+                    </RadioButton>
+                    <RadioButton
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center"
+                        GroupName="HubGroup"
+                        IsChecked="{Binding DomedHub}">
+                        Domed
+                    </RadioButton>
+                </StackPanel>
+                <StackPanel Grid.Row="11" Orientation="Horizontal">
+                    <Label Width="100">
+                        Hub Radius
+                    </Label>
+                    <Slider
+                        Width="200"
+                        Maximum="100"
                         Minimum="0"
-                        Value="{Binding HubRadius}"
-                        Width="200" />
-                <TextBox Text="{Binding HubRadius}"
-                         Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="12"
-                        Orientation="Horizontal">
-                <Label Width="100">
-                    Hub Height
-                </Label>
-                <Slider Maximum="100"
+                        Value="{Binding HubRadius}" />
+                    <TextBox Width="50" Text="{Binding HubRadius}" />
+                </StackPanel>
+                <StackPanel Grid.Row="12" Orientation="Horizontal">
+                    <Label Width="100">
+                        Hub Height
+                    </Label>
+                    <Slider
+                        Width="200"
+                        Maximum="100"
                         Minimum="0"
-                        Value="{Binding HubHeight}"
-                        Width="200" />
-                <TextBox Text="{Binding HubHeight}"
-                         Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="13"
-                        Orientation="Horizontal">
-                <Label Width="100">
-                    Hub Offset
-                </Label>
-                <Slider Maximum="10"
+                        Value="{Binding HubHeight}" />
+                    <TextBox Width="50" Text="{Binding HubHeight}" />
+                </StackPanel>
+                <StackPanel Grid.Row="13" Orientation="Horizontal">
+                    <Label Width="100">
+                        Hub Offset
+                    </Label>
+                    <Slider
+                        Width="200"
+                        Maximum="10"
                         Minimum="-10"
-                        Value="{Binding HubOffset}"
-                        Width="200" />
-                <TextBox Text="{Binding HubOffset}"
-                         Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="14"
-                        Orientation="Horizontal">
-                <Label Width="100">
-                    Spoke Radius
-                </Label>
-                <Slider Maximum="20"
+                        Value="{Binding HubOffset}" />
+                    <TextBox Width="50" Text="{Binding HubOffset}" />
+                </StackPanel>
+                <StackPanel Grid.Row="14" Orientation="Horizontal">
+                    <Label Width="100">
+                        Spoke Radius
+                    </Label>
+                    <Slider
+                        Width="200"
+                        Maximum="20"
                         Minimum="1"
-                        Value="{Binding SpokeRadius}"
-                        Width="200" />
-                <TextBox Text="{Binding SpokeRadius}"
-                         Width="50" />
-            </StackPanel>
-        </Grid>
-        <Border Grid.Column="1"
-                Grid.Row="0"
-                Style="{StaticResource ControlBorder}">
-            <Viewport3D Name="viewport3D1"
-                        MouseDown="Viewport_MouseDown"
-                        MouseMove="Viewport_MouseMove"
-                        MouseWheel="Viewport_MouseWheel">
+                        Value="{Binding SpokeRadius}" />
+                    <TextBox Width="50" Text="{Binding SpokeRadius}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+        <GridSplitter
+            Grid.Row="0"
+            Grid.Column="2"
+            Style="{StaticResource GridSplitterStyle}" />
+        <Border
+            Grid.Row="0"
+            Grid.Column="3"
+            Style="{StaticResource ControlBorder}">
+            <Viewport3D
+                Name="viewport3D1"
+                MouseDown="Viewport_MouseDown"
+                MouseMove="Viewport_MouseMove"
+                MouseWheel="Viewport_MouseWheel">
                 <Viewport3D.Camera>
-                    <PerspectiveCamera LookDirection="{Binding LookDirection}"
-                                       Position="{Binding CameraPosition}"
-                                       x:Name="camMain">
-                    </PerspectiveCamera>
+                    <PerspectiveCamera
+                        x:Name="camMain"
+                        LookDirection="{Binding LookDirection}"
+                        Position="{Binding CameraPosition}" />
                 </Viewport3D.Camera>
                 <ModelVisual3D>
                     <ModelVisual3D.Content>
                         <Model3DGroup>
                             <AmbientLight Color="#FF808080" />
-                            <DirectionalLight Color="White"
-                                              Direction="-1,-1,-1"
-                                              x:Name="dirLightMain">
-                            </DirectionalLight>
+                            <DirectionalLight
+                                x:Name="dirLightMain"
+                                Direction="-1,-1,-1"
+                                Color="White" />
                         </Model3DGroup>
                     </ModelVisual3D.Content>
                 </ModelVisual3D>
                 <ModelVisual3D x:Name="MyModel">
                     <ModelVisual3D.Content>
-                        <Model3DGroup x:Name="MyModelGroup">
-                        </Model3DGroup>
+                        <Model3DGroup x:Name="MyModelGroup" />
                     </ModelVisual3D.Content>
                 </ModelVisual3D>
             </Viewport3D>
         </Border>
-        <Grid Grid.ColumnSpan="2"
-              Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <CheckBox Content="Floor"
-                          Grid.Column="0"
-                          IsChecked="{Binding ShowFloor}" />
-                <CheckBox Content="Axies"
-                          Grid.Column="1"
-                          IsChecked="{Binding ShowAxies}" />
-                <Button Click="Home_Click"
-                        Content="Home"
-                        Grid.Column="2" Style="{StaticResource RoundedButton}" />
-            </Grid>
-            <Grid Grid.Column="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="80" />
-                    <ColumnDefinition Width="80" />
-                    <ColumnDefinition Width="10" />
-                </Grid.ColumnDefinitions>
-                <Button Click="Cancel_Click"
-                        Content="Cancel"
-                        Grid.Column="1"
-                        Margin="2,2,2,2" />
+        <Grid Grid.Row="2" Grid.ColumnSpan="3">
 
-                <Button Click="Ok_Click"
-                        Content="Ok"
-                        Grid.Column="2"
-                        Margin="2,2,2,2" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <CheckBox
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    Content="Floor"
+                    IsChecked="{Binding ShowFloor}" />
+                <CheckBox
+                    Grid.Column="2"
+                    VerticalAlignment="Center"
+                    Content="Axies"
+                    IsChecked="{Binding ShowAxies}" />
+                <Button
+                    Grid.Column="3"
+                    Click="Home_Click"
+                    Content="Home" Width="80" Margin="0,2,0,2" 
+                    Style="{StaticResource RoundedButton}" />
             </Grid>
+
+        </Grid>
+        <Grid Grid.Row="2" Grid.Column="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="10" />
+            </Grid.ColumnDefinitions>
+            <Button
+                Grid.Column="1"
+                Margin="2,2,2,2"
+                Click="Cancel_Click"
+                Content="Cancel" />
+
+            <Button
+                Grid.Column="2"
+                Margin="2,2,2,2"
+                Click="Ok_Click"
+                Content="Ok" />
         </Grid>
     </Grid>
 </local:BaseModellerDialog>

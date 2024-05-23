@@ -126,7 +126,7 @@
                       Grid.Column="1"
                       IsChecked="{Binding ShowAxies}" />
             <Button Click="Home_Click"
-                    Content="Home"
+                    Content="Home" Width="80" Margin="0,2,0,2"
                     Grid.Column="2" />
         </Grid>
         <Grid Grid.Column="2"

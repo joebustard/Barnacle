@@ -311,20 +311,29 @@ namespace Barnacle.Dialogs
 
                 for (int i = 0; i < numDivisions - 1; i++)
                 {
-                    for (int j = 0; j < divisions[0].Count; j++)
+                    if (i + 1 < ribX.Count)
                     {
-                        int k = j + 1;
-                        if (k >= divisions[0].Count)
+                        for (int j = 0; j < divisions[0].Count; j++)
                         {
-                            k = 0;
-                        }
-                        int p0 = AddVertice(ribX[i], divisions[i][j].X + minX, divisions[i][j].Y + dihedralOffset[i]);
-                        int p1 = AddVertice(ribX[i], divisions[i][k].X + minX, divisions[i][k].Y + dihedralOffset[i]);
-                        int p2 = AddVertice(ribX[i + 1], divisions[i + 1][k].X + minX, divisions[i + 1][k].Y + dihedralOffset[i + 1]);
-                        int p3 = AddVertice(ribX[i + 1], divisions[i + 1][j].X + minX, divisions[i + 1][j].Y + dihedralOffset[i + 1]);
+                            int k = j + 1;
+                            if (k >= divisions[0].Count)
+                            {
+                                k = 0;
+                            }
+                            if ( i < divisions.GetLength(0) && 
+                                 j < divisions.GetLength(1) && 
+                                 i < dihedralOffset.Count && 
+                                 k < divisions.GetLength(1))
+                            {
+                                int p0 = AddVertice(ribX[i], divisions[i][j].X + minX, divisions[i][j].Y + dihedralOffset[i]);
+                                int p1 = AddVertice(ribX[i], divisions[i][k].X + minX, divisions[i][k].Y + dihedralOffset[i]);
+                                int p2 = AddVertice(ribX[i + 1], divisions[i + 1][k].X + minX, divisions[i + 1][k].Y + dihedralOffset[i + 1]);
+                                int p3 = AddVertice(ribX[i + 1], divisions[i + 1][j].X + minX, divisions[i + 1][j].Y + dihedralOffset[i + 1]);
 
-                        AddFace(p0, p2, p1);
-                        AddFace(p0, p3, p2);
+                                AddFace(p0, p2, p1);
+                                AddFace(p0, p3, p2);
+                            }
+                        }
                     }
                 }
 

@@ -163,7 +163,7 @@
                       Grid.Column="2"
                       IsChecked="{Binding ShowAxies}" VerticalAlignment="Center" />
             <Button Click="Home_Click"
-                    Content="Home"
+                    Content="Home" Width="80" Margin="0,2,0,2"
                     Grid.Column="3" />
         </Grid>
         <Grid Grid.Column="3"

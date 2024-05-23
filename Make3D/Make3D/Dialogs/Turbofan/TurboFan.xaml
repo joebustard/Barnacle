@@ -1,7 +1,7 @@
 <local:BaseModellerDialog Background="{StaticResource WindowBackBrush }"
                           Loaded="Window_Loaded"
                           mc:Ignorable="d"
-                          Title="TurboFan"
+                          Title="Turbo Fan"
                           WindowStartupLocation="CenterOwner"
                           x:Class="Barnacle.Dialogs.TurboFan"
                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -17,165 +17,171 @@
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0"
-              Grid.Row="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-            </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1"
+        <Border Grid.Column="1"
+                Grid.Row="0"
+                Style="{StaticResource ControlBorder}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="1"
                         Margin="10,0,0,0"
                         Orientation="Horizontal">
-                <Label Width="100">
-                No. of Blades
-                </Label>
-                <Slider Maximum="100"
+                    <Label Width="100">
+                        No. of Blades
+                    </Label>
+                    <Slider Maximum="100"
                         Minimum="4"
                         Value="{Binding NumberOfBlades}"
                         Width="200" />
-                <TextBox Text="{Binding NumberOfBlades}"
+                    <TextBox Text="{Binding NumberOfBlades}"
                          Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="2"
+                </StackPanel>
+                <StackPanel Grid.Row="2"
                         Margin="10,0,0,0"
                         Orientation="Horizontal">
-                <Label Width="100">
-                Blade Overlap
-                </Label>
-                <Slider Maximum="99"
+                    <Label Width="100">
+                        Blade Overlap
+                    </Label>
+                    <Slider Maximum="99"
                         Minimum="0"
                         Value="{Binding BladeOverlap}"
                         Width="200" />
-                <TextBox Text="{Binding BladeOverlap}"
+                    <TextBox Text="{Binding BladeOverlap}"
                          Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="3"
+                </StackPanel>
+                <StackPanel Grid.Row="3"
                         Margin="10,0,0,0"
                         Orientation="Horizontal">
-                <Label Width="100">
-                Blade Length
-                </Label>
-                <Slider Maximum="100"
+                    <Label Width="100">
+                        Blade Length
+                    </Label>
+                    <Slider Maximum="100"
                         Minimum="10"
                         Value="{Binding BladeLength}"
                         Width="200" />
-                <TextBox Text="{Binding BladeLength}"
+                    <TextBox Text="{Binding BladeLength}"
                          Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="4"
+                </StackPanel>
+                <StackPanel Grid.Row="4"
                         Margin="10,0,0,0"
                         Orientation="Horizontal">
-                <Label Width="100">
-                Blade Pitch
-                </Label>
-                <Slider Maximum="90"
+                    <Label Width="100">
+                        Blade Pitch
+                    </Label>
+                    <Slider Maximum="90"
                         Minimum="1"
                         Value="{Binding BladePitch}"
                         Width="200" />
-                <TextBox Text="{Binding BladePitch}"
+                    <TextBox Text="{Binding BladePitch}"
                          Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="5"
+                </StackPanel>
+                <StackPanel Grid.Row="5"
                         Margin="10,0,0,0"
                         Orientation="Horizontal">
-                <Label Width="100">
-                Blade Thickness
-                </Label>
-                <Slider Maximum="5"
+                    <Label Width="100">
+                        Blade Thickness
+                    </Label>
+                    <Slider Maximum="5"
                         Minimum="1"
                         Value="{Binding BladeThickness}"
                         Width="200" />
-                <TextBox Text="{Binding BladeThickness}"
+                    <TextBox Text="{Binding BladeThickness}"
                          Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="6"
+                </StackPanel>
+                <StackPanel Grid.Row="6"
                         Margin="10,0,0,0"
                         Orientation="Horizontal">
-                <Label Width="100">
-                Hub Radius
-                </Label>
-                <Slider Maximum="100"
+                    <Label Width="100">
+                        Hub Radius
+                    </Label>
+                    <Slider Maximum="100"
                         Minimum="1"
                         Value="{Binding HubRadius}"
                         Width="200" />
-                <TextBox Text="{Binding HubRadius}"
+                    <TextBox Text="{Binding HubRadius}"
                          Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="7"
+                </StackPanel>
+                <StackPanel Grid.Row="7"
                         Margin="10,0,0,0"
                         Orientation="Horizontal">
-                <Label Width="100">
-                Blade Alignment
-                </Label>
-                <RadioButton GroupName="BladeAlignGroup"
+                    <Label Width="100">
+                        Blade Alignment
+                    </Label>
+                    <RadioButton GroupName="BladeAlignGroup"
                              IsChecked="{Binding Anticlockwise}"
                              VerticalAlignment="Center">
-                Anti - clockwise
-                </RadioButton>
-                <RadioButton GroupName="BladeAlignGroup"
+                        Anti - clockwise
+                    </RadioButton>
+                    <RadioButton GroupName="BladeAlignGroup"
                              IsChecked="{Binding Clockwise}"
                              Margin="8,0,0,0"
                              VerticalAlignment="Center">
-                Clockwise
-                </RadioButton>
-            </StackPanel>
-            <StackPanel Grid.Row="9"
+                        Clockwise
+                    </RadioButton>
+                </StackPanel>
+                <StackPanel Grid.Row="9"
                         Margin="10,0,0,0"
                         Orientation="Horizontal">
-                <Label ToolTip="Include a solid disk behind the blades"
+                    <Label ToolTip="Include a solid disk behind the blades"
                        Width="90">
-                Backing Disk
-                </Label>
-                <CheckBox IsChecked="{Binding SupportDisk}"
+                        Backing Disk
+                    </Label>
+                    <CheckBox IsChecked="{Binding SupportDisk}"
                           VerticalAlignment="Center">
-                </CheckBox>
-            </StackPanel>
-            <StackPanel Grid.Row="10"
+                    </CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Row="10"
                         Margin="10,0,0,0"
                         Orientation="Horizontal">
-                <Label Width="90">
-                Disk Thickness
-                </Label>
-                <Slider LargeChange="1"
+                    <Label Width="90">
+                        Disk Thickness
+                    </Label>
+                    <Slider LargeChange="1"
                         Maximum="10"
                         Minimum="1"
                         Value="{Binding DiskThickness}"
                         Width="200" />
-                <TextBox Text="{Binding DiskThickness}"
+                    <TextBox Text="{Binding DiskThickness}"
                          Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="11"
+                </StackPanel>
+                <StackPanel Grid.Row="11"
                         Margin="10,0,0,0"
                         Orientation="Horizontal">
-                <Label Width="90">
-                Disk Offset
-                </Label>
-                <Slider LargeChange="0.1"
+                    <Label Width="90">
+                        Disk Offset
+                    </Label>
+                    <Slider LargeChange="0.1"
                         Maximum="1"
                         Minimum="0.0"
                         TickFrequency="0.1"
                         Value="{Binding DiskOffset}"
                         Width="200" />
-                <TextBox Text="{Binding DiskOffset}"
+                    <TextBox Text="{Binding DiskOffset}"
                          Width="50" />
-            </StackPanel>
-        </Grid>
-        <Border Grid.Column="1"
+                </StackPanel>
+            </Grid>
+        </Border>
+        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
+        <Border Grid.Column="3"
                 Grid.Row="0"
                 Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"
@@ -207,7 +213,7 @@
                 </ModelVisual3D>
             </Viewport3D>
         </Border>
-        <Grid Grid.ColumnSpan="3"
+        <Grid Grid.Column="1" Grid.ColumnSpan="3"
               Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
@@ -221,31 +227,32 @@
                 </Grid.ColumnDefinitions>
                 <CheckBox Content="Floor"
                           Grid.Column="0"
-                          IsChecked="{Binding ShowFloor}" />
+                          IsChecked="{Binding ShowFloor}" VerticalAlignment="Center"/>
                 <CheckBox Content="Axies"
                           Grid.Column="1"
-                          IsChecked="{Binding ShowAxies}" />
+                          IsChecked="{Binding ShowAxies}" VerticalAlignment="Center"/>
                 <Button Click="Home_Click"
-                        Content="Home"
+                        Content="Home" Width="80" Margin="0,2,0,2"
                         Grid.Column="2" />
             </Grid>
-            <Grid Grid.Column="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="80" />
-                    <ColumnDefinition Width="80" />
-                    <ColumnDefinition Width="10" />
-                </Grid.ColumnDefinitions>
-                <Button Click="Cancel_Click"
+            
+        </Grid>
+        <Grid Grid.Row="1" Grid.Column="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="10" />
+            </Grid.ColumnDefinitions>
+            <Button Click="Cancel_Click"
                         Content="Cancel"
                         Grid.Column="1"
                         Margin="2,2,2,2" />
 
-                <Button Click="Ok_Click"
+            <Button Click="Ok_Click"
                         Content="Ok"
                         Grid.Column="2"
                         Margin="2,2,2,2" />
-            </Grid>
         </Grid>
     </Grid>
 </local:BaseModellerDialog>

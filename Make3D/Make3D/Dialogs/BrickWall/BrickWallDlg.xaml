@@ -155,7 +155,7 @@
             <Button
                 Grid.Column="2"
                 Click="Home_Click"
-                Content="Home" />
+                Content="Home" Width="80" Margin="0,2,0,2"  />
         </Grid>
 
         <Grid Grid.Row="1" Grid.Column="3">

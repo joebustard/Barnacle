@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Barnacle.Dialogs"
         mc:Ignorable="d"
-        Title="" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
+        Title="Pill" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -14,53 +14,57 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="1" Grid.Row="0">
+        <Border Grid.Row ="0" Grid.Column="1" Style="{StaticResource ControlBorder}">
+            <Grid>
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-            </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Flat Length</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding FlatLength}" Width="150" ToolTip="{Binding FlatLengthToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="2" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Flat Height</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding FlatHeight}" Width="150" ToolTip="{Binding FlatHeightToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="3" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Edge</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding Edge}" Width="150" ToolTip="{Binding EdgeToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="4" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Pill Width</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding PillWidth}" Width="150" ToolTip="{Binding PillWidthToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="5" Orientation="Horizontal" Visibility="{Binding ShowTray}">
-                <Label VerticalAlignment="Center" Width="100">Tray Thickness</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding TrayThickness}" Width="150" ToolTip="{Binding TrayThicknessToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="6" Orientation="Horizontal">
-                <RadioButton GroupName="PillType" VerticalAlignment="Center" Content="Plain" IsChecked="{Binding PlainSelected}" />
-                <RadioButton Margin="8,0,0,0" GroupName="PillType" VerticalAlignment="Center" Content="Half" IsChecked="{Binding HalfSelected}" />
-                <RadioButton Margin="8,0,0,0" GroupName="PillType" VerticalAlignment="Center" Content="Tray" IsChecked="{Binding TraySelected}" />
-            </StackPanel>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Width="100">Flat Length</Label>
+                    <TextBox Margin="8,0,0,0" Text="{Binding FlatLength}" Width="150" ToolTip="{Binding FlatLengthToolTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Width="100">Flat Height</Label>
+                    <TextBox Margin="8,0,0,0" Text="{Binding FlatHeight}" Width="150" ToolTip="{Binding FlatHeightToolTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Width="100">Edge</Label>
+                    <TextBox Margin="8,0,0,0" Text="{Binding Edge}" Width="150" ToolTip="{Binding EdgeToolTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="4" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Width="100">Pill Width</Label>
+                    <TextBox Margin="8,0,0,0" Text="{Binding PillWidth}" Width="150" ToolTip="{Binding PillWidthToolTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="5" Orientation="Horizontal" Visibility="{Binding ShowTray}">
+                    <Label VerticalAlignment="Center" Width="100">Tray Thickness</Label>
+                    <TextBox Margin="8,0,0,0" Text="{Binding TrayThickness}" Width="150" ToolTip="{Binding TrayThicknessToolTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="6" Orientation="Horizontal">
+                    <RadioButton GroupName="PillType" VerticalAlignment="Center" Content="Plain" IsChecked="{Binding PlainSelected}" />
+                    <RadioButton Margin="8,0,0,0" GroupName="PillType" VerticalAlignment="Center" Content="Half" IsChecked="{Binding HalfSelected}" />
+                    <RadioButton Margin="8,0,0,0" GroupName="PillType" VerticalAlignment="Center" Content="Tray" IsChecked="{Binding TraySelected}" />
+                </StackPanel>
 
-            <StackPanel Grid.Row="9" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
-            </StackPanel>
-        </Grid>
-        <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
+                <StackPanel Grid.Row="9" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
+        <Border Grid.Row ="0" Grid.Column="3" Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 
@@ -101,10 +105,10 @@
             </Grid.ColumnDefinitions>
             <CheckBox VerticalAlignment="Center" Content="Floor" Grid.Column="0" IsChecked="{Binding ShowFloor}" />
             <CheckBox VerticalAlignment="Center" Content="Axies" Grid.Column="1" IsChecked="{Binding ShowAxies}" />
-            <Button Content="Home" Grid.Column="2" Click="Home_Click" />
+            <Button Content="Home" Width="80" Margin="0,2,0,2" Grid.Column="2" Click="Home_Click" />
         </Grid>
 
-        <Grid Grid.Column="2" Grid.Row="1">
+        <Grid Grid.Column="3" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="80" />
