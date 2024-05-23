@@ -203,7 +203,7 @@
                 </ModelVisual3D>
             </Viewport3D>
         </Border>
-        <Grid Grid.ColumnSpan="3"
+        <Grid Grid.ColumnSpan="4"
               Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
@@ -217,10 +217,10 @@
                 </Grid.ColumnDefinitions>
                 <CheckBox Content="Floor"
                           Grid.Column="0"
-                          IsChecked="{Binding ShowFloor}" />
+                          IsChecked="{Binding ShowFloor}" VerticalAlignment="Center"/>
                 <CheckBox Content="Axies"
                           Grid.Column="1"
-                          IsChecked="{Binding ShowAxies}" />
+                          IsChecked="{Binding ShowAxies}" VerticalAlignment="Center"/>
                 <Button Click="Home_Click"
                         Content="Home"
                         Grid.Column="2" />

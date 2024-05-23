@@ -38,6 +38,7 @@ namespace Barnacle.Views
             vm = DataContext as EditorViewModel;
             vm.ViewPort = viewport3D1;
             vm.Overlay = overlayCanvas;
+            
         }
 
         public void HitTest(object sender, System.Windows.Input.MouseButtonEventArgs args)
