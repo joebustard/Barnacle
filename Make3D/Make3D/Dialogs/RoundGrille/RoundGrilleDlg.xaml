@@ -14,65 +14,64 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="1" Grid.Row="0">
+        <Border Grid.Row ="0" Grid.Column="1" Style="{StaticResource ControlBorder}">
+            <Grid>
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-            </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Radius</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding GrilleRadius}" Width="150" ToolTip="{Binding GrillRadiusToolTip}" />
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Width="100">Radius</Label>
+                    <TextBox Margin="8,0,0,0" Text="{Binding GrilleRadius}" Width="150" ToolTip="{Binding GrillRadiusToolTip}" />
 
-                <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameters to their defaults" Click="ResetDefaults" />
-            </StackPanel>
-            <!--
-            <StackPanel Grid.Row="2" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Height</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding GrillHeight}" Width="150" ToolTip="{Binding GrillHeightToolTip}" />
-            </StackPanel>
-            -->
-            <StackPanel Grid.Row="2" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Height</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding GrillWidth}" Width="150" ToolTip="{Binding GrillWidthToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="3" Orientation="Horizontal">
-                <CheckBox Content="Make Frame" IsChecked="{Binding MakeEdge}" VerticalAlignment="Center" Width="100" />
-                <Label Margin="8,0,0,0" VerticalAlignment="Center" Width="50">Size</Label>
-                <TextBox Text="{Binding EdgeThickness}" Width="100" ToolTip="{Binding EdgeThicknessToolTip}" />
-            </StackPanel>
+                    <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameters to their defaults" Click="ResetDefaults" />
+                </StackPanel>
 
-            <StackPanel Grid.Row="4" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Vertical Bars</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding VerticalBars}" Width="150" ToolTip="{Binding VerticalBarsToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="5" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">V Thickness</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding VerticalBarThickness}" Width="150" ToolTip="{Binding VerticalBarThicknessToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="6" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Horizontal Bars</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding HorizontalBars}" Width="150" ToolTip="{Binding HorizontalBarsToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="7" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">H Thickness</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding HorizontalBarThickness}" Width="150" ToolTip="{Binding HorizontalBarThicknessToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="8" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
-            </StackPanel>
-        </Grid>
-        <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Width="100">Height</Label>
+                    <TextBox Margin="8,0,0,0" Text="{Binding GrillWidth}" Width="150" ToolTip="{Binding GrillWidthToolTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                    <CheckBox Content="Make Frame" IsChecked="{Binding MakeEdge}" VerticalAlignment="Center" Width="100" />
+                    <Label Margin="8,0,0,0" VerticalAlignment="Center" Width="50">Size</Label>
+                    <TextBox Text="{Binding EdgeThickness}" Width="100" ToolTip="{Binding EdgeThicknessToolTip}" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="4" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Width="100">Vertical Bars</Label>
+                    <TextBox Margin="8,0,0,0" Text="{Binding VerticalBars}" Width="150" ToolTip="{Binding VerticalBarsToolTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="5" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Width="100">V Thickness</Label>
+                    <TextBox Margin="8,0,0,0" Text="{Binding VerticalBarThickness}" Width="150" ToolTip="{Binding VerticalBarThicknessToolTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="6" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Width="100">Horizontal Bars</Label>
+                    <TextBox Margin="8,0,0,0" Text="{Binding HorizontalBars}" Width="150" ToolTip="{Binding HorizontalBarsToolTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="7" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Width="100">H Thickness</Label>
+                    <TextBox Margin="8,0,0,0" Text="{Binding HorizontalBarThickness}" Width="150" ToolTip="{Binding HorizontalBarThicknessToolTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="8" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
+        <Border Grid.Row ="0" Grid.Column="3" Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 
@@ -116,7 +115,7 @@
             <Button Content="Home" Width="80" Margin="0,2,0,2" Grid.Column="2" Click="Home_Click" />
         </Grid>
 
-        <Grid Grid.Column="2" Grid.Row="1">
+        <Grid Grid.Column="3" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="80" />

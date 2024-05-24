@@ -19,74 +19,79 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="1"
-              Grid.Row="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25" />
-                <RowDefinition Height="128" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0"
+        <Border Grid.Column="1"
+                Grid.Row="0"
+                Style="{StaticResource ControlBorder}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="128" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0"
                             Orientation="Horizontal">
-                    <Label VerticalAlignment="Center">
-                    Height
-                    </Label>
-                    <TextBox Margin="8,0,0,0"
+                        <Label VerticalAlignment="Center">
+                            Height
+                        </Label>
+                        <TextBox Margin="8,0,0,0"
                              Text="{Binding SquirkleHeight}"
                              VerticalAlignment="Center"
                              Width="80" />
-                </StackPanel>
-                <UniformGrid Columns="2"
+                    </StackPanel>
+                    <UniformGrid Columns="2"
                              Grid.Column="1"
                              Rows="2"
                              Width="128">
-                    <local:CornerShape x:Name="TopLeftCornerShape" />
-                    <local:CornerShape x:Name="TopRightCornerShape" />
-                    <local:CornerShape x:Name="BottomLeftCornerShape" />
-                    <local:CornerShape x:Name="BottomRightCornerShape" />
-                </UniformGrid>
-            </Grid>
-            <StackPanel Grid.Row="3"
+                        <local:CornerShape x:Name="TopLeftCornerShape" />
+                        <local:CornerShape x:Name="TopRightCornerShape" />
+                        <local:CornerShape x:Name="BottomLeftCornerShape" />
+                        <local:CornerShape x:Name="BottomRightCornerShape" />
+                    </UniformGrid>
+                </Grid>
+                <StackPanel Grid.Row="3"
                         HorizontalAlignment="Center"
                         Orientation="Horizontal">
-                <Label VerticalAlignment="Center">
-                Length
-                </Label>
-                <TextBox Margin="8,0,0,0"
+                    <Label VerticalAlignment="Center">
+                        Length
+                    </Label>
+                    <TextBox Margin="8,0,0,0"
                          Text="{Binding Length}"
                          VerticalAlignment="Center"
                          Width="80" />
-            </StackPanel>
-            <StackPanel Grid.Row="5"
+                </StackPanel>
+                <StackPanel Grid.Row="5"
                         Orientation="Horizontal">
-            </StackPanel>
-            <StackPanel Grid.Row="7"
+                </StackPanel>
+                <StackPanel Grid.Row="7"
                         Orientation="Horizontal">
-            </StackPanel>
-            <StackPanel Grid.Row="9"
+                </StackPanel>
+                <StackPanel Grid.Row="9"
                         Orientation="Horizontal">
-                <Label Content="{Binding WarningText}"
+                    <Label Content="{Binding WarningText}"
                        FontSize="18"
                        Foreground="{StaticResource WarningColour}"
                        VerticalAlignment="Center" />
-            </StackPanel>
-        </Grid>
-        <Border Grid.Column="2"
+                </StackPanel>
+            </Grid>
+        </Border>
+        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
+        <Border Grid.Column="3"
                 Grid.Row="0"
                 Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"
@@ -143,7 +148,7 @@
                     Content="Home" Width="80" Margin="0,2,0,2"
                     Grid.Column="2" />
         </Grid>
-        <Grid Grid.Column="2"
+        <Grid Grid.Column="3"
               Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />

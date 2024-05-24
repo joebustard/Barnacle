@@ -320,10 +320,10 @@ namespace Barnacle.Dialogs
                             {
                                 k = 0;
                             }
-                            if ( i < divisions.GetLength(0) && 
-                                 j < divisions.GetLength(1) && 
-                                 i < dihedralOffset.Count && 
-                                 k < divisions.GetLength(1))
+                            if (i < divisions.GetLength(0) &&
+                                 j < divisions[0].Count &&
+                                 i < dihedralOffset.Count &&
+                                 k < divisions[0].Count)
                             {
                                 int p0 = AddVertice(ribX[i], divisions[i][j].X + minX, divisions[i][j].Y + dihedralOffset[i]);
                                 int p1 = AddVertice(ribX[i], divisions[i][k].X + minX, divisions[i][k].Y + dihedralOffset[i]);

@@ -18,94 +18,99 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
-            <ColumnDefinition Width="290" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="1"
-              Grid.Row="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
-            </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0"
+        <Border Grid.Column="1"
+                Grid.Row="0"
+                Style="{StaticResource ControlBorder}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0"
                         Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
+                    <Label VerticalAlignment="Center"
                        Width="80">
-                Height
-                </Label>
-                <TextBox HorizontalAlignment="Stretch"
+                        Height
+                    </Label>
+                    <TextBox HorizontalAlignment="Stretch"
                          MinWidth="60"
                          Text="{Binding TubeHeight}"
                          VerticalAlignment="Center">
-                </TextBox>
-            </StackPanel>
-            <StackPanel Grid.Row="1"
+                    </TextBox>
+                </StackPanel>
+                <StackPanel Grid.Row="1"
                         Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
+                    <Label VerticalAlignment="Center"
                        Width="80">
-                Inner Radius
-                </Label>
-                <TextBox HorizontalAlignment="Stretch"
+                        Inner Radius
+                    </Label>
+                    <TextBox HorizontalAlignment="Stretch"
                          MinWidth="60"
                          Text="{Binding InnerRadius}"
                          VerticalAlignment="Center">
-                </TextBox>
-            </StackPanel>
-            <StackPanel Grid.Row="2"
+                    </TextBox>
+                </StackPanel>
+                <StackPanel Grid.Row="2"
                         Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
+                    <Label VerticalAlignment="Center"
                        Width="80">
-                Thickness
-                </Label>
-                <TextBox HorizontalAlignment="Stretch"
+                        Thickness
+                    </Label>
+                    <TextBox HorizontalAlignment="Stretch"
                          MinWidth="60"
                          Text="{Binding TubeThickness}"
                          VerticalAlignment="Center">
-                </TextBox>
-            </StackPanel>
-            <StackPanel Grid.Row="3"
+                    </TextBox>
+                </StackPanel>
+                <StackPanel Grid.Row="3"
                         Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
+                    <Label VerticalAlignment="Center"
                        Width="80">
-                Upper Bevel
-                </Label>
-                <TextBox HorizontalAlignment="Stretch"
+                        Upper Bevel
+                    </Label>
+                    <TextBox HorizontalAlignment="Stretch"
                          MinWidth="60"
                          Text="{Binding UpperBevel}"
                          VerticalAlignment="Center">
-                </TextBox>
-            </StackPanel>
-            <StackPanel Grid.Row="4"
+                    </TextBox>
+                </StackPanel>
+                <StackPanel Grid.Row="4"
                         Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
+                    <Label VerticalAlignment="Center"
                        Width="80">
-                Lower Bevel
-                </Label>
-                <TextBox HorizontalAlignment="Stretch"
+                        Lower Bevel
+                    </Label>
+                    <TextBox HorizontalAlignment="Stretch"
                          MinWidth="60"
                          Text="{Binding LowerBevel}"
                          VerticalAlignment="Center">
-                </TextBox>
-            </StackPanel>
-            <StackPanel Grid.Row="5"
+                    </TextBox>
+                </StackPanel>
+                <StackPanel Grid.Row="5"
                         Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
+                    <Label VerticalAlignment="Center"
                        Width="80">
-                Sweep
-                </Label>
-                <TextBox HorizontalAlignment="Stretch"
+                        Sweep
+                    </Label>
+                    <TextBox HorizontalAlignment="Stretch"
                          MinWidth="60"
                          Text="{Binding SweepDegrees}"
                          VerticalAlignment="Center">
-                </TextBox>
-            </StackPanel>
-        </Grid>
-        <Border Grid.Column="2"
+                    </TextBox>
+                </StackPanel>
+            </Grid>
+        </Border>
+        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
+        <Border Grid.Column="3"
                 Grid.Row="0"
                 Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"
@@ -142,40 +147,35 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <CheckBox Content="Floor"
+
+            <CheckBox Content="Floor"
                           Grid.Column="0"
-                          IsChecked="{Binding ShowFloor}" />
-                <CheckBox Content="Axies"
+                          IsChecked="{Binding ShowFloor}" VerticalAlignment="Center" />
+            <CheckBox Content="Axies"
                           Grid.Column="1"
-                          IsChecked="{Binding ShowAxies}" />
-                <Button Click="Home_Click"
+                          IsChecked="{Binding ShowAxies}" VerticalAlignment="Center" />
+            <Button Click="Home_Click"
                         Content="Home" Width="80" Margin="0,2,0,2"
                         Grid.Column="2" />
-            </Grid>
-            <Grid Grid.Column="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="80" />
-                    <ColumnDefinition Width="80" />
-                    <ColumnDefinition Width="10" />
-                </Grid.ColumnDefinitions>
-                <Button Click="Cancel_Click"
+        </Grid>
+        <Grid Grid.Column="3" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="10" />
+            </Grid.ColumnDefinitions>
+            <Button Click="Cancel_Click"
                         Content="Cancel"
                         Grid.Column="1"
                         Margin="2,2,2,2" />
 
-                <Button Click="Ok_Click"
+            <Button Click="Ok_Click"
                         Content="Ok"
                         Grid.Column="2"
                         Margin="2,2,2,2" />
-            </Grid>
         </Grid>
     </Grid>
 </local:BaseModellerDialog>

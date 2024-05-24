@@ -31,9 +31,7 @@ namespace ScriptLanguage
             this.heightExp = h;
         }
 
-        /// Execute this node
-        /// returning false terminates the application
-        ///
+        /// Execute this node returning false terminates the application
         public override bool Execute()
         {
             bool result = false;
@@ -89,10 +87,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        /// Returns a String representation of this node that can be used for
-        /// Pretty Printing
-        ///
-        ///
+        /// Returns a String representation of this node that can be used for Pretty Printing
         public override String ToRichText()
         {
             String result = RichTextFormatter.KeyWord("MakeTorus") + "( ";

@@ -37,6 +37,7 @@ namespace Barnacle.Dialogs
         public int NumberOfTeeth
         {
             get => numberOfTeeth;
+
             set
             {
                 if (numberOfTeeth != value)
@@ -51,6 +52,7 @@ namespace Barnacle.Dialogs
         public double Radius
         {
             get => outterRadius;
+
             set
             {
                 if (outterRadius != value)
@@ -68,6 +70,7 @@ namespace Barnacle.Dialogs
             {
                 return showAxies;
             }
+
             set
             {
                 if (showAxies != value)
@@ -85,6 +88,7 @@ namespace Barnacle.Dialogs
             {
                 return showFloor;
             }
+
             set
             {
                 if (showFloor != value)
@@ -99,6 +103,7 @@ namespace Barnacle.Dialogs
         public double TeethBaseHeight
         {
             get => teethBaseHeight;
+
             set
             {
                 if (teethBaseHeight != value)
@@ -113,6 +118,7 @@ namespace Barnacle.Dialogs
         public double TeethBaseWidth
         {
             get => teethBaseWidth;
+
             set
             {
                 if (teethBaseWidth != value)
@@ -127,6 +133,7 @@ namespace Barnacle.Dialogs
         public double TeethTopHeight
         {
             get => teethTopHeight;
+
             set
             {
                 if (teethTopHeight != value)
@@ -141,6 +148,7 @@ namespace Barnacle.Dialogs
         public double TeethTopWidth
         {
             get => teethTopWidth;
+
             set
             {
                 if (teethTopWidth != value)
@@ -155,6 +163,7 @@ namespace Barnacle.Dialogs
         public double Thickness
         {
             get => thickness;
+
             set
             {
                 if (thickness != value)
@@ -282,18 +291,10 @@ namespace Barnacle.Dialogs
                     bool tooth = true;
                     while (theta <= Math.PI * 2)
                     {
-                        //     2 ---- 3
-                        //    /        \
-                        //   /          \
-                        //   1           4
-                        //   !           !
-                        //   !           !
-                        //   0           5
-                        // (Sort of)
+                        // 2 ---- 3 / \ / \ 1 4 ! ! ! ! 0 5 (Sort of)
                         if (tooth && (Math.PI * 2 - theta > toothDeltaTheta))
                         {
-                            // add a tooth
-                            // 0
+                            // add a tooth 0
                             double x = outterRadius * Math.Cos(theta);
                             double y = outterRadius * Math.Sin(theta);
                             points.Add(new System.Windows.Point(x, y));
@@ -339,7 +340,7 @@ namespace Barnacle.Dialogs
                         }
                         tooth = !tooth;
                     }
-                    DisplayFlatView(points);
+                    // DisplayFlatView(points);
 
                     ClearShape();
 

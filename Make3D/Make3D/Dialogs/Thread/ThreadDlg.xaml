@@ -19,115 +19,121 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="1"
-              Grid.Row="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-            </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1"
+        <Border Grid.Column="1"
+                Grid.Row="0"
+                Style="{StaticResource ControlBorder}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="1"
                         Orientation="Horizontal">
-                <Label Width="100">
-                Major Radius
-                </Label>
-                <Slider Maximum="100"
+                    <Label Width="100">
+                        Major Radius
+                    </Label>
+                    <Slider Maximum="100"
                         Minimum="1"
                         Value="{Binding MajorRadius}"
                         Width="200" />
-                <TextBox Text="{Binding MajorRadius}"
+                    <TextBox Text="{Binding MajorRadius}"
                          Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="2"
+                </StackPanel>
+                <StackPanel Grid.Row="2"
                         Orientation="Horizontal">
-                <Label Width="100">
-                Minor Radius
-                </Label>
-                <Slider Maximum="100"
+                    <Label Width="100">
+                        Minor Radius
+                    </Label>
+                    <Slider Maximum="100"
                         Minimum="1"
                         Value="{Binding MinorRadius}"
                         Width="200" />
-                <TextBox Text="{Binding MinorRadius}"
+                    <TextBox Text="{Binding MinorRadius}"
                          Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="3"
+                </StackPanel>
+                <StackPanel Grid.Row="3"
                         Orientation="Horizontal">
-                <Label Width="100">
-                Root
-                </Label>
-                <Slider Maximum="10"
+                    <Label Width="100">
+                        Root
+                    </Label>
+                    <Slider Maximum="10"
                         Minimum="0.01"
                         Value="{Binding Root}"
                         Width="200" />
-                <TextBox Text="{Binding Root}"
+                    <TextBox Text="{Binding Root}"
                          Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="4"
+                </StackPanel>
+                <StackPanel Grid.Row="4"
                         Orientation="Horizontal">
-                <Label Width="100">
-                Crest
-                </Label>
-                <Slider Maximum="10"
+                    <Label Width="100">
+                        Crest
+                    </Label>
+                    <Slider Maximum="10"
                         Minimum="0.01"
                         Value="{Binding Crest}"
                         Width="200" />
-                <TextBox Text="{Binding Crest}"
+                    <TextBox Text="{Binding Crest}"
                          Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="5"
+                </StackPanel>
+                <StackPanel Grid.Row="5"
                         Orientation="Horizontal">
-                <Label Width="100">
-                Pitch
-                </Label>
-                <Slider Maximum="10"
+                    <Label Width="100">
+                        Pitch
+                    </Label>
+                    <Slider Maximum="10"
                         Minimum="0.01"
                         Value="{Binding Pitch}"
                         Width="200" />
-                <TextBox Text="{Binding Pitch}"
+                    <TextBox Text="{Binding Pitch}"
                          Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="6"
+                </StackPanel>
+                <StackPanel Grid.Row="6"
                         Orientation="Horizontal">
-                <Label Width="100">
-                Helix Angle
-                </Label>
-                <Slider Maximum="25"
+                    <Label Width="100">
+                        Helix Angle
+                    </Label>
+                    <Slider Maximum="25"
                         Minimum="5"
                         Value="{Binding Angle}"
                         Width="200" />
-                <TextBox Text="{Binding Angle}"
+                    <TextBox Text="{Binding Angle}"
                          Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="7"
+                </StackPanel>
+                <StackPanel Grid.Row="7"
                         Orientation="Horizontal">
-                <Label Width="100">
-                Length
-                </Label>
-                <Slider Maximum="200"
+                    <Label Width="100">
+                        Length
+                    </Label>
+                    <Slider Maximum="200"
                         Minimum="5"
                         Value="{Binding Length}"
                         Width="200" />
-                <TextBox Text="{Binding Length}"
+                    <TextBox Text="{Binding Length}"
                          Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="9"
+                </StackPanel>
+                <StackPanel Grid.Row="9"
                         Orientation="Horizontal">
-                <Label Content="{Binding WarningText}"
+                    <Label Content="{Binding WarningText}"
                        FontSize="18"
                        Foreground="{StaticResource WarningColour}"
                        VerticalAlignment="Center" />
-            </StackPanel>
-        </Grid>
-        <Border Grid.Column="2"
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
+        <Border Grid.Column="3"
                 Grid.Row="0"
                 Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"
@@ -182,7 +188,7 @@
                     Content="Home" Width="80" Margin="0,2,0,2"
                     Grid.Column="2" />
         </Grid>
-        <Grid Grid.Column="2"
+        <Grid Grid.Column="3"
               Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />

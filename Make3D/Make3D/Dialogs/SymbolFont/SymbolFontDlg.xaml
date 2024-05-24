@@ -38,7 +38,7 @@
                 <TextBox Margin="8,0,0,0" VerticalAlignment="Center"  Text="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
             </StackPanel>
         </Grid>
-        <gc:SpinControl Grid.Row ="0" Grid.Column="2"  Visibility="{Binding ShowBusy}" Height="150" Width="150" />
+        <gc:SpinControl Grid.Row ="0" Grid.Column="2"  Visibility="{Binding ShowBusy}" HorizontalAlignment="Center"  VerticalAlignment="center" MaxHeight="300" MaxWidth="300" />
         <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}" Visibility="{Binding Show3D}">
 
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"

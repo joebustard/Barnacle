@@ -1,6 +1,7 @@
 using MakerLib;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace Barnacle.Dialogs
 {
@@ -20,6 +21,7 @@ namespace Barnacle.Dialogs
         private string symbolFont;
         private double symbolLength;
         private string warningText;
+        private DispatcherTimer timer;
 
         public SymbolDlg()
         {
@@ -223,8 +225,10 @@ namespace Barnacle.Dialogs
         {
             if (loaded)
             {
-                GenerateShape();
-                Redisplay();
+                ClearShape();
+                ShowBusy = Visibility.Visible;
+
+                timer.Start();
             }
         }
 
@@ -236,11 +240,21 @@ namespace Barnacle.Dialogs
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             loaded = true;
-
+            timer = new DispatcherTimer();
+            timer.Interval = new System.TimeSpan(0, 0, 1);
+            timer.Tick += Timer_Tick;
             UpdateDisplay();
             SymbolSelection.OnSymbolChanged = OnSymbolChanged;
             ShowBusy = Visibility.Hidden;
             Show3D = Visibility.Visible;
+        }
+
+        private void Timer_Tick(object sender, System.EventArgs e)
+        {
+            timer.Stop();
+            GenerateShape();
+            Redisplay();
+            ShowBusy = Visibility.Hidden;
         }
     }
 }
