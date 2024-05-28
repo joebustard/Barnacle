@@ -226,7 +226,7 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 ClearShape();
-                ShowBusy = Visibility.Visible;
+                // ShowBusy = Visibility.Visible;
 
                 timer.Start();
             }

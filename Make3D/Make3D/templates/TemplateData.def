@@ -16,7 +16,7 @@
     <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
       <File Name="Untitled.txt" Source="templates/blankmodel1_35.txt" />
     </Folder>
-    <Folder Name="Backup" AddSubs="True" AddFiles="True" Explorer="True" Clean="False" Export="False" />
+    <Folder Name="Backup" AddSubs="True" AddFiles="False" Explorer="True" Clean="False" Export="False" />
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
     <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
     <Folder Name="Printer" Explorer="True" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
@@ -72,7 +72,7 @@
       <File Name="TurretAssembly.txt" Source="templates/Tank/TurretAssembly1_35.txt" />
       <File Name="WholeTankAssembly.txt" Source="templates/Tank/WholeTankAssembly1_35.txt" />
     </Folder>
-    <Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
+    <Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" />
     <Folder Name="Docs" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True" AutoLoad="True">
       <File Name="BillOfMaterials.xlsx" Source="templates/Tank/tankbom.xlsx" />
       <File Name="BuildInstructions.docx" Source="templates/Tank/TankBuildInstructions.docx" />
@@ -123,7 +123,7 @@
       <File Name="EngineAssembly.txt" Source="templates/EngineAssembly1_35.txt" />
       <File Name="WholeArmouredCarAssembly.txt" Source="templates/WholeArmouredCarAssembly1_35.txt" />
     </Folder>
-    <Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
+    <Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" />
     <Folder Name="Docs" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True" AutoLoad="True">
       <File Name="BillOfMaterials.xlsx" Source="templates/tank/tankbom.xlsx" />
       <File Name="BuildInstructions.docx" Source="templates/tank/TankBuildInstructions.docx" />
@@ -169,7 +169,7 @@
       <File Name="WingsAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="WholeAircraftAssembly.txt" Source="templates/WholeAircraftAssembly1_35.txt" />
     </Folder>
-    <Folder Name="Backup" Explorer="False" Clean="False" Export="True" AddSubs="True" AddFiles="True" />
+    <Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="False" />
     <Folder Name="Docs" Explorer="False" Clean="False" Export="True" AddSubs="True" AddFiles="True">
       <File Name="BillOfMaterials.xlsx" Source="templates/aircraftbillofmaterials.xlsx" />
       <File Name="BuildInstructions.docx" Source="templates/AircraftBuildInstructions.docx" />
@@ -213,7 +213,7 @@
     <Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
       <File Name="AssembledBuilding.txt" Source="templates/blankmodel1_35.txt" />
     </Folder>
-    <Folder Name="Backup" AddSubs="True" AddFiles="True" Explorer="True" Clean="False" Export="False" />
+    <Folder Name="Backup" AddSubs="True" AddFiles="False" Explorer="True" Clean="False" Export="False" />
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
     <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
     <Folder Name="Printer" Explorer="True" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
