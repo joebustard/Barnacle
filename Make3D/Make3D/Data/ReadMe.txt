@@ -25,6 +25,7 @@ Added
 	"Reset to defaults" added to ring lofting
 	Mirror p/down
 	Some presets for aircraft wing shapes.
+	Allow import multi STLs dialog to specify a subfolder to create
 
 Fixed
 	Prevent preset names being loaded twice in flexipathcontrol 

@@ -41,8 +41,7 @@ namespace VisualSolutionExplorer
         // can this folder be opened in explorer
         public bool Explorer { get; set; }
 
-        // should the contents of this folder be exported
-        // when a project export is done
+        // should the contents of this folder be exported when a project export is done
         public bool Export { get; set; }
 
         public string FileTemplate { get; set; }
@@ -58,6 +57,7 @@ namespace VisualSolutionExplorer
         public bool CanAddToLibrary
         {
             get { return canAddToLibrary; }
+
             internal set
             {
                 canAddToLibrary = value;
@@ -146,6 +146,12 @@ namespace VisualSolutionExplorer
         public string CreateNewFolder()
         {
             string folderName = GetNextFolderName("New Folder");
+            String folderPath = CreateNamedFolder(folderName);
+            return folderPath;
+        }
+
+        public string CreateNamedFolder(string folderName)
+        {
             ProjectFolder fo = new ProjectFolder(folderName);
             fo.SupportsSubFolders = SupportsSubFolders;
             fo.SupportsFiles = SupportsFiles;
@@ -470,8 +476,8 @@ namespace VisualSolutionExplorer
 
         internal void Refresh(String baseFolder)
         {
-            // in practice refresh just means update any autoloading folders
-            // with the actual files on disk.
+            // in practice refresh just means update any autoloading folders with the actual files
+            // on disk.
             if (AutoLoad)
             {
                 _projectFiles.Clear();
