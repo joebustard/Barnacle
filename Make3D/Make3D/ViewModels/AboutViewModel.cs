@@ -47,6 +47,7 @@ namespace Barnacle.ViewModels
                 }
             }
         }
+
         public String AppIdentity
         {
             get
