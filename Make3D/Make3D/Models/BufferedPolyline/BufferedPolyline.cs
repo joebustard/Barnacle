@@ -61,6 +61,121 @@ namespace Barnacle.Models.BufferedPolyline
             return GenerateBufferOutline();
         }
 
+        public struct CurvePoint
+        {
+            public Point point;
+            public Vector direction;
+            public double radius;
+            public double angle;
+        }
+
+        public List<CurvePoint> GenerateBufferCurvePoints()
+        {
+            sideSegments.Clear();
+            List<CurvePoint> curvePoints = new List<CurvePoint>();
+            if (coreSegments != null)
+            {
+                foreach (CoreSegment seg in coreSegments)
+                {
+                    Point sp = new Point(seg.Start.X, seg.Start.Y);
+                    Point se = new Point(seg.End.X, seg.End.Y);
+
+                    GetOffsetEdge(sp, se);
+                }
+                for (int si = coreSegments.Count - 1; si >= 0; si--)
+                {
+                    CoreSegment seg = coreSegments[si];
+                    Point sp = new Point(seg.End.X, seg.End.Y);
+                    Point se = new Point(seg.Start.X, seg.Start.Y);
+                    GetOffsetEdge(sp, se, false);
+                    sideSegments[sideSegments.Count - 1].Twin = si;
+                    sideSegments[si].Twin = sideSegments.Count - 1;
+                }
+
+                FixOutlineConnections(sideSegments);
+                CurvePoint cp = new CurvePoint();
+                cp.radius = bufferRadius;
+                cp.point = new Point(coreSegments[0].Start.X, coreSegments[0].Start.Y);
+                cp.direction = new Vector(coreSegments[0].End.X - coreSegments[0].Start.X, coreSegments[0].End.Y - coreSegments[0].Start.Y);
+                cp.angle = Math.Atan2(cp.direction.Y, cp.direction.X);
+                curvePoints.Add(cp);
+                for (int i = 0; i < coreSegments.Count; i++)
+                {
+                    int twin = sideSegments[i].Twin;
+                    if (sideSegments[i].Extensions != null && sideSegments[i].Extensions.Count > 1)
+                    {
+                        Segment opposite = sideSegments[twin];
+                        Point midPoint;
+                        Point midPoint2 = new Point(0, 0);
+                        Point opPoint = opposite.Start;
+                        for (int j = 0; j < sideSegments[i].Extensions.Count - 1; j++)
+                        {
+                            Segment fs = sideSegments[i].Extensions[j];
+                            midPoint = new Point(0, 0);
+                            midPoint.X = opPoint.X + (fs.Start.X - opPoint.X) * 0.5;
+                            midPoint.Y = opPoint.Y + (fs.Start.Y - opPoint.Y) * 0.5;
+
+                            Segment fs2 = sideSegments[i].Extensions[j + 1];
+                            midPoint2 = new Point(0, 0);
+                            midPoint2.X = opPoint.X + (fs2.Start.X - opPoint.X) * 0.5;
+                            midPoint2.Y = opPoint.Y + (fs2.Start.Y - opPoint.Y) * 0.5;
+                            cp.radius = Distance(midPoint, opPoint);
+                            cp.point = new Point(midPoint.X, midPoint.Y);
+                            cp.direction = new Vector(midPoint2.X - midPoint.X, midPoint2.X - midPoint.Y);
+                            cp.angle = Math.Atan2(cp.direction.Y, cp.direction.X);
+                            curvePoints.Add(cp);
+                        }
+                        if (i < coreSegments.Count - 1)
+                        {
+                            cp.radius = bufferRadius;
+                            cp.point = new Point(midPoint2.X, midPoint2.Y);
+                            cp.direction = new Vector(coreSegments[i + 1].End.X - cp.point.X, coreSegments[i + 1].End.Y - cp.point.Y);
+                            cp.angle = Math.Atan2(cp.direction.Y, cp.direction.X);
+                            curvePoints.Add(cp);
+                        }
+                    }
+                    else
+                        if (sideSegments[twin].Extensions != null && sideSegments[twin].Extensions.Count > 1)
+                    {
+                        Segment opposite = sideSegments[i];
+                        Point opPoint = new Point(opposite.End.X, opposite.End.Y);
+                        for (int j = sideSegments[twin].Extensions.Count - 2; j >= 0; j--)
+                        {
+                            Segment fs = sideSegments[twin].Extensions[j];
+                            Point midPoint = new Point(0, 0);
+                            midPoint.X = opPoint.X + (fs.End.X - opPoint.X) * 0.5;
+                            midPoint.Y = opPoint.Y + (fs.End.Y - opPoint.Y) * 0.5;
+
+                            Segment fs2 = sideSegments[i].Extensions[j + 1];
+                            Point midPoint2 = new Point(0, 0);
+                            midPoint2.X = opPoint.X + (fs2.End.X - opPoint.X) * 0.5;
+                            midPoint2.Y = opPoint.Y + (fs2.End.Y - opPoint.Y) * 0.5;
+                            cp.radius = Distance(midPoint, opPoint);
+                            cp.point = new Point(midPoint.X, midPoint.Y);
+                            cp.direction = new Vector(midPoint2.X - midPoint.X, midPoint2.X - midPoint.Y);
+                            cp.angle = Math.Atan2(cp.direction.Y, cp.direction.X);
+                            curvePoints.Add(cp);
+                        }
+                    }
+                    else
+                    {
+                        cp.radius = bufferRadius;
+                        cp.point = new Point(coreSegments[i].End.X, coreSegments[i].End.Y);
+                        cp.direction = new Vector(coreSegments[i].End.X - curvePoints[curvePoints.Count - 1].point.X, coreSegments[i].End.Y - curvePoints[curvePoints.Count - 1].point.Y);
+                        cp.angle = Math.Atan2(cp.direction.Y, cp.direction.X);
+                        curvePoints.Add(cp);
+                    }
+                }
+
+                LoggerLib.Logger.LogLine("-------------");
+                foreach (CurvePoint cp1 in curvePoints)
+                {
+                    LoggerLib.Logger.LogLine($"cp {cp1.point.X},{cp1.point.Y}, v= {cp1.direction.X},{cp1.direction.Y}, r = {cp1.radius}, a = {cp1.angle}");
+                }
+            }
+            return curvePoints;
+        }
+
         /// <summary>
         /// Assuming we have been given a polyline and its been stored in the Coresegments, generate
         /// the outline, offset by BufferRadius
@@ -159,7 +274,7 @@ namespace Barnacle.Models.BufferedPolyline
             double dx2 = p2.X - centre.X;
 
             double endAngle = Math.Atan2(dy2, dx2);
-            int numdiv = 4;
+            int numdiv = 6;
             double theta;
             Point? oldp = null;
 
@@ -346,6 +461,13 @@ namespace Barnacle.Models.BufferedPolyline
                 res = true;
             }
             return res;
+        }
+
+        private double Distance(Point p1, Point p2)
+        {
+            double dist = (p2.X - p1.X) * (p2.X - p1.X) +
+                 (p2.Y - p1.Y) * (p2.Y - p1.Y);
+            return Math.Sqrt(dist);
         }
     }
 }
