@@ -19,5 +19,6 @@ namespace Barnacle.Models.BufferedPolyline
         public List<Segment> Extensions { get; set; }
         public bool Outbound { get; set; }
         public Point Start { get; set; }
+        public int Twin { get; internal set; }
     }
 }

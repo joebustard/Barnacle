@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Media3D;
+using static Barnacle.Models.BufferedPolyline.BufferedPolyline;
 using Triangle = PolygonTriangulationLib.Triangle;
 
 namespace Barnacle.Dialogs
@@ -329,8 +330,21 @@ namespace Barnacle.Dialogs
                     }
 
                     CentreVertices();
+
+                    TestCurve();
                 }
             }
+        }
+
+        private void TestCurve()
+        {
+            List<Point> pnts = new List<Point>();
+            pnts.Add(new Point(10, 10));
+            pnts.Add(new Point(20, 10));
+            pnts.Add(new Point(20, 20));
+            BufferedPolyline bl = new BufferedPolyline(pnts);
+            bl.BufferRadius = loftThickness / 2;
+            List<CurvePoint> curvePoints = bl.GenerateBufferCurvePoints();
         }
 
         private void LoadEditorParameters()
