@@ -13,7 +13,7 @@ namespace Barnacle.Models.Mru
         {
             recentFilesList = new List<MruEntry>();
             Name = "Mru";
-            NumberToRemember = 120;
+            NumberToRemember = 150;
             LoadMru();
         }
 
