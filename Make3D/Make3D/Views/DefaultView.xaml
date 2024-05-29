@@ -1140,7 +1140,7 @@
               x:Name="MyGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding TabPanelWidth}" />
-                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="10" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <!--         <DockPanel LastChildFill="True"> -->
@@ -1210,7 +1210,7 @@
                 </TabItem>
             </TabControl>
 
-            <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
+            <GridSplitter Grid.Row="0" Grid.Column="1" Style="{StaticResource GridSplitterStyle}" />
             <ScrollViewer Grid.Column="2" HorizontalAlignment="Stretch"
                               HorizontalScrollBarVisibility="Auto"
                               VerticalAlignment="Stretch"
