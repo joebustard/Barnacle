@@ -64,6 +64,8 @@
             <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="8,0,0,0">
                 <Label VerticalAlignment="Center" Width="75">Height</Label>
                 <TextBox Margin="8,2,0,0" Text="{Binding LoftHeight}" Width="75" ToolTip="{Binding LoftHeightToolTip}" />
+                <RadioButton VerticalAlignment="Center" Margin="8,2,0,0" Width="75" IsChecked="{Binding FlatShape}" Content="Flat" GroupName="ShapeGroup" />
+                <RadioButton VerticalAlignment="Center" Margin="8,2,0,0" Width="75" IsChecked="{Binding RoundShape}" Content="Round" GroupName="ShapeGroup" />
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="8,0,0,0">
                 <Label VerticalAlignment="Center" Width="75">Thickness</Label>

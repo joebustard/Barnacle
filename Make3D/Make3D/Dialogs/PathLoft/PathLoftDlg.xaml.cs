@@ -49,6 +49,39 @@ namespace Barnacle.Dialogs
         private string warningText;
         private double xExtent;
         private double yExtent;
+        private bool flatShape;
+
+        public bool FlatShape
+        {
+            get { return flatShape; }
+
+            set
+            {
+                if (value != flatShape)
+                {
+                    flatShape = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        private bool roundShape;
+
+        public bool RoundShape
+        {
+            get { return roundShape; }
+
+            set
+            {
+                if (value != roundShape)
+                {
+                    roundShape = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
 
         public PathLoftDlg()
         {
@@ -259,7 +292,14 @@ namespace Barnacle.Dialogs
             ClearShape();
             if (pathPoints != null && pathPoints.Count > 0)
             {
-                GenerateFlat();
+                if (flatShape)
+                {
+                    GenerateFlat();
+                }
+                else
+                {
+                    GenerateRound();
+                }
             }
         }
 
@@ -321,19 +361,18 @@ namespace Barnacle.Dialogs
                 }
 
                 CentreVertices();
-
-               
             }
         }
-
 
         private void GenerateRound()
         {
             BufferedPolyline bl = new BufferedPolyline(pathPoints);
             bl.BufferRadius = loftThickness / 2;
-            List<Point> outline = bl.GenerateBufferOutline();
-            if (outline != null && outline.Count > 3)
+            List<CurvePoint> curvePoints = bl.GenerateBufferCurvePoints();
+            bl.BufferRadius = loftThickness / 2;
+            if (curvePoints != null && curvePoints.Count > 1)
             {
+                /*
                 List<System.Windows.Point> tmp = new List<System.Windows.Point>();
                 double top = 0;
                 for (int i = 0; i < outline.Count; i++)
@@ -383,10 +422,8 @@ namespace Barnacle.Dialogs
                     Faces.Add(c1);
                     Faces.Add(c2);
                 }
-
+                */
                 CentreVertices();
-
-                TestCurve();
             }
         }
 
@@ -416,6 +453,8 @@ namespace Barnacle.Dialogs
             {
                 PathEditor.FromString(s);
             }
+            FlatShape = EditorParameters.GetBoolean("FlatShape", true);
+            RoundShape = EditorParameters.GetBoolean("RoundShape", false);
         }
 
         private void PathPointsChanged(List<Point> points)
@@ -438,6 +477,8 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("LoftThickness", LoftThickness.ToString());
             EditorParameters.Set("Path", PathEditor.AbsolutePathString);
             EditorParameters.Set("ImagePath", PathEditor.ImagePath);
+            EditorParameters.Set("FlatShape", FlatShape.ToString());
+            EditorParameters.Set("RoundShape", RoundShape.ToString());
         }
 
         private void UpdateDisplay()
@@ -454,7 +495,6 @@ namespace Barnacle.Dialogs
             WarningText = "";
             // should flexi control give us live point updates while lines are dragged. Computing
             // new line costs too much so , no, instead wait until mouse up
-
             PathEditor.OpenEndedPath = true;
             LoadEditorParameters();
 
