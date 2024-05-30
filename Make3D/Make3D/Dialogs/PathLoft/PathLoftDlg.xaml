@@ -6,7 +6,7 @@
                               xmlns:ctrls="clr-namespace:Barnacle.UserControls"
         xmlns:local="clr-namespace:Barnacle.Dialogs"
         mc:Ignorable="d"
-        Title="Path" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
+        Title="Path" Height="450" Width="900" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -62,12 +62,12 @@
                 </Viewport3D>
             </Border>
             <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="8,0,0,0">
-                <Label VerticalAlignment="Center" Width="100">Height</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding LoftHeight}" Width="150" ToolTip="{Binding LoftHeightToolTip}" />
+                <Label VerticalAlignment="Center" Width="75">Height</Label>
+                <TextBox Margin="8,2,0,0" Text="{Binding LoftHeight}" Width="75" ToolTip="{Binding LoftHeightToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="8,0,0,0">
-                <Label VerticalAlignment="Center" Width="100">Thickness</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding LoftThickness}" Width="150" ToolTip="{Binding LoftThicknessToolTip}" />
+                <Label VerticalAlignment="Center" Width="75">Thickness</Label>
+                <TextBox Margin="8,2,0,0" Text="{Binding LoftThickness}" Width="75" ToolTip="{Binding LoftThicknessToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />

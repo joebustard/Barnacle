@@ -146,7 +146,7 @@ namespace Barnacle.Models.BufferedPolyline
                             midPoint.X = opPoint.X + (fs.End.X - opPoint.X) * 0.5;
                             midPoint.Y = opPoint.Y + (fs.End.Y - opPoint.Y) * 0.5;
 
-                            Segment fs2 = sideSegments[i].Extensions[j + 1];
+                            Segment fs2 = sideSegments[twin].Extensions[j + 1];
                             Point midPoint2 = new Point(0, 0);
                             midPoint2.X = opPoint.X + (fs2.End.X - opPoint.X) * 0.5;
                             midPoint2.Y = opPoint.Y + (fs2.End.Y - opPoint.Y) * 0.5;

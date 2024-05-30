@@ -259,80 +259,134 @@ namespace Barnacle.Dialogs
             ClearShape();
             if (pathPoints != null && pathPoints.Count > 0)
             {
-                BufferedPolyline bl = new BufferedPolyline(pathPoints);
-                bl.BufferRadius = loftThickness / 2;
-                List<Point> outline = bl.GenerateBufferOutline();
-                if (outline != null && outline.Count > 3)
+                GenerateFlat();
+            }
+        }
+
+        private void GenerateFlat()
+        {
+            BufferedPolyline bl = new BufferedPolyline(pathPoints);
+            bl.BufferRadius = loftThickness / 2;
+            List<Point> outline = bl.GenerateBufferOutline();
+            if (outline != null && outline.Count > 3)
+            {
+                List<System.Windows.Point> tmp = new List<System.Windows.Point>();
+                double top = 0;
+                for (int i = 0; i < outline.Count; i++)
                 {
-                    List<System.Windows.Point> tmp = new List<System.Windows.Point>();
-                    double top = 0;
-                    for (int i = 0; i < outline.Count; i++)
+                    if (outline[i].Y > top)
                     {
-                        if (outline[i].Y > top)
-                        {
-                            top = outline[i].Y;
-                        }
+                        top = outline[i].Y;
                     }
-                    for (int i = 0; i < outline.Count; i++)
-                    {
-                        tmp.Add(new Point(outline[i].X, top - outline[i].Y));
-                    }
-                    /*
-                    if (PathEditor.LocalImage == null)
-                    {
-                    }
-                    else
-                    {
-                        for (int i = 0; i < outline.Count; i++)
-                        {
-                            double x = PathEditor.ToMM(outline[i].X);
-                            double y = PathEditor.ToMM(top - outline[i].Y);
-
-                            tmp.Add(new System.Windows.Point(x, y));
-                        }
-                    }
-                    */
-                    double lx, rx, ty, by;
-                    CalculateExtents(tmp, out lx, out rx, out ty, out by);
-
-                    octTree = CreateOctree(new Point3D(-lx, -by, -1),
-                                            new Point3D(+rx, +ty, loftHeight + 1));
-
-                    for (int i = 0; i < tmp.Count; i++)
-                    {
-                        CreateSideFace(tmp, i);
-                    }
-
-                    // triangulate the basic polygon
-                    TriangulationPolygon ply = new TriangulationPolygon();
-                    List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
-                    foreach (System.Windows.Point p in tmp)
-                    {
-                        pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
-                    }
-                    ply.Points = pf.ToArray();
-                    List<Triangle> tris = ply.Triangulate();
-                    foreach (Triangle t in tris)
-                    {
-                        int c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, 0.0);
-                        int c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, 0.0);
-                        int c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, 0.0);
-                        Faces.Add(c0);
-                        Faces.Add(c2);
-                        Faces.Add(c1);
-
-                        c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, loftHeight);
-                        c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, loftHeight);
-                        c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, loftHeight);
-                        Faces.Add(c0);
-                        Faces.Add(c1);
-                        Faces.Add(c2);
-                    }
-
-                    CentreVertices();
-
-                    TestCurve();
                 }
+                for (int i = 0; i < outline.Count; i++)
+                {
+                    tmp.Add(new Point(outline[i].X, top - outline[i].Y));
+                }
+                double lx, rx, ty, by;
+                CalculateExtents(tmp, out lx, out rx, out ty, out by);
+
+                octTree = CreateOctree(new Point3D(-lx, -by, -1),
+                                        new Point3D(+rx, +ty, loftHeight + 1));
+
+                for (int i = 0; i < tmp.Count; i++)
+                {
+                    CreateSideFace(tmp, i);
+                }
+
+                // triangulate the basic polygon
+                TriangulationPolygon ply = new TriangulationPolygon();
+                List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
+                foreach (System.Windows.Point p in tmp)
+                {
+                    pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
+                }
+                ply.Points = pf.ToArray();
+                List<Triangle> tris = ply.Triangulate();
+                foreach (Triangle t in tris)
+                {
+                    int c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, 0.0);
+                    int c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, 0.0);
+                    int c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, 0.0);
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+
+                    c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, loftHeight);
+                    c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, loftHeight);
+                    c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, loftHeight);
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+                }
+
+                CentreVertices();
+
+               
+            }
+        }
+
+
+        private void GenerateRound()
+        {
+            BufferedPolyline bl = new BufferedPolyline(pathPoints);
+            bl.BufferRadius = loftThickness / 2;
+            List<Point> outline = bl.GenerateBufferOutline();
+            if (outline != null && outline.Count > 3)
+            {
+                List<System.Windows.Point> tmp = new List<System.Windows.Point>();
+                double top = 0;
+                for (int i = 0; i < outline.Count; i++)
+                {
+                    if (outline[i].Y > top)
+                    {
+                        top = outline[i].Y;
+                    }
+                }
+                for (int i = 0; i < outline.Count; i++)
+                {
+                    tmp.Add(new Point(outline[i].X, top - outline[i].Y));
+                }
+                double lx, rx, ty, by;
+                CalculateExtents(tmp, out lx, out rx, out ty, out by);
+
+                octTree = CreateOctree(new Point3D(-lx, -by, -1),
+                                        new Point3D(+rx, +ty, loftHeight + 1));
+
+                for (int i = 0; i < tmp.Count; i++)
+                {
+                    CreateSideFace(tmp, i);
+                }
+
+                // triangulate the basic polygon
+                TriangulationPolygon ply = new TriangulationPolygon();
+                List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
+                foreach (System.Windows.Point p in tmp)
+                {
+                    pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
+                }
+                ply.Points = pf.ToArray();
+                List<Triangle> tris = ply.Triangulate();
+                foreach (Triangle t in tris)
+                {
+                    int c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, 0.0);
+                    int c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, 0.0);
+                    int c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, 0.0);
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+
+                    c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, loftHeight);
+                    c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, loftHeight);
+                    c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, loftHeight);
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+                }
+
+                CentreVertices();
+
+                TestCurve();
             }
         }
 
@@ -341,7 +395,7 @@ namespace Barnacle.Dialogs
             List<Point> pnts = new List<Point>();
             pnts.Add(new Point(10, 10));
             pnts.Add(new Point(20, 10));
-            pnts.Add(new Point(20, 20));
+            pnts.Add(new Point(25, 0));
             BufferedPolyline bl = new BufferedPolyline(pnts);
             bl.BufferRadius = loftThickness / 2;
             List<CurvePoint> curvePoints = bl.GenerateBufferCurvePoints();
