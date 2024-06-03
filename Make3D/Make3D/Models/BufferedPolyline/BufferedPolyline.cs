@@ -99,12 +99,15 @@ namespace Barnacle.Models.BufferedPolyline
                 cp.direction = new Vector(coreSegments[0].End.X - coreSegments[0].Start.X, coreSegments[0].End.Y - coreSegments[0].Start.Y);
                 cp.angle = Math.Atan2(cp.direction.Y, cp.direction.X);
                 curvePoints.Add(cp);
+                LoggerLib.Logger.LogLine($"GenerateBufferCurvePoints ");
                 for (int i = 0; i < coreSegments.Count; i++)
                 {
                     int twin = sideSegments[i].Twin;
+                    LoggerLib.Logger.LogLine($"Check SideSegment {i}");
                     // does the side segment to the left have any curve extensions
                     if (sideSegments[i].Extensions != null && sideSegments[i].Extensions.Count > 1)
                     {
+                        LoggerLib.Logger.LogLine($"Side {i} has {sideSegments[i].Extensions.Count} extensions");
                         Segment opposite = sideSegments[twin];
                         Point midPoint;
                         Point midPoint2 = new Point(0, 0);
@@ -128,6 +131,7 @@ namespace Barnacle.Models.BufferedPolyline
                         }
                         if (i < coreSegments.Count - 1)
                         {
+                            LoggerLib.Logger.LogLine($"Adding cp at midpoint2");
                             cp.radius = bufferRadius;
                             cp.point = new Point(midPoint2.X, midPoint2.Y);
                             cp.direction = new Vector(coreSegments[i + 1].End.X - cp.point.X, coreSegments[i + 1].End.Y - cp.point.Y);
@@ -138,16 +142,17 @@ namespace Barnacle.Models.BufferedPolyline
                     else
                     if (sideSegments[twin].Extensions != null && sideSegments[twin].Extensions.Count > 1)
                     {
+                        LoggerLib.Logger.LogLine($"Twin  {twin} has {sideSegments[twin].Extensions.Count} extensions");
                         Segment opposite = sideSegments[i];
-                        Point opPoint = new Point(opposite.End.X, opposite.End.Y);
-                        for (int j = sideSegments[twin].Extensions.Count - 2; j >= 0; j--)
+                        Point opPoint = new Point(opposite.Start.X, opposite.Start.Y);
+                        for (int j = sideSegments[twin].Extensions.Count - 1; j > 0; j--)
                         {
                             Segment fs = sideSegments[twin].Extensions[j];
                             Point midPoint = new Point(0, 0);
                             midPoint.X = opPoint.X + (fs.End.X - opPoint.X) * 0.5;
                             midPoint.Y = opPoint.Y + (fs.End.Y - opPoint.Y) * 0.5;
 
-                            Segment fs2 = sideSegments[twin].Extensions[j + 1];
+                            Segment fs2 = sideSegments[twin].Extensions[j - 1];
                             Point midPoint2 = new Point(0, 0);
                             midPoint2.X = opPoint.X + (fs2.End.X - opPoint.X) * 0.5;
                             midPoint2.Y = opPoint.Y + (fs2.End.Y - opPoint.Y) * 0.5;
@@ -160,6 +165,7 @@ namespace Barnacle.Models.BufferedPolyline
                     }
                     else
                     {
+                        LoggerLib.Logger.LogLine($"Side {i} no extensions");
                         // no extensions at all
                         cp.radius = bufferRadius;
                         cp.point = new Point(coreSegments[i].End.X, coreSegments[i].End.Y);
@@ -168,6 +174,13 @@ namespace Barnacle.Models.BufferedPolyline
                         curvePoints.Add(cp);
                     }
                 }
+                LoggerLib.Logger.LogLine($"add end");
+                int last = coreSegments.Count - 1;
+                cp.radius = bufferRadius;
+                cp.point = new Point(coreSegments[last].End.X, coreSegments[last].End.Y);
+                cp.direction = new Vector(coreSegments[last].End.X - coreSegments[last].Start.X, coreSegments[last].End.Y - coreSegments[last].Start.Y);
+                cp.angle = Math.Atan2(cp.direction.Y, cp.direction.X);
+                curvePoints.Add(cp);
 
                 LoggerLib.Logger.LogLine("-------------");
                 foreach (CurvePoint cp1 in curvePoints)

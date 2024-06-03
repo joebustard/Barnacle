@@ -428,6 +428,10 @@ namespace Barnacle.Dialogs
                         Faces.Add(p0);
                         Faces.Add(p1);
                         Faces.Add(p2);
+
+                        Faces.Add(p1);
+                        Faces.Add(p3);
+                        Faces.Add(p2);
                     }
                 }
 
