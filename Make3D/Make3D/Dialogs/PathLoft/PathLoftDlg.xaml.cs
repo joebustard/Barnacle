@@ -16,6 +16,7 @@
 **************************************************************************/
 
 using Barnacle.Models.BufferedPolyline;
+using Barnacle.Object3DLib;
 using OctTreeLib;
 using PolygonTriangulationLib;
 using System;
@@ -298,7 +299,7 @@ namespace Barnacle.Dialogs
                 }
                 else
                 {
-                    GenerateRound();
+                    GenerateRound(10);
                 }
             }
         }
@@ -364,7 +365,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void GenerateRound()
+        private void GenerateRound(int numCircumferencePoints)
         {
             BufferedPolyline bl = new BufferedPolyline(pathPoints);
             bl.BufferRadius = loftThickness / 2;
@@ -372,6 +373,64 @@ namespace Barnacle.Dialogs
             bl.BufferRadius = loftThickness / 2;
             if (curvePoints != null && curvePoints.Count > 1)
             {
+                List<Point3D> circumference = new List<Point3D>();
+                double dt = (2 * Math.PI) / numCircumferencePoints;
+                double theta = 0;
+                for (int i = 0; i < numCircumferencePoints; i++)
+                {
+                    Point p = CalcPoint(theta, bl.BufferRadius);
+                    circumference.Add(new Point3D(0, p.Y, p.X));
+                    theta += dt;
+                }
+                double lx, rx, ty, by, bz, fz;
+                lx = by = bz = double.MaxValue;
+                rx = ty = fz = double.MinValue;
+
+                Point3D[,] surface = new Point3D[curvePoints.Count, numCircumferencePoints];
+                for (int i = 0; i < curvePoints.Count; i++)
+                {
+                    double rotation = curvePoints[i].angle;
+                    List<Point3D> tmp = RotatePoints(circumference, 0, rotation, 0);
+                    for (int j = 0; j < numCircumferencePoints; j++)
+                    {
+                        Point3D pn = tmp[j];
+                        pn.X += curvePoints[i].point.X;
+                        pn.Y += curvePoints[i].point.Y;
+
+                        surface[i, j] = pn;
+                        if (pn.X < lx) lx = pn.X;
+                        if (pn.X > rx) rx = pn.X;
+                        if (pn.Y < by) by = pn.Y;
+                        if (pn.Y > ty) ty = pn.Y;
+                        if (pn.Z < bz) bz = pn.Z;
+                        if (pn.Z > fz) fz = pn.Z;
+                    }
+                }
+
+                octTree = CreateOctree(new Point3D(lx - 10, by - 10, bz - 10),
+                                       new Point3D(rx + 10, ty + 10, fz + 10));
+
+                for (int i = 0; i < curvePoints.Count - 1; i++)
+                {
+                    for (int j = 0; j < numCircumferencePoints; j++)
+                    {
+                        int k = j + 1;
+                        if (k == numCircumferencePoints)
+                        {
+                            k = 0;
+                        }
+
+                        int p0 = AddVerticeOctTree(surface[i, j].X, ty - surface[i, j].Y, surface[i, j].Z);
+                        int p1 = AddVerticeOctTree(surface[i + 1, j].X, ty - surface[i + 1, j].Y, surface[i + 1, j].Z);
+                        int p2 = AddVerticeOctTree(surface[i, k].X, ty - surface[i, k].Y, surface[i, k].Z);
+                        int p3 = AddVerticeOctTree(surface[i + 1, k].X, ty - surface[i + 1, k].Y, surface[i + 1, k].Z);
+
+                        Faces.Add(p0);
+                        Faces.Add(p1);
+                        Faces.Add(p2);
+                    }
+                }
+
                 /*
                 List<System.Windows.Point> tmp = new List<System.Windows.Point>();
                 double top = 0;
@@ -425,6 +484,41 @@ namespace Barnacle.Dialogs
                 */
                 CentreVertices();
             }
+        }
+
+        private List<Point3D> RotatePoints(List<Point3D> pnts, double r1, double r2, double r3)
+        {
+            List<Point3D> tmp = new List<Point3D>();
+            float cosa = (float)Math.Cos(r2);
+            float sina = (float)Math.Sin(r2);
+
+            float cosb = (float)Math.Cos(r1);
+            float sinb = (float)Math.Sin(r1);
+
+            float cosc = (float)Math.Cos(r3);
+            float sinc = (float)Math.Sin(r3);
+
+            float Axx = cosa * cosb;
+            float Axy = cosa * sinb * sinc - sina * cosc;
+            float Axz = cosa * sinb * cosc + sina * sinc;
+
+            float Ayx = sina * cosb;
+            float Ayy = sina * sinb * sinc + cosa * cosc;
+            float Ayz = sina * sinb * cosc - cosa * sinc;
+
+            float Azx = -sinb;
+            float Azy = cosb * sinc;
+            float Azz = cosb * cosc;
+            foreach (Point3D cp in pnts)
+            {
+                Point3D rp = new Point3D();
+                rp.X = Axx * cp.X + Axy * cp.Y + Axz * cp.Z;
+                rp.Y = Ayx * cp.X + Ayy * cp.Y + Ayz * cp.Z;
+                rp.Z = Azx * cp.X + Azy * cp.Y + Azz * cp.Z;
+
+                tmp.Add(rp);
+            }
+            return tmp;
         }
 
         private void TestCurve()

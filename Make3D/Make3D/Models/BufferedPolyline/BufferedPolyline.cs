@@ -102,6 +102,7 @@ namespace Barnacle.Models.BufferedPolyline
                 for (int i = 0; i < coreSegments.Count; i++)
                 {
                     int twin = sideSegments[i].Twin;
+                    // does the side segment to the left have any curve extensions
                     if (sideSegments[i].Extensions != null && sideSegments[i].Extensions.Count > 1)
                     {
                         Segment opposite = sideSegments[twin];
@@ -135,7 +136,7 @@ namespace Barnacle.Models.BufferedPolyline
                         }
                     }
                     else
-                        if (sideSegments[twin].Extensions != null && sideSegments[twin].Extensions.Count > 1)
+                    if (sideSegments[twin].Extensions != null && sideSegments[twin].Extensions.Count > 1)
                     {
                         Segment opposite = sideSegments[i];
                         Point opPoint = new Point(opposite.End.X, opposite.End.Y);
@@ -152,16 +153,17 @@ namespace Barnacle.Models.BufferedPolyline
                             midPoint2.Y = opPoint.Y + (fs2.End.Y - opPoint.Y) * 0.5;
                             cp.radius = Distance(midPoint, opPoint);
                             cp.point = new Point(midPoint.X, midPoint.Y);
-                            cp.direction = new Vector(midPoint2.X - midPoint.X, midPoint2.X - midPoint.Y);
+                            cp.direction = new Vector(midPoint2.X - midPoint.X, midPoint2.Y - midPoint.Y);
                             cp.angle = Math.Atan2(cp.direction.Y, cp.direction.X);
                             curvePoints.Add(cp);
                         }
                     }
                     else
                     {
+                        // no extensions at all
                         cp.radius = bufferRadius;
                         cp.point = new Point(coreSegments[i].End.X, coreSegments[i].End.Y);
-                        cp.direction = new Vector(coreSegments[i].End.X - curvePoints[curvePoints.Count - 1].point.X, coreSegments[i].End.Y - curvePoints[curvePoints.Count - 1].point.Y);
+                        cp.direction = new Vector(coreSegments[i].End.X - coreSegments[i].Start.X, coreSegments[i].End.Y - coreSegments[i].Start.Y);
                         cp.angle = Math.Atan2(cp.direction.Y, cp.direction.X);
                         curvePoints.Add(cp);
                     }
