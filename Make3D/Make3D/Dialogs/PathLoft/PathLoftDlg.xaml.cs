@@ -435,57 +435,42 @@ namespace Barnacle.Dialogs
                     }
                 }
 
-                /*
-                List<System.Windows.Point> tmp = new List<System.Windows.Point>();
-                double top = 0;
-                for (int i = 0; i < outline.Count; i++)
+                // close start
+                int cp = AddVerticeOctTree(curvePoints[0].point.X, ty - curvePoints[0].point.Y, 0);
+                for (int j = 0; j < numCircumferencePoints; j++)
                 {
-                    if (outline[i].Y > top)
+                    int k = j + 1;
+                    if (k == numCircumferencePoints)
                     {
-                        top = outline[i].Y;
+                        k = 0;
                     }
-                }
-                for (int i = 0; i < outline.Count; i++)
-                {
-                    tmp.Add(new Point(outline[i].X, top - outline[i].Y));
-                }
-                double lx, rx, ty, by;
-                CalculateExtents(tmp, out lx, out rx, out ty, out by);
 
-                octTree = CreateOctree(new Point3D(-lx, -by, -1),
-                                        new Point3D(+rx, +ty, loftHeight + 1));
+                    int p1 = AddVerticeOctTree(surface[0, j].X, ty - surface[0, j].Y, surface[0, j].Z);
+                    int p2 = AddVerticeOctTree(surface[0, k].X, ty - surface[0, k].Y, surface[0, k].Z);
 
-                for (int i = 0; i < tmp.Count; i++)
-                {
-                    CreateSideFace(tmp, i);
+                    Faces.Add(cp);
+                    Faces.Add(p1);
+                    Faces.Add(p2);
                 }
 
-                // triangulate the basic polygon
-                TriangulationPolygon ply = new TriangulationPolygon();
-                List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
-                foreach (System.Windows.Point p in tmp)
+                // close end
+                int last = curvePoints.Count - 1;
+                cp = AddVerticeOctTree(curvePoints[last].point.X, ty - curvePoints[last].point.Y, 0);
+                for (int j = 0; j < numCircumferencePoints; j++)
                 {
-                    pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
-                }
-                ply.Points = pf.ToArray();
-                List<Triangle> tris = ply.Triangulate();
-                foreach (Triangle t in tris)
-                {
-                    int c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, 0.0);
-                    int c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, 0.0);
-                    int c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, 0.0);
-                    Faces.Add(c0);
-                    Faces.Add(c2);
-                    Faces.Add(c1);
+                    int k = j + 1;
+                    if (k == numCircumferencePoints)
+                    {
+                        k = 0;
+                    }
 
-                    c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, loftHeight);
-                    c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, loftHeight);
-                    c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, loftHeight);
-                    Faces.Add(c0);
-                    Faces.Add(c1);
-                    Faces.Add(c2);
+                    int p1 = AddVerticeOctTree(surface[last, j].X, ty - surface[last, j].Y, surface[last, j].Z);
+                    int p2 = AddVerticeOctTree(surface[last, k].X, ty - surface[last, k].Y, surface[last, k].Z);
+
+                    Faces.Add(cp);
+                    Faces.Add(p2);
+                    Faces.Add(p1);
                 }
-                */
                 CentreVertices();
             }
         }

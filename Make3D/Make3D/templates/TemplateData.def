@@ -19,7 +19,7 @@
     <Folder Name="Backup" AddSubs="True" AddFiles="False" Explorer="True" Clean="False" Export="False" />
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
     <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
-    <Folder Name="Printer" Explorer="True" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
+    <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt" Run="True" Edit="True">
     </Folder>
     <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
@@ -79,7 +79,7 @@
     </Folder>
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
     <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
-    <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
+    <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
       <File Name="GlobalDefinitions.txt" Source="templates/Tank/TankGlobals.txt" />
     </Folder>
@@ -130,7 +130,7 @@
     </Folder>
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
     <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
-    <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
+    <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
     </Folder>
     <InitialFile>
@@ -216,7 +216,7 @@
     <Folder Name="Backup" AddSubs="True" AddFiles="False" Explorer="True" Clean="False" Export="False" />
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
     <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
-    <Folder Name="Printer" Explorer="True" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
+    <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt" Run="True" Edit="True">
     </Folder>
     <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">

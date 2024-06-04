@@ -103,43 +103,7 @@ namespace Barnacle.Models.BufferedPolyline
                 for (int i = 0; i < coreSegments.Count; i++)
                 {
                     int twin = sideSegments[i].Twin;
-                    LoggerLib.Logger.LogLine($"Check SideSegment {i}");
-                    // does the side segment to the left have any curve extensions
-                    if (sideSegments[i].Extensions != null && sideSegments[i].Extensions.Count > 1)
-                    {
-                        LoggerLib.Logger.LogLine($"Side {i} has {sideSegments[i].Extensions.Count} extensions");
-                        Segment opposite = sideSegments[twin];
-                        Point midPoint;
-                        Point midPoint2 = new Point(0, 0);
-                        Point opPoint = opposite.Start;
-                        for (int j = 0; j < sideSegments[i].Extensions.Count - 1; j++)
-                        {
-                            Segment fs = sideSegments[i].Extensions[j];
-                            midPoint = new Point(0, 0);
-                            midPoint.X = opPoint.X + (fs.Start.X - opPoint.X) * 0.5;
-                            midPoint.Y = opPoint.Y + (fs.Start.Y - opPoint.Y) * 0.5;
-
-                            Segment fs2 = sideSegments[i].Extensions[j + 1];
-                            midPoint2 = new Point(0, 0);
-                            midPoint2.X = opPoint.X + (fs2.Start.X - opPoint.X) * 0.5;
-                            midPoint2.Y = opPoint.Y + (fs2.Start.Y - opPoint.Y) * 0.5;
-                            cp.radius = Distance(midPoint, opPoint);
-                            cp.point = new Point(midPoint.X, midPoint.Y);
-                            cp.direction = new Vector(midPoint2.X - midPoint.X, midPoint2.X - midPoint.Y);
-                            cp.angle = Math.Atan2(cp.direction.Y, cp.direction.X);
-                            curvePoints.Add(cp);
-                        }
-                        if (i < coreSegments.Count - 1)
-                        {
-                            LoggerLib.Logger.LogLine($"Adding cp at midpoint2");
-                            cp.radius = bufferRadius;
-                            cp.point = new Point(midPoint2.X, midPoint2.Y);
-                            cp.direction = new Vector(coreSegments[i + 1].End.X - cp.point.X, coreSegments[i + 1].End.Y - cp.point.Y);
-                            cp.angle = Math.Atan2(cp.direction.Y, cp.direction.X);
-                            curvePoints.Add(cp);
-                        }
-                    }
-                    else
+                    bool addEnd = true;
                     if (sideSegments[twin].Extensions != null && sideSegments[twin].Extensions.Count > 1)
                     {
                         LoggerLib.Logger.LogLine($"Twin  {twin} has {sideSegments[twin].Extensions.Count} extensions");
@@ -163,7 +127,45 @@ namespace Barnacle.Models.BufferedPolyline
                             curvePoints.Add(cp);
                         }
                     }
-                    else
+                    LoggerLib.Logger.LogLine($"Check SideSegment {i}");
+                    // does the side segment to the left have any curve extensions
+                    if (sideSegments[i].Extensions != null && sideSegments[i].Extensions.Count > 1)
+                    {
+                        LoggerLib.Logger.LogLine($"Side {i} has {sideSegments[i].Extensions.Count} extensions");
+                        Segment opposite = sideSegments[twin];
+                        Point midPoint;
+                        Point midPoint2 = new Point(0, 0);
+                        Point opPoint = opposite.Start;
+                        for (int j = 0; j < sideSegments[i].Extensions.Count - 1; j++)
+                        {
+                            Segment fs = sideSegments[i].Extensions[j];
+                            midPoint = new Point(0, 0);
+                            midPoint.X = opPoint.X + (fs.Start.X - opPoint.X) * 0.5;
+                            midPoint.Y = opPoint.Y + (fs.Start.Y - opPoint.Y) * 0.5;
+
+                            Segment fs2 = sideSegments[i].Extensions[j + 1];
+                            midPoint2 = new Point(0, 0);
+                            midPoint2.X = opPoint.X + (fs2.Start.X - opPoint.X) * 0.5;
+                            midPoint2.Y = opPoint.Y + (fs2.Start.Y - opPoint.Y) * 0.5;
+                            cp.radius = Distance(midPoint, opPoint);
+                            cp.point = new Point(midPoint.X, midPoint.Y);
+                            cp.direction = new Vector(midPoint2.X - midPoint.X, midPoint2.Y - midPoint.Y);
+                            cp.angle = Math.Atan2(cp.direction.Y, cp.direction.X);
+                            curvePoints.Add(cp);
+                        }
+                        if (i < coreSegments.Count - 1)
+                        {
+                            LoggerLib.Logger.LogLine($"Adding cp at midpoint2");
+                            cp.radius = bufferRadius;
+                            cp.point = new Point(midPoint2.X, midPoint2.Y);
+                            cp.direction = new Vector(coreSegments[i + 1].End.X - cp.point.X, coreSegments[i + 1].End.Y - cp.point.Y);
+                            cp.angle = Math.Atan2(cp.direction.Y, cp.direction.X);
+                            curvePoints.Add(cp);
+                        }
+                        addEnd = false;
+                    }
+
+                    if (addEnd)
                     {
                         LoggerLib.Logger.LogLine($"Side {i} no extensions");
                         // no extensions at all
