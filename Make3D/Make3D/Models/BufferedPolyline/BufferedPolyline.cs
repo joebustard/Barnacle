@@ -291,7 +291,7 @@ namespace Barnacle.Models.BufferedPolyline
             double dx2 = p2.X - centre.X;
 
             double endAngle = Math.Atan2(dy2, dx2);
-            int numdiv = 6;
+            int numdiv = 12;
             double theta;
             Point? oldp = null;
 

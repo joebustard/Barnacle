@@ -67,6 +67,23 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private bool squareShape;
+
+        public bool SquareShape
+        {
+            get { return squareShape; }
+
+            set
+            {
+                if (value != squareShape)
+                {
+                    squareShape = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
         private bool roundShape;
 
         public bool RoundShape
@@ -298,8 +315,13 @@ namespace Barnacle.Dialogs
                     GenerateFlat();
                 }
                 else
+                if (squareShape)
                 {
-                    GenerateRound(10);
+                    GenerateRound(4);
+                }
+                else
+                {
+                    GenerateRound(36);
                 }
             }
         }
@@ -538,6 +560,7 @@ namespace Barnacle.Dialogs
             }
             FlatShape = EditorParameters.GetBoolean("FlatShape", true);
             RoundShape = EditorParameters.GetBoolean("RoundShape", false);
+            SquareShape = EditorParameters.GetBoolean("SquareShape", false);
         }
 
         private void PathPointsChanged(List<Point> points)

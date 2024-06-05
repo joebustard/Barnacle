@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Barnacle.Dialogs"
         mc:Ignorable="d"
-        Title="ParabolicDish" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
+        Title="Parabolic Dish" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -19,6 +19,10 @@
         </Grid.ColumnDefinitions>
         <Border Grid.Row ="0" Grid.Column="1" Style="{StaticResource ControlBorder}">
             <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="94*" />
+                    <ColumnDefinition Width="269*" />
+                </Grid.ColumnDefinitions>
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="25" />
@@ -32,25 +36,25 @@
                     <RowDefinition Height="25" />
                     <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.ColumnSpan="2" Margin="0,0.4,0.2,0.2">
                     <Label VerticalAlignment="Center" Width="100">Radius</Label>
-                    <TextBox Margin="8,0,0,0" Text="{Binding Radius}" Width="150" />
+                    <TextBox Margin="8,2,0,0" Text="{Binding Radius}" Width="50" />
                 </StackPanel>
-                <StackPanel Grid.Row="2" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="100">WallThickness</Label>
-                    <TextBox Margin="8,0,0,0" Text="{Binding WallThickness}" Width="150" />
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.ColumnSpan="2" Margin="0,25.4,0.2,25.4" Grid.RowSpan="3">
+                    <Label VerticalAlignment="Center" Width="100">Wall Thickness</Label>
+                    <TextBox Margin="8,2,0,0" Text="{Binding WallThickness}" Width="50" />
                 </StackPanel>
-                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                <StackPanel Grid.Row="3" Orientation="Horizontal" Grid.ColumnSpan="2" Margin="0,0.2,0.2,0.4">
                     <Label VerticalAlignment="Center" Width="100">Pitch</Label>
-                    <TextBox Margin="8,0,0,0" Text="{Binding Pitch}" Width="150" />
+                    <TextBox Margin="8,2,0,0" Text="{Binding Pitch}" Width="50" />
                 </StackPanel>
-                <StackPanel Grid.Row="4" Orientation="Horizontal">
+                <StackPanel Grid.Row="3" Orientation="Horizontal" Grid.ColumnSpan="2" Margin="0,25.2,0.2,0" Grid.RowSpan="2">
                 </StackPanel>
-                <StackPanel Grid.Row="5" Orientation="Horizontal">
+                <StackPanel Grid.Row="5" Orientation="Horizontal" Grid.ColumnSpan="2" Margin="0,0,0.2,25.2" Grid.RowSpan="2">
                 </StackPanel>
-                <StackPanel Grid.Row="6" Orientation="Horizontal">
+                <StackPanel Grid.Row="6" Orientation="Horizontal" Grid.ColumnSpan="2" Margin="0,0.4,0.2,0.2">
                 </StackPanel>
-                <StackPanel Grid.Row="9" Orientation="Horizontal">
+                <StackPanel Grid.Row="8" Orientation="Horizontal" Grid.ColumnSpan="2" Margin="0,25.2,0.2,0" Grid.RowSpan="2">
                     <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
                 </StackPanel>
             </Grid>

@@ -63,13 +63,15 @@
             </Border>
             <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="8,0,0,0">
                 <Label VerticalAlignment="Center" Width="75">Height</Label>
-                <TextBox Margin="8,2,0,0" Text="{Binding LoftHeight}" Width="75" ToolTip="{Binding LoftHeightToolTip}" />
-                <RadioButton VerticalAlignment="Center" Margin="8,2,0,0" Width="75" IsChecked="{Binding FlatShape}" Content="Flat" GroupName="ShapeGroup" />
-                <RadioButton VerticalAlignment="Center" Margin="8,2,0,0" Width="75" IsChecked="{Binding RoundShape}" Content="Round" GroupName="ShapeGroup" />
+                <TextBox Margin="8,2,0,0" Text="{Binding LoftHeight}" Width="50" ToolTip="{Binding LoftHeightToolTip}" />
+                <Label VerticalAlignment="Center"  Content="Profile" Margin="8,0,0,0" />
+                <RadioButton VerticalAlignment="Center" Margin="8,2,0,0"  IsChecked="{Binding FlatShape}" Content="Flat" GroupName="ShapeGroup" />
+                <RadioButton VerticalAlignment="Center" Margin="8,2,0,0"  IsChecked="{Binding RoundShape}" Content="Round" GroupName="ShapeGroup" />
+                <RadioButton VerticalAlignment="Center" Margin="8,2,0,0"  IsChecked="{Binding SquareShape}" Content="Square" GroupName="ShapeGroup" />
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="8,0,0,0">
                 <Label VerticalAlignment="Center" Width="75">Thickness</Label>
-                <TextBox Margin="8,2,0,0" Text="{Binding LoftThickness}" Width="75" ToolTip="{Binding LoftThicknessToolTip}" />
+                <TextBox Margin="8,2,0,0" Text="{Binding LoftThickness}" Width="50" ToolTip="{Binding LoftThicknessToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
