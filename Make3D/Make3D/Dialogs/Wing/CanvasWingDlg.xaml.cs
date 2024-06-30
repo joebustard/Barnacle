@@ -44,7 +44,7 @@ namespace Barnacle.Dialogs
         private List<String> tipShapeNames;
         private bool topModelChecked;
         private bool wholeModelChecked;
-
+        private bool loaded;
         public CanvasWingDlg()
         {
             InitializeComponent();
@@ -57,14 +57,9 @@ namespace Barnacle.Dialogs
             airFoilDoc.XmlResolver = null;
             rootairfoilNames = new List<string>();
             airfoilGroups = new List<string>();
-            rootLength = 30;
-            tipLength = 10;
-            span = 70;
-            sweepAngle = 0;
-            dihedralAngle = 0;
             ModelGroup = MyModelGroup;
-            numStruts = 8;
-            dipPercent = 25;
+            loaded = false;
+            
         }
 
         public List<string> AirfoilGroups
@@ -1208,17 +1203,43 @@ namespace Barnacle.Dialogs
 
         private void Update()
         {
-            EnableControlsForShape();
-            GenerateWing();
-            Redisplay();
-            RootDisplay.Refresh();
+            if (loaded)
+            {
+                EnableControlsForShape();
+                GenerateWing();
+                Redisplay();
+                RootDisplay.Refresh();
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             LoadAirFoils();
-
             SetShapeNames();
+            ResetParameters();
+            LoadEditorParameters();
+            UpdateCameraPos();
+            MyModelGroup.Children.Clear();
+            loaded = true;
+            GenerateWing();
+            Redisplay();
+        }
+
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            ResetParameters();
+        }
+
+        private void ResetParameters()
+        {
+            RootLength = 30;
+            TipLength = 10;
+            Span = 70;
+            SweepAngle = 0;
+            DihedralAngle = 0;
+
+            NumStruts = 8;
+            DipPercent = 25;
             SelectedShape = shapeNames[0];
             SelectedTipShape = tipShapeNames[0];
             RootGroup = airfoilGroups[0];
@@ -1226,11 +1247,6 @@ namespace Barnacle.Dialogs
             SelectedRootAirfoil = rootairfoilNames[0];
             SelectedTipAirfoil = tipairfoilNames[0];
             WholeModelChecked = true;
-            LoadEditorParameters();
-            UpdateCameraPos();
-            MyModelGroup.Children.Clear();
-            GenerateWing();
-            Redisplay();
         }
     }
 }

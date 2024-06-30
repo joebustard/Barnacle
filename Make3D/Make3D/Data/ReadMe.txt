@@ -1,4 +1,12 @@
-﻿v1.0.5
+﻿v1.0.6
+===========
+Added
+	Browse the textures folder from  the platelet dialog
+Fixed
+
+Changed
+
+v1.0.5
 ===========
 Added
 	Basic hole support in platelet

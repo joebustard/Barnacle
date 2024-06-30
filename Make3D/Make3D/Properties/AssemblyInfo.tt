@@ -4,7 +4,7 @@
 <#@ import namespace="System.Text.RegularExpressions" #>
 <#
     string output = File.ReadAllText(this.Host.ResolvePath("AssemblyInfo.cs"));
-    Regex pattern = new Regex("AssemblyVersion\\(\"(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<revision>\\d+)\\.(?<build>\\d+)\"\\)");
+    Regex pattern = new Regex("AssemblyVersion\\(\"(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<revision>\\d+)\\.(?<build>\\d+)\"\\)");    
     MatchCollection matches = pattern.Matches(output);
     if( matches.Count == 1 )
     {
@@ -23,11 +23,11 @@ using System.Runtime.InteropServices;
 using System.Resources;
 
 // General Information
-[assembly: AssemblyTitle("Barnacle")]
+[assembly: AssemblyTitle("Barnacle3D")]
 [assembly: AssemblyDescription("3D Modeller")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("")]
+[assembly: AssemblyCompany("BarnacleJoe")]
+[assembly: AssemblyProduct("Barnacle3D")]
 [assembly: AssemblyCopyright("Copyright Joe Bustard")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

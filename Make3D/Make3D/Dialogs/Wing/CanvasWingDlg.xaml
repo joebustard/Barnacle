@@ -61,6 +61,9 @@
                              IsChecked="{Binding BottomModelChecked}"
                              Margin="10,0"
                              VerticalAlignment="Center" />
+                    <Button x:Name="ResetButton" Margin="8,0,0,0" VerticalAlignment="Center" 
+                    Content="Reset"
+                    Click="ResetButton_Click" ToolTip="Reset parameters to default"/>
                 </StackPanel>
                 <StackPanel Grid.Row="1"
                         Orientation="Horizontal">

@@ -24,7 +24,10 @@
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
+        <GridSplitter
+            Grid.Row="0"
+            Grid.Column="2"
+            Style="{StaticResource GridSplitterStyle}" />
         <Border
             Grid.Row="0"
             Grid.Column="3"
@@ -220,6 +223,15 @@
                                 ItemsSource="{Binding TextureItems}"
                                 SelectedItem="{Binding SelectedTexture, UpdateSourceTrigger=PropertyChanged}"
                                 Visibility="{Binding ShowTextures}" />
+                            <Button Style="{StaticResource SmallButton}"
+                                Grid.Row="2"
+                                Grid.Column="3"
+                                MaxWidth="30"
+                                Margin="8,2"
+                                Click="BrowseTextures_Click"
+                                Content="..."
+                                ToolTip="Open the folder containing the user defined textures"
+                                Visibility="{Binding ShowTextures}" />
 
                             <Label
                                 Grid.Row="3"
@@ -383,8 +395,10 @@
                 IsChecked="{Binding ShowAxies}" />
             <Button
                 Grid.Column="2"
+                Width="80"
+                Margin="0,2,0,2"
                 Click="Home_Click"
-                Content="Home" Width="80" Margin="0,2,0,2" />
+                Content="Home" />
         </Grid>
         <Grid Grid.Row="1" Grid.Column="3">
             <Grid.ColumnDefinitions>

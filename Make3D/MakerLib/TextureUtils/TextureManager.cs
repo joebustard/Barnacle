@@ -264,7 +264,10 @@ namespace MakerLib.TextureUtils
                 MessageBox.Show(ex.Message);
             }
         }
-
+        public string GetTextureFolderName()
+        {
+        return System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\Barnacle\\Textures";
+        }
         private void GetTexturesFromFolder(string appFolder)
         {
             if (Directory.Exists(appFolder))

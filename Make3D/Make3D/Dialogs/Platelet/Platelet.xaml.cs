@@ -23,6 +23,7 @@ using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -2066,6 +2067,18 @@ namespace Barnacle.Dialogs
             UpdateCameraPos();
             warningText = "";
             Redisplay();
+        }
+
+        private void BrowseTextures_Click(object sender, RoutedEventArgs e)
+        {
+            string folder = textureManager.GetTextureFolderName();
+            if ( Directory.Exists(folder))
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo("explorer.exe");
+                startInfo.Arguments = folder;
+                startInfo.WindowStyle = ProcessWindowStyle.Normal;
+                Process.Start(startInfo);
+            }
         }
     }
 

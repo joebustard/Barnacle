@@ -1745,6 +1745,39 @@ namespace Barnacle.ViewModels
                                 }
                             }
                             break;
+
+                        case "MidwayUpDown":
+                            {
+                                dAbsX = ob.Position.X ;
+                                dAbsY = ob.Position.Y - (ob.AbsoluteBounds.MidPoint().Y - midY);
+
+                                dAbsZ = ob.Position.Z;
+                                ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
+                                ob.Remesh();
+                                bns.Add(ob.AbsoluteBounds);
+                            }
+                            break;
+
+                        case "MidwayBackFront":
+                            {
+                                dAbsX = ob.Position.X;
+                                dAbsY = ob.Position.Y;
+                                dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.MidPoint().Z - midZ); ;
+                                ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
+                                ob.Remesh();
+                                bns.Add(ob.AbsoluteBounds);
+                            }
+                            break;
+                        case "MidwayLeftRight":
+                            {
+                                dAbsX = ob.Position.X - (ob.AbsoluteBounds.MidPoint().X - midX); ;
+                                dAbsY = ob.Position.Y;
+                                dAbsZ = ob.Position.Z; 
+                                ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
+                                ob.Remesh();
+                                bns.Add(ob.AbsoluteBounds);
+                            }
+                            break;
                     }
                 }
             }
