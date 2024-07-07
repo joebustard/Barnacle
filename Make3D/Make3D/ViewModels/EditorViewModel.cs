@@ -204,17 +204,24 @@ namespace Barnacle.ViewModels
 
         private void SubdivideObject(Object3D object3D)
         {
+            CheckPoint();
             Point3DCollection tmp = new Point3DCollection();
             PointUtils.P3DToPointCollection(object3D.RelativeObjectVertices, tmp);
             MeshSubdivider subdiv = new MeshSubdivider(tmp, object3D.TriangleIndices);
-            subdiv.Subdivide(tmp, object3D.TriangleIndices);
-            PointUtils.PointCollectionToP3D(tmp, object3D.RelativeObjectVertices);
-            object3D.Remesh();
 
+            Point3DCollection tmp2 = new Point3DCollection();
+            Int32Collection newTri = new Int32Collection();
+            subdiv.Subdivide(tmp2, newTri);
+            PointUtils.PointCollectionToP3D(tmp2, object3D.RelativeObjectVertices);
+            object3D.TriangleIndices = newTri;
+
+            object3D.Remesh();
             object3D.CalcScale(false);
             allBounds += object3D.AbsoluteBounds;
+
             GeometryModel3D gm = GetMesh(object3D);
             RegenerateDisplayList();
+            Document.Dirty = true;
         }
 
         private void OnUpdateModels(object param)

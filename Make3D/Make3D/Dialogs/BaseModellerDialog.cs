@@ -1004,7 +1004,7 @@ namespace Barnacle.Dialogs
             Close();
         }
 
-        protected void CentreVertices()
+        protected void CentreVertices(bool floor = true)
         {
             Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
             Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue);
@@ -1017,7 +1017,15 @@ namespace Barnacle.Dialogs
             double midx = min.X + (scaleX / 2);
             double midy = min.Y + (scaleY / 2);
             double midz = min.Z + (scaleZ / 2);
-            Vector3D offset = new Vector3D(-midx, -min.Y, -midz);
+            Vector3D offset;
+            if (floor)
+            {
+                offset = new Vector3D(-midx, -min.Y, -midz);
+            }
+            else
+            {
+                offset = new Vector3D(-midx, 0, -midz);
+            }
             bounds.Zero();
             for (int i = 0; i < Vertices.Count; i++)
             {

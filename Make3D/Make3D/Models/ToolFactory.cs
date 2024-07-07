@@ -11,6 +11,10 @@ namespace Barnacle.Models
             BaseModellerDialog res = null;
             switch (name)
             {
+                case "Barrel":
+                    res = new BarrelDlg();
+                    break;
+
                 case "BezierFuselage":
                     res = new FuselageLoftDialog();
                     break;

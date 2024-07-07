@@ -75,6 +75,7 @@ namespace ScriptLanguage
                 "len",
                 "length",
                 "make",
+                "makebarrel",
                 "makebicorn",
                 "makebox",
                 "makebrickwall",
@@ -2736,6 +2737,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "makebarrel":
+                            {
+                                exp = ParseMakeBarrelFunction(parentName);
+                            }
+                            break;
+
                         case "makebicorn":
                             {
                                 exp = ParseMakeBicornFunction(parentName);
@@ -3304,6 +3311,46 @@ namespace ScriptLanguage
             if (parsed && coll.Count() == exprCount)
             {
                 MakeRoofRidgeNode mn = new MakeRoofRidgeNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
+        private ExpressionNode ParseMakeBarrelFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeBarrel";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 8;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeBarrelNode mn = new MakeBarrelNode(coll);
                 mn.IsInLibrary = tokeniser.InIncludeFile();
                 exp = mn;
             }

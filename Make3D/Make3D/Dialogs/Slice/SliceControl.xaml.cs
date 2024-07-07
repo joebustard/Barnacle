@@ -355,15 +355,15 @@ namespace Barnacle.Dialogs.Slice
                     dlg.PrinterName = bp.Name;
                     dlg.SelectedPrinter = bp.CuraPrinterFile;
                     dlg.SelectedExtruder = bp.CuraExtruderFile;
-                    dlg.StartGCode = bp.StartGCode;
-                    dlg.EndGCode = bp.EndGCode;
+                    dlg.StartGCode = SlashN(bp.StartGCode);
+                    dlg.EndGCode = SlashN(bp.EndGCode);
                     if (dlg.ShowDialog() == true)
                     {
                         bp.Name = dlg.PrinterName;
                         bp.CuraPrinterFile = dlg.SelectedPrinter;
                         bp.CuraExtruderFile = dlg.SelectedExtruder;
-                        bp.StartGCode = dlg.StartGCode;
-                        bp.EndGCode = dlg.EndGCode;
+                        bp.StartGCode = UnSlashN( dlg.StartGCode);
+                        bp.EndGCode = UnSlashN(dlg.EndGCode);
                         printerManager.Save();
                         BarnaclePrinterNames = printerManager.GetPrinterNames();
 
@@ -373,6 +373,15 @@ namespace Barnacle.Dialogs.Slice
             }
         }
 
+        private string SlashN(string str)
+        {
+            return str.Replace("\\n", "\n");
+        }
+
+        private string UnSlashN(string str)
+        {
+            return str.Replace("\n", "\\n");
+        }
         private void EditProfileClicked(object sender, RoutedEventArgs e)
         {
             if (!String.IsNullOrEmpty(selectedUserProfile))

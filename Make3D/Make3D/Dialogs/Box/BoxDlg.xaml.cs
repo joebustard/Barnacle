@@ -383,7 +383,7 @@ namespace Barnacle.Dialogs
             else
             {
                 BoxMaker maker = new BoxMaker(boxLength, boxHeight, boxWidth, baseThickness, leftThickness, rightThickness, frontThickness, backThickness); maker.Generate(Vertices, Faces);
-                CentreVertices();
+                CentreVertices(false);
             }
         }
 

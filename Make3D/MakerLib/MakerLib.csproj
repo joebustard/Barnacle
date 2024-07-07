@@ -53,6 +53,7 @@
     <Compile Include="HollowPolyMaker.cs" />
     <Compile Include="LerpBox\LerpBox.cs" />
     <Compile Include="LerpBox\Voxel.cs" />
+    <Compile Include="MakeBarrel.cs" />
     <Compile Include="MakeBox.cs" />
     <Compile Include="MakeBrickTower.cs" />
     <Compile Include="MakeBrickWall.cs" />

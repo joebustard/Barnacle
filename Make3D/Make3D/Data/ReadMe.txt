@@ -2,9 +2,13 @@
 ===========
 Added
 	Browse the textures folder from  the platelet dialog
+	Barrel tool
+
 Fixed
+	Slice dialog not showing carriage returns in gcode. Fixed
 
 Changed
+	Replaced subdivision method by a simpler one
 
 v1.0.5
 ===========

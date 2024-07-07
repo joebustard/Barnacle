@@ -95,6 +95,7 @@
     <Compile Include="Dialogs\AutoFix\AutoFixDlg.xaml.cs">
       <DependentUpon>AutoFixDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\Barrel\BarrelDlg.xaml.cs" />
     <Compile Include="Dialogs\BaseModellerDialog.cs" />
     <Compile Include="Dialogs\BezierFuselage\BezierLine.cs" />
     <Compile Include="Dialogs\BezierFuselage\BulkheadControl.xaml.cs">
@@ -473,6 +474,10 @@
     <Page Include="Dialogs\AutoFix\AutoFixDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\Barrel\BarrelDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\BezierFuselage\BulkheadControl.xaml">
       <SubType>Designer</SubType>

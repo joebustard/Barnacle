@@ -19,7 +19,6 @@ using MakerLib;
 using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {

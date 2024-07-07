@@ -11,7 +11,7 @@ namespace OctTreeLib
         private const int MaxPointsPerNode = 500;
         private OctNode root;
 
-        public OctTree(Point3DCollection pnts, Point3D minPnt, Point3D maxPnt, int maxTreeDepth)
+        public OctTree(Point3DCollection pnts, Point3D minPnt, Point3D maxPnt, int maxTreeDepth = 200)
         {
             root = new OctNode();
             minPnt += new Vector3D(-10, -10, -10);

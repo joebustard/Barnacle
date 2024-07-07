@@ -12,11 +12,11 @@ namespace DlgMaker
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private static string ctrString = @"                <Label VerticalAlignment=""Center"" Width=""100""><pName></Label>
+        private static string ctrString = @"                <Label VerticalAlignment=""Center"" Width=""100"" Content=""<pName>""/>
                  <TextBox Margin=""8,0,0,0"" Text=""{Binding <pName>}"" Width=""150"" ToolTip=""{Binding <pName>ToolTip}""/>
 ";
 
-        private static string ctrCombo = @"                <Label VerticalAlignment=""Center"" Width=""100""><pName></Label>
+        private static string ctrCombo = @"                <Label VerticalAlignment=""Center"" Width=""100"" Content=""<pName>""/>
                  <ComboBox Margin=""8,0,0,0"" SelectedItem=""{Binding <pName>}"" ItemsSource=""{Binding <pName>Items}"" Width=""150"" ToolTip=""{Binding <pName>ToolTip}""/>
 ";
 
