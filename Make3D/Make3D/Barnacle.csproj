@@ -1388,6 +1388,7 @@
     <Resource Include="Images\Buttons\MirrorDown.png" />
     <Resource Include="Images\Buttons\MirrorUp.png" />
     <Resource Include="Data\ShapedWingPresetPaths.txt" />
+    <Resource Include="Images\Buttons\Barrel.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

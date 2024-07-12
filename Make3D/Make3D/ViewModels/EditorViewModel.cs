@@ -810,6 +810,7 @@ namespace Barnacle.ViewModels
             if (holdKey != "")
             {
                 handled = HandleHeldKey(key, shift, ctrl);
+                holdKey = "";
             }
             else
             {
@@ -2010,7 +2011,10 @@ namespace Barnacle.ViewModels
                 {
                     CheckPoint();
                     Group3D grp = selectedObjectAdorner.SelectedObjects[0] as Group3D;
-                    Document.SplitGroup(grp);
+                    if (grp.LeftObject != null && grp.RightObject != null)
+                    {
+                        Document.SplitGroup(grp);
+                    }
 
                     res = true;
                 }
@@ -2768,7 +2772,7 @@ namespace Barnacle.ViewModels
                 s = "groupdifference";
             }
 
-            if (selectedObjectAdorner.NumberOfSelectedObjects() >= 2)
+            if (selectedObjectAdorner != null && selectedObjectAdorner.NumberOfSelectedObjects() >= 2)
             {
                 CheckPoint();
 

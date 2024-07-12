@@ -649,8 +649,14 @@ namespace Barnacle.Object3DLib
             {
                 writer.Write(TriangleIndices[i]);
             }
-            leftObject.WriteBinary(writer);
-            rightObject.WriteBinary(writer);
+            if (leftObject != null)
+            {
+                leftObject.WriteBinary(writer);
+            }
+            if (rightObject != null)
+            {
+                rightObject.WriteBinary(writer);
+            }
         }
 
         private int AddVertex(Point3DCollection av, double x, double y, double z)
