@@ -395,7 +395,7 @@ namespace Barnacle.Object3DLib
             return res;
         }
 
-        public override void Read(XmlNode nd)
+        public override void Read(XmlNode nd, bool reportMissing = true)
         {
             XmlElement ele = nd as XmlElement;
             Name = ele.GetAttribute("Name");

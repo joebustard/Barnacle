@@ -172,12 +172,12 @@ namespace Barnacle.Models
             ProjectSettings = null;
         }
 
-        public void Load(string fileName)
+        public void Load(string fileName, bool reportMissing = true)
         {
             string ext = System.IO.Path.GetExtension(fileName).ToLower();
             if (ext == ".txt")
             {
-                Read(fileName, true);
+                Read(fileName, true,reportMissing);
 
                 FilePath = fileName;
                 FileName = System.IO.Path.GetFileName(fileName);
@@ -207,7 +207,7 @@ namespace Barnacle.Models
             }
         }
 
-        public virtual void Read(string file, bool clearFirst)
+        public virtual void Read(string file, bool clearFirst, bool reportMissing = true)
         {
             try
             {
@@ -243,8 +243,12 @@ namespace Barnacle.Models
                     if (ndname == "fileref")
                     {
                         string fn = (nd as XmlElement).GetAttribute("Name");
-                        fn = ParentProject.ProjectPathToAbsPath(fn);
-                        referencedFiles.Add(fn);
+                        if (ParentProject != null && !String.IsNullOrEmpty(fn))
+                        {
+                            fn = ParentProject.ProjectPathToAbsPath(fn);
+                            referencedFiles.Add(fn);
+                        }
+                        
                     }
                 }
                 foreach (string fn in referencedFiles)
@@ -274,7 +278,7 @@ namespace Barnacle.Models
                     if (ndname == "refobj")
                     {
                         ReferenceObject3D obj = new ReferenceObject3D();
-                        obj.Read(nd);
+                        obj.Read(nd, reportMissing);
 
                         obj.SetMesh();
                         // so we should have already read the referenced files by now
@@ -298,7 +302,7 @@ namespace Barnacle.Models
                         {
                             // might have been converted into a group
                             ReferenceGroup3D grp = new ReferenceGroup3D();
-                            grp.Read(nd);
+                            grp.Read(nd, reportMissing);
 
                             grp.SetMesh();
                             foreach (Object3D old in Content)
@@ -330,7 +334,7 @@ namespace Barnacle.Models
                     if (ndname == "refgroupobj")
                     {
                         ReferenceGroup3D obj = new ReferenceGroup3D();
-                        obj.Read(nd);
+                        obj.Read(nd, reportMissing);
 
                         obj.SetMesh();
 

@@ -3,6 +3,7 @@
 Added
 	Browse the textures folder from  the platelet dialog
 	Barrel tool
+	Oblique End Cylinder tool
 
 Fixed
 	Slice dialog not showing carriage returns in gcode. Fixed

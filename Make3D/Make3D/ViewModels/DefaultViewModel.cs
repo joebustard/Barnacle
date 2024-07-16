@@ -1386,6 +1386,7 @@ namespace Barnacle.ViewModels
             mechanicalToolsToShow = new List<ToolDef>();
             mechanicalToolsToShow.Add(new ToolDef("Spur Gear", true, "SpurGear", "Create a spur gear with a variable number of teeth."));
             mechanicalToolsToShow.Add(new ToolDef("Construction Strip", true, "ConstructionStrip", "Create a strip with holes and round ends."));
+            mechanicalToolsToShow.Add(new ToolDef("Oblique End Cylinder", true, "ObliqueEndCylinder", "Create a cylinder with one end cut."));
             SortMenu(mechanicalToolsToShow);
             NotifyPropertyChanged("MechanicalToolsToShow");
         }

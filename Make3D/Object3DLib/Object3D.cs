@@ -624,7 +624,7 @@ namespace Barnacle.Object3DLib
             Position = new Point3D(Position.X, Position.Y - minY, Position.Z);
         }
 
-        public virtual void Read(XmlNode nd)
+        public virtual void Read(XmlNode nd, bool reportMissing = true)
         {
             XmlElement ele = nd as XmlElement;
             Name = ele.GetAttribute("Name");

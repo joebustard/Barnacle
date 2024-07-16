@@ -76,6 +76,12 @@ namespace Barnacle.Models
                     res = new MorphableModelDlg();
                     break;
 
+
+                case "ObliqueEndCylinder":
+                    res = new ObliqueEndCylinderDlg();
+                    break;
+
+
                 case "ParabolicDish":
                     res = new ParabolicDishDlg();
                     break;

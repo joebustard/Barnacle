@@ -144,6 +144,7 @@
     <Compile Include="Dialogs\MultiImport.xaml.cs">
       <DependentUpon>MultiImport.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\ObliqueSliceCylinder\ObliqueEndCylinderDlg.xaml.cs" />
     <Compile Include="Dialogs\PathLoft\PathEdge.cs" />
     <Compile Include="Dialogs\PathLoft\PathLoftDlg.xaml.cs" />
     <Compile Include="Dialogs\PieDlg\PieDlg.xaml.cs" />
@@ -554,6 +555,10 @@
     <Page Include="Dialogs\MultiImport.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\ObliqueSliceCylinder\ObliqueEndCylinderDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\PathLoft\PathLoftDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -1389,6 +1394,7 @@
     <Resource Include="Images\Buttons\MirrorUp.png" />
     <Resource Include="Data\ShapedWingPresetPaths.txt" />
     <Resource Include="Images\Buttons\Barrel.png" />
+    <Resource Include="Images\Buttons\ObliqueEndCylinder.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

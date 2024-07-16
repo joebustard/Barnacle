@@ -168,8 +168,8 @@ namespace Barnacle.Dialogs
         {
             AppendResults($"{fullPath}");
             Document doc = new Document();
-
-            doc.Load(fullPath);
+            bool dontReportMissingReferences = false;
+            doc.Load(fullPath, dontReportMissingReferences);
             foreach (Object3D ob in doc.Content)
             {
                 if (!token.IsCancellationRequested)

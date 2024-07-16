@@ -40,7 +40,7 @@ namespace Barnacle.Object3DLib
             return false;
         }
 
-        public override void Read(XmlNode nd)
+        public override void Read(XmlNode nd, bool reportMissing = true)
         {
             RefValid = false;
             XmlElement ele = nd as XmlElement;
@@ -58,7 +58,10 @@ namespace Barnacle.Object3DLib
                 XmlElement src = FindExternalModel(Name, Reference.Path);
                 if (src == null)
                 {
-                    MessageBox.Show("Cant find object " + Name + " in file " + Reference.Path);
+                    if (reportMissing)
+                    {
+                        MessageBox.Show("Cant find object " + Name + " in file " + Reference.Path);
+                    }
                 }
                 else
                 {
