@@ -168,6 +168,11 @@ namespace Barnacle.Views
             }
         }
 
+        private bool previousShowFloor;
+        private bool previousShowAxis;
+        private bool previousShowBuildPlate;
+        private bool previousShowMarker;
+
         private void OnScreenShot(object param)
         {
             screenShotTarget = "";
@@ -178,7 +183,16 @@ namespace Barnacle.Views
                 if (!String.IsNullOrEmpty(dlg.FileName))
                 {
                     screenShotTarget = dlg.FileName;
-                    // ont take snap shot imediately, wait half a second for screen to update
+                    previousShowAxis = vm.ShowAxies;
+                    previousShowFloor = vm.ShowFloor;
+                    previousShowBuildPlate = vm.ShowBuildPlates;
+                    previousShowMarker = vm.ShowFloorMarker;
+                    vm.ShowAxies = false;
+                    vm.ShowFloor = false;
+                    vm.ShowBuildPlates = false;
+                    vm.ShowFloorMarker = false;
+                    vm.RegenerateDisplayList();
+                    // dont take snap shot imediately, wait half a second for screen to update
                     TimeSpan interval = new TimeSpan(0, 0, 0, 0, 500);
                     snapShotTimer = new DispatcherTimer();
                     snapShotTimer.Interval = interval;
@@ -203,7 +217,14 @@ namespace Barnacle.Views
             snapShotTimer.Stop();
             if (!String.IsNullOrEmpty(screenShotTarget))
             {
-                ImageCapture.ScreenCaptureElement(viewport3D1, screenShotTarget, false);
+                //ImageCapture.ScreenCaptureElement(viewport3D1, screenShotTarget, false);
+                ImageCapture.ScreenCaptureElement(this, screenShotTarget, false);
+
+                vm.ShowAxies = previousShowAxis;
+                vm.ShowFloor = previousShowFloor;
+                vm.ShowBuildPlates = previousShowBuildPlate;
+                vm.ShowFloorMarker = previousShowMarker;
+                vm.RegenerateDisplayList();
             }
         }
 

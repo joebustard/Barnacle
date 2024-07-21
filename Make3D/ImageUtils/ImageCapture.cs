@@ -37,9 +37,11 @@ namespace ImageUtils
                 {
                     DpiScale dps = VisualTreeHelper.GetDpi(element);
                     // save an uncropped version
-                    RenderTargetBitmap bmp = new RenderTargetBitmap((int)element.ActualWidth, (int)element.ActualHeight, dps.DpiScaleX * 96, dps.DpiScaleY * 96, PixelFormats.Pbgra32);
+                    //RenderTargetBitmap bmp = new RenderTargetBitmap((int)element.ActualWidth, (int)element.ActualHeight, dps.DpiScaleX * 96, dps.DpiScaleY * 96, PixelFormats.Pbgra32);
+                    RenderTargetBitmap bmp = new RenderTargetBitmap((int)element.ActualWidth, (int)element.ActualHeight,  96, 96, PixelFormats.Pbgra32);
                     bmp.Render(element);
                     PngBitmapEncoder encoder = new PngBitmapEncoder();
+                    
 
                     encoder.Frames.Add(BitmapFrame.Create(bmp));
 

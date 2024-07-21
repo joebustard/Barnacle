@@ -30,7 +30,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using System.Windows.Threading;
 
 namespace Barnacle.ViewModels
 {
@@ -89,11 +88,35 @@ namespace Barnacle.ViewModels
 
         private bool showAxies;
 
+        public bool ShowAxies
+        {
+            get { return showAxies; }
+            set { showAxies = value; }
+        }
+
         private bool showBuildPlate;
+
+        public bool ShowBuildPlates
+        {
+            get { return showBuildPlate; }
+            set { showBuildPlate = value; }
+        }
 
         private bool showFloor;
 
+        public bool ShowFloor
+        {
+            get { return showFloor; }
+            set { showFloor = value; }
+        }
+
         private bool showFloorMarker;
+
+        public bool ShowFloorMarker
+        {
+            get { return showFloorMarker; }
+            set { showFloorMarker = value; }
+        }
 
         private int totalFaces;
         private int totalVertices;
@@ -1756,7 +1779,7 @@ namespace Barnacle.ViewModels
 
                         case "MidwayUpDown":
                             {
-                                dAbsX = ob.Position.X ;
+                                dAbsX = ob.Position.X;
                                 dAbsY = ob.Position.Y - (ob.AbsoluteBounds.MidPoint().Y - midY);
 
                                 dAbsZ = ob.Position.Z;
@@ -1776,11 +1799,12 @@ namespace Barnacle.ViewModels
                                 bns.Add(ob.AbsoluteBounds);
                             }
                             break;
+
                         case "MidwayLeftRight":
                             {
                                 dAbsX = ob.Position.X - (ob.AbsoluteBounds.MidPoint().X - midX); ;
                                 dAbsY = ob.Position.Y;
-                                dAbsZ = ob.Position.Z; 
+                                dAbsZ = ob.Position.Z;
                                 ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
                                 ob.Remesh();
                                 bns.Add(ob.AbsoluteBounds);

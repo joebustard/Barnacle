@@ -251,6 +251,15 @@ namespace Barnacle.Dialogs
                 line.Add(new Point(p.X, top - p.Y));
             }
             line.RemoveAt(0);
+
+            // dirty hack
+            // if there is only two points the shelltosolid goes wrong
+            if (line.Count ==2)
+            {
+                Point mid = Midpoint(line[0], line[1]);
+                line.Insert(1, mid);
+            }
+
             int numSpokes = numDivisions;
             double deltaTheta = 360.0 / numSpokes; // in degrees
             Point3D[,] spokeVertices = new Point3D[numSpokes, line.Count];
@@ -301,6 +310,15 @@ namespace Barnacle.Dialogs
             }                          
             SurfaceToSolid(Vertices, Faces, SurfaceThickness);
         }
+
+        private Point Midpoint(Point point1, Point point2)
+        {
+            Point p = new Point(0, 0);
+            p.X = (point1.X + point2.X) / 2;
+            p.Y = (point1.Y + point2.Y) / 2;
+            return p;
+        }
+
         private Visibility showSurfaceParameters;
         private Visibility ShowHollowParameters
         {
