@@ -93,6 +93,7 @@ namespace Barnacle.Object3DLib
             res.Description = this.Description;
             res.primType = this.primType;
             res.Exportable = this.Exportable;
+            res.LockAspectRatio = this.LockAspectRatio;
             res.scale = new Scale3D(this.scale.X, this.scale.Y, this.scale.Z);
 
             res.position = new Point3D(this.position.X, this.position.Y, this.position.Z);
@@ -411,6 +412,16 @@ namespace Barnacle.Object3DLib
             {
                 Exportable = true;
             }
+
+            if (ele.HasAttribute("LockAspectRatio"))
+            {
+                LockAspectRatio = Convert.ToBoolean(ele.GetAttribute("LockAspectRatio"));
+            }
+            else
+            {
+                LockAspectRatio = true;
+            }
+
             XmlNode pn = nd.SelectSingleNode("Position");
             Point3D p = new Point3D();
             p.X = GetDouble(pn, "X");
@@ -488,7 +499,7 @@ namespace Barnacle.Object3DLib
             Color = Color.FromArgb(A, R, G, B);
             PrimType = reader.ReadString();
             Exportable = reader.ReadBoolean();
-
+            LockAspectRatio = reader.ReadBoolean();
             double x, y, z;
             x = reader.ReadDouble();
             y = reader.ReadDouble();
@@ -583,6 +594,7 @@ namespace Barnacle.Object3DLib
                 ele.SetAttribute("Colour", Color.ToString());
                 ele.SetAttribute("Primitive", PrimType);
                 ele.SetAttribute("Exportable", Exportable.ToString());
+                ele.SetAttribute("LockAspectRatio", LockAspectRatio.ToString());
                 XmlElement pos = doc.CreateElement("Position");
                 pos.SetAttribute("X", Position.X.ToString());
                 pos.SetAttribute("Y", Position.Y.ToString());
@@ -628,6 +640,7 @@ namespace Barnacle.Object3DLib
             writer.Write(Color.B);
             writer.Write(PrimType);
             writer.Write(Exportable);
+            writer.Write(LockAspectRatio);
             writer.Write(Position.X);
             writer.Write(Position.Y);
             writer.Write(Position.Z);

@@ -4,9 +4,12 @@ Added
 	Browse the textures folder from  the platelet dialog
 	Barrel tool
 	Oblique End Cylinder tool
+	Added ability to lock aspect ratio when changing an objects size
+	from the object properties panel.
 
 Fixed
 	Slice dialog not showing carriage returns in gcode. Fixed
+	Bug were canvas wing did not generate wing tip until parameters and changed back
 
 Changed
 	Replaced subdivision method by a simpler one

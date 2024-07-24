@@ -1220,6 +1220,7 @@ namespace Barnacle.Dialogs
             LoadEditorParameters();
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
+            EnableControlsForShape();
             loaded = true;
             GenerateWing();
             Redisplay();

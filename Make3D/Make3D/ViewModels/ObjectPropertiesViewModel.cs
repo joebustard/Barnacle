@@ -33,7 +33,25 @@ namespace Barnacle.ViewModels
 
         private Object3D selectedObject;
         private List<AvailableColour> availableColours;
-
+        private bool lockAspectRatio;
+        public bool LockAspectRatio
+        {
+            get { return lockAspectRatio; }
+            set
+            {
+                if (lockAspectRatio != value)
+                {
+                    lockAspectRatio = value;
+                    if (selectedObject != null)
+                    {
+                        CheckPoint();                        
+                        selectedObject.LockAspectRatio = lockAspectRatio;
+                        Document.Dirty = true;                        
+                    }
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         private void SuspendEditing(object param)
         {
             bool b = Convert.ToBoolean(param);
@@ -82,6 +100,7 @@ namespace Barnacle.ViewModels
             rotationZ = 90;
             PercentScale = 1;
             CanScale = false;
+            LockAspectRatio = false;
             SetAvailableColours();
         }
 
@@ -482,13 +501,19 @@ namespace Barnacle.ViewModels
                     Scale3D p = selectedObject.Scale;
                     if (p.X != v && p.X != 0 && v != 0)
                     {
-                        CheckPoint();
-                        Scale3D p2 = new Scale3D(v, p.Y, p.Z);
-                        double d = v / p.X;
-                        selectedObject.Scale = p2;
-                        selectedObject.ScaleMesh(d, 1.0, 1.0);
+                        CheckPoint();                        
+                        double d = v / p.X;                        
+                        if (lockAspectRatio)
+                        {
+                            selectedObject.ScaleMesh(d, d, d);                            
+                        }
+                        else
+                        {
+                            selectedObject.ScaleMesh(d, 1.0, 1.0);                            
+                        }
+                        selectedObject.CalcScale(false);                        
                         selectedObject.Remesh();
-                        NotifyPropertyChanged();
+                        OnScaleUpdated(null);
                         NotificationManager.Notify("ScaleRefresh", selectedObject);
                         NotificationManager.Notify("RefreshAdorners", null);
                         Document.Dirty = true;
@@ -520,12 +545,18 @@ namespace Barnacle.ViewModels
                     if (p.Y != v && p.Y != 0 && v != 0)
                     {
                         CheckPoint();
-                        Scale3D p2 = new Scale3D(p.X, v, p.Z);
                         double d = v / p.Y;
-                        selectedObject.Scale = p2;
-                        selectedObject.ScaleMesh(1.0, d, 1.0);
+                        if (lockAspectRatio)
+                        {
+                            selectedObject.ScaleMesh(d, d, d);
+                        }
+                        else
+                        {
+                            selectedObject.ScaleMesh(1.0, d, 1.0);
+                        }
+                        selectedObject.CalcScale(false);
                         selectedObject.Remesh();
-                        NotifyPropertyChanged();
+                        OnScaleUpdated(null);
                         NotificationManager.Notify("ScaleRefresh", selectedObject);
                         NotificationManager.Notify("RefreshAdorners", null);
                         Document.Dirty = true;
@@ -556,14 +587,19 @@ namespace Barnacle.ViewModels
                     Scale3D p = selectedObject.Scale;
                     if (p.Z != v && p.Z != 0 && v != 0)
                     {
-                        CheckPoint();
-                        Scale3D p2 = new Scale3D(p.X, p.Y, v);
-                        double d = v / p.Z;
-                        selectedObject.Scale = p2;
-                        selectedObject.ScaleMesh(1.0, 1.0, d);
+                        CheckPoint();                        
+                        double d = v / p.Z;                        
+                        if (lockAspectRatio)
+                        {
+                            selectedObject.ScaleMesh(d, d, d);
+                        }
+                        else
+                        {
+                            selectedObject.ScaleMesh(1.0, 1.0, d);
+                        }
+                        selectedObject.CalcScale(false);
                         selectedObject.Remesh();
-                        NotifyPropertyChanged();
-
+                        OnScaleUpdated(null);
                         NotificationManager.Notify("ScaleRefresh", selectedObject);
                         NotificationManager.Notify("RefreshAdorners", null);
                         Document.Dirty = true;
@@ -698,6 +734,7 @@ namespace Barnacle.ViewModels
                 description = "";
                 ControlsEnabled = false;
                 ObjectType = "";
+                LockAspectRatio = false;
             }
             else
             {
@@ -706,6 +743,7 @@ namespace Barnacle.ViewModels
                 CanScale = selectedObject.IsSizable();
                 exportable = selectedObject.Exportable;
                 description = selectedObject.Description;
+                lockAspectRatio = selectedObject.LockAspectRatio;
                 ControlsEnabled = true;
                 if (selectedObject is Group3D)
                 {
@@ -737,6 +775,7 @@ namespace Barnacle.ViewModels
             NotifyPropertyChanged("ObjectColour");
             NotifyPropertyChanged("ObjectName");
             NotifyPropertyChanged("Exportable");
+            NotifyPropertyChanged("LockAspectRatio");
             NotifyPropertyChanged("Description");
             NotifyPropertyChanged("ControlsEnabled");
         }
