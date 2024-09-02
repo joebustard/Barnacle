@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
@@ -395,7 +396,7 @@ namespace Barnacle.Dialogs
         {
             bool result = false;
             string rootName = System.IO.Path.GetFileNameWithoutExtension(fpath);
-
+            bool flip = false;
             string targetPath = BaseViewModel.Project.ProjectPathToAbsPath(rootName + ".txt");
             if (targetSubFolder != "")
             {
@@ -409,7 +410,17 @@ namespace Barnacle.Dialogs
                     localDoc = new Document();
                     string fldr = System.IO.Path.GetDirectoryName(targetPath);
 
-                    localDoc.ImportStl(fpath, BaseViewModel.Project.SharedProjectSettings.ImportAxisSwap);
+                    if (fpath.ToLower().EndsWith("stl"))
+                    {
+                        localDoc.ImportStl(fpath, BaseViewModel.Project.SharedProjectSettings.ImportAxisSwap);
+                        flip = true;
+                    }
+                    else
+                    if (fpath.ToLower().EndsWith("off"))
+                    {
+                        localDoc.ImportOffs(fpath);
+                        flip = false;
+                    }
                     int numObs = 0;
                     foreach (Object3D ob in localDoc.Content)
                     {
@@ -419,7 +430,10 @@ namespace Barnacle.Dialogs
                             ob.Name += "_" + numObs.ToString();
                         }
                         // ob.FlipInside();
-                        ob.FlipX();
+                        if (flip)
+                        {
+                            ob.FlipX();
+                        }
                         ob.Color = BaseViewModel.Project.SharedProjectSettings.DefaultObjectColour;
                         ob.MoveOriginToCentroid();
 
@@ -512,7 +526,11 @@ namespace Barnacle.Dialogs
                 Properties.Settings.Default.LastImportFolder = ImportPath;
                 Properties.Settings.Default.Save();
                 ResultsText = "";
-                string[] files = System.IO.Directory.GetFiles(ImportPath, "*.stl");
+
+                var filteredFiles = Directory.GetFiles(ImportPath, "*.*")
+    .Where(file => file.ToLower().EndsWith("stl") || file.ToLower().EndsWith("off"))
+    .ToList();
+                string[] files = filteredFiles.ToArray();
                 double prog = 0;
                 int numFiles = files.GetLength(0);
                 if (numFiles > 0)

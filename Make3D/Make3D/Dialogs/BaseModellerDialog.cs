@@ -176,25 +176,28 @@ namespace Barnacle.Dialogs
             // vertices which correspond to there outer counter parts. i.e. Vertex 0 in the inner is
             // vertex 0 of the outer but moved along the normal so in effect we triangulate the
             // rectangle formed by two outer and and the corresponding two inner vertices
-            foreach (HalfEdge he in hemesh.FakeFace)
+            foreach (List<HalfEdge> lhe in hemesh.Boundaries)
             {
-                // outer indices
-                int f0 = he.StartVertex;
-                int f1 = he.EndVertex;
+                foreach (HalfEdge he in lhe)
+                {
+                    // outer indices
+                    int f0 = he.StartVertex;
+                    int f1 = he.EndVertex;
 
-                // inner indices
-                int v0 = AddPoint(vertices, innerVerts[f0]);
-                int v1 = AddPoint(vertices, innerVerts[f1]);
+                    // inner indices
+                    int v0 = AddPoint(vertices, innerVerts[f0]);
+                    int v1 = AddPoint(vertices, innerVerts[f1]);
 
-                // make a triangle
-                tris.Add(f0);
-                tris.Add(f1);
-                tris.Add(v0);
+                    // make a triangle
+                    tris.Add(f0);
+                    tris.Add(f1);
+                    tris.Add(v0);
 
-                // make the other triangle
-                tris.Add(f1);
-                tris.Add(v1);
-                tris.Add(v0);
+                    // make the other triangle
+                    tris.Add(f1);
+                    tris.Add(v1);
+                    tris.Add(v0);
+                }
             }
         }
 

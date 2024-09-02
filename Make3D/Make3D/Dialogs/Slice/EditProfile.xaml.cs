@@ -35,6 +35,7 @@ namespace Barnacle.Dialogs.Slice
 
         public bool CreatingNewProfile { get; set; }
         public string PrinterName { get; internal set; }
+        private string originalName;
 
         public string ProfileName
         {
@@ -153,6 +154,21 @@ namespace Barnacle.Dialogs.Slice
             {
                 DialogResult = true;
                 SaveFile(fileName);
+
+                // if we have changed the name of the file
+                // we will have create a new one so get rid of
+                // the original
+                string originalFileName = UserProfilePath + $"{originalName}.profile";
+                if (originalFileName != fileName)
+                {
+                    try
+                    {
+                        File.Delete(originalFileName);
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                }
                 Close();
             }
         }
@@ -224,6 +240,7 @@ namespace Barnacle.Dialogs.Slice
                     {
                         LoadFile(profile);
                     }
+                    originalName = ProfileName;
                 }
             }
         }

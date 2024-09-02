@@ -671,6 +671,7 @@ namespace Barnacle.UserControls
             el.MouseDown += MainCanvas_MouseDown;
             el.MouseMove += MainCanvas_MouseMove;
             el.MouseUp += MainCanvas_MouseUp;
+            el.ToolTip = $"{p.X.ToString("F2")},{p.Y.ToString("F2")}";
             // el.ContextMenu = PointMenu(el);
             MainCanvas.Children.Add(el);
             return p;
@@ -689,6 +690,7 @@ namespace Barnacle.UserControls
             el.MouseDown += MainCanvas_MouseDown;
             el.MouseMove += MainCanvas_MouseMove;
             el.MouseUp += MainCanvas_MouseUp;
+            el.ToolTip = $"{p.X.ToString("F2")},{p.Y.ToString("F2")}";
             // el.ContextMenu = PointMenu(el);
             MainCanvas.Children.Add(el);
             return p;
@@ -717,6 +719,7 @@ namespace Barnacle.UserControls
             myPolygon.MouseDown += MainCanvas_MouseDown;
             myPolygon.MouseMove += MainCanvas_MouseMove;
             myPolygon.MouseUp += MainCanvas_MouseUp;
+            myPolygon.ToolTip = $"{p.X.ToString("F2")},{p.Y.ToString("F2")}";
             // myPolygon.ContextMenu = PointMenu(myPolygon);
             MainCanvas.Children.Add(myPolygon);
             return p;
@@ -821,6 +824,18 @@ namespace Barnacle.UserControls
                         EnableSelectionModeBorder(MovePathBorder);
                     }
                     break;
+            }
+        }
+
+        private void ShowPointsStatus()
+        {
+            if (vm.ShowPointsStatus)
+            {
+                ShowPointsBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
+            }
+            else
+            {
+                ShowPointsBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
             }
         }
 
@@ -1079,6 +1094,7 @@ namespace Barnacle.UserControls
                     vm.CreateGrid(ScreenDpi, MainCanvas.ActualWidth, MainCanvas.ActualHeight);
                     vm.ShowGrid = showGrid;
                     ShowGridStatus();
+                    ShowPointsStatus();
                     vm.AbsolutePaths = absolutePaths;
                     vm.SetPath(pathText);
                     vm.DefaultImagePath = defaultImagePath;
@@ -1150,6 +1166,7 @@ namespace Barnacle.UserControls
 
                 case "Points":
                     {
+                        ShowPointsStatus();
                         UpdateDisplay();
                         NotifyPathPointsChanged();
                     }

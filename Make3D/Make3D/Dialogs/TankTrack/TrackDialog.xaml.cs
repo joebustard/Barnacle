@@ -574,7 +574,7 @@ namespace Barnacle.Dialogs
                 for (int i = 0; i < polyPoints.Count; i++)
                 {
                     polyPoints[i].Selected = false;
-                    polyPoints[i].Visible = false;
+                    // polyPoints[i].Visible = false;
                 }
             }
         }

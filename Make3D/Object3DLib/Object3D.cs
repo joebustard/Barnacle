@@ -311,12 +311,15 @@ namespace Barnacle.Object3DLib
                 Indices.Add(i);
             }
         }
+
         internal delegate void GenPrim(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals);
+
         internal struct PrimTableEntry
         {
             internal string PrimName;
             internal GenPrim Generator;
             internal Color Color;
+
             internal PrimTableEntry(String s, GenPrim p, Color c)
             {
                 PrimName = s;
@@ -324,6 +327,7 @@ namespace Barnacle.Object3DLib
                 Color = c;
             }
         }
+
         public static List<String> PrimitiveNames()
         {
             List<String> res = new List<String>();
@@ -331,9 +335,9 @@ namespace Barnacle.Object3DLib
             {
                 res.Add(pt.PrimName);
             }
-                return res;
-
+            return res;
         }
+
         internal static PrimTableEntry[] PrimitiveTable =
         {
             new PrimTableEntry( "box",PrimitiveGenerator.GenerateCube,Colors.Pink),
@@ -367,7 +371,6 @@ namespace Barnacle.Object3DLib
             new PrimTableEntry( "trispike",PrimitiveGenerator.GenerateTriSpike, Colors.CadetBlue),
             new PrimTableEntry( "tube",PrimitiveGenerator.GenerateTube, Colors.Magenta),
             new PrimTableEntry( "xbar",PrimitiveGenerator.GenerateXBar,Colors.IndianRed),
-
         };
 
         public bool LookupPrim(string s, ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
@@ -383,12 +386,11 @@ namespace Barnacle.Object3DLib
                     AddPrimitiveToObject(pnts, indices, normals, pt.Color);
                     res = true;
                     break;
-
                 }
             }
             return res;
-
         }
+
         public bool BuildPrimitive(string obType)
         {
             bool built = false;
@@ -396,7 +398,7 @@ namespace Barnacle.Object3DLib
             Int32Collection indices = new Int32Collection();
             Vector3DCollection normals = new Vector3DCollection();
             PrimType = obType;
-            built = LookupPrim(obType.ToLower(), ref pnts, ref indices, ref normals);            
+            built = LookupPrim(obType.ToLower(), ref pnts, ref indices, ref normals);
             return built;
         }
 
@@ -652,7 +654,7 @@ namespace Barnacle.Object3DLib
             {
                 LockAspectRatio = false;
             }
-            
+
             XmlNode pn = nd.SelectSingleNode("Position");
             Point3D p = new Point3D();
             p.X = GetDouble(pn, "X");

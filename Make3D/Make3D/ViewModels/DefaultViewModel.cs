@@ -183,6 +183,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Loading", LoadingNewFile);
             NotificationManager.Subscribe("SuspendEditing", SuspendEditing);
             NotificationManager.Subscribe("GroupSelected", GroupSelected);
+            NotificationManager.Subscribe("BackupProject", BackupProject);
 
             SubView = subViewMan.GetView("editor");
             CreateToolMenus();
@@ -195,7 +196,7 @@ namespace Barnacle.ViewModels
             LoadPartLibrary();
         }
 
-        private void OnZipProject(object obj)
+        private void BackupProject(object param)
         {
             if (Document.Dirty)
             {
@@ -221,6 +222,10 @@ namespace Barnacle.ViewModels
                     MessageBox.Show("Project Zipped to file: " + zipPath);
                 }
             }
+        }
+
+        private void OnZipProject(object obj)
+        {
         }
 
         private void AddTargetNamesForProject(string root, List<string> targetFiles, List<string> emptyFolderNames)
@@ -1464,16 +1469,16 @@ namespace Barnacle.ViewModels
             TubeEnabled = b;
             ProfileFuselageEnabled = b;
             WingEnabled = b;
-            EnabledToolIst(b, parametricToolsToShow);
-            EnabledToolIst(b, loftedToolsToShow);
-            EnabledToolIst(b, vehicleToolsToShow);
-            EnabledToolIst(b, aircraftToolsToShow);
-            EnabledToolIst(b, decorativeToolsToShow);
-            EnabledToolIst(b, buildingToolsToShow);
-            EnabledToolIst(b, grilleToolsToShow);
+            EnabledToolList(b, parametricToolsToShow);
+            EnabledToolList(b, loftedToolsToShow);
+            EnabledToolList(b, vehicleToolsToShow);
+            EnabledToolList(b, aircraftToolsToShow);
+            EnabledToolList(b, decorativeToolsToShow);
+            EnabledToolList(b, buildingToolsToShow);
+            EnabledToolList(b, grilleToolsToShow);
         }
 
-        private void EnabledToolIst(bool b, List<ToolDef> defs)
+        private void EnabledToolList(bool b, List<ToolDef> defs)
         {
             if (defs != null)
             {
@@ -1650,7 +1655,7 @@ namespace Barnacle.ViewModels
 
         private void OnFixHoles(object obj)
         {
-            NotificationManager.Notify("FixHoles", null);
+            NotificationManager.Notify("FixHoles", obj);
         }
 
         private void OnFlip(object obj)

@@ -126,7 +126,7 @@
                     <Custom:RibbonApplicationMenuItem
                         x:Name="Save1"
                         Command="{Binding SaveCommand}"
-                        Header="Save"
+                        Header="Save                    Ctrl+S"
                         ImageSource="/images/buttons/document_save_as.png"
                         IsEnabled="{Binding EditingActive}" />
                     <Custom:RibbonApplicationMenuItem
@@ -168,7 +168,7 @@
                     <Custom:RibbonApplicationMenuItem
                         x:Name="ZipProjectMenu"
                         Command="{Binding ZipProjectCommand}"
-                        Header="Backup Project"
+                        Header="Backup Project    Ctrl+B"
                         ImageSource="/images/buttons/BackUp.png"
                         IsEnabled="{Binding EditingActive}"
                         ToolTip="Zip the main files of the current project and store in the backup folder" />
@@ -193,7 +193,7 @@
                         Command="{Binding CutCommand}"
                         Label="Cut"
                         SmallImageSource="/Barnacle;component/Images/Buttons/cut.png"
-                        ToolTip="Cut the selected objects" />
+                        ToolTip="Ctrl+X Cut the selected objects" />
                     <Custom:RibbonButton
                         x:Name="CutButton"
                         HorizontalAlignment="Stretch"
@@ -201,7 +201,7 @@
                         Command="{Binding CopyCommand}"
                         Label="Copy"
                         SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
-                        ToolTip="Copy the selected objects" />
+                        ToolTip="Ctrl+C Copy the selected objects" />
                     <Custom:RibbonButton
                         x:Name="CloneInPlaceButton"
                         HorizontalAlignment="Stretch"
@@ -209,7 +209,7 @@
                         Command="{Binding CloneInPlaceCommand}"
                         Label="Clone"
                         SmallImageSource="/Barnacle;component/Images/Buttons/clone.png"
-                        ToolTip="Clone the selected object in exactly the same same place as the original without moving or rotating anything. Be careful!" />
+                        ToolTip="Ctrl+K Clone the selected object in exactly the same same place as the original without moving or rotating anything. Be careful!" />
                     <Custom:RibbonMenuButton
                         HorizontalAlignment="Stretch"
                         Label="Paste"
@@ -221,7 +221,7 @@
                             Command="{Binding PasteCommand}"
                             Header="Paste"
                             ImageSource="/Barnacle;component/Images/Buttons/paste.png"
-                            ToolTip="Replace the selected object by the contents of the clipboard, or paste to right/at marker" />
+                            ToolTip="Ctrl+V Replace the selected object by the contents of the clipboard, or paste to right/at marker" />
                         <!--
                         <Custom:RibbonMenuItem Command="{Binding PasteAtCommand}"
                                          HorizontalAlignment="Stretch"
@@ -265,7 +265,7 @@
                         IsEnabled="{Binding EditingActive}"
                         Label="All"
                         SmallImageSource="/Barnacle;component/Images/Buttons/SelectAll.png"
-                        ToolTip="Select All" />
+                        ToolTip="Ctrl+A Select All" />
                     <Custom:RibbonButton
                         x:Name="SelectNoneButton"
                         HorizontalAlignment="Stretch"
@@ -285,7 +285,7 @@
                         IsEnabled="{Binding EditingActive}"
                         ItemsSource="{Binding ObjectNames}"
                         SelectedItem="{Binding SelectedObjectName}"
-                        ToolTip="Select an object by its name" />
+                        ToolTip="Select an object by its name. Hold down the shift key to add to the existing selection" />
                     <Custom:RibbonMenuButton Label="Select" SmallImageSource="/Barnacle;component/Images/Buttons/SelectAll.png">
 
                         <Custom:RibbonMenuItem
@@ -297,7 +297,7 @@
                             Header="First"
                             ImageSource="/Barnacle;component/Images/Buttons/SelectFirst.png"
                             IsEnabled="{Binding EditingActive}"
-                            ToolTip="Select First" />
+                            ToolTip="Select First. Hold down the shift key to add to the existing selection" />
                         <Custom:RibbonMenuItem
                             x:Name="SelectPrevButton"
                             HorizontalAlignment="Stretch"
@@ -307,7 +307,7 @@
                             Header="Previous"
                             ImageSource="/Barnacle;component/Images/Buttons/SelectPrevious.png"
                             IsEnabled="{Binding EditingActive}"
-                            ToolTip="Select Previous" />
+                            ToolTip="Select Previous. Hold down the shift key to add to the existing selection" />
                         <Custom:RibbonMenuItem
                             x:Name="SelectNextButton"
                             HorizontalAlignment="Stretch"
@@ -317,7 +317,7 @@
                             Header="Next"
                             ImageSource="/Barnacle;component/Images/Buttons/SelectNext.png"
                             IsEnabled="{Binding EditingActive}"
-                            ToolTip="Select Next" />
+                            ToolTip="Select Next. Hold down the shift key to add to the existing selection" />
                         <Custom:RibbonMenuItem
                             x:Name="SelectLastButton"
                             HorizontalAlignment="Stretch"
@@ -327,7 +327,7 @@
                             Header="Last"
                             ImageSource="/Barnacle;component/Images/Buttons/SelectLast.png"
                             IsEnabled="{Binding EditingActive}"
-                            ToolTip="Select Last" />
+                            ToolTip="Select Last. Hold down the shift key to add to the existing selection" />
                     </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup
@@ -355,6 +355,15 @@
                             CommandParameter="OBJ"
                             Header="OBJ"
                             ImageSource="/Barnacle;component/Images/Buttons/importobj.png" />
+                        <Custom:RibbonMenuItem
+                            x:Name="ImportOFF"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding ImportCommand}"
+                            CommandParameter="OFF"
+                            Header="OFF"
+                            ImageSource="/Barnacle;component/Images/Buttons/importobj.png" />
+
                         <Custom:RibbonMenuItem
                             x:Name="ImportSTL"
                             HorizontalAlignment="Stretch"
@@ -503,7 +512,7 @@
                         x:Name="Alignment"
                         Label="Align"
                         SmallImageSource="/Barnacle;component/Images/Buttons/Align.png">
-                        
+
                         <Custom:RibbonMenuItem
                             x:Name="LeftAlignment"
                             HorizontalAlignment="Stretch"
@@ -600,9 +609,6 @@
                             Header="Distal"
                             ImageSource="/Barnacle;component/Images/Buttons/AlignLeft.png"
                             ToolTip="Align objects so they are halfway between the back and front of the first selected." />
-
-
-
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton
                         x:Name="Stack"
@@ -848,6 +854,15 @@
                             Header="Cut Out"
                             ImageSource="/Barnacle;component/Images/Buttons/copy.png"
                             ToolTip="Cut the second part from the first but keep both." />
+                        <Custom:RibbonSeparator />
+                        <Custom:RibbonMenuItem
+                            x:Name="GroupForce"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding GroupCommand}"
+                            CommandParameter="ForceUnion"
+                            Header="Force Union"
+                            ImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Make a new object containing all the points and triangles of the selected ones. The resulting object WONT be manifold" />
                         <Custom:RibbonSeparator />
                         <Custom:RibbonMenuItem
                             x:Name="UngroupSelected"
@@ -1235,7 +1250,7 @@
                             ToolTip="Reduce the number of faces in the selected object" />
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton Label="Fix">
-                        
+
                         <Custom:RibbonMenuItem
                             x:Name="ManifoldButton"
                             HorizontalAlignment="Stretch"
@@ -1258,7 +1273,18 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
                             Command="{Binding FixHolesCommand}"
+                            CommandParameter="Normal"
                             Header="Fix Holes"
+                            ImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                            ToolTip="Remove small holes" />
+
+                        <Custom:RibbonMenuItem
+                            x:Name="FixHolesHalfEdgeButton"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding FixHolesCommand}"
+                            CommandParameter="HalfEdge"
+                            Header="Fix Holes Half Edge"
                             ImageSource="/Barnacle;component/Images/Buttons/copy.png"
                             ToolTip="Remove small holes" />
 

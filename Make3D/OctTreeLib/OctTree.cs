@@ -91,5 +91,16 @@ namespace OctTreeLib
                 return false;
             }
         }
+
+        public int AddPoint(Point3D p)
+        {
+            int res = PointPresent(p);
+            if (res == -1)
+            {
+                res = OctNode.AllPoints.Count;
+                AddPoint(res, p);
+            }
+            return res;
+        }
     }
 }

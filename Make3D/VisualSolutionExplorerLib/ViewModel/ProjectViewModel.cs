@@ -127,16 +127,35 @@ namespace VisualSolutionExplorer
             }
         }
 
+        public void ClearContent()
+        {
+            this.folders = null;
+        }
+
         public void SetContent(List<ProjectFolder> folders)
         {
-            this.folders = new ObservableCollection<ProjectFolderViewModel>();
+            if (this.folders == null)
+            {
+                this.folders = new ObservableCollection<ProjectFolderViewModel>();
+            }
             Project?.Refresh();
             foreach (var fld in folders)
             {
                 fld.RepathSubFolders("");
-                ProjectFolderViewModel pvm = new ProjectFolderViewModel(fld);
-                pvm.SolutionChanged = NotifySolutionChanged;
-                this.folders.Add(pvm);
+                bool addFolder = true;
+                foreach (ProjectFolderViewModel tm in this.Folders)
+                {
+                    if (tm.FolderMatch(fld))
+                    {
+                        addFolder = false;
+                    }
+                }
+                if (addFolder)
+                {
+                    ProjectFolderViewModel pvm = new ProjectFolderViewModel(fld);
+                    pvm.SolutionChanged = NotifySolutionChanged;
+                    this.folders.Add(pvm);
+                }
             }
             NotifyPropertyChanged("Folders");
         }

@@ -77,7 +77,8 @@ namespace HalfEdgeLib
                     int s0 = HalfEdges[i].StartVertex;
                     int e0 = HalfEdges[HalfEdges[i].Next].StartVertex;
                     bool more = true;
-                    for (int j = 0; j < HalfEdges.Count && more; j++)
+                    //for (int j = 0; j < HalfEdges.Count && more; j++)
+                    for (int j = i; j < HalfEdges.Count && more; j++)
                     {
                         if (HalfEdges[j].Twin == -1 && j != i)
                         {
@@ -94,7 +95,7 @@ namespace HalfEdgeLib
                 }
             }
 
-            // if any halfedes can't find there twins, then they are probably on the boundary
+            // if any halfedges can't find their twins, then they are probably on the boundary
             MarkBoundaryAndEndVertices();
             StitchBoundary();
         }
@@ -116,12 +117,12 @@ namespace HalfEdgeLib
                 normal += Vector3D.CrossProduct(v1, v2);
             }
             normal.Normalize();
-            
-            if ( n == 3)
+
+            if (n == 3)
             {
                 normal *= -1;
             }
-            
+
             System.Diagnostics.Debug.WriteLine($"Ring size {n}, Normal {normal.X},{normal.Y},{normal.Z}");
             return normal;
         }
@@ -137,7 +138,10 @@ namespace HalfEdgeLib
                 do
                 {
                     int next = HalfEdges[current].Next;
-                    res.Add(HalfEdges[next].StartVertex);
+                    if (next != -1)
+                    {
+                        res.Add(HalfEdges[next].StartVertex);
+                    }
 
                     current = HalfEdges[current].Twin;
                     if (current != -1)
@@ -161,7 +165,8 @@ namespace HalfEdgeLib
             return res;
         }
 
-        public int HalfEdgeCount { get { return HalfEdges.Count; } }
+        public int HalfEdgeCount
+        { get { return HalfEdges.Count; } }
 
         public void AddFacePoint(int e, Int32Collection faces)
         {
@@ -281,7 +286,6 @@ namespace HalfEdgeLib
                     }
                 }
             }
-           
         }
 
         /// <summary>
@@ -695,7 +699,7 @@ namespace HalfEdgeLib
             TwinUp(t0, ne1);
             TwinUp(ne0, ne2);
 
-            // mark exsing faces as dead
+            // mark existing faces as dead
             Faces[fe0].FirstEdge = -1;
             Faces[ft0].FirstEdge = -1;
 
@@ -807,6 +811,7 @@ namespace HalfEdgeLib
         }
 
         public List<HalfEdge> BoundaryHalfEdges { get; set; }
+
         private void MarkBoundaryAndEndVertices()
         {
             BoundaryHalfEdges = new List<HalfEdge>();
@@ -827,7 +832,10 @@ namespace HalfEdgeLib
                 }
             }
         }
+
         public List<HalfEdge> FakeFace { get; set; }
+        public List<List<HalfEdge>> Boundaries;
+
         private void StitchBoundary()
         {
             if (BoundaryHalfEdges != null)
@@ -837,7 +845,6 @@ namespace HalfEdgeLib
                 for (int i = 0; i < BoundaryHalfEdges.Count; i++)
                 {
                     HalfEdge dummy = new HalfEdge();
-
                     dummy.Twin = BoundaryHalfEdges[i].Id;
                     dummy.StartVertex = BoundaryHalfEdges[i].EndVertex;
                     dummy.EndVertex = BoundaryHalfEdges[i].StartVertex;
@@ -847,23 +854,68 @@ namespace HalfEdgeLib
                     HalfEdges.Add(dummy);
                     FakeFace.Add(dummy);
                 }
+                Boundaries = new List<List<HalfEdge>>();
 
-                // now we need the fakes to link up correctly
-                for (int i = 0; i < FakeFace.Count; i++)
+                while (FakeFace.Count > 0)
                 {
-                    for (int j = 0; j < FakeFace.Count; j++)
+                    List<HalfEdge> singleBoundary = new List<HalfEdge>();
+                    singleBoundary.Add(FakeFace[0]);
+                    int startVIndex = FakeFace[0].StartVertex;
+                    int id = FakeFace[0].Id;
+                    int i = 0;
+                    int endVIndex = FakeFace[0].EndVertex;
+                    FakeFace.RemoveAt(0);
+                    bool found;
+                    do
                     {
-                        if (i != j)
+                        found = false;
+                        for (int j = 0; j < FakeFace.Count; j++)
                         {
-                            if (FakeFace[i].EndVertex == FakeFace[j].StartVertex)
+                            if (endVIndex == FakeFace[j].StartVertex)
                             {
-                                FakeFace[i].Next = FakeFace[j].Id;
-                                FakeFace[j].Previous = FakeFace[i].Id;
+                                singleBoundary[i].Next = FakeFace[j].Id;
+                                singleBoundary.Add(FakeFace[j]);
+                                FakeFace.RemoveAt(j);
+                                i++;
+                                singleBoundary[i].Previous = singleBoundary[i - 1].Id;
+                                endVIndex = singleBoundary[i].EndVertex;
+                                found = true;
+                                break;
                             }
                         }
+                    } while (found);
+
+                    // did the boundary close itself
+                    if (singleBoundary[i].EndVertex != startVIndex)
+                    {
+                        singleBoundary[i].EndVertex = startVIndex;
                     }
-                }                
+                    if (singleBoundary[i].Next == -1)
+                    {
+                        singleBoundary[i].Next = singleBoundary[0].Id;
+                    }
+                    singleBoundary[0].Previous = singleBoundary[i].Id;
+                    Boundaries.Add(singleBoundary);
+                }
             }
+            /*
+            // now we need the fakes to link up correctly
+            for (int i = 0; i < FakeFace.Count; i++)
+            {
+                for (int j = 0; j < FakeFace.Count; j++)
+                {
+                    if (i != j)
+                    {
+                        if (FakeFace[i].EndVertex == FakeFace[j].StartVertex)
+                        {
+                            FakeFace[i].Next = FakeFace[j].Id;
+                            FakeFace[j].Previous = FakeFace[i].Id;
+                        }
+                    }
+                }
+            }
+            Boundaries.Add(FakeFace);
+            */
         }
     }
 }

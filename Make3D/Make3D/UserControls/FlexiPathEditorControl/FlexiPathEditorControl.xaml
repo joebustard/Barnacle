@@ -30,16 +30,19 @@
                         VerticalAlignment="Top"
                         Columns="9"
                         Rows="3">
-
-                        <Button
+                        <Border
+                            x:Name="ShowPointsBorder"
+                            BorderThickness="4"
+                            CornerRadius="2">
+                            <Button
                             x:Name="ShowAllPointsButton"
-                            Margin="4,4,4,4"
+
                             Command="{Binding ShowAllPointsCommand}"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Show all the control points on the path">
-                            <Image Source="/Barnacle;component/Images/Buttons/SeeAllPoints.png" ToolTip="Show all the control points on the path" />
-                        </Button>
-
+                                <Image Source="/Barnacle;component/Images/Buttons/SeeAllPoints.png" ToolTip="Show all the control points on the path" />
+                            </Button>
+                        </Border>
                         <Border
                             x:Name="PickBorder"
                             BorderThickness="4"

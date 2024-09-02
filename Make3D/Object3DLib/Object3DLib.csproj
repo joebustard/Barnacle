@@ -62,6 +62,7 @@
     <Compile Include="LineUtils.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Object3D.cs" />
+    <Compile Include="OFF\OFFFormat.cs" />
     <Compile Include="PointUtils.cs" />
     <Compile Include="PolarCoordinate.cs" />
     <Compile Include="PrimitiveGenerator.cs" />

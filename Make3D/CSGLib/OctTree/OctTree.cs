@@ -64,7 +64,7 @@ namespace CSGLib
                 {
                     foreach (int index in node.PointsInOctNode)
                     {
-                        if (pnt.Equals(OctNode.AllPoints[index]))
+                        if (index < OctNode.AllPoints.Count && pnt.Equals(OctNode.AllPoints[index]))
                         {
                             res = index;
                             break;

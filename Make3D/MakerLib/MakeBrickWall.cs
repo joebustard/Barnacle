@@ -6,13 +6,17 @@ namespace MakerLib
 {
     public class BrickWallMaker : MakerBase
     {
-        private double wallLength;
-        private double wallHeight;
-        private double wallWidth;
-        private double largeBrickLength;
-        private double smallBrickLength;
+        private bool bottomBevel;
         private double brickHeight;
+        private double largeBrickLength;
+        private bool leftBevel;
         private double mortarGap;
+        private bool rightBevel;
+        private double smallBrickLength;
+        private bool topBevel;
+        private double wallHeight;
+        private double wallLength;
+        private double wallWidth;
 
         public BrickWallMaker(double wallLength, double wallHeight, double wallWidth, double largeBrickLength, double smallBrickLength, double brickHeight, double mortarGap)
         {
@@ -23,6 +27,11 @@ namespace MakerLib
             this.smallBrickLength = smallBrickLength;
             this.brickHeight = brickHeight;
             this.mortarGap = mortarGap;
+
+            this.topBevel = false;
+            this.bottomBevel = false;
+            this.leftBevel = false;
+            this.rightBevel = false;
         }
 
         public void Generate(Point3DCollection pnts, Int32Collection faces)
@@ -111,10 +120,33 @@ namespace MakerLib
 
             // assume top left point is 0,wallheight,0
             // close the "box"
-            Point3D v0 = new Point3D(0, wallHeight, mortarGap - wallWidth);
-            Point3D v1 = new Point3D(x, wallHeight, mortarGap - wallWidth);
-            Point3D v2 = new Point3D(0, y, mortarGap - wallWidth);
-            Point3D v3 = new Point3D(x, y, mortarGap - wallWidth);
+            double topBev = 0;
+            double leftBev = 0;
+            double rightBev = 0;
+            double botBev = 0;
+            if (topBevel)
+            {
+                topBev = wallWidth;
+            }
+
+            if (bottomBevel)
+            {
+                botBev = wallWidth;
+            }
+
+            if (leftBevel)
+            {
+                leftBev = wallWidth;
+            }
+
+            if (rightBevel)
+            {
+                rightBev = wallWidth;
+            }
+            Point3D v0 = new Point3D(0 + leftBev, wallHeight - topBev, mortarGap - wallWidth);
+            Point3D v1 = new Point3D(x - rightBev, wallHeight - topBev, mortarGap - wallWidth);
+            Point3D v2 = new Point3D(0 + leftBev, y + botBev, mortarGap - wallWidth);
+            Point3D v3 = new Point3D(x - rightBev, y + botBev, mortarGap - wallWidth);
             int p0 = AddVertice(v0);
             int p1 = AddVertice(v1);
             int p2 = AddVertice(v2);
@@ -173,6 +205,87 @@ namespace MakerLib
             Faces.Add(p3);
             Faces.Add(p1);
             Faces.Add(p5);
+        }
+
+        public void SetBevels(bool topBevel, bool bottomBevel, bool leftBevel, bool rightBevel)
+        {
+            this.topBevel = topBevel;
+            this.bottomBevel = bottomBevel;
+            this.leftBevel = leftBevel;
+            this.rightBevel = rightBevel;
+        }
+
+        private void OneBrick(Point3D origin, double bl, double bh, double bw, double gl, double gh)
+        {
+            int[] vid = new int[10];
+            // gap above brick
+            vid[0] = AddVertice(new Point3D(origin.X, origin.Y, origin.Z));
+            vid[1] = AddVertice(new Point3D(origin.X + bl, origin.Y, origin.Z));
+
+            vid[2] = AddVertice(new Point3D(origin.X, origin.Y - gh, origin.Z));
+            vid[3] = AddVertice(new Point3D(origin.X + bl, origin.Y - gh, origin.Z));
+
+            vid[4] = AddVertice(new Point3D(origin.X, origin.Y - bh - gh, origin.Z));
+            vid[5] = AddVertice(new Point3D(origin.X + bl, origin.Y - bh - gh, origin.Z));
+
+            // front of brick
+            vid[6] = AddVertice(new Point3D(origin.X, origin.Y - gh, origin.Z + bw));
+            vid[7] = AddVertice(new Point3D(origin.X + bl, origin.Y - gh, origin.Z + bw));
+            vid[8] = AddVertice(new Point3D(origin.X, origin.Y - gh - bh, origin.Z + bw));
+            vid[9] = AddVertice(new Point3D(origin.X + bl, origin.Y - gh - bh, origin.Z + bw));
+
+            Faces.Add(vid[0]);
+            Faces.Add(vid[2]);
+            Faces.Add(vid[1]);
+
+            Faces.Add(vid[2]);
+            Faces.Add(vid[3]);
+            Faces.Add(vid[1]);
+
+            // top of brick
+            Faces.Add(vid[2]);
+            Faces.Add(vid[6]);
+            Faces.Add(vid[3]);
+
+            Faces.Add(vid[6]);
+            Faces.Add(vid[7]);
+            Faces.Add(vid[3]);
+
+            // front of brick
+            Faces.Add(vid[6]);
+            Faces.Add(vid[8]);
+            Faces.Add(vid[7]);
+
+            Faces.Add(vid[8]);
+            Faces.Add(vid[9]);
+            Faces.Add(vid[7]);
+
+            // brick left
+            Faces.Add(vid[2]);
+            Faces.Add(vid[4]);
+            Faces.Add(vid[6]);
+
+            Faces.Add(vid[6]);
+            Faces.Add(vid[4]);
+            Faces.Add(vid[8]);
+
+            // brick right
+            Faces.Add(vid[9]);
+            Faces.Add(vid[5]);
+            Faces.Add(vid[7]);
+
+            Faces.Add(vid[5]);
+            Faces.Add(vid[3]);
+            Faces.Add(vid[7]);
+
+            // brick bottom
+            Faces.Add(vid[4]);
+            Faces.Add(vid[9]);
+            Faces.Add(vid[8]);
+
+            Faces.Add(vid[4]);
+            Faces.Add(vid[5]);
+            Faces.Add(vid[9]);
         }
 
         private void OneBrickWithSideGap(Point3D origin, double bl, double bh, double bw, double gl, double gh)
@@ -265,79 +378,6 @@ namespace MakerLib
             Faces.Add(vid[12]);
             Faces.Add(vid[11]);
             Faces.Add(vid[6]);
-        }
-
-        private void OneBrick(Point3D origin, double bl, double bh, double bw, double gl, double gh)
-        {
-            int[] vid = new int[10];
-            // gap above brick
-            vid[0] = AddVertice(new Point3D(origin.X, origin.Y, origin.Z));
-            vid[1] = AddVertice(new Point3D(origin.X + bl, origin.Y, origin.Z));
-
-            vid[2] = AddVertice(new Point3D(origin.X, origin.Y - gh, origin.Z));
-            vid[3] = AddVertice(new Point3D(origin.X + bl, origin.Y - gh, origin.Z));
-
-            vid[4] = AddVertice(new Point3D(origin.X, origin.Y - bh - gh, origin.Z));
-            vid[5] = AddVertice(new Point3D(origin.X + bl, origin.Y - bh - gh, origin.Z));
-
-            // front of brick
-            vid[6] = AddVertice(new Point3D(origin.X, origin.Y - gh, origin.Z + bw));
-            vid[7] = AddVertice(new Point3D(origin.X + bl, origin.Y - gh, origin.Z + bw));
-            vid[8] = AddVertice(new Point3D(origin.X, origin.Y - gh - bh, origin.Z + bw));
-            vid[9] = AddVertice(new Point3D(origin.X + bl, origin.Y - gh - bh, origin.Z + bw));
-
-            Faces.Add(vid[0]);
-            Faces.Add(vid[2]);
-            Faces.Add(vid[1]);
-
-            Faces.Add(vid[2]);
-            Faces.Add(vid[3]);
-            Faces.Add(vid[1]);
-
-            // top of brick
-            Faces.Add(vid[2]);
-            Faces.Add(vid[6]);
-            Faces.Add(vid[3]);
-
-            Faces.Add(vid[6]);
-            Faces.Add(vid[7]);
-            Faces.Add(vid[3]);
-
-            // front of brick
-            Faces.Add(vid[6]);
-            Faces.Add(vid[8]);
-            Faces.Add(vid[7]);
-
-            Faces.Add(vid[8]);
-            Faces.Add(vid[9]);
-            Faces.Add(vid[7]);
-
-            // brick left
-            Faces.Add(vid[2]);
-            Faces.Add(vid[4]);
-            Faces.Add(vid[6]);
-
-            Faces.Add(vid[6]);
-            Faces.Add(vid[4]);
-            Faces.Add(vid[8]);
-
-            // brick right
-            Faces.Add(vid[9]);
-            Faces.Add(vid[5]);
-            Faces.Add(vid[7]);
-
-            Faces.Add(vid[5]);
-            Faces.Add(vid[3]);
-            Faces.Add(vid[7]);
-
-            // brick bottom
-            Faces.Add(vid[4]);
-            Faces.Add(vid[9]);
-            Faces.Add(vid[8]);
-
-            Faces.Add(vid[4]);
-            Faces.Add(vid[5]);
-            Faces.Add(vid[9]);
         }
     }
 }

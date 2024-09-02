@@ -68,6 +68,12 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OctTreeLib\OctTreeLib.csproj">
+      <Project>{0d9bb88e-b275-4e45-8ea9-aec204588a7c}</Project>
+      <Name>OctTreeLib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

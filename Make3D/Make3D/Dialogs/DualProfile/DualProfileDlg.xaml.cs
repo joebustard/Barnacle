@@ -16,10 +16,16 @@
 **************************************************************************/
 
 using asdflibrary;
+using CSGLib;
+using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Media.Media3D;
+using OctTreeLib;
+using Barnacle.Models;
+using System.Windows.Media;
 
 namespace Barnacle.Dialogs
 {
@@ -61,6 +67,8 @@ namespace Barnacle.Dialogs
             toppnts = new List<Point>();
             FrontPathControl.OnFlexiPathChanged += FrontPointsChanged;
             TopPathControl.OnFlexiPathChanged += TopPointsChanged;
+            FrontPathControl.AbsolutePaths = true;
+            TopPathControl.AbsolutePaths = true;
             ModelGroup = MyModelGroup;
             loaded = false;
         }
@@ -173,6 +181,206 @@ namespace Barnacle.Dialogs
             Close();
         }
 
+        private void CalculateExtents(List<Point> tmp, out double lx, out double rx, out double ty, out double by)
+        {
+            lx = double.MaxValue;
+            rx = double.MinValue;
+            ty = double.MinValue;
+            by = double.MaxValue;
+            for (int i = 0; i < tmp.Count; i++)
+            {
+                lx = Math.Min(tmp[i].X, lx);
+                rx = Math.Max(tmp[i].X, rx);
+                by = Math.Min(tmp[i].Y, by);
+                ty = Math.Max(tmp[i].Y, ty);
+            }
+        }
+
+        private OctTreeLib.OctTree octTree;
+
+        private OctTreeLib.OctTree CreateOctree(Point3D minPoint, Point3D maxPoint)
+        {
+            octTree = new OctTreeLib.OctTree(Vertices,
+                                  minPoint,
+                                  maxPoint,
+                                  200);
+            return octTree;
+        }
+
+        private void CreateSideFace(List<System.Windows.Point> pnts, int i, bool flip, bool autoclose = true)
+        {
+            int v = i + 1;
+
+            if (v == pnts.Count)
+            {
+                if (autoclose)
+                {
+                    v = 0;
+                }
+                else
+                {
+                    // dont process the final point if caller doesn't want it
+                    return;
+                }
+            }
+            int c0;
+            int c1;
+            int c2;
+            int c3;
+
+            if (!flip)
+            {
+                c0 = AddVerticeOctTree(pnts[i].X, pnts[i].Y, -0.5);
+                c1 = AddVerticeOctTree(pnts[i].X, pnts[i].Y, 0.5);
+                c2 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, 0.5);
+                c3 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, -0.5);
+                Faces.Add(c0);
+                Faces.Add(c2);
+                Faces.Add(c1);
+
+                Faces.Add(c0);
+                Faces.Add(c3);
+                Faces.Add(c2);
+            }
+            else
+            {
+                c0 = AddVerticeOctTree(flippedScale * pnts[i].X, flippedScale * -0.5, flippedScale * pnts[i].Y);
+                c1 = AddVerticeOctTree(flippedScale * pnts[i].X, flippedScale * 0.5, flippedScale * pnts[i].Y);
+                c2 = AddVerticeOctTree(flippedScale * pnts[v].X, flippedScale * 0.5, flippedScale * pnts[v].Y);
+                c3 = AddVerticeOctTree(flippedScale * pnts[v].X, flippedScale * -0.5, flippedScale * pnts[v].Y);
+                Faces.Add(c0);
+                Faces.Add(c1);
+                Faces.Add(c2);
+
+                Faces.Add(c0);
+                Faces.Add(c2);
+                Faces.Add(c3);
+            }
+            Faces.Add(c0);
+            Faces.Add(c2);
+            Faces.Add(c1);
+
+            Faces.Add(c0);
+            Faces.Add(c3);
+            Faces.Add(c2);
+        }
+
+        public int AddVerticeOctTree(double x, double y, double z)
+        {
+            int res = -1;
+            if (octTree != null)
+            {
+                Point3D v = new Point3D(x, y, z);
+                res = octTree.PointPresent(v);
+
+                if (res == -1)
+                {
+                    res = Vertices.Count;
+                    octTree.AddPoint(res, v);
+                }
+            }
+            return res;
+        }
+
+        private const double flippedScale = 1.1;
+
+        private Solid GenerateSolid(List<System.Windows.Point> points, bool flip)
+        {
+            ClearShape();
+            Solid res = null;
+            // points should be a list of 2d points scaled between -0.5 and .5
+            if (points != null && points.Count > 3)
+            {
+                List<System.Windows.Point> tmp = new List<System.Windows.Point>();
+                double top = 0;
+                for (int i = 0; i < points.Count; i++)
+                {
+                    if (points[i].Y > top)
+                    {
+                        top = points[i].Y;
+                    }
+                }
+
+                for (int i = 0; i < points.Count; i++)
+                {
+                    // flipping coordinates so have to reverse polygon too
+                    tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
+                }
+
+                octTree = CreateOctree(new Point3D(-2, -2, -2),
+                                  new Point3D(2, 2, 2));
+
+                for (int i = 0; i < tmp.Count; i++)
+                {
+                    CreateSideFace(tmp, i, flip);
+                }
+
+                // triangulate the basic polygon
+                TriangulationPolygon ply = new TriangulationPolygon();
+                List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
+                foreach (System.Windows.Point p in tmp)
+                {
+                    pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
+                }
+                ply.Points = pf.ToArray();
+                List<PolygonTriangulationLib.Triangle> tris = ply.Triangulate();
+
+                int c0;
+                int c1;
+                int c2;
+                foreach (PolygonTriangulationLib.Triangle t in tris)
+                {
+                    if (!flip)
+                    {
+                        c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, -0.5);
+                        c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, -0.5);
+                        c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, -0.5);
+                        Faces.Add(c0);
+                        Faces.Add(c2);
+                        Faces.Add(c1);
+                    }
+                    else
+                    {
+                        c0 = AddVerticeOctTree(flippedScale * t.Points[0].X, flippedScale * -0.5, flippedScale * t.Points[0].Y);
+                        c1 = AddVerticeOctTree(flippedScale * t.Points[1].X, flippedScale * -0.5, flippedScale * t.Points[1].Y);
+                        c2 = AddVerticeOctTree(flippedScale * t.Points[2].X, flippedScale * -0.5, flippedScale * t.Points[2].Y);
+                        Faces.Add(c0);
+                        Faces.Add(c1);
+                        Faces.Add(c2);
+                    }
+
+                    if (!flip)
+                    {
+                        c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, 0.5);
+                        c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, 0.5);
+                        c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, 0.5);
+                        Faces.Add(c0);
+                        Faces.Add(c1);
+                        Faces.Add(c2);
+                    }
+                    else
+                    {
+                        c0 = AddVerticeOctTree(flippedScale * t.Points[0].X, flippedScale * 0.5, flippedScale * t.Points[0].Y);
+                        c1 = AddVerticeOctTree(flippedScale * t.Points[1].X, flippedScale * 0.5, flippedScale * t.Points[1].Y);
+                        c2 = AddVerticeOctTree(flippedScale * t.Points[2].X, flippedScale * 0.5, flippedScale * t.Points[2].Y);
+                        Faces.Add(c0);
+                        Faces.Add(c2);
+                        Faces.Add(c1);
+                    }
+                }
+                CentreVertices();
+                /*
+                MeshSubdivider subdiv = new MeshSubdivider(Vertices, Faces);
+
+                Point3DCollection tmp2 = new Point3DCollection();
+                Int32Collection newTri = new Int32Collection();
+                subdiv.Subdivide(tmp2, newTri);
+                */
+                res = new Solid(Vertices, Faces, false);
+            }
+            return res;
+        }
+
         private void GenerateShape()
         {
             ClearShape();
@@ -180,58 +388,91 @@ namespace Barnacle.Dialogs
             {
                 if (frontpnts.Count > 3 && toppnts.Count > 3)
                 {
-                    CubeMarcher cm = new CubeMarcher();
-                    GridCell gc = new GridCell();
-                    List<Triangle> triangles = new List<Triangle>();
+                    double frontXExtent;
+                    double frontYExtent;
+                    double topXExtent;
+                    double topYExtent;
+                    Solid front = GenerateSolid(frontpnts, false);
 
-                    float dd = 0.025F;
-                    Functions.SphereRadius = 0.5F;
-                    for (float x = -0.6F; x <= 0.6; x += dd)
+                    Solid top = GenerateSolid(toppnts, true);
+
+                    BooleanModeller.OperationType op = BooleanModeller.OperationType.Intersection;
+                    Part Object1 = new Part(front);
+                    Part Object2 = new Part(top);
+
+                    BooleanModeller modeller = new BooleanModeller(front, top);
+                    Solid result = modeller.GetIntersection();
+
+                    ClearShape();
+                    Vector3D[] vc = result.GetVertices();
+                    if (vc.GetLength(0) > 0)
                     {
-                        for (float y = -0.6F; y <= 0.6F; y += dd)
+                        foreach (Vector3D v in vc)
                         {
-                            for (float z = -0.6F; z <= 0.6; z += dd)
+                            Point3D p = new Point3D(v.X * 10.0, v.Y * 10.0, v.Z * 10.0);
+                            Vertices.Add(p);
+                        }
+                        int[] ids = result.GetIndices();
+                        for (int i = 0; i < ids.Length; i++)
+                        {
+                            Faces.Add(ids[i]);
+                        }
+                    }
+
+                    /*
+                        CubeMarcher cm = new CubeMarcher();
+                        GridCell gc = new GridCell();
+                        List<Triangle> triangles = new List<Triangle>();
+
+                        float dd = 0.025F;
+                        Functions.SphereRadius = 0.5F;
+                        for (float x = -0.6F; x <= 0.6; x += dd)
+                        {
+                            for (float y = -0.6F; y <= 0.6F; y += dd)
                             {
-                                gc.p[0] = new XYZ(x, y, z);
-
-                                gc.p[1] = new XYZ(x + dd, y, z);
-                                gc.p[2] = new XYZ(x + dd, y, z + dd);
-                                gc.p[3] = new XYZ(x, y, z + dd);
-                                gc.p[4] = new XYZ(x, y + dd, z);
-                                gc.p[5] = new XYZ(x + dd, y + dd, z);
-                                gc.p[6] = new XYZ(x + dd, y + dd, z + dd);
-                                gc.p[7] = new XYZ(x, y + dd, z + dd);
-
-                                for (int i = 0; i < 8; i++)
+                                for (float z = -0.6F; z <= 0.6; z += dd)
                                 {
-                                    //gc.val[i] = Functions.Sphere(gc.p[i].x, gc.p[i].y, gc.p[i].z); ;
-                                    bool fin = InFront((float)gc.p[i].x, (float)gc.p[i].y);
-                                    float fd = FrontDist((float)gc.p[i].x, (float)gc.p[i].y, fin);
-                                    if (Math.Abs(fd) < 0.001) fin = true;
+                                    gc.p[0] = new XYZ(x, y, z);
 
-                                    bool tin = InTop((float)gc.p[i].x, (float)gc.p[i].z);
-                                    float td = TopDist((float)gc.p[i].x, (float)gc.p[i].z, tin);
-                                    if (Math.Abs(td) < 0.001) tin = true;
+                                    gc.p[1] = new XYZ(x + dd, y, z);
+                                    gc.p[2] = new XYZ(x + dd, y, z + dd);
+                                    gc.p[3] = new XYZ(x, y, z + dd);
+                                    gc.p[4] = new XYZ(x, y + dd, z);
+                                    gc.p[5] = new XYZ(x + dd, y + dd, z);
+                                    gc.p[6] = new XYZ(x + dd, y + dd, z + dd);
+                                    gc.p[7] = new XYZ(x, y + dd, z + dd);
 
-                                    gc.val[i] = GetDist(fin, fd, tin, td);
-                                }
-                                triangles.Clear();
+                                    for (int i = 0; i < 8; i++)
+                                    {
+                                        //gc.val[i] = Functions.Sphere(gc.p[i].x, gc.p[i].y, gc.p[i].z); ;
+                                        bool fin = InFront((float)gc.p[i].x, (float)gc.p[i].y);
+                                        float fd = FrontDist((float)gc.p[i].x, (float)gc.p[i].y, fin);
+                                        if (Math.Abs(fd) < 0.001) fin = true;
 
-                                cm.Polygonise(gc, 0, triangles);
+                                        bool tin = InTop((float)gc.p[i].x, (float)gc.p[i].z);
+                                        float td = TopDist((float)gc.p[i].x, (float)gc.p[i].z, tin);
+                                        if (Math.Abs(td) < 0.001) tin = true;
 
-                                foreach (Triangle t in triangles)
-                                {
-                                    int p0 = AddVertice(t.p[0].x * frontXSize, -(t.p[0].y * frontYSize), t.p[0].z * topYSize);
-                                    int p1 = AddVertice(t.p[1].x * frontXSize, -(t.p[1].y * frontYSize), t.p[1].z * topYSize);
-                                    int p2 = AddVertice(t.p[2].x * frontXSize, -(t.p[2].y * frontYSize), t.p[2].z * topYSize);
+                                        gc.val[i] = GetDist(fin, fd, tin, td);
+                                    }
+                                    triangles.Clear();
 
-                                    Faces.Add(p0);
-                                    Faces.Add(p2);
-                                    Faces.Add(p1);
+                                    cm.Polygonise(gc, 0, triangles);
+
+                                    foreach (Triangle t in triangles)
+                                    {
+                                        int p0 = AddVertice(t.p[0].x * frontXSize, -(t.p[0].y * frontYSize), t.p[0].z * topYSize);
+                                        int p1 = AddVertice(t.p[1].x * frontXSize, -(t.p[1].y * frontYSize), t.p[1].z * topYSize);
+                                        int p2 = AddVertice(t.p[2].x * frontXSize, -(t.p[2].y * frontYSize), t.p[2].z * topYSize);
+
+                                        Faces.Add(p0);
+                                        Faces.Add(p2);
+                                        Faces.Add(p1);
+                                    }
                                 }
                             }
                         }
-                    }
+                        */
                 }
             }
             CentreVertices();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LoggerLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,7 @@ namespace HalfEdgeLib
         public int Next { get; set; }
         public bool OnBoundary { get; set; }
         public int Id { get; set; }
+
         public HalfEdge()
         {
             StartVertex = -1;
@@ -27,7 +29,12 @@ namespace HalfEdgeLib
             OnBoundary = false;
             Id = -1;
         }
-        public int EndVertex { get;set; }
-        
+
+        public int EndVertex { get; set; }
+
+        public void Dump()
+        {
+            Logger.LogLine($"Id {Id:D6} : Next {Next:D6}, Previous {Previous:D6}, Twin {Twin:D6}, StartVertex {StartVertex:D6}, Face {Face:D6} Boundary {OnBoundary}");
+        }
     }
 }

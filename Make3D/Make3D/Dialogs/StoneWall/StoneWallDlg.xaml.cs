@@ -187,22 +187,22 @@ namespace Barnacle.Dialogs
 
             if (EditorParameters.Get("WallLength") != "")
             {
-                wallLength = EditorParameters.GetDouble("WallLength");
+                WallLength = EditorParameters.GetDouble("WallLength");
             }
 
             if (EditorParameters.Get("WallHeight") != "")
             {
-                wallHeight = EditorParameters.GetDouble("WallHeight");
+                WallHeight = EditorParameters.GetDouble("WallHeight");
             }
 
             if (EditorParameters.Get("WallThickness") != "")
             {
-                wallThickness = EditorParameters.GetDouble("WallThickness");
+                WallThickness = EditorParameters.GetDouble("WallThickness");
             }
 
             if (EditorParameters.Get("StoneSize") != "")
             {
-                stoneSize = EditorParameters.GetInt("StoneSize");
+                StoneSize = EditorParameters.GetInt("StoneSize");
             }
         }
 

@@ -48,7 +48,7 @@ namespace Barnacle.Dialogs
         }
 
         private const double minflatLength = 1;
-        private const double maxflatLength = 100;
+        private const double maxflatLength = 200;
         private double flatLength;
 
         public double FlatLength
@@ -81,7 +81,7 @@ namespace Barnacle.Dialogs
         }
 
         private const double minflatHeight = 1;
-        private const double maxflatHeight = 100;
+        private const double maxflatHeight = 200;
         private double flatHeight;
 
         public double FlatHeight

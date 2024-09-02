@@ -118,7 +118,7 @@ namespace HoleLibrary
                 while (!closed && found && !token.IsCancellationRequested)
                 {
                     found = false;
-                    for (int i = 0; i < maxi && !token.IsCancellationRequested; i++)
+                    for (int i = 0; i < maxi && !found && !token.IsCancellationRequested; i++)
                     {
                         if (i < duffEdges.Count)
                         {

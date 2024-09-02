@@ -334,6 +334,12 @@ namespace Barnacle.Object3DLib
                         op = BooleanModeller.OperationType.Intersection;
                     }
                     break;
+
+                case "groupforceunion":
+                    {
+                        op = BooleanModeller.OperationType.ForceUnion;
+                    }
+                    break;
             }
             Solid result = null;
             modeller = new BooleanModeller();

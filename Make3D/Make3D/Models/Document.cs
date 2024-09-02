@@ -1,5 +1,6 @@
 ﻿using Barnacle.Object3DLib;
 using FixLib;
+using Object3DLib.OFF;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -177,7 +178,7 @@ namespace Barnacle.Models
             string ext = System.IO.Path.GetExtension(fileName).ToLower();
             if (ext == ".txt")
             {
-                Read(fileName, true,reportMissing);
+                Read(fileName, true, reportMissing);
 
                 FilePath = fileName;
                 FileName = System.IO.Path.GetFileName(fileName);
@@ -248,7 +249,6 @@ namespace Barnacle.Models
                             fn = ParentProject.ProjectPathToAbsPath(fn);
                             referencedFiles.Add(fn);
                         }
-                        
                     }
                 }
                 foreach (string fn in referencedFiles)
@@ -869,6 +869,37 @@ namespace Barnacle.Models
                     ob.PrimType = "Mesh";
                     ob.Remesh();
                     ob.MoveToFloor();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        internal void ImportOffs(string fileName)
+        {
+            try
+            {
+                Point3DCollection vertices = new Point3DCollection();
+                Int32Collection faces = new Int32Collection();
+                if (OFFFormat.ReadOffFile(fileName, vertices, faces))
+                {
+                    Object3D ob = new Object3D();
+                    ob.Name = System.IO.Path.GetFileNameWithoutExtension(fileName);
+                    Content.Add(ob);
+                    ob.AbsoluteObjectVertices = vertices;
+                    ob.TriangleIndices = faces;
+                    ob.AbsoluteToRelative();
+                    ob.PrimType = "Mesh";
+                    ob.CalcScale();
+                    ob.RelativeToAbsolute();
+                    ob.Mesh.Positions = ob.AbsoluteObjectVertices;
+                    ob.Mesh.TriangleIndices = ob.TriangleIndices;
+                    ob.Mesh.Normals = ob.Normals;
+
+                    ob.MoveToFloor();
+                    ob.Remesh();
                 }
             }
             catch (Exception ex)

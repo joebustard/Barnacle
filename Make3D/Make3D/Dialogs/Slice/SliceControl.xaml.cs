@@ -344,6 +344,28 @@ namespace Barnacle.Dialogs.Slice
             }
         }
 
+        private void CopyProfileClicked(object sender, RoutedEventArgs e)
+        {
+            if (!String.IsNullOrEmpty(selectedUserProfile))
+            {
+                String defProfile = UserProfilePath + $"{selectedUserProfile}.profile";
+                if (File.Exists(defProfile))
+                {
+                    try
+                    {
+                        String copyName = UserProfilePath + $"{selectedUserProfile}_Copy.profile";
+                        File.Copy(defProfile, copyName, true);
+                        // refresh profiles list
+                        Profiles = GetAvailableUserProfiles();
+                    }
+                    catch (Exception ex)
+                    {
+                        LoggerLib.Logger.LogException(ex);
+                    }
+                }
+            }
+        }
+
         private void EditPrinterClicked(object sender, RoutedEventArgs e)
         {
             if (selectedPrinter != null && selectedPrinter != "")
@@ -362,7 +384,7 @@ namespace Barnacle.Dialogs.Slice
                         bp.Name = dlg.PrinterName;
                         bp.CuraPrinterFile = dlg.SelectedPrinter;
                         bp.CuraExtruderFile = dlg.SelectedExtruder;
-                        bp.StartGCode = UnSlashN( dlg.StartGCode);
+                        bp.StartGCode = UnSlashN(dlg.StartGCode);
                         bp.EndGCode = UnSlashN(dlg.EndGCode);
                         printerManager.Save();
                         BarnaclePrinterNames = printerManager.GetPrinterNames();
@@ -382,6 +404,7 @@ namespace Barnacle.Dialogs.Slice
         {
             return str.Replace("\n", "\\n");
         }
+
         private void EditProfileClicked(object sender, RoutedEventArgs e)
         {
             if (!String.IsNullOrEmpty(selectedUserProfile))
@@ -395,6 +418,8 @@ namespace Barnacle.Dialogs.Slice
                     dlg.ProfileName = selectedUserProfile;
                     dlg.CreatingNewProfile = false;
                     dlg.ShowDialog();
+                    Profiles = GetAvailableUserProfiles();
+                    SelectedUserProfile = dlg.ProfileName;
                 }
             }
         }

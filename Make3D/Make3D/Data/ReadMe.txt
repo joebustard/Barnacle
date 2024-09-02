@@ -6,10 +6,19 @@ Added
 	Oblique End Cylinder tool
 	Added ability to lock aspect ratio when changing an objects size
 	from the object properties panel.
+	Added quick and dirty Union. Does not necessarily make a manifold union but is good enough
+	for most models.
+	Added Copy printer profile button to slice dialog
+	Added Control S key to do a file save.
+	Added Bevel options to brick wall tool.
+	Added Bevel options to plank wall tool.
+	Flexipathcontrol, split line segment can split quadbezier segment
 
 Fixed
-	Slice dialog not showing carriage returns in gcode. Fixed
+	Slice dialog not showing carriage returns in start/end gcode. Fixed
 	Bug were canvas wing did not generate wing tip until parameters and changed back
+	Platelet box option was using size to set the inside dimensions of the box
+	rather than the outside. So platelet appeared to change size when user toggled between options
 
 Changed
 	Replaced subdivision method by a simpler one

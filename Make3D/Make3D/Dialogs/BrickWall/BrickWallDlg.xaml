@@ -4,10 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Barnacle.Dialogs"
+    xmlns:u="clr-namespace:Barnacle.UserControls.SideBevelSelector"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="BrickWall"
     Width="800"
-    Height="450"
+    Height="550"
     Background="{StaticResource WindowBackBrush}"
     Loaded="Window_Loaded"
     WindowStartupLocation="CenterOwner"
@@ -37,7 +38,7 @@
                     <RowDefinition Height="25" />
                     <RowDefinition Height="25" />
                     <RowDefinition Height="25" />
-                    <RowDefinition Height="25" />
+                    <RowDefinition Height="200" />
                     <RowDefinition Height="25" />
                     <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
@@ -84,6 +85,7 @@
                         Margin="8,0,0,0"
                         Text="{Binding MortarGap}" />
                 </StackPanel>
+                <u:SideBevelSelector x:Name="BevelSelector" Grid.Row="7"  Grid.Column="1" Width="200" Height="200" HorizontalAlignment="Left" />
                 <StackPanel Grid.Row="9" Orientation="Horizontal">
                     <Label
                         VerticalAlignment="Center"
@@ -155,7 +157,7 @@
             <Button
                 Grid.Column="2"
                 Click="Home_Click"
-                Content="Home" Width="80" Margin="0,2,0,2"  />
+                Content="Home" Width="80" Margin="0,2,0,2" />
         </Grid>
 
         <Grid Grid.Row="1" Grid.Column="3">

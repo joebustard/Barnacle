@@ -7,14 +7,16 @@ namespace Barnacle.LineLib
     public class FlexiSegment
     {
         public bool Selected { get; set; }
+
         public void DeselectHide(int v, ObservableCollection<FlexiPoint> points)
         {
             if (v >= 0 && v < points.Count)
             {
                 points[v].Selected = false;
-                points[v].Visible = false;
+                // points[v].Visible = false;
             }
         }
+
         public virtual void DeletePoints(ObservableCollection<FlexiPoint> points)
         {
         }

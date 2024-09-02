@@ -802,6 +802,36 @@ namespace Barnacle.Dialogs
             Faces.Add(c3);
         }
 
+        private void CreateInvertedSideFace(List<System.Windows.Point> pnts, int i, double offset = 0, bool autoclose = true)
+        {
+            int v = i + 1;
+
+            if (v == pnts.Count)
+            {
+                if (autoclose)
+                {
+                    v = 0;
+                }
+                else
+                {
+                    // dont process the final point if caller doesn't want it
+                    return;
+                }
+            }
+
+            int c0 = AddVerticeOctTree(pnts[i].X, pnts[i].Y, offset);
+            int c1 = AddVerticeOctTree(pnts[i].X, pnts[i].Y, plateWidth);
+            int c2 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, plateWidth);
+            int c3 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, offset);
+            Faces.Add(c0);
+            Faces.Add(c1);
+            Faces.Add(c2);
+
+            Faces.Add(c0);
+            Faces.Add(c2);
+            Faces.Add(c3);
+        }
+
         private void CreateSideFace(List<System.Windows.Point> pnts, int i, bool autoclose = true)
         {
             int v = i + 1;
@@ -934,7 +964,7 @@ namespace Barnacle.Dialogs
                     }
                 }
 
-                // user may ahve chosen a wallwidth that means the inside walls overlap DOnt allow that.
+                // user may have chosen a wallwidth that means the inside walls overlap DOnt allow that.
                 double actualWallWidth = wallWidth;
                 double d = ((rx - lx) / 2) - 0.1;
                 if (d < actualWallWidth)
@@ -964,7 +994,7 @@ namespace Barnacle.Dialogs
                 {
                     innerPolygon.Add(new System.Drawing.PointF((float)outerPolygon[i].X, (float)outerPolygon[i].Y));
                 }
-                innerPolygon = LineUtils.GetEnlargedPolygon(innerPolygon, -(float)actualWallWidth);
+                innerPolygon = LineUtils.GetEnlargedPolygon(innerPolygon,/* - */(float)actualWallWidth);
 
                 tmp.Clear();
                 for (int i = outerPolygon.Count - 1; i >= 0; i--)
@@ -981,7 +1011,7 @@ namespace Barnacle.Dialogs
                                                                                     // tmp = clk.ToList();
                 for (int i = 0; i < tmp.Count; i++)
                 {
-                    CreateSideFace(tmp, i);
+                    CreateInvertedSideFace(tmp, i);
                 }
 
                 tmp.Clear();
@@ -993,7 +1023,7 @@ namespace Barnacle.Dialogs
                 // OrderAntiClockwise(tmp.ToArray()); tmp = clk.ToList();
                 for (int i = 0; i < tmp.Count; i++)
                 {
-                    CreateSideFace(tmp, i);
+                    CreateInvertedSideFace(tmp, i);
                 }
 
                 for (int i = 0; i < outerPolygon.Count; i++)
@@ -1008,24 +1038,24 @@ namespace Barnacle.Dialogs
                     int c2 = AddVerticeOctTree(innerPolygon[j].X, innerPolygon[j].Y, 0.0);
                     int c3 = AddVerticeOctTree(outerPolygon[j].X, outerPolygon[j].Y, 0.0);
                     Faces.Add(c0);
-                    Faces.Add(c2);
                     Faces.Add(c1);
+                    Faces.Add(c2);
 
                     Faces.Add(c0);
-                    Faces.Add(c3);
                     Faces.Add(c2);
+                    Faces.Add(c3);
 
                     c0 = AddVerticeOctTree(outerPolygon[i].X, outerPolygon[i].Y, plateWidth);
                     c1 = AddVerticeOctTree(innerPolygon[i].X, innerPolygon[i].Y, plateWidth);
                     c2 = AddVerticeOctTree(innerPolygon[j].X, innerPolygon[j].Y, plateWidth);
                     c3 = AddVerticeOctTree(outerPolygon[j].X, outerPolygon[j].Y, plateWidth);
                     Faces.Add(c0);
-                    Faces.Add(c1);
                     Faces.Add(c2);
+                    Faces.Add(c1);
 
                     Faces.Add(c0);
-                    Faces.Add(c2);
                     Faces.Add(c3);
+                    Faces.Add(c2);
                 }
 
                 CentreVertices();
@@ -1085,7 +1115,7 @@ namespace Barnacle.Dialogs
                     // flipping coordinates so have to reverse polygon too
                     tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
                 }
-                // Point[] clik = OrderAntiClockwise(tmp.ToArray());
+
                 for (int i = 0; i < tmp.Count - 1; i++)
                 {
                     outerPolygon.Add(new System.Drawing.PointF((float)tmp[i].X, (float)tmp[i].Y));
@@ -1096,7 +1126,7 @@ namespace Barnacle.Dialogs
                 {
                     innerPolygon.Add(new System.Drawing.PointF((float)outerPolygon[i].X, (float)outerPolygon[i].Y));
                 }
-                innerPolygon = LineUtils.GetEnlargedPolygon(innerPolygon, -(float)actualWallWidth);
+                innerPolygon = LineUtils.GetEnlargedPolygon(innerPolygon, /*-*/ (float)actualWallWidth);
 
                 tmp.Clear();
                 for (int i = outerPolygon.Count - 1; i >= 0; i--)
@@ -1113,7 +1143,7 @@ namespace Barnacle.Dialogs
                                                                                     // tmp = clk.ToList();
                 for (int i = 0; i < tmp.Count; i++)
                 {
-                    CreateSideFace(tmp, i);
+                    CreateInvertedSideFace(tmp, i);
                 }
 
                 tmp.Clear();
@@ -1121,13 +1151,14 @@ namespace Barnacle.Dialogs
                 {
                     tmp.Add(new System.Windows.Point(innerPolygon[i].X, innerPolygon[i].Y));
                 }
-                // generate side triangles so original points are already in list clk =
-                // OrderAntiClockwise(tmp.ToArray()); tmp = clk.ToList();
+
+                // sides of indented area
                 for (int i = 0; i < tmp.Count; i++)
                 {
-                    CreateSideFace(tmp, i);
+                    CreateInvertedSideFace(tmp, i, baseWidth);
                 }
 
+                // front of the wall
                 for (int i = 0; i < outerPolygon.Count; i++)
                 {
                     int j = i + 1;
@@ -1135,32 +1166,33 @@ namespace Barnacle.Dialogs
                     {
                         j = 0;
                     }
+                    /*
                     int c0 = AddVerticeOctTree(outerPolygon[i].X, outerPolygon[i].Y, 0.0);
                     int c1 = AddVerticeOctTree(innerPolygon[i].X, innerPolygon[i].Y, 0.0);
                     int c2 = AddVerticeOctTree(innerPolygon[j].X, innerPolygon[j].Y, 0.0);
                     int c3 = AddVerticeOctTree(outerPolygon[j].X, outerPolygon[j].Y, 0.0);
                     Faces.Add(c0);
-                    Faces.Add(c2);
-                    Faces.Add(c1);
-
-                    Faces.Add(c0);
-                    Faces.Add(c3);
-                    Faces.Add(c2);
-
-                    c0 = AddVerticeOctTree(outerPolygon[i].X, outerPolygon[i].Y, plateWidth);
-                    c1 = AddVerticeOctTree(innerPolygon[i].X, innerPolygon[i].Y, plateWidth);
-                    c2 = AddVerticeOctTree(innerPolygon[j].X, innerPolygon[j].Y, plateWidth);
-                    c3 = AddVerticeOctTree(outerPolygon[j].X, outerPolygon[j].Y, plateWidth);
-                    Faces.Add(c0);
                     Faces.Add(c1);
                     Faces.Add(c2);
 
                     Faces.Add(c0);
                     Faces.Add(c2);
                     Faces.Add(c3);
+                    */
+                    int c0 = AddVerticeOctTree(outerPolygon[i].X, outerPolygon[i].Y, plateWidth);
+                    int c1 = AddVerticeOctTree(innerPolygon[i].X, innerPolygon[i].Y, plateWidth);
+                    int c2 = AddVerticeOctTree(innerPolygon[j].X, innerPolygon[j].Y, plateWidth);
+                    int c3 = AddVerticeOctTree(outerPolygon[j].X, outerPolygon[j].Y, plateWidth);
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+
+                    Faces.Add(c0);
+                    Faces.Add(c3);
+                    Faces.Add(c2);
                 }
 
-                // triangulate the basic polygon
+                // Whole back
                 TriangulationPolygon ply = new TriangulationPolygon();
 
                 ply.Points = outerPolygon.ToArray();
@@ -1175,6 +1207,7 @@ namespace Barnacle.Dialogs
                     Faces.Add(c1);
                 }
 
+                // front of the base
                 ply.Points = innerPolygon.ToArray();
                 tris = ply.Triangulate();
                 foreach (Triangle t in tris)
@@ -1729,6 +1762,7 @@ namespace Barnacle.Dialogs
             HollowShape = EditorParameters.GetBoolean("Hollow", false);
             TexturedShape = EditorParameters.GetBoolean("Textured", false);
             SolidShape = EditorParameters.GetBoolean("Solid", true);
+            BoxShape = EditorParameters.GetBoolean("Box", false);
             LargeTexture = EditorParameters.GetBoolean("LargeTexture", true);
             SmallTexture = EditorParameters.GetBoolean("SmallTexture", false);
             TileTexture = EditorParameters.GetBoolean("CentreTexture", true);
@@ -2000,6 +2034,7 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("TextureDepth", TextureDepth.ToString());
             EditorParameters.Set("Hollow", HollowShape.ToString());
             EditorParameters.Set("Solid", SolidShape.ToString());
+            EditorParameters.Set("Box", BoxShape.ToString());
             EditorParameters.Set("Textured", TexturedShape.ToString());
             EditorParameters.Set("LargeTexture", LargeTexture.ToString());
             EditorParameters.Set("SmallTexture", SmallTexture.ToString());
@@ -2072,7 +2107,7 @@ namespace Barnacle.Dialogs
         private void BrowseTextures_Click(object sender, RoutedEventArgs e)
         {
             string folder = textureManager.GetTextureFolderName();
-            if ( Directory.Exists(folder))
+            if (Directory.Exists(folder))
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo("explorer.exe");
                 startInfo.Arguments = folder;

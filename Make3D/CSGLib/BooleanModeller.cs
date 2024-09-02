@@ -73,7 +73,8 @@ namespace CSGLib
             Union,
             Difference,
             Intersection,
-            ReverseDifference
+            ReverseDifference,
+            ForceUnion
         }
 
         public BooleanModeller(Solid solid1, Solid solid2)
@@ -126,9 +127,15 @@ namespace CSGLib
                                     Point3DCollection rp, Int32Collection ri,
                                     OperationType op, CancellationTokenSource csgCancelation, IProgress<CSGGroupProgress> progress)
         {
+            Point3D minPnt = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
+            Point3D maxPnt = new Point3D(double.MinValue, double.MinValue, double.MinValue);
+
             BlockingCollection<Point3D> lpnts = new BlockingCollection<Point3D>();
             foreach (Point3D p in lp)
             {
+                minPnt = MinPoint(minPnt, p);
+                maxPnt = MaxPoint(maxPnt, p);
+
                 lpnts.Add(new Point3D(p.X, p.Y, p.Z));
             }
 
@@ -140,6 +147,9 @@ namespace CSGLib
             BlockingCollection<Point3D> rpnts = new BlockingCollection<Point3D>();
             foreach (Point3D p in rp)
             {
+                minPnt = MinPoint(minPnt, p);
+                maxPnt = MaxPoint(maxPnt, p);
+
                 rpnts.Add(new Point3D(p.X, p.Y, p.Z));
             }
 
@@ -152,9 +162,54 @@ namespace CSGLib
             {
                 BooleanModeller btmp = new BooleanModeller();
                 btmp.SetCancelationToken(csgCancelation.Token);
-                OpResult res = btmp.DoModelOperation(lpnts, lint, rpnts, rint, op, progress);
+                OpResult res;
+                if (op == OperationType.ForceUnion)
+                {
+                    Point3DCollection vertices = new Point3DCollection();
+                    Int32Collection faces = new Int32Collection();
+                    OctTreeLib.OctTree octree = new OctTreeLib.OctTree(vertices, minPnt, maxPnt, 200);
+
+                    foreach (int f in li)
+                    {
+                        var sp = lp[f];
+                        Point3D p = new Point3D(sp.X, sp.Y, sp.Z);
+                        int nf = octree.AddPoint(p);
+                        faces.Add(nf);
+                    }
+                    foreach (int f in ri)
+                    {
+                        var sp = rp[f];
+                        Point3D p = new Point3D(sp.X, sp.Y, sp.Z);
+                        int nf = octree.AddPoint(p);
+                        faces.Add(nf);
+                    }
+                    res.OperationStatus = CSGState.Good;
+                    res.ResultObject = new Solid(vertices, faces, false);
+                }
+                else
+                {
+                    res = btmp.DoModelOperation(lpnts, lint, rpnts, rint, op, progress);
+                }
                 return res;
             }, csgCancelation.Token).ConfigureAwait(true);
+        }
+
+        private Point3D MaxPoint(Point3D p1, Point3D p2)
+        {
+            return new Point3D(
+            Math.Max(p1.X, p2.X),
+            Math.Max(p1.Y, p2.Y),
+            Math.Max(p1.Z, p2.Z)
+            );
+        }
+
+        private Point3D MinPoint(Point3D p1, Point3D p2)
+        {
+            return new Point3D(
+           Math.Min(p1.X, p2.X),
+           Math.Min(p1.Y, p2.Y),
+           Math.Min(p1.Z, p2.Z)
+           );
         }
 
         private static CancellationToken cancelToken;
@@ -372,7 +427,53 @@ namespace CSGLib
             Vertex min2;
             Vertex max2;
             Object1.octTree.Bounds(out min1, out max1);
-            Object1.octTree.Bounds(out min2, out max2);
+            Object2.octTree.Bounds(out min2, out max2);
+            double minx, miny, minz;
+            double maxx, maxy, maxz;
+            minx = Math.Min(min1.Position.X, min2.Position.X);
+            miny = Math.Min(min1.Position.Y, min2.Position.Y);
+            minz = Math.Min(min1.Position.Z, min2.Position.Z);
+
+            maxx = Math.Max(max1.Position.X, max2.Position.X);
+            maxy = Math.Max(max1.Position.Y, max2.Position.Y);
+            maxz = Math.Max(max1.Position.Z, max2.Position.Z);
+
+            Vertex min = new Vertex(minx, miny, minz);
+            Vertex max = new Vertex(maxx, maxy, maxz);
+
+            var vertices = new List<Vertex>();
+            var indices = new List<int>();
+            OctTree octTree = new OctTree(vertices, min, max, 100);
+
+            //group the elements of the two solids whose faces fit with the desired status
+            GroupObjectComponents(octTree, Object1, vertices, indices, faceStatus1, faceStatus2);
+            // GroupObjectComponents(Object2, vertices, indices, faceStatus3, faceStatus3);
+            GroupObjectComponents(octTree, Object2, vertices, indices, faceStatus3, faceStatus3);
+
+            //turn the arrayLists to arrays
+            Vector3D[] verticesArray = new Vector3D[vertices.Count];
+            for (int i = 0; i < vertices.Count; i++)
+            {
+                verticesArray[i] = vertices[i].Position;
+            }
+            int[] indicesArray = new int[indices.Count];
+            for (int i = 0; i < indices.Count; i++)
+            {
+                indicesArray[i] = indices[i];
+            }
+
+            //returns the solid containing the grouped elements
+            return new Solid(verticesArray, indicesArray);
+        }
+
+        public Solid ComposeSolid(Status faceStatus1, Status faceStatus2, Status faceStatus3, Part Object1, Part Object2)
+        {
+            Vertex min1;
+            Vertex max1;
+            Vertex min2;
+            Vertex max2;
+            Object1.octTree.Bounds(out min1, out max1);
+            Object2.octTree.Bounds(out min2, out max2);
             double minx, miny, minz;
             double maxx, maxy, maxz;
             minx = Math.Min(min1.Position.X, min2.Position.X);
@@ -446,8 +547,6 @@ namespace CSGLib
                             indices.Add(vertices.Count);
                             octTree.AddPoint(vertices.Count, faceVerts[j]);
                         }
-
-                       
                     }
                 }
             }

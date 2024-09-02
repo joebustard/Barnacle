@@ -38,7 +38,6 @@ namespace Barnacle.Views
             vm = DataContext as EditorViewModel;
             vm.ViewPort = viewport3D1;
             vm.Overlay = overlayCanvas;
-            
         }
 
         public void HitTest(object sender, System.Windows.Input.MouseButtonEventArgs args)
@@ -126,7 +125,7 @@ namespace Barnacle.Views
         {
             KeyEventArgs e = param as KeyEventArgs;
             e.Handled = vm.KeyDown(e.Key, Keyboard.IsKeyDown(Key.LeftShift) | Keyboard.IsKeyDown(Key.RightShift),
-                  Keyboard.IsKeyDown(Key.LeftCtrl) | Keyboard.IsKeyDown(Key.RightCtrl));
+                  Keyboard.IsKeyDown(Key.LeftCtrl) | Keyboard.IsKeyDown(Key.RightCtrl), Keyboard.IsKeyDown(Key.LeftAlt));
         }
 
         private void OnKeyUp(object param)
@@ -231,7 +230,7 @@ namespace Barnacle.Views
         private void UserControl_KeyDown(object sender, KeyEventArgs e)
         {
             vm.KeyDown(e.Key, Keyboard.IsKeyDown(Key.LeftShift) | Keyboard.IsKeyDown(Key.RightShift),
-                                 Keyboard.IsKeyDown(Key.LeftCtrl) | Keyboard.IsKeyDown(Key.RightCtrl));
+                                 Keyboard.IsKeyDown(Key.LeftCtrl) | Keyboard.IsKeyDown(Key.RightCtrl), Keyboard.IsKeyDown(Key.LeftAlt));
         }
 
         private void UserControl_KeyUp(object sender, KeyEventArgs e)

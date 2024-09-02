@@ -26,7 +26,6 @@ namespace VisualSolutionExplorer
         {
             InitializeComponent();
 
-            //  Folders = Database.GetFolders("");
             viewModel = new ProjectViewModel();
 
             base.DataContext = viewModel;
@@ -82,10 +81,8 @@ namespace VisualSolutionExplorer
                 if (prj.ProjectFolders != null)
                 {
                     List<ProjectFolder> fldrs = prj.ProjectFolders;
-
                     Folders = fldrs;
                     viewModel.SetContent(Folders);
-                    // ProjectViewModel.ProjectFilePath = ParentProject.BaseFolder;
                     if (!showRefreshButton)
                     {
                         viewModel.RefreshVisibility = Visibility.Hidden;
@@ -170,7 +167,9 @@ namespace VisualSolutionExplorer
         {
             startPoint = e.GetPosition(null);
         }
+
         private object selectedTreeObject;
+
         private void TreeView_SelectedItemChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<object> e)
         {
             TreeView item = sender as TreeView;
@@ -186,7 +185,6 @@ namespace VisualSolutionExplorer
                 if (ob is ProjectFileViewModel)
                 {
                     ProjectFileViewModel pfivm = ob as ProjectFileViewModel;
-                   // pfivm.IsSelected = false;
                     pfivm.IsEditing = false;
                 }
             }
@@ -207,17 +205,18 @@ namespace VisualSolutionExplorer
                     pfivm.IsEditing = false;
                 }
             }
-           // selectedTreeObject = e.NewValue;
+        }
+
+        public void ResetSolutionTree()
+        {
+            viewModel.ClearContent();
         }
 
         private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
-       
-            
-            if ( e.Key == Key.Enter)
+            if (e.Key == Key.Enter)
             {
                 viewModel.StopAllEditing();
-
             }
         }
     }

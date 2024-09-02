@@ -8,15 +8,17 @@ namespace MakerLib
 {
     public class PlankWallMaker : MakerBase
     {
-
         private double wallLength;
         private double wallHeight;
         private double wallWidth;
         private double plankWidth;
         private double gap;
         private double gapDepth;
+        private bool topBevel;
+        private bool bottomBevel;
+        private bool leftBevel;
+        private bool rightBevel;
 
- 
         public PlankWallMaker(double wallLength, double wallHeight, double wallWidth, double plankWidth, double gap, double gapDepth)
         {
             this.wallLength = wallLength;
@@ -26,6 +28,18 @@ namespace MakerLib
             this.gap = gap;
             this.gapDepth = gapDepth;
 
+            this.topBevel = false;
+            this.bottomBevel = false;
+            this.leftBevel = false;
+            this.rightBevel = false;
+        }
+
+        public void SetBevels(bool topBevel, bool bottomBevel, bool leftBevel, bool rightBevel)
+        {
+            this.topBevel = topBevel;
+            this.bottomBevel = bottomBevel;
+            this.leftBevel = leftBevel;
+            this.rightBevel = rightBevel;
         }
 
         public void Generate(Point3DCollection pnts, Int32Collection faces)
@@ -38,12 +52,9 @@ namespace MakerLib
             double plankAndGapLength = plankWidth + gap;
             int wholePlanksAndGaps = (int)(wallLength / plankAndGapLength);
             double x = 0;
-            for ( int pl = 0; pl < wholePlanksAndGaps; pl ++)
+            for (int pl = 0; pl < wholePlanksAndGaps; pl++)
             {
-
-                
-                
-                PlankAndGap(x, plankWidth,wallHeight,gapDepth,gap);
+                PlankAndGap(x, plankWidth, wallHeight, gapDepth, gap);
                 x += plankAndGapLength;
             }
             double leftOver = wallLength - x;
@@ -57,14 +68,37 @@ namespace MakerLib
             // close the "box"
             double x = wallLength;
             double backz = gapDepth - wallWidth;
-            if ( backz >=0)
+            if (backz >= 0)
             {
                 backz = -1.0;
             }
-            Point3D v0 = new Point3D(0, wallHeight, backz);
-            Point3D v1 = new Point3D(x, wallHeight, backz);
-            Point3D v2 = new Point3D(0, 0, backz);
-            Point3D v3 = new Point3D(x, 0, backz);
+            double topBev = 0;
+            double leftBev = 0;
+            double rightBev = 0;
+            double botBev = 0;
+            if (topBevel)
+            {
+                topBev = wallWidth;
+            }
+
+            if (bottomBevel)
+            {
+                botBev = wallWidth;
+            }
+
+            if (leftBevel)
+            {
+                leftBev = wallWidth;
+            }
+
+            if (rightBevel)
+            {
+                rightBev = wallWidth;
+            }
+            Point3D v0 = new Point3D(0 + leftBev, wallHeight - topBev, backz);
+            Point3D v1 = new Point3D(x - rightBev, wallHeight - topBev, backz);
+            Point3D v2 = new Point3D(0 + leftBev, 0 + botBev, backz);
+            Point3D v3 = new Point3D(x - rightBev, 0 + botBev, backz);
             int p0 = AddVertice(v0);
             int p1 = AddVertice(v1);
             int p2 = AddVertice(v2);
@@ -124,11 +158,11 @@ namespace MakerLib
             Faces.Add(p1);
             Faces.Add(p5);
         }
-   
+
         private void PlankAndGap(double x, double plw, double plh, double depth, double gl)
         {
             int[] vid = new int[13];
-           
+
             vid[0] = AddVertice(new Point3D(x, 0.0, 0.0));
             vid[1] = AddVertice(new Point3D(x + plw, 0.0, 0.0));
             vid[2] = AddVertice(new Point3D(x + plw + gl, 0.0, 0.0));
@@ -139,60 +173,59 @@ namespace MakerLib
 
             // front of Plank
             vid[6] = AddVertice(new Point3D(x, 0.0, depth));
-            vid[7] = AddVertice(new Point3D(x + plw, 0,  depth));
-            vid[8] = AddVertice(new Point3D(x,plh, depth));
-            vid[9] = AddVertice(new Point3D(x + plw,plh,depth));
+            vid[7] = AddVertice(new Point3D(x + plw, 0, depth));
+            vid[8] = AddVertice(new Point3D(x, plh, depth));
+            vid[9] = AddVertice(new Point3D(x + plw, plh, depth));
 
             Faces.Add(vid[0]);
             Faces.Add(vid[8]);
             Faces.Add(vid[3]);
-           
+
             Faces.Add(vid[0]);
             Faces.Add(vid[6]);
             Faces.Add(vid[8]);
-            
+
             Faces.Add(vid[6]);
             Faces.Add(vid[9]);
             Faces.Add(vid[8]);
-            
+
             Faces.Add(vid[6]);
             Faces.Add(vid[7]);
             Faces.Add(vid[9]);
-            
+
             Faces.Add(vid[7]);
             Faces.Add(vid[4]);
             Faces.Add(vid[9]);
-            
+
             Faces.Add(vid[7]);
             Faces.Add(vid[1]);
             Faces.Add(vid[4]);
-            
+
             // top of Plank
             Faces.Add(vid[3]);
             Faces.Add(vid[9]);
             Faces.Add(vid[4]);
-            
+
             Faces.Add(vid[3]);
             Faces.Add(vid[8]);
             Faces.Add(vid[9]);
-            
+
             // bottom of plank
             Faces.Add(vid[0]);
             Faces.Add(vid[7]);
             Faces.Add(vid[6]);
-            
+
             Faces.Add(vid[0]);
             Faces.Add(vid[1]);
             Faces.Add(vid[7]);
-            
-            
+
             Faces.Add(vid[1]);
             Faces.Add(vid[5]);
             Faces.Add(vid[4]);
-            
+
             Faces.Add(vid[1]);
             Faces.Add(vid[2]);
-            Faces.Add(vid[5]);          
+            Faces.Add(vid[5]);
         }
 
         private void Plank(double x, double plw, double plh, double depth)
@@ -200,11 +233,11 @@ namespace MakerLib
             int[] vid = new int[8];
 
             vid[0] = AddVertice(new Point3D(x, 0.0, 0.0));
-            vid[1] = AddVertice(new Point3D(x + plw, 0.0, 0.0));           
+            vid[1] = AddVertice(new Point3D(x + plw, 0.0, 0.0));
 
             vid[2] = AddVertice(new Point3D(x, plh, 0.0));
             vid[3] = AddVertice(new Point3D(x + plw, plh, 0.0));
-           
+
             vid[4] = AddVertice(new Point3D(x, 0.0, depth));
             vid[5] = AddVertice(new Point3D(x + plw, 0, depth));
             vid[6] = AddVertice(new Point3D(x, plh, depth));
@@ -251,10 +284,6 @@ namespace MakerLib
             Faces.Add(vid[0]);
             Faces.Add(vid[1]);
             Faces.Add(vid[5]);
-
-
-
-
         }
     }
 }

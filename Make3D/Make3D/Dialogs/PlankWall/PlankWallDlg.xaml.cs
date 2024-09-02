@@ -34,6 +34,47 @@ namespace Barnacle.Dialogs
         private double wallLength;
         private double wallWidth;
         private string warningText;
+        private bool topBevel;
+        private bool bottomBevel;
+        private bool leftBevel;
+        private bool rightBevel;
+
+        private void BevelSelector_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (loaded)
+            {
+                switch (e.PropertyName)
+                {
+                    case "TopBevelled":
+                        {
+                            topBevel = BevelSelector.TopBevelled;
+                            UpdateDisplay();
+                        }
+                        break;
+
+                    case "BottomBevelled":
+                        {
+                            bottomBevel = BevelSelector.BottomBevelled;
+                            UpdateDisplay();
+                        }
+                        break;
+
+                    case "LeftBevelled":
+                        {
+                            leftBevel = BevelSelector.LeftBevelled;
+                            UpdateDisplay();
+                        }
+                        break;
+
+                    case "RightBevelled":
+                        {
+                            rightBevel = BevelSelector.RightBevelled;
+                            UpdateDisplay();
+                        }
+                        break;
+                }
+            }
+        }
 
         public PlankWallDlg()
         {
@@ -44,10 +85,11 @@ namespace Barnacle.Dialogs
             loaded = false;
             WallHeight = 25;
             WallLength = 50;
-            WallWidth = 10;
+            WallWidth = 2;
             PlankWidth = 5;
             Gap = 1;
-            GapDepth = 2;
+            GapDepth = 1;
+            BevelSelector.PropertyChanged += BevelSelector_PropertyChanged;
         }
 
         public double Gap
@@ -242,6 +284,7 @@ namespace Barnacle.Dialogs
             PlankWallMaker maker = new PlankWallMaker(
                 wallLength, wallHeight, wallWidth, plankWidth, gap, gapDepth
                 );
+            maker.SetBevels(topBevel, bottomBevel, leftBevel, rightBevel);
             maker.Generate(Vertices, Faces);
         }
 
@@ -278,6 +321,10 @@ namespace Barnacle.Dialogs
             {
                 GapDepth = EditorParameters.GetDouble("GapDepth");
             }
+            topBevel = EditorParameters.GetBoolean("TopBevel", false);
+            bottomBevel = EditorParameters.GetBoolean("BottomBevel", false);
+            leftBevel = EditorParameters.GetBoolean("LeftBevel", false);
+            rightBevel = EditorParameters.GetBoolean("RightBevel", false);
         }
 
         private void SaveEditorParmeters()
@@ -290,6 +337,10 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("PlankWidth", PlankWidth.ToString());
             EditorParameters.Set("Gap", Gap.ToString());
             EditorParameters.Set("GapDepth", GapDepth.ToString());
+            EditorParameters.Set("TopBevel", topBevel.ToString());
+            EditorParameters.Set("BottomBevel", bottomBevel.ToString());
+            EditorParameters.Set("LeftBevel", leftBevel.ToString());
+            EditorParameters.Set("RightBevel", rightBevel.ToString());
         }
 
         private void UpdateDisplay()
@@ -305,6 +356,11 @@ namespace Barnacle.Dialogs
         {
             WarningText = "";
             LoadEditorParameters();
+
+            BevelSelector.TopBevelled = topBevel;
+            BevelSelector.BottomBevelled = bottomBevel;
+            BevelSelector.RightBevelled = rightBevel;
+            BevelSelector.LeftBevelled = leftBevel;
 
             UpdateCameraPos();
             MyModelGroup.Children.Clear();

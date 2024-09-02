@@ -114,7 +114,7 @@ namespace Barnacle.UserControls
             curveNames = new ObservableCollection<string>();
             curveNames.Add("Outside");
             selectedCurveName = "Outside";
-
+            ShowPointsStatus = false;
             selectedPoint = -1;
             SelectionMode = SelectionModeType.StartPoint;
             scale = 1.0;
@@ -381,7 +381,8 @@ namespace Barnacle.UserControls
 
         public ICommand MovePathCommand { get; set; }
 
-        public int NumberOfPaths { get { return allPaths.Count; } }
+        public int NumberOfPaths
+        { get { return allPaths.Count; } }
 
         public bool OpenEndedPath
         {
@@ -732,6 +733,7 @@ namespace Barnacle.UserControls
         }
 
         public ICommand ZoomCommand { get; set; }
+        public bool ShowPointsStatus { get; set; }
 
         public bool ConvertLineAtPointToBezier(System.Windows.Point position, bool cubic)
         {
@@ -1257,7 +1259,7 @@ namespace Barnacle.UserControls
                 for (int i = 0; i < selectedFlexiPathControlPoints.Count; i++)
                 {
                     selectedFlexiPathControlPoints[i].Selected = false;
-                    selectedFlexiPathControlPoints[i].Visible = false;
+                    // selectedFlexiPathControlPoints[i].Visible = false;
                 }
             }
         }
@@ -1845,11 +1847,12 @@ namespace Barnacle.UserControls
 
         private void OnShowAllPoints(object obj)
         {
+            ShowPointsStatus = !ShowPointsStatus;
             foreach (FlexiPath fp in allPaths)
             {
                 foreach (FlexiPoint p in fp.FlexiPoints)
                 {
-                    p.Visible = true;
+                    p.Visible = ShowPointsStatus;
                 }
             }
 

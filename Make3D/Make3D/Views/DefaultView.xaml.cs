@@ -208,6 +208,7 @@ namespace Barnacle.Views
         private void LoadNamedProject(string projName)
         {
             BaseViewModel.Project.Open(projName);
+            SolutionExplorer.ResetSolutionTree();
             SolutionExplorer.ProjectChanged(BaseViewModel.Project);
             if (BaseViewModel.Project.FirstFile != "")
             {
@@ -243,6 +244,7 @@ namespace Barnacle.Views
                     if (BaseViewModel.Project.Open(dlg.ProjectPath))
                     {
                         BaseViewModel.RecentlyUsedManager.UpdateRecentFiles(dlg.ProjectPath);
+                        SolutionExplorer.ResetSolutionTree();
                         SolutionExplorer.ProjectChanged(BaseViewModel.Project);
                         LoadFileLastOpenedInProject();
                         NotificationManager.Notify("Refresh", null);

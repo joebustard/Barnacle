@@ -366,6 +366,9 @@
     <Compile Include="UserControls\FlexiPathEditorControl\PointGrid.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\PolarGrid.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\RectangularGrid.cs" />
+    <Compile Include="UserControls\SideBevelSelector\SideBevelSelector.xaml.cs">
+      <DependentUpon>SideBevelSelector.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\SymbolGridControl\Symbol.cs" />
     <Compile Include="UserControls\SymbolGridControl\SymbolGridControl.cs" />
     <Compile Include="UserControls\SymbolGridControl\SymbolGridViewModel.cs" />
@@ -857,6 +860,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\FlexiPathEditorControl\GridSettingsDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\SideBevelSelector\SideBevelSelector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1395,6 +1402,14 @@
     <Resource Include="Data\ShapedWingPresetPaths.txt" />
     <Resource Include="Images\Buttons\Barrel.png" />
     <Resource Include="Images\Buttons\ObliqueEndCylinder.png" />
+    <Resource Include="Images\Buttons\BottomBevelled.png" />
+    <Resource Include="Images\Buttons\BottomNotBevelled.png" />
+    <Resource Include="Images\Buttons\LeftBevelled.png" />
+    <Resource Include="Images\Buttons\LeftNotBevelled.png" />
+    <Resource Include="Images\Buttons\RightBevelled.png" />
+    <Resource Include="Images\Buttons\RightNotBevelled.png" />
+    <Resource Include="Images\Buttons\TopBevelled.png" />
+    <Resource Include="Images\Buttons\TopNotBevelled.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
@@ -1424,6 +1439,11 @@ copy /Y "$(SolutionDir)make3d\Data\Textures\*.*" "$(TargetDir)data\textures"
 copy /Y "$(SolutionDir)Interpreter\Libs\*.*" "$(TargetDir)libs"
 del   /q "$(TargetDir)data\figure\*.txt"
 copy /Y "$(SolutionDir)make3d\Dialogs\Figure\FigureData\*.txt" "$(TargetDir)data\figure"
+
+
+mkdir "$(TargetDir)MeshOp"
+copy /Y "$(SolutionDir)make3d\ExternalBinaries\MeshOp\*.*" "$(TargetDir)MeshOp"
+
 
 Exit 0
 </PostBuildEvent>

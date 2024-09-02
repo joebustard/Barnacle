@@ -154,6 +154,11 @@ namespace VisualSolutionExplorer
             }
         }
 
+        internal bool FolderMatch(ProjectFolder fld)
+        {
+            return _folder.FolderPath == fld.FolderPath;
+        }
+
         public void CreateNewFile()
         {
             string f = _folder.CreateNewFile();

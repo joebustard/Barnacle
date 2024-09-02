@@ -210,7 +210,7 @@
                 <Image Source="/Barnacle;component/Images/Buttons/Tube.png" />
             </Button>
 
-            
+
             <Button
                 Command="{Binding AddCommand}"
                 CommandParameter="stellatedodec"

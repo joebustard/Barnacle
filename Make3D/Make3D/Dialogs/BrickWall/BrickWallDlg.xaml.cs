@@ -52,6 +52,19 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public bool TopBevelled
+        {
+            get { return topBevelled; }
+            set
+            {
+                if (value != topBevelled)
+                {
+                    topBevelled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         private double wallHeight;
 
         public double WallHeight
@@ -145,6 +158,7 @@ namespace Barnacle.Dialogs
         }
 
         private double mortarGap;
+        private bool topBevelled;
 
         public double MortarGap
         {
@@ -167,6 +181,11 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private bool topBevel;
+        private bool bottomBevel;
+        private bool leftBevel;
+        private bool rightBevel;
+
         public BrickWallDlg()
         {
             InitializeComponent();
@@ -175,6 +194,44 @@ namespace Barnacle.Dialogs
             DataContext = this;
             ModelGroup = MyModelGroup;
             loaded = false;
+            BevelSelector.PropertyChanged += BevelSelector_PropertyChanged;
+        }
+
+        private void BevelSelector_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (loaded)
+            {
+                switch (e.PropertyName)
+                {
+                    case "TopBevelled":
+                        {
+                            topBevel = BevelSelector.TopBevelled;
+                            UpdateDisplay();
+                        }
+                        break;
+
+                    case "BottomBevelled":
+                        {
+                            bottomBevel = BevelSelector.BottomBevelled;
+                            UpdateDisplay();
+                        }
+                        break;
+
+                    case "LeftBevelled":
+                        {
+                            leftBevel = BevelSelector.LeftBevelled;
+                            UpdateDisplay();
+                        }
+                        break;
+
+                    case "RightBevelled":
+                        {
+                            rightBevel = BevelSelector.RightBevelled;
+                            UpdateDisplay();
+                        }
+                        break;
+                }
+            }
         }
 
         public override bool ShowAxies
@@ -242,6 +299,7 @@ namespace Barnacle.Dialogs
         {
             ClearShape();
             BrickWallMaker maker = new BrickWallMaker(wallLength, wallHeight, wallWidth, brickLength, brickLength / 2, brickHeight, mortarGap);
+            maker.SetBevels(topBevel, bottomBevel, leftBevel, rightBevel);
             maker.Generate(Vertices, Faces);
             CentreVertices();
         }
@@ -279,6 +337,10 @@ namespace Barnacle.Dialogs
             {
                 mortarGap = EditorParameters.GetDouble("MortarGap");
             }
+            topBevel = EditorParameters.GetBoolean("TopBevel", false);
+            bottomBevel = EditorParameters.GetBoolean("BottomBevel", false);
+            leftBevel = EditorParameters.GetBoolean("LeftBevel", false);
+            rightBevel = EditorParameters.GetBoolean("RightBevel", false);
         }
 
         private void SaveEditorParmeters()
@@ -292,6 +354,10 @@ namespace Barnacle.Dialogs
 
             EditorParameters.Set("BrickHeight", BrickHeight.ToString());
             EditorParameters.Set("MortarGap", MortarGap.ToString());
+            EditorParameters.Set("TopBevel", topBevel.ToString());
+            EditorParameters.Set("BottomBevel", bottomBevel.ToString());
+            EditorParameters.Set("LeftBevel", leftBevel.ToString());
+            EditorParameters.Set("RightBevel", rightBevel.ToString());
         }
 
         private void UpdateDisplay()
@@ -313,8 +379,16 @@ namespace Barnacle.Dialogs
 
             brickHeight = 1.1;
             mortarGap = 0.25;
+            topBevel = false;
+            bottomBevel = false;
+            leftBevel = false;
+            rightBevel = false;
             LoadEditorParameters();
 
+            BevelSelector.TopBevelled = topBevel;
+            BevelSelector.BottomBevelled = bottomBevel;
+            BevelSelector.RightBevelled = rightBevel;
+            BevelSelector.LeftBevelled = leftBevel;
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             loaded = true;

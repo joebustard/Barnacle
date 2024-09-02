@@ -1135,7 +1135,7 @@ namespace Barnacle.LineLib
             {
                 if (segs[i].Start() == pointIndex)
                 {
-                    int end = segs[i].End();
+                    //int end = segs[i].End();
                     flexiPoints.Insert(pointIndex + 1, new FlexiPoint(position, pointIndex + 1));
 
                     LineSegment ls = new LineSegment(pointIndex + 1, pointIndex + 2);
@@ -1192,6 +1192,23 @@ namespace Barnacle.LineLib
                             segs[i + 1].Select(flexiPoints);
                         }
                         found = true;
+                    }
+                    else
+                    {
+                        if (segs[i] is FlexiQuadBezier)
+                        {
+                            // insert a line segment between the
+                            // start point of the bezier and the clicked point
+                            int pointIndex = segs[i].Start();
+                            flexiPoints.Insert(pointIndex + 1, new FlexiPoint(position, pointIndex + 1));
+
+                            LineSegment ls = new LineSegment(pointIndex, pointIndex + 1);
+                            PointInserted(segs, i, pointIndex, 1);
+                            segs.Insert(i, ls);
+                            DeselectAll();
+
+                            // move the start point of the bezier to clicked point
+                        }
                     }
                     break;
                 }

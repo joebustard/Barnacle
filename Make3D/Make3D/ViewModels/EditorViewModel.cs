@@ -8,11 +8,12 @@ using Barnacle.Object3DLib;
 using Barnacle.ViewModel.BuildPlates;
 using CSGLib;
 using FixLib;
+using HalfEdgeLib;
 using HoleLibrary;
-
 using ManifoldLib;
 using MeshDecimator;
 using Microsoft.Win32;
+using PolygonTriangulationLib;
 using PrintPlacementLib;
 using SimpleSmoothLib;
 using System;
@@ -26,10 +27,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using Object3DLib.OFF;
 
 namespace Barnacle.ViewModels
 {
@@ -62,6 +63,7 @@ namespace Barnacle.ViewModels
 
         private Grid3D grid;
 
+        private String holdKey = "";
         private bool isEditingEnabled;
 
         private double keyrotationx = 90;
@@ -88,37 +90,14 @@ namespace Barnacle.ViewModels
 
         private bool showAxies;
 
-        public bool ShowAxies
-        {
-            get { return showAxies; }
-            set { showAxies = value; }
-        }
-
         private bool showBuildPlate;
-
-        public bool ShowBuildPlates
-        {
-            get { return showBuildPlate; }
-            set { showBuildPlate = value; }
-        }
 
         private bool showFloor;
 
-        public bool ShowFloor
-        {
-            get { return showFloor; }
-            set { showFloor = value; }
-        }
-
         private bool showFloorMarker;
 
-        public bool ShowFloorMarker
-        {
-            get { return showFloorMarker; }
-            set { showFloorMarker = value; }
-        }
-
         private int totalFaces;
+
         private int totalVertices;
 
         private double zoomPercent = 100;
@@ -213,343 +192,6 @@ namespace Barnacle.ViewModels
             RegenerateDisplayList();
         }
 
-        private void OnMeshSubdivide(object param)
-        {
-            if (selectedItems == null || selectedItems.Count != 1)
-            {
-                MessageBox.Show("Mesh subdivision operation requires a single selected object");
-            }
-            else
-            {
-                SubdivideObject(selectedItems[0]);
-            }
-        }
-
-        private void SubdivideObject(Object3D object3D)
-        {
-            CheckPoint();
-            Point3DCollection tmp = new Point3DCollection();
-            PointUtils.P3DToPointCollection(object3D.RelativeObjectVertices, tmp);
-            MeshSubdivider subdiv = new MeshSubdivider(tmp, object3D.TriangleIndices);
-
-            Point3DCollection tmp2 = new Point3DCollection();
-            Int32Collection newTri = new Int32Collection();
-            subdiv.Subdivide(tmp2, newTri);
-            PointUtils.PointCollectionToP3D(tmp2, object3D.RelativeObjectVertices);
-            object3D.TriangleIndices = newTri;
-
-            object3D.Remesh();
-            object3D.CalcScale(false);
-            allBounds += object3D.AbsoluteBounds;
-
-            GeometryModel3D gm = GetMesh(object3D);
-            RegenerateDisplayList();
-            Document.Dirty = true;
-        }
-
-        private void OnUpdateModels(object param)
-        {
-            NotifyPropertyChanged("ModelItems");
-        }
-
-        private void BuildVolumeChanged(object param)
-        {
-            bool b = (bool)param;
-            if (printerPlate != null)
-            {
-                printerPlate.ShowVolume = b;
-                RegenerateDisplayList();
-            }
-        }
-
-        private void OnMirror(object param)
-        {
-            string s = param.ToString();
-            if (selectedItems == null || selectedItems.Count != 1)
-            {
-                MessageBox.Show("Mirror operation requires a single selected object");
-            }
-            else
-            {
-                MirrorObject(s);
-            }
-        }
-
-        private void MirrorObject(string s)
-        {
-            bool confirmed = true;
-            Object3D ob = selectedObjectAdorner.SelectedObjects[0];
-            if (ob is Group3D)
-            {
-                MessageBoxResult res = MessageBox.Show("The object will have to be converted to a mesh first. Convert now.", "Warning", MessageBoxButton.OKCancel);
-                confirmed = res == MessageBoxResult.OK;
-                if (confirmed)
-                {
-                    Document.Content.Remove(ob);
-                    Object3D it = ob.ConvertToMesh();
-                    it.Remesh();
-                    Document.Content.Add(it);
-                    Document.Dirty = true;
-                    ob = it;
-                }
-            }
-            if (confirmed)
-            {
-                CheckPoint();
-                Bounds3D bnds = new Bounds3D();
-
-                foreach (P3D p in ob.RelativeObjectVertices)
-                {
-                    bnds.Adjust(new Point3D((double)p.X, (double)p.Y, (double)p.Z));
-                }
-                int numPoints = ob.RelativeObjectVertices.Count;
-                int numFaces = ob.TriangleIndices.Count;
-                bool addFaces = false;
-                switch (s.ToLower())
-                {
-                    case "left":
-                        {
-                            double ox = 2 * bnds.Lower.X - 0.1;
-                            for (int i = 0; i < numPoints; i++)
-                            {
-                                P3D op = ob.RelativeObjectVertices[i];
-                                P3D np = new P3D(ox - op.X, op.Y, op.Z);
-                                ob.RelativeObjectVertices.Add(np);
-                            }
-                            addFaces = true;
-                        }
-                        break;
-
-                    case "right":
-                        {
-                            double ox = bnds.Upper.X + bnds.Width + bnds.Lower.X;
-                            for (int i = 0; i < numPoints; i++)
-                            {
-                                P3D op = ob.RelativeObjectVertices[i];
-                                P3D np = new P3D(ox - op.X, op.Y, op.Z);
-                                ob.RelativeObjectVertices.Add(np);
-                            }
-                            addFaces = true;
-                        }
-                        break;
-
-                    case "front":
-                        {
-                            double oz = 2 * bnds.Upper.Z;
-                            for (int i = 0; i < numPoints; i++)
-                            {
-                                P3D op = ob.RelativeObjectVertices[i];
-                                P3D np = new P3D(op.X, op.Y, oz - op.Z);
-                                ob.RelativeObjectVertices.Add(np);
-                            }
-                            addFaces = true;
-                        }
-                        break;
-
-                    case "back":
-                        {
-                            double oz = 2 * bnds.Lower.Z;
-                            for (int i = 0; i < numPoints; i++)
-                            {
-                                P3D op = ob.RelativeObjectVertices[i];
-                                P3D np = new P3D(op.X, op.Y, oz - op.Z);
-                                ob.RelativeObjectVertices.Add(np);
-                            }
-                            addFaces = true;
-                        }
-                        break;
-
-                    case "up":
-                        {
-                            double oy = 2 * bnds.Upper.Y;
-                            for (int i = 0; i < numPoints; i++)
-                            {
-                                P3D op = ob.RelativeObjectVertices[i];
-                                P3D np = new P3D(op.X, oy - op.Y, op.Z);
-                                ob.RelativeObjectVertices.Add(np);
-                            }
-                            addFaces = true;
-                        }
-                        break;
-
-                    case "down":
-                        {
-                            double oy = 2 * bnds.Lower.Y;
-                            for (int i = 0; i < numPoints; i++)
-                            {
-                                P3D op = ob.RelativeObjectVertices[i];
-                                P3D np = new P3D(op.X, oy - op.Y, op.Z);
-                                ob.RelativeObjectVertices.Add(np);
-                            }
-                            addFaces = true;
-                        }
-                        break;
-                }
-                if (addFaces)
-                {
-                    for (int f = 0; f < numFaces; f += 3)
-                    {
-                        int v0 = ob.TriangleIndices[f] + numPoints;
-                        int v1 = ob.TriangleIndices[f + 1] + numPoints;
-                        int v2 = ob.TriangleIndices[f + 2] + numPoints;
-                        ob.TriangleIndices.Add(v0);
-                        ob.TriangleIndices.Add(v2);
-                        ob.TriangleIndices.Add(v1);
-                    }
-                }
-                RemoveDuplicateVertices(ob);
-                ob.Remesh();
-
-                ob.CalcScale(false);
-                allBounds += ob.AbsoluteBounds;
-                GeometryModel3D gm = GetMesh(ob);
-                RegenerateDisplayList();
-            }
-        }
-
-        private void AutoFix(object param)
-        {
-            AutoFixDlg dlg = new AutoFixDlg();
-            dlg.ShowDialog();
-        }
-
-        private void FixHoles(object param)
-        {
-            var tokenSource = new CancellationTokenSource();
-            var token = tokenSource.Token;
-            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
-            {
-                Object3D ob = selectedObjectAdorner.SelectedObjects[0];
-                if (ob != null)
-                {
-                    CheckPoint();
-                    Tuple<int, int> res = Tuple.Create<int, int>(0, 0);
-                    int totalFixed = 0;
-                    int totalFound = -1;
-                    if (Properties.Settings.Default.RepeatHoleFixes)
-                    {
-                        int reps = 0;
-                        do
-                        {
-                            HoleFinder hf = new HoleFinder(ob.RelativeObjectVertices, ob.TriangleIndices);
-                            res = hf.FindHoles(token);
-                            if (totalFound == -1)
-                            {
-                                totalFound = res.Item1;
-                            }
-                            totalFixed += res.Item2;
-
-                            ob.Remesh();
-                            ob.CalcScale(false);
-                            GeometryModel3D gm2 = GetMesh(ob);
-                            reps++;
-                        } while (res.Item2 > 0 && reps < 10);
-                    }
-                    else
-                    {
-                        HoleFinder hf = new HoleFinder(ob.RelativeObjectVertices, ob.TriangleIndices);
-                        res = hf.FindHoles(token);
-                        totalFound = res.Item1;
-                        totalFixed += res.Item2;
-                    }
-
-                    ob.Remesh();
-                    ob.CalcScale(false);
-                    allBounds += ob.AbsoluteBounds;
-                    GeometryModel3D gm = GetMesh(ob);
-                    Document.Dirty = true;
-
-                    selectedObjectAdorner.Clear();
-                    selectedObjectAdorner.AdornObject(ob);
-                    RegenerateDisplayList();
-                    MessageBox.Show($"Found {totalFound.ToString()} holes, Filled {totalFixed.ToString()}", "Information");
-                }
-            }
-            else
-            {
-                MessageBox.Show("Must have a single object selected", "Error");
-            }
-        }
-
-        private void OnCloneInPlace(object param)
-        {
-            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
-            {
-                Object3D ob = selectedObjectAdorner.SelectedObjects[0];
-                if (ob != null)
-                {
-                    CheckPoint();
-                    Object3D o = ob.Clone();
-                    o.Name = Document.DuplicateName(o.Name);
-
-                    o.Remesh();
-                    // o.MoveToFloor();
-                    o.CalcScale(false);
-                    allBounds += o.AbsoluteBounds;
-                    GeometryModel3D gm = GetMesh(o);
-                    Document.Content.Add(o);
-                    Document.Dirty = true;
-
-                    selectedObjectAdorner.Clear();
-                    selectedObjectAdorner.AdornObject(o);
-                    RegenerateDisplayList();
-                    NotificationManager.Notify("ObjectNamesChanged", null);
-                    NotificationManager.Notify("ObjectSelected", o);
-                    PassOnGroupStatus(o);
-                }
-            }
-            else
-            {
-                MessageBox.Show("Must have a single object selected", "Error");
-            }
-        }
-
-        private void PassOnGroupStatus(Object3D o)
-        {
-            if (o is Group3D)
-            {
-                NotificationManager.Notify("GroupSelected", true);
-            }
-            else
-            {
-                NotificationManager.Notify("GroupSelected", false);
-            }
-        }
-
-        private void OnAddObjectToLibrary(object param)
-        {
-            string libPath = (param as string);
-            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
-            {
-                Object3D ob = selectedObjectAdorner.SelectedObjects[0];
-                if (ob != null)
-                {
-                    Object3D ob2 = ob.Clone();
-                    if (ob2.PrimType != "Mesh")
-                    {
-                        ob2 = ob2.ConvertToMesh();
-                    }
-                    ob2.Color = Colors.SkyBlue;
-                    ob2.MoveToCentre();
-                    ob2.MoveToFloor();
-                    LibrarySnapShotDlg dlg = new LibrarySnapShotDlg();
-                    dlg.Part = ob2;
-                    string pth = System.IO.Path.GetDirectoryName(GetPartsLibraryPath()) + libPath;
-                    dlg.PartPath = pth;
-                    dlg.PartProjectSection = libPath;
-                    if (dlg.ShowDialog() == true)
-                    {
-                        // reminder the contents of the partslibrary that they are in a library
-                        BaseViewModel.PartLibraryProject.LibraryAdd = true;
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Must have a single object selected", "Error");
-                }
-            }
-        }
-
         private enum CameraModes
         {
             None,
@@ -623,6 +265,30 @@ namespace Barnacle.ViewModels
         /// Canvas to draw things like text labels on
         /// </summary>
         public Canvas Overlay { get; internal set; }
+
+        public bool ShowAxies
+        {
+            get { return showAxies; }
+            set { showAxies = value; }
+        }
+
+        public bool ShowBuildPlates
+        {
+            get { return showBuildPlate; }
+            set { showBuildPlate = value; }
+        }
+
+        public bool ShowFloor
+        {
+            get { return showFloor; }
+            set { showFloor = value; }
+        }
+
+        public bool ShowFloorMarker
+        {
+            get { return showFloorMarker; }
+            set { showFloorMarker = value; }
+        }
 
         /// <summary>
         /// Calculate total number of faces of all objects
@@ -778,6 +444,26 @@ namespace Barnacle.ViewModels
             }
         }
 
+        internal int AddPoint(Point3DCollection positions, Point3D v)
+        {
+            int res = -1;
+            for (int i = 0; i < positions.Count; i++)
+            {
+                if (PointUtils.equals(positions[i], v.X, v.Y, v.Z))
+                {
+                    res = i;
+                    break;
+                }
+            }
+
+            if (res == -1)
+            {
+                positions.Add(new Point3D(v.X, v.Y, v.Z));
+                res = positions.Count - 1;
+            }
+            return res;
+        }
+
         internal void DeselectAll()
         {
             NotificationManager.Notify("SetToolsVisibility", true);
@@ -793,573 +479,16 @@ namespace Barnacle.ViewModels
             NotificationManager.Notify("GroupSelected", false);
         }
 
-        internal void RemoveSelections(bool regen = false)
-        {
-            if (selectedObjectAdorner != null)
-            {
-                selectedObjectAdorner.Clear();
-            }
-
-            selectedItems.Clear();
-            selectedObjectAdorner = null;
-            Overlay.Children.Clear();
-            if (regen)
-            {
-                RegenerateDisplayList();
-            }
-            NotificationManager.Notify("ObjectSelected", null);
-            NotificationManager.Notify("GroupSelected", false);
-        }
-
-        internal bool KeyDown(Key key, bool shift, bool ctrl)
+        internal bool KeyDown(Key key, bool shift, bool ctrl, bool alt)
         {
             bool handled = false;
             if (isEditingEnabled)
             {
-                handled = HandleKeyWhenEditingIsEnabled(key, shift, ctrl);
+                handled = HandleKeyWhenEditingIsEnabled(key, shift, ctrl, alt);
             }
             else
             {
                 handled = HandleKeyWhenEditingDisabled(key);
-            }
-            return handled;
-        }
-
-        private String holdKey = "";
-
-        private bool HandleKeyWhenEditingIsEnabled(Key key, bool shift, bool ctrl)
-        {
-            bool handled = false;
-            if (holdKey != "")
-            {
-                handled = HandleHeldKey(key, shift, ctrl);
-                holdKey = "";
-            }
-            else
-            {
-                switch (key)
-                {
-                    case Key.Up:
-                        {
-                            handled = true;
-                            if (selectedObjectAdorner != null)
-                            {
-                                CheckPointForNudge();
-                                if (ctrl)
-                                {
-                                    if (shift)
-                                    {
-                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 0.1);
-                                    }
-                                    else
-                                    {
-                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 1.0);
-                                    }
-                                }
-                                else
-                                {
-                                    if (shift)
-                                    {
-                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 0.1);
-                                    }
-                                    else
-                                    {
-                                        // If R is down treat as rotate
-                                        if (Keyboard.IsKeyDown(Key.R))
-                                        {
-                                            KeyboardRotation rd = GetRotationDirection(Key.Up);
-                                            OnKeyRotate(rd);
-                                        }
-                                        else
-                                        {
-                                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 1.0);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        break;
-
-                    case Key.Down:
-                        {
-                            handled = true;
-                            if (selectedObjectAdorner != null)
-                            {
-                                CheckPointForNudge();
-                                if (ctrl)
-                                {
-                                    if (shift)
-                                    {
-                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 0.1);
-                                    }
-                                    else
-                                    {
-                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 1.0);
-                                    }
-                                }
-                                else
-                                {
-                                    if (shift)
-                                    {
-                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 0.1);
-                                    }
-                                    else
-                                    {
-                                        // If R is down treat as rotate
-                                        if (Keyboard.IsKeyDown(Key.R))
-                                        {
-                                            KeyboardRotation rd = GetRotationDirection(Key.Down);
-                                            OnKeyRotate(rd);
-                                        }
-                                        else
-                                        {
-                                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 1.0);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        break;
-
-                    case Key.Left:
-                        {
-                            handled = true;
-                            if (selectedObjectAdorner != null)
-                            {
-                                CheckPointForNudge();
-                                if (shift)
-                                {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 0.1);
-                                }
-                                else
-                                {
-                                    // If R is down treat as rotate
-                                    if (Keyboard.IsKeyDown(Key.R))
-                                    {
-                                        bool ctrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
-                                        KeyboardRotation rd = GetRotationDirection(Key.Left, ctrlDown);
-                                        OnKeyRotate(rd);
-                                    }
-                                    else
-                                    {
-                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 1.0);
-                                    }
-                                }
-                            }
-                        }
-                        break;
-
-                    case Key.Right:
-                        {
-                            handled = true;
-                            if (selectedObjectAdorner != null)
-                            {
-                                CheckPointForNudge();
-                                if (shift)
-                                {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 0.1);
-                                }
-                                else
-                                {
-                                    if (Keyboard.IsKeyDown(Key.R))
-                                    {
-                                        bool ctrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
-                                        KeyboardRotation rd = GetRotationDirection(Key.Right, ctrlDown);
-                                        OnKeyRotate(rd);
-                                    }
-                                    else
-                                    {
-                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 1.0);
-                                    }
-                                }
-                            }
-                        }
-                        break;
-
-                    case Key.OemPlus:
-                        {
-                            handled = true;
-                            CloseObjectDistances();
-                        }
-                        break;
-
-                    case Key.A:
-                        {
-                            handled = true;
-                            if (ctrl)
-                            {
-                                SelectAll();
-                            }
-                        }
-                        break;
-
-                    case Key.C:
-                        {
-                            handled = true;
-                            if (ctrl)
-                            {
-                                OnCopy(null);
-                            }
-                            else
-                            {
-                                CheckPoint();
-                                MoveSelectionToCentre();
-                            }
-                        }
-                        break;
-
-                    case Key.E:
-                        {
-                            handled = true;
-                            CheckEditSelection();
-                        }
-                        break;
-
-                    case Key.O:
-                        {
-                            handled = true;
-                            SwitchToObjectProperties();
-                        }
-                        break;
-
-                    case Key.V:
-                        {
-                            handled = true;
-                            if (ctrl)
-                            {
-                                OnPaste(null);
-                            }
-                        }
-                        break;
-
-                    case Key.F:
-                        {
-                            handled = true;
-                            if (ctrl)
-                            {
-                                CheckPoint();
-                                FloorAllObjects();
-                                RegenerateDisplayList();
-                            }
-                            else
-                            {
-                                CheckPoint();
-                                AlignSelectedObjects("Floor");
-                                RegenerateDisplayList();
-                            }
-                        }
-                        break;
-
-                    case Key.K:
-                        {
-                            handled = true;
-                            OnCloneInPlace(null);
-                        }
-                        break;
-
-                    case Key.M:
-                        {
-                            handled = true;
-                            CheckPoint();
-                            MoveToMarker(null);
-                            RegenerateDisplayList();
-                        }
-                        break;
-
-                    case Key.X:
-                        {
-                            handled = true;
-                            if (ctrl)
-
-                            {
-                                OnCut(null);
-                            }
-                        }
-                        break;
-
-                    case Key.Delete:
-                        {
-                            handled = true;
-                            OnDelete(null);
-                        }
-                        break;
-
-                    case Key.Z:
-                        {
-                            handled = true;
-                            if (ctrl)
-                            {
-                                Undo();
-                            }
-                            else
-                            {
-                                CheckPoint();
-                                MoveSelectionToZero();
-                            }
-                        }
-                        break;
-
-                    case Key.H:
-                        {
-                            handled = true;
-                            showAdorners = false;
-                            RegenerateDisplayList();
-                        }
-                        break;
-
-                    case Key.Home:
-                        {
-                            handled = true;
-                            HomeCamera();
-                        }
-                        break;
-
-                    case Key.Escape:
-                        {
-                            handled = true;
-                            if (csgCancelation != null && !csgCancelation.IsCancellationRequested)
-                            {
-                                csgCancelation.Cancel();
-                            }
-                        }
-                        break;
-
-                    case Key.F5:
-                        {
-                            handled = true;
-                            RotateCamera(-0.5, 0.0);
-                        }
-                        break;
-
-                    case Key.F6:
-                        {
-                            handled = true;
-                            RotateCamera(0.5, 0.0);
-                        }
-                        break;
-
-                    case Key.F7:
-                        {
-                            handled = true;
-                            RotateCamera(0.0, -0.5);
-                        }
-                        break;
-
-                    case Key.F8:
-                        {
-                            handled = true;
-                            RotateCamera(0.0, 0.5);
-                        }
-                        break;
-
-                    case Key.S:
-                        {
-                            handled = true;
-                            holdKey = "S";
-                        }
-                        break;
-
-                    case Key.L:
-                        {
-                            handled = true;
-                            holdKey = "L";
-                        }
-                        break;
-                }
-            }
-            return handled;
-        }
-
-        private void CloseObjectDistances()
-        {
-            if (selectedObjectAdorner != null && selectedObjectAdorner is DimensionAdorner)
-            {
-                DimensionAdorner da = selectedObjectAdorner as DimensionAdorner;
-                if (da.TwoPoints)
-                {
-                    CheckPoint();
-                    Vector3D c = da.EndPoint - da.StartPoint;
-                    da.EndObject.Position -= c;
-                    da.EndObject.Remesh();
-                    da.Clear();
-                    da = null;
-                    RemoveSelections(true);
-                }
-            }
-        }
-
-        private void SwitchToObjectProperties()
-        {
-            NotificationManager.Notify("SwitchToObjectProperties", null);
-        }
-
-        private bool HandleHeldKey(Key key, bool shift, bool ctrl)
-        {
-            bool handled = false;
-            switch (holdKey)
-            {
-                case "S":
-                    {
-                        handled = true;
-                        switch (key)
-                        {
-                            case Key.Up:
-                                {
-                                    if (ctrl)
-                                    {
-                                        OnAlignment("StackBehind");
-                                    }
-                                    else
-                                    {
-                                        OnAlignment("StackAbove");
-                                    }
-                                    holdKey = "";
-                                }
-                                break;
-
-                            case Key.Down:
-                                {
-                                    if (ctrl)
-                                    {
-                                        OnAlignment("StackFront");
-                                    }
-                                    else
-                                    {
-                                        OnAlignment("StackBelow");
-                                    }
-                                    holdKey = "";
-                                }
-                                break;
-
-                            case Key.Left:
-                                {
-                                    OnAlignment("StackLeft");
-                                    holdKey = "";
-                                }
-                                break;
-
-                            case Key.Right:
-                                {
-                                    OnAlignment("StackRight");
-                                    holdKey = "";
-                                }
-                                break;
-
-                            default:
-                                break;
-                        }
-                    }
-                    break;
-
-                case "L":
-                    {
-                        handled = true;
-                        switch (key)
-                        {
-                            case Key.Up:
-                                {
-                                    if (ctrl)
-                                    {
-                                        OnAlignment("Back");
-                                    }
-                                    else
-                                    {
-                                        OnAlignment("Top");
-                                    }
-                                    holdKey = "";
-                                }
-                                break;
-
-                            case Key.Down:
-                                {
-                                    if (ctrl)
-                                    {
-                                        OnAlignment("Front");
-                                    }
-                                    else
-                                    {
-                                        OnAlignment("Bottom");
-                                    }
-                                    holdKey = "";
-                                }
-                                break;
-
-                            case Key.Left:
-                                {
-                                    OnAlignment("Left");
-                                    holdKey = "";
-                                }
-                                break;
-
-                            case Key.Right:
-                                {
-                                    OnAlignment("Right");
-                                    holdKey = "";
-                                }
-                                break;
-
-                            default:
-                                break;
-                        }
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-            return handled;
-        }
-
-        private bool HandleKeyWhenEditingDisabled(Key key)
-        {
-            bool handled = false;
-            switch (key)
-            {
-                // if editing is disable, ignore all keys except escape ( which may enale it again)
-                case Key.Escape:
-                    {
-                        handled = true;
-                        if (csgCancelation != null && !csgCancelation.IsCancellationRequested)
-                        {
-                            csgCancelation.Cancel();
-                        }
-                    }
-                    break;
-
-                case Key.Home:
-                    {
-                        handled = true;
-                        HomeCamera();
-                    }
-                    break;
-
-                case Key.F5:
-                    {
-                        handled = true;
-                        RotateCamera(-0.5, 0.0);
-                    }
-                    break;
-
-                case Key.F6:
-                    {
-                        handled = true;
-                        RotateCamera(0.5, 0.0);
-                    }
-                    break;
-
-                case Key.F7:
-                    {
-                        handled = true;
-                        RotateCamera(0.0, -0.5);
-                    }
-                    break;
-
-                case Key.F8:
-                    {
-                        handled = true;
-                        RotateCamera(0.0, 0.5);
-                    }
-                    break;
             }
             return handled;
         }
@@ -1439,6 +568,24 @@ namespace Barnacle.ViewModels
             }
         }
 
+        internal void RemoveSelections(bool regen = false)
+        {
+            if (selectedObjectAdorner != null)
+            {
+                selectedObjectAdorner.Clear();
+            }
+
+            selectedItems.Clear();
+            selectedObjectAdorner = null;
+            Overlay.Children.Clear();
+            if (regen)
+            {
+                RegenerateDisplayList();
+            }
+            NotificationManager.Notify("ObjectSelected", null);
+            NotificationManager.Notify("GroupSelected", false);
+        }
+
         internal void Select(GeometryModel3D geo, Point3D hitPos, bool size, bool append, bool control)
         {
             if (isEditingEnabled)
@@ -1511,9 +658,9 @@ namespace Barnacle.ViewModels
             return gm;
         }
 
-        private static Mesh ObjectMeshToDecimatorMesh(Object3D ob)
+        private static MeshDecimator.Mesh ObjectMeshToDecimatorMesh(Object3D ob)
         {
-            Mesh mesh;
+            MeshDecimator.Mesh mesh;
             MeshDecimator.Math.Vector3d[] vex = new MeshDecimator.Math.Vector3d[ob.RelativeObjectVertices.Count];
             int i = 0;
             //foreach (Point3D pnt in ob.RelativeObjectVertices)
@@ -1533,22 +680,6 @@ namespace Barnacle.ViewModels
             return mesh;
         }
 
-        private int RemoveDuplicateVertices(Object3D ob)
-        {
-            CheckPoint();
-            int numberRemoved = ob.RelativeObjectVertices.Count;
-            Fixer checker = new Fixer();
-            Point3DCollection points = new Point3DCollection();
-            PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, points);
-
-            checker.RemoveDuplicateVertices(points, ob.TriangleIndices);
-            PointUtils.PointCollectionToP3D(checker.Vertices, ob.RelativeObjectVertices);
-            ob.TriangleIndices = checker.Faces;
-            ob.Remesh();
-            numberRemoved -= ob.RelativeObjectVertices.Count;
-            return numberRemoved;
-        }
-
         private static void RemoveUnrefVertices(Object3D ob)
         {
             ManifoldChecker checker = new ManifoldChecker();
@@ -1560,57 +691,6 @@ namespace Barnacle.ViewModels
             PointUtils.PointCollectionToP3D(checker.Points, ob.RelativeObjectVertices);
             ob.TriangleIndices = checker.Indices;
             ob.Remesh();
-        }
-
-        private void OnCutPlane(object obj)
-        {
-            bool warning = true;
-            if (selectedObjectAdorner != null)
-            {
-                if (selectedObjectAdorner.NumberOfSelectedObjects() == 1)
-                {
-                    warning = false;
-                    CheckPoint();
-                    Object3D ob = selectedObjectAdorner.SelectedObjects[0];
-                    string s = obj.ToString();
-                    switch (s)
-                    {
-                        case "H":
-
-                            CutHorizontalPlane(ob);
-
-                            break;
-
-                        default:
-                            break;
-                    }
-                }
-            }
-            if (warning)
-            {
-                MessageBox.Show("Requires a single object to be selected", "Warning");
-            }
-        }
-
-        private void CutHorizontalPlane(Object3D ob)
-        {
-            CutHorizontalPlaneDlg dlg = new CutHorizontalPlaneDlg();
-            Point3DCollection p3col = new Point3DCollection();
-            PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, p3col);
-            dlg.OriginalVertices = p3col;
-            dlg.OriginalFaces = ob.TriangleIndices;
-
-            if (dlg.ShowDialog() == true)
-            {
-                PointUtils.PointCollectionToP3D(dlg.Vertices, ob.RelativeObjectVertices);
-                ob.TriangleIndices.Clear();
-                foreach (int i in dlg.Faces)
-                {
-                    ob.TriangleIndices.Add(i);
-                }
-                // RemoveDuplicateVertices(ob);
-                ob.Remesh();
-            }
         }
 
         private void AlignSelectedObjects(string s)
@@ -1817,6 +897,12 @@ namespace Barnacle.ViewModels
             {
                 selectedObjectAdorner.GenerateAdornments();
             }
+        }
+
+        private void AutoFix(object param)
+        {
+            AutoFixDlg dlg = new AutoFixDlg();
+            dlg.ShowDialog();
         }
 
         private void BackCamera()
@@ -2057,6 +1143,16 @@ namespace Barnacle.ViewModels
             RegenerateDisplayList();
         }
 
+        private void BuildVolumeChanged(object param)
+        {
+            bool b = (bool)param;
+            if (printerPlate != null)
+            {
+                printerPlate.ShowVolume = b;
+                RegenerateDisplayList();
+            }
+        }
+
         private void CheckEditSelection()
         {
             if (selectedObjectAdorner != null)
@@ -2195,6 +1291,94 @@ namespace Barnacle.ViewModels
                 CleanFolder(pth, "gcode", "*.ctb");
                 CleanFolder(pth, "printer", "*.ctb");
                 NotificationManager.Notify("ExportRefresh", null);
+            }
+        }
+
+        private void CloseObjectDistances()
+        {
+            if (selectedObjectAdorner != null && selectedObjectAdorner is DimensionAdorner)
+            {
+                DimensionAdorner da = selectedObjectAdorner as DimensionAdorner;
+                if (da.TwoPoints)
+                {
+                    CheckPoint();
+                    Vector3D c = da.EndPoint - da.StartPoint;
+                    da.EndObject.Position -= c;
+                    da.EndObject.Remesh();
+                    da.Clear();
+                    da = null;
+                    RemoveSelections(true);
+                }
+            }
+        }
+
+        private void CreateSelectionAdorner(Object3D object3D, bool leftMouseButton, bool control, Point3D hitPos)
+        {
+            if (leftMouseButton)
+            {
+                // ctrl and left button means skew
+                if (control)
+                {
+                    selectedObjectAdorner = new SkewAdorner(camera);
+                    selectedObjectAdorner.ViewPort = ViewPort;
+                    selectedObjectAdorner.Overlay = Overlay;
+                }
+                else
+                {
+                    // left button on its own means size
+                    MakeSizeAdorner();
+                }
+            }
+            else
+            {
+                if (control)
+                {
+                    // do we already have an existing dimensionadorner, if so assume we are changing
+                    // the second point
+                    if (selectedObjectAdorner != null && selectedObjectAdorner is DimensionAdorner)
+                    {
+                        (selectedObjectAdorner as DimensionAdorner).SecondPoint(hitPos, object3D);
+                    }
+                    else
+                    {
+                        selectedObjectAdorner = new DimensionAdorner(camera, document.Content, hitPos, object3D);
+                        selectedObjectAdorner.ViewPort = ViewPort;
+                        selectedObjectAdorner.Overlay = Overlay;
+                    }
+                }
+                else
+                {
+                    // right button on its own means rotation
+                    selectedObjectAdorner = new RotationAdorner(camera);
+                }
+            }
+            selectedObjectAdorner.AdornObject(object3D);
+
+            foreach (Model3D md in selectedObjectAdorner.Adornments)
+            {
+                modelItems.Add(md);
+            }
+            NotifyPropertyChanged("ModelItems");
+        }
+
+        private void CutHorizontalPlane(Object3D ob)
+        {
+            CutHorizontalPlaneDlg dlg = new CutHorizontalPlaneDlg();
+            Point3DCollection p3col = new Point3DCollection();
+            PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, p3col);
+            dlg.OriginalVertices = p3col;
+            dlg.OriginalFaces = ob.TriangleIndices;
+
+            if (dlg.ShowDialog() == true)
+            {
+                PointUtils.PointCollectionToP3D(dlg.Vertices, ob.RelativeObjectVertices);
+                ob.TriangleIndices.Clear();
+                foreach (int i in dlg.Faces)
+                {
+                    ob.TriangleIndices.Add(i);
+                }
+                // RemoveDuplicateVertices(ob);
+                ob.Remesh();
             }
         }
 
@@ -2360,6 +1544,160 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private Point3D FindY(HalfEdgeLib.Mesh hemesh, List<HalfEdge> lhe, System.Drawing.PointF point)
+        {
+            Point3D res = new Point3D();
+            foreach (HalfEdge he in lhe)
+            {
+                var pnt = hemesh.Vertices[he.StartVertex];
+                if (Math.Abs(pnt.X - (double)point.X) < 0.000001)
+                {
+                    if (Math.Abs(pnt.Z - (double)point.Y) < 0.000001)
+                    {
+                        res.X = pnt.X;
+                        res.Y = pnt.Y;
+                        res.Z = pnt.Z;
+                    }
+                }
+            }
+            return res;
+        }
+
+        private void FixHoles(object param)
+        {
+            var tokenSource = new CancellationTokenSource();
+            var token = tokenSource.Token;
+            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
+            {
+                Object3D ob = selectedObjectAdorner.SelectedObjects[0];
+                if (ob != null)
+                {
+                    CheckPoint();
+                    if (param.ToString() == "Normal")
+                    {
+                        FixNormalHoles(ob, token);
+                    }
+                    else
+                    {
+                        FixHolesHalfEdge(ob, token);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Must have a single object selected", "Error");
+            }
+        }
+
+        private void FixHolesHalfEdge(Object3D ob, CancellationToken token)
+        {
+            int totalFixed = 0;
+            int totalFound = -1;
+            Point3DCollection vertices = new Point3DCollection();
+            Int32Collection tris = ob.TriangleIndices;
+            Point3DCollection vertices2 = new Point3DCollection();
+            Int32Collection tris2 = new Int32Collection();
+
+            LoggerLib.Logger.Log($"Before fixing, tris.count= {tris.Count}");
+            foreach (P3D p in ob.RelativeObjectVertices)
+            {
+                vertices.Add(new Point3D(p.X, p.Y, p.Z));
+            }
+            HalfEdgeLib.Mesh hemesh = new HalfEdgeLib.Mesh(vertices, tris);
+            foreach (List<HalfEdge> lhe in hemesh.Boundaries)
+            {
+                List<Triangle> polyTris;
+                TriangulationPolygon ply = new TriangulationPolygon();
+                List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
+
+                foreach (HalfEdge he in lhe)
+                {
+                    var pnt = hemesh.Vertices[he.StartVertex];
+                    pf.Add(new System.Drawing.PointF((float)pnt.X, (float)pnt.Z));
+                }
+                ply.Points = pf.ToArray();
+                polyTris = ply.Triangulate(true);
+                for (int i = 0; i < polyTris.Count; i++)
+                {
+                    Triangle t = polyTris[i];
+
+                    Point3D np0 = FindY(hemesh, lhe, t.Points[0]);
+                    Point3D np1 = FindY(hemesh, lhe, t.Points[1]);
+                    Point3D np2 = FindY(hemesh, lhe, t.Points[2]);
+
+                    int c0 = AddPoint(vertices, np0);
+                    int c1 = AddPoint(vertices, np1);
+                    int c2 = AddPoint(vertices, np2);
+                    ob.TriangleIndices.Add(c0);
+                    ob.TriangleIndices.Add(c2);
+                    ob.TriangleIndices.Add(c1);
+                }
+            }
+            LoggerLib.Logger.Log($"After fixing, ob.TriangleIndices.count= {ob.TriangleIndices.Count}");
+            totalFixed = hemesh.Boundaries.Count;
+            ob.RelativeObjectVertices.Clear();
+
+            ob.AbsoluteObjectVertices.Clear();
+            foreach (Point3D p in vertices)
+            {
+                ob.RelativeObjectVertices.Add(new P3D(p));
+            }
+            ob.Remesh();
+            ob.CalcScale(false);
+            allBounds += ob.AbsoluteBounds;
+            GeometryModel3D gm = GetMesh(ob);
+            Document.Dirty = true;
+
+            selectedObjectAdorner.Clear();
+            selectedObjectAdorner.AdornObject(ob);
+            RegenerateDisplayList();
+            MessageBox.Show($"Filled {totalFixed.ToString()}", "Information");
+        }
+
+        private void FixNormalHoles(Object3D ob, CancellationToken token)
+        {
+            Tuple<int, int> res = Tuple.Create<int, int>(0, 0);
+            int totalFixed = 0;
+            int totalFound = -1;
+            if (Properties.Settings.Default.RepeatHoleFixes)
+            {
+                int reps = 0;
+                do
+                {
+                    HoleFinder hf = new HoleFinder(ob.RelativeObjectVertices, ob.TriangleIndices);
+                    res = hf.FindHoles(token);
+                    if (totalFound == -1)
+                    {
+                        totalFound = res.Item1;
+                    }
+                    totalFixed += res.Item2;
+
+                    ob.Remesh();
+                    ob.CalcScale(false);
+                    GeometryModel3D gm2 = GetMesh(ob);
+                    reps++;
+                } while (res.Item2 > 0 && reps < 10);
+            }
+            else
+            {
+                HoleFinder hf = new HoleFinder(ob.RelativeObjectVertices, ob.TriangleIndices);
+                res = hf.FindHoles(token);
+                totalFound = res.Item1;
+                totalFixed += res.Item2;
+            }
+
+            ob.Remesh();
+            ob.CalcScale(false);
+            allBounds += ob.AbsoluteBounds;
+            GeometryModel3D gm = GetMesh(ob);
+            Document.Dirty = true;
+
+            selectedObjectAdorner.Clear();
+            selectedObjectAdorner.AdornObject(ob);
+            RegenerateDisplayList();
+            MessageBox.Show($"Filled {totalFixed.ToString()}, {totalFound.ToString()} holes still remaining", "Information");
+        }
+
         private void FlipSelectedObjects(string s)
         {
             bool needsConversion = false;
@@ -2459,53 +1797,53 @@ namespace Barnacle.ViewModels
             }
         }
 
-        private void CreateSelectionAdorner(Object3D object3D, bool leftMouseButton, bool control, Point3D hitPos)
+        private bool ForceUnion()
         {
-            if (leftMouseButton)
+            document.Dirty = true;
+            bool res = false;
+            if (selectedObjectAdorner != null)
             {
-                // ctrl and left button means skew
-                if (control)
+                if (selectedObjectAdorner.NumberOfSelectedObjects() > 1)
                 {
-                    selectedObjectAdorner = new SkewAdorner(camera);
-                    selectedObjectAdorner.ViewPort = ViewPort;
-                    selectedObjectAdorner.Overlay = Overlay;
-                }
-                else
-                {
-                    // left button on its own means size
-                    MakeSizeAdorner();
-                }
-            }
-            else
-            {
-                if (control)
-                {
-                    // do we already have an existing dimensionadorner, if so assume we are changing
-                    // the second point
-                    if (selectedObjectAdorner != null && selectedObjectAdorner is DimensionAdorner)
+                    CheckPoint();
+                    Point3D minPnt = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
+                    Point3D maxPnt = new Point3D(double.MinValue, double.MinValue, double.MinValue);
+                    foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
                     {
-                        (selectedObjectAdorner as DimensionAdorner).SecondPoint(hitPos, object3D);
+                        minPnt = MinPoint(minPnt, ob.AbsoluteBounds.Lower);
+                        maxPnt = MaxPoint(maxPnt, ob.AbsoluteBounds.Upper);
                     }
-                    else
-                    {
-                        selectedObjectAdorner = new DimensionAdorner(camera, document.Content, hitPos, object3D);
-                        selectedObjectAdorner.ViewPort = ViewPort;
-                        selectedObjectAdorner.Overlay = Overlay;
-                    }
-                }
-                else
-                {
-                    // right button on its own means rotation
-                    selectedObjectAdorner = new RotationAdorner(camera);
-                }
-            }
-            selectedObjectAdorner.AdornObject(object3D);
 
-            foreach (Model3D md in selectedObjectAdorner.Adornments)
-            {
-                modelItems.Add(md);
+                    Point3DCollection vertices = new Point3DCollection();
+                    Int32Collection faces = new Int32Collection();
+                    OctTreeLib.OctTree octree = new OctTreeLib.OctTree(vertices, minPnt, maxPnt, 200);
+                    foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+                    {
+                        foreach (int f in ob.TriangleIndices)
+                        {
+                            var sp = ob.AbsoluteObjectVertices[f];
+                            Point3D p = new Point3D(sp.X, sp.Y, sp.Z);
+                            int nf = octree.AddPoint(p);
+
+                            faces.Add(nf);
+                        }
+                    }
+                    for (int i = 1; i < selectedObjectAdorner.SelectedObjects.Count; i++)
+                    {
+                        Document.Content.Remove(selectedObjectAdorner.SelectedObjects[i]);
+                    }
+
+                    selectedObjectAdorner.SelectedObjects[0].AbsoluteObjectVertices = vertices;
+                    selectedObjectAdorner.SelectedObjects[0].TriangleIndices = faces;
+                    selectedObjectAdorner.SelectedObjects[0].AbsoluteToRelative();
+                    selectedObjectAdorner.SelectedObjects[0].Remesh();
+                    Document.Dirty = true;
+                    RegenerateDisplayList();
+                    NotificationManager.Notify("ObjectNamesChanged", null);
+                    res = true;
+                }
             }
-            NotifyPropertyChanged("ModelItems");
+            return res;
         }
 
         private KeyboardRotation GetRotationDirection(Key k, bool ctrlDown = false)
@@ -2596,6 +1934,10 @@ namespace Barnacle.ViewModels
             {
                 grp.RightObject = selectedObjectAdorner.SelectedObjects[i];
             }
+
+            //OFFFormat.WriteOffFile(@"C:\tmp\t\leftie.off", leftie.AbsoluteObjectVertices, leftie.TriangleIndices);
+            //OFFFormat.WriteOffFile(@"C:\tmp\t\rightie.off", grp.RightObject.AbsoluteObjectVertices, grp.RightObject.TriangleIndices);
+
             grp.PrimType = s;
 
             res = await grp.InitAsync(csgCancelation, progress);
@@ -2608,6 +1950,537 @@ namespace Barnacle.ViewModels
                 grp = null;
             }
             return grp; ;
+        }
+
+        private bool HandleHeldKey(Key key, bool shift, bool ctrl, bool alt)
+        {
+            bool handled = false;
+            switch (holdKey)
+            {
+                case "S":
+                    {
+                        handled = true;
+                        switch (key)
+                        {
+                            case Key.Up:
+                                {
+                                    if (ctrl)
+                                    {
+                                        OnAlignment("StackBehind");
+                                    }
+                                    else
+                                    {
+                                        OnAlignment("StackAbove");
+                                    }
+                                    holdKey = "";
+                                }
+                                break;
+
+                            case Key.Down:
+                                {
+                                    if (ctrl)
+                                    {
+                                        OnAlignment("StackFront");
+                                    }
+                                    else
+                                    {
+                                        OnAlignment("StackBelow");
+                                    }
+                                    holdKey = "";
+                                }
+                                break;
+
+                            case Key.Left:
+                                {
+                                    OnAlignment("StackLeft");
+                                    holdKey = "";
+                                }
+                                break;
+
+                            case Key.Right:
+                                {
+                                    OnAlignment("StackRight");
+                                    holdKey = "";
+                                }
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+                    break;
+
+                case "L":
+                    {
+                        handled = true;
+                        switch (key)
+                        {
+                            case Key.Up:
+                                {
+                                    if (ctrl)
+                                    {
+                                        OnAlignment("Back");
+                                    }
+                                    else
+                                    {
+                                        OnAlignment("Top");
+                                    }
+                                    holdKey = "";
+                                }
+                                break;
+
+                            case Key.Down:
+                                {
+                                    if (ctrl)
+                                    {
+                                        OnAlignment("Front");
+                                    }
+                                    else
+                                    {
+                                        OnAlignment("Bottom");
+                                    }
+                                    holdKey = "";
+                                }
+                                break;
+
+                            case Key.Left:
+                                {
+                                    OnAlignment("Left");
+                                    holdKey = "";
+                                }
+                                break;
+
+                            case Key.Right:
+                                {
+                                    OnAlignment("Right");
+                                    holdKey = "";
+                                }
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+            return handled;
+        }
+
+        private bool HandleKeyWhenEditingDisabled(Key key)
+        {
+            bool handled = false;
+            switch (key)
+            {
+                // if editing is disable, ignore all keys except escape ( which may enale it again)
+                case Key.Escape:
+                    {
+                        handled = true;
+                        if (csgCancelation != null && !csgCancelation.IsCancellationRequested)
+                        {
+                            csgCancelation.Cancel();
+                        }
+                    }
+                    break;
+
+                case Key.Home:
+                    {
+                        handled = true;
+                        HomeCamera();
+                    }
+                    break;
+
+                case Key.F5:
+                    {
+                        handled = true;
+                        RotateCamera(-0.5, 0.0);
+                    }
+                    break;
+
+                case Key.F6:
+                    {
+                        handled = true;
+                        RotateCamera(0.5, 0.0);
+                    }
+                    break;
+
+                case Key.F7:
+                    {
+                        handled = true;
+                        RotateCamera(0.0, -0.5);
+                    }
+                    break;
+
+                case Key.F8:
+                    {
+                        handled = true;
+                        RotateCamera(0.0, 0.5);
+                    }
+                    break;
+            }
+            return handled;
+        }
+
+        private bool HandleKeyWhenEditingIsEnabled(Key key, bool shift, bool ctrl, bool alt)
+        {
+            bool handled = false;
+            if (holdKey != "")
+            {
+                handled = HandleHeldKey(key, shift, ctrl, alt);
+                holdKey = "";
+            }
+            else
+            {
+                switch (key)
+                {
+                    case Key.Up:
+                        {
+                            handled = true;
+                            if (selectedObjectAdorner != null)
+                            {
+                                CheckPointForNudge();
+                                if (ctrl)
+                                {
+                                    if (shift)
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 0.1);
+                                    }
+                                    else
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 1.0);
+                                    }
+                                }
+                                else
+                                {
+                                    if (shift)
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 0.1);
+                                    }
+                                    else
+                                    {
+                                        // If R is down treat as rotate
+                                        if (Keyboard.IsKeyDown(Key.R))
+                                        {
+                                            KeyboardRotation rd = GetRotationDirection(Key.Up);
+                                            OnKeyRotate(rd);
+                                        }
+                                        else
+                                        {
+                                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 1.0);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+
+                    case Key.Down:
+                        {
+                            handled = true;
+                            if (selectedObjectAdorner != null)
+                            {
+                                CheckPointForNudge();
+                                if (ctrl)
+                                {
+                                    if (shift)
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 0.1);
+                                    }
+                                    else
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 1.0);
+                                    }
+                                }
+                                else
+                                {
+                                    if (shift)
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 0.1);
+                                    }
+                                    else
+                                    {
+                                        // If R is down treat as rotate
+                                        if (Keyboard.IsKeyDown(Key.R))
+                                        {
+                                            KeyboardRotation rd = GetRotationDirection(Key.Down);
+                                            OnKeyRotate(rd);
+                                        }
+                                        else
+                                        {
+                                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 1.0);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+
+                    case Key.Left:
+                        {
+                            handled = true;
+                            if (selectedObjectAdorner != null)
+                            {
+                                CheckPointForNudge();
+                                if (shift)
+                                {
+                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 0.1);
+                                }
+                                else
+                                {
+                                    // If R is down treat as rotate
+                                    if (Keyboard.IsKeyDown(Key.R))
+                                    {
+                                        bool ctrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                                        KeyboardRotation rd = GetRotationDirection(Key.Left, ctrlDown);
+                                        OnKeyRotate(rd);
+                                    }
+                                    else
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 1.0);
+                                    }
+                                }
+                            }
+                        }
+                        break;
+
+                    case Key.Right:
+                        {
+                            handled = true;
+                            if (selectedObjectAdorner != null)
+                            {
+                                CheckPointForNudge();
+                                if (shift)
+                                {
+                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 0.1);
+                                }
+                                else
+                                {
+                                    if (Keyboard.IsKeyDown(Key.R))
+                                    {
+                                        bool ctrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                                        KeyboardRotation rd = GetRotationDirection(Key.Right, ctrlDown);
+                                        OnKeyRotate(rd);
+                                    }
+                                    else
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 1.0);
+                                    }
+                                }
+                            }
+                        }
+                        break;
+
+                    case Key.OemPlus:
+                        {
+                            handled = true;
+                            CloseObjectDistances();
+                        }
+                        break;
+
+                    case Key.A:
+                        {
+                            handled = true;
+                            if (ctrl)
+                            {
+                                SelectAll();
+                            }
+                        }
+                        break;
+
+                    case Key.B:
+                        {
+                            handled = true;
+                            if (ctrl)
+                            {
+                                NotificationManager.Notify("BackupProject", null);
+                            }
+                        }
+                        break;
+
+                    case Key.C:
+                        {
+                            handled = true;
+                            if (ctrl)
+                            {
+                                OnCopy(null);
+                            }
+                            else
+                            {
+                                CheckPoint();
+                                MoveSelectionToCentre();
+                            }
+                        }
+                        break;
+
+                    case Key.E:
+                        {
+                            handled = true;
+                            CheckEditSelection();
+                        }
+                        break;
+
+                    case Key.F:
+                        {
+                            handled = true;
+                            if (ctrl)
+                            {
+                                CheckPoint();
+                                FloorAllObjects();
+                                RegenerateDisplayList();
+                            }
+                            else
+                            {
+                                CheckPoint();
+                                AlignSelectedObjects("Floor");
+                                RegenerateDisplayList();
+                            }
+                        }
+                        break;
+
+                    case Key.H:
+                        {
+                            handled = true;
+                            showAdorners = false;
+                            RegenerateDisplayList();
+                        }
+                        break;
+
+                    case Key.K:
+                        {
+                            handled = true;
+                            OnCloneInPlace(null);
+                        }
+                        break;
+
+                    case Key.L:
+                        {
+                            handled = true;
+                            holdKey = "L";
+                        }
+                        break;
+
+                    case Key.M:
+                        {
+                            handled = true;
+                            CheckPoint();
+                            MoveToMarker(null);
+                            RegenerateDisplayList();
+                        }
+                        break;
+
+                    case Key.O:
+                        {
+                            handled = true;
+                            SwitchToObjectProperties();
+                        }
+                        break;
+
+                    case Key.S:
+                        {
+                            if (ctrl)
+                            {
+                                NotificationManager.Notify("SaveFile", null);
+                            }
+                            else
+                            {
+                                holdKey = "S";
+                            }
+
+                            handled = true;
+                        }
+                        break;
+
+                    case Key.V:
+                        {
+                            handled = true;
+                            if (ctrl)
+                            {
+                                OnPaste(null);
+                            }
+                        }
+                        break;
+
+                    case Key.X:
+                        {
+                            handled = true;
+                            if (ctrl)
+                            {
+                                OnCut(null);
+                            }
+                        }
+                        break;
+
+                    case Key.Z:
+                        {
+                            handled = true;
+                            if (ctrl)
+                            {
+                                Undo();
+                            }
+                            else
+                            {
+                                CheckPoint();
+                                MoveSelectionToZero();
+                            }
+                        }
+                        break;
+
+                    case Key.Delete:
+                        {
+                            handled = true;
+                            OnDelete(null);
+                        }
+                        break;
+
+                    case Key.Home:
+                        {
+                            handled = true;
+                            HomeCamera();
+                        }
+                        break;
+
+                    case Key.Escape:
+                        {
+                            handled = true;
+                            if (csgCancelation != null && !csgCancelation.IsCancellationRequested)
+                            {
+                                csgCancelation.Cancel();
+                            }
+                        }
+                        break;
+
+                    case Key.F5:
+                        {
+                            handled = true;
+                            RotateCamera(-0.5, 0.0);
+                        }
+                        break;
+
+                    case Key.F6:
+                        {
+                            handled = true;
+                            RotateCamera(0.5, 0.0);
+                        }
+                        break;
+
+                    case Key.F7:
+                        {
+                            handled = true;
+                            RotateCamera(0.0, -0.5);
+                        }
+                        break;
+
+                    case Key.F8:
+                        {
+                            handled = true;
+                            RotateCamera(0.0, 0.5);
+                        }
+                        break;
+                }
+            }
+            return handled;
         }
 
         private void HomeCamera()
@@ -2681,7 +2554,6 @@ namespace Barnacle.ViewModels
         private void LoadingNewFile(object param)
         {
             // about to switch files dont leave the adorners hanging around
-
             if (selectedObjectAdorner != null)
             {
                 selectedObjectAdorner.Clear();
@@ -2689,7 +2561,7 @@ namespace Barnacle.ViewModels
 
             selectedItems.Clear();
             Overlay.Children.Clear();
-            // dont leave obect palette show the details of an obect whih doesn't exist in the new file
+            // dont leave obect palette show the details of an object whih doesn't exist in the new file
             NotificationManager.Notify("ObjectSelected", null);
             NotificationManager.Notify("GroupSelected", false);
         }
@@ -2832,6 +2704,156 @@ namespace Barnacle.ViewModels
             selectedObjectAdorner.ViewPort = ViewPort;
         }
 
+        private Point3D MaxPoint(Point3D p1, Point3D p2)
+        {
+            return new Point3D(
+            Math.Max(p1.X, p2.X),
+            Math.Max(p1.Y, p2.Y),
+            Math.Max(p1.Z, p2.Z)
+            );
+        }
+
+        private Point3D MinPoint(Point3D p1, Point3D p2)
+        {
+            return new Point3D(
+           Math.Min(p1.X, p2.X),
+           Math.Min(p1.Y, p2.Y),
+           Math.Min(p1.Z, p2.Z)
+           );
+        }
+
+        private void MirrorObject(string s)
+        {
+            bool confirmed = true;
+            Object3D ob = selectedObjectAdorner.SelectedObjects[0];
+            if (ob is Group3D)
+            {
+                MessageBoxResult res = MessageBox.Show("The object will have to be converted to a mesh first. Convert now.", "Warning", MessageBoxButton.OKCancel);
+                confirmed = res == MessageBoxResult.OK;
+                if (confirmed)
+                {
+                    Document.Content.Remove(ob);
+                    Object3D it = ob.ConvertToMesh();
+                    it.Remesh();
+                    Document.Content.Add(it);
+                    Document.Dirty = true;
+                    ob = it;
+                }
+            }
+            if (confirmed)
+            {
+                CheckPoint();
+                Bounds3D bnds = new Bounds3D();
+
+                foreach (P3D p in ob.RelativeObjectVertices)
+                {
+                    bnds.Adjust(new Point3D((double)p.X, (double)p.Y, (double)p.Z));
+                }
+                int numPoints = ob.RelativeObjectVertices.Count;
+                int numFaces = ob.TriangleIndices.Count;
+                bool addFaces = false;
+                switch (s.ToLower())
+                {
+                    case "left":
+                        {
+                            double ox = 2 * bnds.Lower.X - 0.1;
+                            for (int i = 0; i < numPoints; i++)
+                            {
+                                P3D op = ob.RelativeObjectVertices[i];
+                                P3D np = new P3D(ox - op.X, op.Y, op.Z);
+                                ob.RelativeObjectVertices.Add(np);
+                            }
+                            addFaces = true;
+                        }
+                        break;
+
+                    case "right":
+                        {
+                            double ox = bnds.Upper.X + bnds.Width + bnds.Lower.X;
+                            for (int i = 0; i < numPoints; i++)
+                            {
+                                P3D op = ob.RelativeObjectVertices[i];
+                                P3D np = new P3D(ox - op.X, op.Y, op.Z);
+                                ob.RelativeObjectVertices.Add(np);
+                            }
+                            addFaces = true;
+                        }
+                        break;
+
+                    case "front":
+                        {
+                            double oz = 2 * bnds.Upper.Z;
+                            for (int i = 0; i < numPoints; i++)
+                            {
+                                P3D op = ob.RelativeObjectVertices[i];
+                                P3D np = new P3D(op.X, op.Y, oz - op.Z);
+                                ob.RelativeObjectVertices.Add(np);
+                            }
+                            addFaces = true;
+                        }
+                        break;
+
+                    case "back":
+                        {
+                            double oz = 2 * bnds.Lower.Z;
+                            for (int i = 0; i < numPoints; i++)
+                            {
+                                P3D op = ob.RelativeObjectVertices[i];
+                                P3D np = new P3D(op.X, op.Y, oz - op.Z);
+                                ob.RelativeObjectVertices.Add(np);
+                            }
+                            addFaces = true;
+                        }
+                        break;
+
+                    case "up":
+                        {
+                            double oy = 2 * bnds.Upper.Y;
+                            for (int i = 0; i < numPoints; i++)
+                            {
+                                P3D op = ob.RelativeObjectVertices[i];
+                                P3D np = new P3D(op.X, oy - op.Y, op.Z);
+                                ob.RelativeObjectVertices.Add(np);
+                            }
+                            addFaces = true;
+                        }
+                        break;
+
+                    case "down":
+                        {
+                            double oy = 2 * bnds.Lower.Y;
+                            for (int i = 0; i < numPoints; i++)
+                            {
+                                P3D op = ob.RelativeObjectVertices[i];
+                                P3D np = new P3D(op.X, oy - op.Y, op.Z);
+                                ob.RelativeObjectVertices.Add(np);
+                            }
+                            addFaces = true;
+                        }
+                        break;
+                }
+                if (addFaces)
+                {
+                    for (int f = 0; f < numFaces; f += 3)
+                    {
+                        int v0 = ob.TriangleIndices[f] + numPoints;
+                        int v1 = ob.TriangleIndices[f + 1] + numPoints;
+                        int v2 = ob.TriangleIndices[f + 2] + numPoints;
+                        ob.TriangleIndices.Add(v0);
+                        ob.TriangleIndices.Add(v2);
+                        ob.TriangleIndices.Add(v1);
+                    }
+                }
+                RemoveDuplicateVertices(ob);
+                ob.Remesh();
+
+                ob.CalcScale(false);
+                allBounds += ob.AbsoluteBounds;
+                GeometryModel3D gm = GetMesh(ob);
+                RegenerateDisplayList();
+            }
+        }
+
         private void MoveAllToCentre()
         {
             Point3D target = new Point3D(0, 0, 0);
@@ -2866,14 +2888,6 @@ namespace Barnacle.ViewModels
             NotifyPropertyChanged("CameraPos");
         }
 
-        private void RotateCamera(double dt, double dp)
-        {
-            camera.RotateDegrees(dt, dp);
-            LookToCenter();
-            ReportCameraPosition();
-            NotifyPropertyChanged("CameraPos");
-        }
-
         private void MoveSelectionToCentre()
         {
             Point3D centre = new Point3D(0, 0, 0);
@@ -2891,7 +2905,6 @@ namespace Barnacle.ViewModels
             if (showFloorMarker == true && floorMarker != null)
             {
                 Point3D target = floorMarker.Position;
-
                 MoveToPoint(target);
                 document.Dirty = true;
             }
@@ -2994,6 +3007,40 @@ namespace Barnacle.ViewModels
                 RegenerateDisplayList();
 
                 NotificationManager.Notify("ObjectNamesChanged", null);
+            }
+        }
+
+        private void OnAddObjectToLibrary(object param)
+        {
+            string libPath = (param as string);
+            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
+            {
+                Object3D ob = selectedObjectAdorner.SelectedObjects[0];
+                if (ob != null)
+                {
+                    Object3D ob2 = ob.Clone();
+                    if (ob2.PrimType != "Mesh")
+                    {
+                        ob2 = ob2.ConvertToMesh();
+                    }
+                    ob2.Color = Colors.SkyBlue;
+                    ob2.MoveToCentre();
+                    ob2.MoveToFloor();
+                    LibrarySnapShotDlg dlg = new LibrarySnapShotDlg();
+                    dlg.Part = ob2;
+                    string pth = System.IO.Path.GetDirectoryName(GetPartsLibraryPath()) + libPath;
+                    dlg.PartPath = pth;
+                    dlg.PartProjectSection = libPath;
+                    if (dlg.ShowDialog() == true)
+                    {
+                        // reminder the contents of the partslibrary that they are in a library
+                        BaseViewModel.PartLibraryProject.LibraryAdd = true;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Must have a single object selected", "Error");
+                }
             }
         }
 
@@ -3244,6 +3291,39 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private void OnCloneInPlace(object param)
+        {
+            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
+            {
+                Object3D ob = selectedObjectAdorner.SelectedObjects[0];
+                if (ob != null)
+                {
+                    CheckPoint();
+                    Object3D o = ob.Clone();
+                    o.Name = Document.DuplicateName(o.Name);
+
+                    o.Remesh();
+                    // o.MoveToFloor();
+                    o.CalcScale(false);
+                    allBounds += o.AbsoluteBounds;
+                    GeometryModel3D gm = GetMesh(o);
+                    Document.Content.Add(o);
+                    Document.Dirty = true;
+
+                    selectedObjectAdorner.Clear();
+                    selectedObjectAdorner.AdornObject(o);
+                    RegenerateDisplayList();
+                    NotificationManager.Notify("ObjectNamesChanged", null);
+                    NotificationManager.Notify("ObjectSelected", o);
+                    PassOnGroupStatus(o);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Must have a single object selected", "Error");
+            }
+        }
+
         private void OnCopy(object param)
         {
             if (selectedObjectAdorner != null)
@@ -3275,6 +3355,35 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private void OnCutPlane(object obj)
+        {
+            bool warning = true;
+            if (selectedObjectAdorner != null)
+            {
+                if (selectedObjectAdorner.NumberOfSelectedObjects() == 1)
+                {
+                    warning = false;
+                    CheckPoint();
+                    Object3D ob = selectedObjectAdorner.SelectedObjects[0];
+                    string s = obj.ToString();
+                    switch (s)
+                    {
+                        case "H":
+
+                            CutHorizontalPlane(ob);
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+            if (warning)
+            {
+                MessageBox.Show("Requires a single object to be selected", "Warning");
+            }
+        }
+
         private void OnDelete(object param)
         {
             if (selectedObjectAdorner != null)
@@ -3288,7 +3397,10 @@ namespace Barnacle.ViewModels
                 document.Dirty = true;
                 selectedObjectAdorner.Clear();
                 RegenerateDisplayList();
+                Overlay.Children.Clear();
                 NotificationManager.Notify("ObjectNamesChanged", null);
+                NotificationManager.Notify("ObjectSelected", null);
+                NotificationManager.Notify("SetToolsVisibility", true);
             }
         }
 
@@ -3487,6 +3599,7 @@ namespace Barnacle.ViewModels
         private async Task OnGroup(object param)
         {
             string s = param.ToString().ToLower();
+
             if (s == "test")
             {
                 CheckPoint();
@@ -3559,6 +3672,21 @@ namespace Barnacle.ViewModels
             string s = param.ToString();
             switch (s.ToLower())
             {
+                case "off":
+                    {
+                        dlg.Filter = "Object Format Files (*.off) | *.off";
+                        if (dlg.ShowDialog() == true)
+                        {
+                            if (File.Exists(dlg.FileName))
+                            {
+                                Document.ImportOffs(dlg.FileName);
+                                document.Dirty = true;
+                                RegenerateDisplayList();
+                            }
+                        }
+                    }
+                    break;
+
                 case "obj":
                     {
                         dlg.Filter = "Object Model Files (*.obj) | *.obj";
@@ -3599,7 +3727,6 @@ namespace Barnacle.ViewModels
                                 GC.Collect();
                                 BaseViewModel.Project.Save();
                                 BaseViewModel.Document.SaveGlobalSettings();
-                                NotificationManager.Notify("ImportRefresh", null);
                             }
                         }
                         catch (Exception ex)
@@ -3609,6 +3736,8 @@ namespace Barnacle.ViewModels
                     }
                     break;
             }
+            NotificationManager.Notify("ObjectNamesChanged", null);
+            NotificationManager.Notify("ImportRefresh", null);
         }
 
         private void OnKeyRotate(KeyboardRotation rd)
@@ -3829,6 +3958,31 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private void OnMeshSubdivide(object param)
+        {
+            if (selectedItems == null || selectedItems.Count != 1)
+            {
+                MessageBox.Show("Mesh subdivision operation requires a single selected object");
+            }
+            else
+            {
+                SubdivideObject(selectedItems[0]);
+            }
+        }
+
+        private void OnMirror(object param)
+        {
+            string s = param.ToString();
+            if (selectedItems == null || selectedItems.Count != 1)
+            {
+                MessageBox.Show("Mirror operation requires a single selected object");
+            }
+            else
+            {
+                MirrorObject(s);
+            }
+        }
+
         private void OnMoveObjectToCentre(object param)
         {
             Object3D prm = param as Object3D;
@@ -3972,95 +4126,6 @@ namespace Barnacle.ViewModels
             }
         }
 
-        private void OrdinaryPaste()
-        {
-            selectedObjectAdorner?.Clear();
-
-            if (Project.SharedProjectSettings.PlaceNewAtMarker && floorMarker != null)
-            {
-                PasteAt(floorMarker.Position);
-            }
-            else
-            {
-                foreach (Object3D cl in ObjectClipboard.Items)
-                {
-                    Object3D o = cl.Clone();
-                    if (Document.ContainsName(o.Name))
-                    {
-                        o.Name = Document.DuplicateName(o.Name);
-                    }
-
-                    double cx = allBounds.Upper.X + o.AbsoluteBounds.Width / 2;
-
-                    o.Position = new Point3D(cx, 0, 0);
-                    o.Remesh();
-                    o.MoveToFloor();
-                    o.CalcScale(false);
-                    allBounds += o.AbsoluteBounds;
-                    GeometryModel3D gm = GetMesh(o);
-                    Document.Content.Add(o);
-                    Document.Dirty = true;
-                }
-            }
-            RegenerateDisplayList();
-            NotificationManager.Notify("ObjectNamesChanged", null);
-        }
-
-        private void PasteAt(Point3D targetPoint)
-        {
-            CheckPoint();
-            RecalculateAllBounds();
-            selectedObjectAdorner?.Clear();
-            Point collectionCentre = new Point(0, 0);
-            // if we have more than one object being pasted at the marker we want to keep the
-            // relative positions the same as the original but treat the marker as there new centre.
-            // If there is only one object, it should just be positioned directly at the marker
-            if (ObjectClipboard.Items.Count > 1)
-            {
-                foreach (Object3D cl in ObjectClipboard.Items)
-                {
-                    collectionCentre.X = collectionCentre.X + cl.Position.X;
-                    collectionCentre.Y = collectionCentre.Y + cl.Position.Z;
-                }
-                collectionCentre.X /= ObjectClipboard.Items.Count;
-                collectionCentre.Y /= ObjectClipboard.Items.Count;
-            }
-            foreach (Object3D cl in ObjectClipboard.Items)
-            {
-                Object3D o = cl.Clone();
-                if (Document.ContainsName(o.Name))
-                {
-                    o.Name = Document.DuplicateName(o.Name);
-                }
-                if (o is Group3D)
-                {
-                    // (o as Group3D).Init();
-                }
-
-                if (ObjectClipboard.Items.Count > 1)
-                {
-                    double offsetX = o.Position.X - collectionCentre.X;
-                    double offsetZ = o.Position.Z - collectionCentre.Y;
-
-                    o.Position = new Point3D(targetPoint.X + offsetX, targetPoint.Y, targetPoint.Z + offsetZ);
-                }
-                else
-                {
-                    o.Position = new Point3D(targetPoint.X, targetPoint.Y, targetPoint.Z);
-                }
-                o.Remesh();
-                o.MoveToFloor();
-                o.CalcScale(false);
-                allBounds += o.AbsoluteBounds;
-                GeometryModel3D gm = GetMesh(o);
-                Document.Content.Add(o);
-                Document.Dirty = true;
-            }
-
-            RegenerateDisplayList();
-            NotificationManager.Notify("ObjectNamesChanged", null);
-        }
-
         private void OnPasteAt(object param)
         {
             if (ObjectClipboard.HasItems() && floorMarker != null)
@@ -4183,7 +4248,7 @@ namespace Barnacle.ViewModels
                 dlg.ModelMode = s;
                 dlg.ModelPath = Document.FilePath;
                 dlg.SlicerPath = Properties.Settings.Default.SlicerPath;
-                // dlg.ExportDocument = Document;
+
                 dlg.ShowDialog();
             }
         }
@@ -4248,6 +4313,11 @@ namespace Barnacle.ViewModels
             Undo();
         }
 
+        private void OnUpdateModels(object param)
+        {
+            NotifyPropertyChanged("ModelItems");
+        }
+
         private void OptimumArranger()
         {
             CheckPoint();
@@ -4286,34 +4356,105 @@ namespace Barnacle.ViewModels
             Document.Dirty = true;
         }
 
-        private void SpiralArranger()
+        private void OrdinaryPaste()
         {
-            CheckPoint();
-            PlacementLib.Arranger arr = new PlacementLib.Arranger();
-            foreach (Object3D ob in Document.Content)
+            selectedObjectAdorner?.Clear();
+
+            if (Project.SharedProjectSettings.PlaceNewAtMarker && floorMarker != null)
             {
-                if (ob.Exportable)
+                PasteAt(floorMarker.Position);
+            }
+            else
+            {
+                foreach (Object3D cl in ObjectClipboard.Items)
                 {
-                    arr.AddComponent(ob,
-                                     new Point(ob.AbsoluteBounds.Lower.X, ob.AbsoluteBounds.Lower.Z),
-                                     new Point(ob.AbsoluteBounds.Upper.X, ob.AbsoluteBounds.Upper.Z));
+                    Object3D o = cl.Clone();
+                    if (Document.ContainsName(o.Name))
+                    {
+                        o.Name = Document.DuplicateName(o.Name);
+                    }
+
+                    double cx = allBounds.Upper.X + o.AbsoluteBounds.Width / 2;
+
+                    o.Position = new Point3D(cx, 0, 0);
+                    o.Remesh();
+                    o.MoveToFloor();
+                    o.CalcScale(false);
+                    allBounds += o.AbsoluteBounds;
+                    GeometryModel3D gm = GetMesh(o);
+                    Document.Content.Add(o);
+                    Document.Dirty = true;
                 }
             }
-            arr.Clearance = 3;
-            arr.Width = 200;
-            arr.Height = 200;
-            arr.Arrange();
-
-            foreach (PlacementLib.Component c in arr.Results)
-            {
-                Object3D o = c.Tag as Object3D;
-                double dx = c.Position.X - c.OriginalPosition.X;
-                double dy = c.Position.Y - c.OriginalPosition.Y;
-                o.Position = new Point3D(o.Position.X + dx - arr.Width / 2, o.Position.Y, o.Position.Z + dy - arr.Height / 2);
-            }
-            MoveAllToCentre();
             RegenerateDisplayList();
-            Document.Dirty = true;
+            NotificationManager.Notify("ObjectNamesChanged", null);
+        }
+
+        private void PassOnGroupStatus(Object3D o)
+        {
+            if (o is Group3D)
+            {
+                NotificationManager.Notify("GroupSelected", true);
+            }
+            else
+            {
+                NotificationManager.Notify("GroupSelected", false);
+            }
+        }
+
+        private void PasteAt(Point3D targetPoint)
+        {
+            CheckPoint();
+            RecalculateAllBounds();
+            selectedObjectAdorner?.Clear();
+            Point collectionCentre = new Point(0, 0);
+            // if we have more than one object being pasted at the marker we want to keep the
+            // relative positions the same as the original but treat the marker as there new centre.
+            // If there is only one object, it should just be positioned directly at the marker
+            if (ObjectClipboard.Items.Count > 1)
+            {
+                foreach (Object3D cl in ObjectClipboard.Items)
+                {
+                    collectionCentre.X = collectionCentre.X + cl.Position.X;
+                    collectionCentre.Y = collectionCentre.Y + cl.Position.Z;
+                }
+                collectionCentre.X /= ObjectClipboard.Items.Count;
+                collectionCentre.Y /= ObjectClipboard.Items.Count;
+            }
+            foreach (Object3D cl in ObjectClipboard.Items)
+            {
+                Object3D o = cl.Clone();
+                if (Document.ContainsName(o.Name))
+                {
+                    o.Name = Document.DuplicateName(o.Name);
+                }
+                if (o is Group3D)
+                {
+                    // (o as Group3D).Init();
+                }
+
+                if (ObjectClipboard.Items.Count > 1)
+                {
+                    double offsetX = o.Position.X - collectionCentre.X;
+                    double offsetZ = o.Position.Z - collectionCentre.Y;
+
+                    o.Position = new Point3D(targetPoint.X + offsetX, targetPoint.Y, targetPoint.Z + offsetZ);
+                }
+                else
+                {
+                    o.Position = new Point3D(targetPoint.X, targetPoint.Y, targetPoint.Z);
+                }
+                o.Remesh();
+                o.MoveToFloor();
+                o.CalcScale(false);
+                allBounds += o.AbsoluteBounds;
+                GeometryModel3D gm = GetMesh(o);
+                Document.Content.Add(o);
+                Document.Dirty = true;
+            }
+
+            RegenerateDisplayList();
+            NotificationManager.Notify("ObjectNamesChanged", null);
         }
 
         private void RecalculateAllBounds()
@@ -4330,6 +4471,22 @@ namespace Barnacle.ViewModels
                     allBounds += ob.AbsoluteBounds;
                 }
             }
+        }
+
+        private int RemoveDuplicateVertices(Object3D ob)
+        {
+            CheckPoint();
+            int numberRemoved = ob.RelativeObjectVertices.Count;
+            Fixer checker = new Fixer();
+            Point3DCollection points = new Point3DCollection();
+            PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, points);
+
+            checker.RemoveDuplicateVertices(points, ob.TriangleIndices);
+            PointUtils.PointCollectionToP3D(checker.Vertices, ob.RelativeObjectVertices);
+            ob.TriangleIndices = checker.Faces;
+            ob.Remesh();
+            numberRemoved -= ob.RelativeObjectVertices.Count;
+            return numberRemoved;
         }
 
         private void RemoveObjectAdorner()
@@ -4509,6 +4666,14 @@ namespace Barnacle.ViewModels
             zoomPercent = 100;
         }
 
+        private void RotateCamera(double dt, double dp)
+        {
+            camera.RotateDegrees(dt, dp);
+            LookToCenter();
+            ReportCameraPosition();
+            NotifyPropertyChanged("CameraPos");
+        }
+
         private void RotateSelected(Object3D obj, Point3D pr)
         {
             if (obj != null)
@@ -4569,30 +4734,6 @@ namespace Barnacle.ViewModels
                 // append the the object to the existing list of
                 selectedObjectAdorner.AdornObject(ob);
             }
-            UpdateSelectionDisplay();
-        }
-
-        private void SelectObject(Object3D ob)
-        {
-            ResetSelection();
-            selectedItems.Add(ob);
-            if (selectedObjectAdorner == null)
-            {
-                MakeSizeAdorner();
-            }
-            selectedObjectAdorner.AdornObject(ob);
-            SetSelectionColours();
-            NotificationManager.Notify("ObjectSelected", ob);
-            if (selectedItems.Count == 1)
-            {
-                PassOnGroupStatus(ob);
-            }
-            else
-            {
-                NotificationManager.Notify("GroupSelected", false);
-            }
-
-            EnableTool(ob);
             UpdateSelectionDisplay();
         }
 
@@ -4726,6 +4867,30 @@ namespace Barnacle.ViewModels
                 }
                 UpdateSelectionDisplay();
             }
+        }
+
+        private void SelectObject(Object3D ob)
+        {
+            ResetSelection();
+            selectedItems.Add(ob);
+            if (selectedObjectAdorner == null)
+            {
+                MakeSizeAdorner();
+            }
+            selectedObjectAdorner.AdornObject(ob);
+            SetSelectionColours();
+            NotificationManager.Notify("ObjectSelected", ob);
+            if (selectedItems.Count == 1)
+            {
+                PassOnGroupStatus(ob);
+            }
+            else
+            {
+                NotificationManager.Notify("GroupSelected", false);
+            }
+
+            EnableTool(ob);
+            UpdateSelectionDisplay();
         }
 
         private void SelectObjectByName(object param)
@@ -4916,6 +5081,36 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private void SpiralArranger()
+        {
+            CheckPoint();
+            PlacementLib.Arranger arr = new PlacementLib.Arranger();
+            foreach (Object3D ob in Document.Content)
+            {
+                if (ob.Exportable)
+                {
+                    arr.AddComponent(ob,
+                                     new Point(ob.AbsoluteBounds.Lower.X, ob.AbsoluteBounds.Lower.Z),
+                                     new Point(ob.AbsoluteBounds.Upper.X, ob.AbsoluteBounds.Upper.Z));
+                }
+            }
+            arr.Clearance = 3;
+            arr.Width = 200;
+            arr.Height = 200;
+            arr.Arrange();
+
+            foreach (PlacementLib.Component c in arr.Results)
+            {
+                Object3D o = c.Tag as Object3D;
+                double dx = c.Position.X - c.OriginalPosition.X;
+                double dy = c.Position.Y - c.OriginalPosition.Y;
+                o.Position = new Point3D(o.Position.X + dx - arr.Width / 2, o.Position.Y, o.Position.Z + dy - arr.Height / 2);
+            }
+            MoveAllToCentre();
+            RegenerateDisplayList();
+            Document.Dirty = true;
+        }
+
         private void SplitObjectInHalf(Object3D ob, string ori)
         {
             if (ob != null)
@@ -5075,6 +5270,33 @@ namespace Barnacle.ViewModels
                         break;
                 }
             }
+        }
+
+        private void SubdivideObject(Object3D object3D)
+        {
+            CheckPoint();
+            Point3DCollection tmp = new Point3DCollection();
+            PointUtils.P3DToPointCollection(object3D.RelativeObjectVertices, tmp);
+            MeshSubdivider subdiv = new MeshSubdivider(tmp, object3D.TriangleIndices);
+
+            Point3DCollection tmp2 = new Point3DCollection();
+            Int32Collection newTri = new Int32Collection();
+            subdiv.Subdivide(tmp2, newTri);
+            PointUtils.PointCollectionToP3D(tmp2, object3D.RelativeObjectVertices);
+            object3D.TriangleIndices = newTri;
+
+            object3D.Remesh();
+            object3D.CalcScale(false);
+            allBounds += object3D.AbsoluteBounds;
+
+            GeometryModel3D gm = GetMesh(object3D);
+            RegenerateDisplayList();
+            Document.Dirty = true;
+        }
+
+        private void SwitchToObjectProperties()
+        {
+            NotificationManager.Notify("SwitchToObjectProperties", null);
         }
 
         private bool Test()

@@ -24,7 +24,7 @@
 
             <ctrls:FlexiPathEditorControl x:Name="PathEditor" FixedEndPath="True" />
         </Border>
-         <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
+        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
         <Border Grid.Row ="0" Grid.Column="3" Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.RowDefinitions>
@@ -57,7 +57,7 @@
                     </ModelVisual3D>
                 </Viewport3D>
                 <StackPanel Orientation="Horizontal" Grid.Row="1">
-                    <CheckBox Margin="2,0,16,0" VerticalAlignment="Center" Content="Hollow" IsChecked="{Binding IsHollow}"/>
+                    <CheckBox Margin="2,0,16,0" VerticalAlignment="Center" Content="Hollow" IsChecked="{Binding IsHollow}" />
                     <Label VerticalAlignment="Center" Content="Thickness" Margin="4,0,0,0"
                     Visibility="{Binding ShowHollowParams}" />
                     <TextBox VerticalAlignment="Center" Text="{Binding SurfaceThickness}" Margin="4,0,8,0"
@@ -73,9 +73,11 @@
                     Value="{Binding NumDivisions}"
                     VerticalAlignment="Center"
                     x:Name="HDivSlide" />
-                    
+
+                    <TextBox Text="{Binding NumDivisions}" VerticalContentAlignment="Center"
+                                 Margin="4,0,0,0" FontSize="16" Width="50" />
                     <TextBox Text="{Binding WarningText}" VerticalContentAlignment="Center"
-                                 Margin="4,0,0,0" Foreground="Red" FontSize="18" />
+                                 Margin="4,0,0,0" Foreground="Red" FontSize="18" Width="200" />
                 </StackPanel>
             </Grid>
         </Border>
