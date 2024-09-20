@@ -13,6 +13,10 @@ Added
 	Added Bevel options to brick wall tool.
 	Added Bevel options to plank wall tool.
 	Flexipathcontrol, split line segment can split quadbezier segment
+	FlexipathControl, "Show Points" button, now toggles the visibilty rather
+	than just temporarily showing points until the next click.
+	Tooltips for controls on slice dialog
+	Added another hole fixing method
 
 Fixed
 	Slice dialog not showing carriage returns in start/end gcode. Fixed
@@ -22,6 +26,8 @@ Fixed
 
 Changed
 	Replaced subdivision method by a simpler one
+	Dual tool sdf method. Also added three different sdf resolutions
+	Allow adding sub folders to printer folder ( in case you have more than one printer!)
 
 v1.0.5
 ===========

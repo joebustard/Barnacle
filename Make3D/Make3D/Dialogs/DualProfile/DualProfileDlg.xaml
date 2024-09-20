@@ -32,31 +32,47 @@
         <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
 
         <Border Grid.Row ="0" Grid.Column="3" Style="{StaticResource ControlBorder}">
-            <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
-              MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="20" />
+                </Grid.RowDefinitions>
+                <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
+              MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel" Grid.Row="0">
 
-                <Viewport3D.Camera>
-                    <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
-                    </PerspectiveCamera>
-                </Viewport3D.Camera>
+                    <Viewport3D.Camera>
+                        <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
+                        </PerspectiveCamera>
+                    </Viewport3D.Camera>
 
-                <ModelVisual3D>
-                    <ModelVisual3D.Content>
-                        <Model3DGroup>
-                            <AmbientLight Color="#FF808080" />
-                            <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
-                            </DirectionalLight>
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
+                    <ModelVisual3D>
+                        <ModelVisual3D.Content>
+                            <Model3DGroup>
+                                <AmbientLight Color="#FF808080" />
+                                <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
+                                </DirectionalLight>
+                            </Model3DGroup>
+                        </ModelVisual3D.Content>
+                    </ModelVisual3D>
 
-                <ModelVisual3D x:Name = "MyModel">
-                    <ModelVisual3D.Content>
-                        <Model3DGroup x:Name="MyModelGroup">
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-            </Viewport3D>
+                    <ModelVisual3D x:Name = "MyModel">
+                        <ModelVisual3D.Content>
+                            <Model3DGroup x:Name="MyModelGroup">
+                            </Model3DGroup>
+                        </ModelVisual3D.Content>
+                    </ModelVisual3D>
+                </Viewport3D>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <RadioButton Content="Sdf" GroupName="MethodGroup" VerticalAlignment="Center" IsChecked="{Binding SdfMethod}" />
+                    <RadioButton Content="Mid res Sdf" GroupName="MethodGroup" VerticalAlignment="Center"
+Margin="8,0,0,0" IsChecked="{Binding MidResSdfMethod}" />
+                    <RadioButton Content="Hi res Sdf" GroupName="MethodGroup" VerticalAlignment="Center"
+Margin="8,0,0,0" IsChecked="{Binding HiResSdfMethod}" />
+                    <!--
+                    <RadioButton Content="Intersection" GroupName="MethodGroup" Margin="8,0,0,0" VerticalAlignment="Center" IsChecked="{Binding IntersectionMethod}" />
+                    -->
+                </StackPanel>
+            </Grid>
         </Border>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>

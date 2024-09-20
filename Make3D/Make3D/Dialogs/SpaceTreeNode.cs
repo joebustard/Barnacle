@@ -12,6 +12,7 @@ namespace Barnacle.Dialogs
         }
 
         private const double tolerance = 1E-7;
+        private const double leftRightTolerance = 1E-4;
 
         public NodeColour Colour;
 
@@ -84,7 +85,7 @@ namespace Barnacle.Dialogs
             int result = -1;
 
             double dx = v.X - Vertex.X;
-            if (dx < -tolerance)
+            if (dx < -leftRightTolerance)
             {
                 if (Left != null)
                 {
@@ -92,7 +93,7 @@ namespace Barnacle.Dialogs
                 }
             }
             else
-            if (dx > tolerance)
+            if (dx > leftRightTolerance)
             {
                 if (Right != null)
                 {
@@ -101,7 +102,7 @@ namespace Barnacle.Dialogs
             }
             else
             {
-                if (Math.Abs(v.Y - Vertex.Y) < tolerance && Math.Abs(v.Z - Vertex.Z) < tolerance)
+                if (Math.Abs(v.X - Vertex.X) < tolerance && Math.Abs(v.Y - Vertex.Y) < tolerance && Math.Abs(v.Z - Vertex.Z) < tolerance)
                 {
                     result = Id;
                 }
@@ -137,14 +138,14 @@ namespace Barnacle.Dialogs
             else
             {
                 double dx = v.X - node.Vertex.X;
-                if (dx < -tolerance)
+                if (dx < -leftRightTolerance)
                 {
                     node.Left = Add(v, node.Left, id);
                 }
                 else
                 {
                     // right
-                    if (dx > tolerance)
+                    if (dx > leftRightTolerance)
                     {
                         node.Right = Add(v, node.Right, id);
                     }

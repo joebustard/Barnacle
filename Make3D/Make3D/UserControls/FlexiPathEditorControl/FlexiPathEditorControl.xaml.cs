@@ -202,8 +202,11 @@ namespace Barnacle.UserControls
 
         internal void SetPath(string v)
         {
-            pathText = v;
-            vm?.SetPath(v);
+            if (pathText != v)
+            {
+                pathText = v;
+                vm?.SetPath(v);
+            }
         }
 
         internal void UpdatePath(string v)
