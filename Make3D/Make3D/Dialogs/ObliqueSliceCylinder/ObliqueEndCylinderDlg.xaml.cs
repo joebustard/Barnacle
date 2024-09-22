@@ -2,7 +2,6 @@ using MakerLib;
 using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {
@@ -14,6 +13,7 @@ namespace Barnacle.Dialogs
         private string warningText;
         private bool loaded;
         private Visibility showPoints;
+
         public Visibility ShowPoints
         {
             get { return showPoints; }
@@ -30,6 +30,7 @@ namespace Barnacle.Dialogs
         private const double minradius = 0.5;
         private const double maxradius = 200;
         private double radius;
+
         public double Radius
         {
             get
@@ -49,6 +50,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public String RadiusToolTip
         {
             get
@@ -57,10 +59,10 @@ namespace Barnacle.Dialogs
             }
         }
 
-
         private const double minmainHeight = 0.1;
         private const double maxmainHeight = 200;
         private double mainHeight;
+
         public double MainHeight
         {
             get
@@ -80,6 +82,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public String MainHeightToolTip
         {
             get
@@ -88,10 +91,10 @@ namespace Barnacle.Dialogs
             }
         }
 
-
         private const double mincutHeight = 0.1;
         private const double maxcutHeight = 200;
         private double cutHeight;
+
         public double CutHeight
         {
             get
@@ -111,6 +114,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public String CutHeightToolTip
         {
             get
@@ -119,10 +123,10 @@ namespace Barnacle.Dialogs
             }
         }
 
-
-        private const double mincutStyle = 0;
-        private const double maxcutStyle = 10;
+        private const double mincutStyle = 1;
+        private const double maxcutStyle = 3;
         private double cutStyle;
+
         public double CutStyle
         {
             get
@@ -138,7 +142,7 @@ namespace Barnacle.Dialogs
                         cutStyle = value;
                         NotifyPropertyChanged();
                         UpdateDisplay();
-                        if ( cutStyle == 1)
+                        if (cutStyle == 1)
                         {
                             ShowPoints = Visibility.Hidden;
                         }
@@ -150,6 +154,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public String CutStyleToolTip
         {
             get
@@ -158,10 +163,10 @@ namespace Barnacle.Dialogs
             }
         }
 
-
         private const double mincutPoints = 1;
         private const double maxcutPoints = 10;
         private double cutPoints;
+
         public double CutPoints
         {
             get
@@ -181,6 +186,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public String CutPointsToolTip
         {
             get
@@ -188,8 +194,6 @@ namespace Barnacle.Dialogs
                 return $"CutPoints must be in the range {mincutPoints} to {maxcutPoints}";
             }
         }
-
-
 
         public ObliqueEndCylinderDlg()
         {
@@ -260,9 +264,11 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-            ObliqueEndCylinderMaker maker = new ObliqueEndCylinderMaker(
-                radius, mainHeight, cutHeight, cutStyle, cutPoints
-                );
+            ObliqueEndCylinderMaker maker = new ObliqueEndCylinderMaker(radius,
+                                                                        mainHeight,
+                                                                        cutHeight,
+                                                                        cutStyle,
+                                                                        cutPoints);
             maker.Generate(Vertices, Faces);
             CentreVertices();
         }
@@ -273,19 +279,13 @@ namespace Barnacle.Dialogs
 
             Radius = EditorParameters.GetDouble("Radius", 5);
 
-
             MainHeight = EditorParameters.GetDouble("MainHeight", 5);
-
 
             CutHeight = EditorParameters.GetDouble("CutHeight", 5);
 
-
             CutStyle = EditorParameters.GetDouble("CutStyle", 1);
 
-
             CutPoints = EditorParameters.GetDouble("CutPoints", 1);
-
-
         }
 
         private void SaveEditorParmeters()
@@ -317,8 +317,6 @@ namespace Barnacle.Dialogs
             MyModelGroup.Children.Clear();
             loaded = true;
 
-
-
             UpdateDisplay();
         }
 
@@ -330,9 +328,9 @@ namespace Barnacle.Dialogs
             CutHeight = 5;
             CutStyle = 1;
             CutPoints = 1;
-
             loaded = true;
         }
+
         private void ResetDefaults(object sender, RoutedEventArgs e)
         {
             SetDefaults();
