@@ -232,7 +232,7 @@
         "Entry"
         {
         "MsmKey" = "8:_576ABB3A214CCF22264D68C7C0407D70"
-        "OwnerKey" = "8:_7DD462CEB26E269C1A7F01A1C7E7427B"
+        "OwnerKey" = "8:_9D7C551859560961684B7BA19112C306"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -245,6 +245,12 @@
         {
         "MsmKey" = "8:_576ABB3A214CCF22264D68C7C0407D70"
         "OwnerKey" = "8:_93282F906FBDD3FEBEE7615D829D1D60"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_576ABB3A214CCF22264D68C7C0407D70"
+        "OwnerKey" = "8:_7DD462CEB26E269C1A7F01A1C7E7427B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -856,12 +862,6 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_576ABB3A214CCF22264D68C7C0407D70"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_A73DDCE3E90DCFBC69DD827BDFAE5559"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -875,6 +875,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_9D7C551859560961684B7BA19112C306"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_576ABB3A214CCF22264D68C7C0407D70"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1042,7 +1048,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ManifoldLib, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:ManifoldLib, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_01418B4A9A029136DFFB3D967FCD5091"
@@ -1133,7 +1139,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:SimpleSmoothLib, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:SimpleSmoothLib, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_0FF4C7205DDDB52948E496DB516A00EC"
@@ -1204,7 +1210,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:PlacementLib, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:PlacementLib, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_169267841F562B2F1FC05E8DE3C042CC"
@@ -1295,7 +1301,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:LoggerLib, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:LoggerLib, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_25FB70EBDC0833ADE71B5627B267CA69"
@@ -1357,7 +1363,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:HullLibrary, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:HullLibrary, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_2CCC5ECDD28E7D8623D7CCA6B3149126"
@@ -1388,7 +1394,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Workflow, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Workflow, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_2DA8ADFF98CB98A96664E3C578E5DC90"
@@ -1490,7 +1496,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Object3DLib, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Object3DLib, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_34A63051F8BAD4C96FF7D079E1461CB5"
@@ -1521,7 +1527,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:HoleLibrary, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:HoleLibrary, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_366AF1D24E40E86A7D02F6ED68C5EECD"
@@ -1672,7 +1678,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:sdflib, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:sdflib, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_523D894FF9FDD1F61EBA25CCF0F1BF8F"
@@ -1723,7 +1729,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:OctTreeLib, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:OctTreeLib, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_576ABB3A214CCF22264D68C7C0407D70"
@@ -1856,7 +1862,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ImageUtils, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:ImageUtils, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_627371296D6B6CCECA2EADBFD38B7AF3"
@@ -1998,7 +2004,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:FixLib, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:FixLib, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_7DD462CEB26E269C1A7F01A1C7E7427B"
@@ -2060,7 +2066,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:EarClipperLib, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:EarClipperLib, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_845847A87221D417A87D171F91DC7E16"
@@ -2264,7 +2270,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MakerLib, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:MakerLib, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_93282F906FBDD3FEBEE7615D829D1D60"
@@ -2375,7 +2381,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:HalfEdgeLib, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:HalfEdgeLib, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_9BD0F0D05F9D420B442A0E027B2042A5"
@@ -2426,7 +2432,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:CSGLib, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:CSGLib, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_9D7C551859560961684B7BA19112C306"
@@ -2457,7 +2463,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:EditorParameterLib, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:EditorParameterLib, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_A73DDCE3E90DCFBC69DD827BDFAE5559"
@@ -2508,7 +2514,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:PrintPlacementLib, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:PrintPlacementLib, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_B06A75AE8717ACC8D006DC9D632DDB33"
@@ -2570,7 +2576,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:asdflibrary, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:asdflibrary, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_B233DE873D0C94965E5F8EE3329C295F"
@@ -2692,7 +2698,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:TemplateLib, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:TemplateLib, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_BB7464F8E71D0F82F41CEF05D8A4AAB2"
@@ -3007,7 +3013,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:LineLib, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:LineLib, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_ED26C1E267B523D1AC028C44F6DB14FF"
@@ -3058,7 +3064,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:InterpreterLib, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:InterpreterLib, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_F28E8270355FB0B3A876A6C5019C471F"
@@ -3120,7 +3126,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:PolygonLibrary, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:PolygonLibrary, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_F3E26C5A968C4A121B87649DDF5D4E49"
@@ -3151,7 +3157,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:VisualSolutionExplorerLib, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:VisualSolutionExplorerLib, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_F74EF80B11875A6760AE8B042A766F4E"
@@ -3182,7 +3188,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:PolygonTriangulationLib, Version=1.0.5.4171, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:PolygonTriangulationLib, Version=1.0.6.4171, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_F7CF646CD604A0BA0E3076F2D2E3EF5F"
@@ -3353,15 +3359,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Barnacle3D"
-        "ProductCode" = "8:{259BF9AA-4528-44FD-99BC-7BBB6D44E273}"
-        "PackageCode" = "8:{47B53140-1634-4181-9379-8B92C6FBC46C}"
+        "ProductCode" = "8:{5A17B6E7-E51A-4DF9-B568-81D170C30EB8}"
+        "PackageCode" = "8:{9F9C1D84-D961-490A-B21B-A0DE2A3C50C9}"
         "UpgradeCode" = "8:{6F2FD966-929F-4C74-8C4C-BF438CF79394}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.5"
+        "ProductVersion" = "8:1.0.6"
         "Manufacturer" = "8:BarnacleJoe"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
