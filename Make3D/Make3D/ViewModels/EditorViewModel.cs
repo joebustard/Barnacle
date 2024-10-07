@@ -30,7 +30,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using Object3DLib.OFF;
 
 namespace Barnacle.ViewModels
 {
@@ -1597,7 +1596,9 @@ namespace Barnacle.ViewModels
             Int32Collection tris = ob.TriangleIndices;
             Point3DCollection vertices2 = new Point3DCollection();
             Int32Collection tris2 = new Int32Collection();
-
+            // trying to fix a hole thats really big can get
+            // stuck forever
+            const int maxPointsInHole = 4000;
             LoggerLib.Logger.Log($"Before fixing, tris.count= {tris.Count}");
             foreach (P3D p in ob.RelativeObjectVertices)
             {
@@ -1613,7 +1614,10 @@ namespace Barnacle.ViewModels
                 foreach (HalfEdge he in lhe)
                 {
                     var pnt = hemesh.Vertices[he.StartVertex];
-                    pf.Add(new System.Drawing.PointF((float)pnt.X, (float)pnt.Z));
+                    if (pf.Count < maxPointsInHole)
+                    {
+                        pf.Add(new System.Drawing.PointF((float)pnt.X, (float)pnt.Z));
+                    }
                 }
                 ply.Points = pf.ToArray();
                 polyTris = ply.Triangulate(true);
@@ -3624,44 +3628,18 @@ namespace Barnacle.ViewModels
             else
             if (s == "ungroup")
             {
-                CheckPoint();
-                if (BreakGroup())
-                {
-                    selectedObjectAdorner.Clear();
-                    RegenerateDisplayList();
-                    NotificationManager.Notify("ObjectNamesChanged", null);
-                }
+                TryUngroup();
             }
             else
             {
-                csgCancelation = new CancellationTokenSource();
-                bool groupOpDone = await MakeGroup3D(s);
-                if (groupOpDone)
-                {
-                    Object3D ob = selectedItems[0];
-                    selectedObjectAdorner.Clear();
-                    selectedItems.Clear();
-
-                    if (Properties.Settings.Default.ConfirmNameAfterCSG)
-                    {
-                        ConfirmObjectNameDlg dlg = new ConfirmObjectNameDlg();
-                        dlg.Owner = Application.Current.MainWindow;
-                        dlg.ObjectName = ob.Name;
-                        if (dlg.ShowDialog() == true)
-                        {
-                            ob.Name = dlg.ObjectName;
-                        }
-                    }
-                    SelectObject(ob);
-                }
-
+                await TryGroup(s);
                 RegenerateDisplayList();
                 SetSelectionColours();
                 NotificationManager.Notify("ObjectNamesChanged", null);
             }
         }
 
-        private async void OnImport(object param)
+        private void OnImport(object param)
         {
             if (selectedObjectAdorner != null)
             {
@@ -4775,6 +4753,12 @@ namespace Barnacle.ViewModels
             UpdateSelectionDisplay();
         }
 
+        private bool SelectionContainsReferences()
+        {
+            bool res = selectedItems.Where(c => (c is ReferenceGroup3D) || (c is ReferenceObject3D)).Count() > 0;
+            return res;
+        }
+
         private void SelectLast()
         {
             var v1 = (Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down);
@@ -5312,6 +5296,59 @@ namespace Barnacle.ViewModels
             CameraScrollDelta = new Point3D(1, 0, 1);
             LookToCenter();
             zoomPercent = 100;
+        }
+
+        private async Task TryGroup(string s)
+        {
+            if (SelectionContainsReferences())
+            {
+                MessageBox.Show("Can't group referenced objects");
+            }
+            else
+            {
+                csgCancelation = new CancellationTokenSource();
+                string leftName = selectedItems[0].Name;
+                string rightName = selectedItems[1].Name;
+                bool groupOpDone = await MakeGroup3D(s);
+                if (groupOpDone)
+                {
+                    Object3D ob = selectedItems[0];
+                    selectedObjectAdorner.Clear();
+                    selectedItems.Clear();
+
+                    if (Properties.Settings.Default.ConfirmNameAfterCSG)
+                    {
+                        ConfirmObjectNameDlg dlg = new ConfirmObjectNameDlg();
+                        dlg.Owner = Application.Current.MainWindow;
+                        dlg.ObjectName = ob.Name;
+                        dlg.LeftName = leftName;
+                        dlg.RightName = rightName;
+                        if (dlg.ShowDialog() == true)
+                        {
+                            ob.Name = dlg.ObjectName;
+                        }
+                    }
+                    SelectObject(ob);
+                }
+            }
+        }
+
+        private void TryUngroup()
+        {
+            if (SelectionContainsReferences())
+            {
+                MessageBox.Show("Can't ungroup referenced objects");
+            }
+            else
+            {
+                CheckPoint();
+                if (BreakGroup())
+                {
+                    selectedObjectAdorner.Clear();
+                    RegenerateDisplayList();
+                    NotificationManager.Notify("ObjectNamesChanged", null);
+                }
+            }
         }
 
         private void UpdateSelectionDisplay()

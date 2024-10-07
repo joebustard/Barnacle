@@ -16,12 +16,12 @@
 **************************************************************************/
 
 using asdflibrary;
-using CSGLib;
-using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 
@@ -102,31 +102,6 @@ namespace Barnacle.Dialogs
                         sdfMethod = false;
                         midResSdfMethod = false;
                         shapeDirty = true;
-                        NotifyPropertyChanged();
-                        StartUpdateTimer();
-                    }
-                }
-            }
-        }
-
-        public bool IntersectionMethod
-        {
-            get
-            {
-                return intersectionMethod;
-            }
-            set
-            {
-                if (value != intersectionMethod)
-                {
-                    intersectionMethod = value;
-
-                    if (intersectionMethod)
-                    {
-                        shapeDirty = true;
-                        sdfMethod = false;
-                        hiResSdfMethod = false;
-                        midResSdfMethod = false;
                         NotifyPropertyChanged();
                         StartUpdateTimer();
                     }
@@ -268,7 +243,7 @@ namespace Barnacle.Dialogs
 
                 if (res == -1)
                 {
-                    res = Vertices.Count;
+                    res = octTree.PointCount;
                     octTree.AddPoint(res, v);
                 }
             }
@@ -379,71 +354,13 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private OctTreeLib.OctTree CreateOctree(Point3D minPoint, Point3D maxPoint)
+        private OctTreeLib.OctTree CreateOctree(Point3D minPoint, Point3D maxPoint, Point3DCollection vertices)
         {
-            octTree = new OctTreeLib.OctTree(Vertices,
+            octTree = new OctTreeLib.OctTree(vertices,
                                   minPoint,
                                   maxPoint,
                                   200);
             return octTree;
-        }
-
-        private void CreateSideFace(List<System.Windows.Point> pnts, int i, bool flip, bool autoclose = true)
-        {
-            int v = i + 1;
-
-            if (v == pnts.Count)
-            {
-                if (autoclose)
-                {
-                    v = 0;
-                }
-                else
-                {
-                    // dont process the final point if caller doesn't want it
-                    return;
-                }
-            }
-            int c0;
-            int c1;
-            int c2;
-            int c3;
-
-            if (!flip)
-            {
-                c0 = AddVerticeOctTree(pnts[i].X, pnts[i].Y, -0.5);
-                c1 = AddVerticeOctTree(pnts[i].X, pnts[i].Y, 0.5);
-                c2 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, 0.5);
-                c3 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, -0.5);
-                Faces.Add(c0);
-                Faces.Add(c2);
-                Faces.Add(c1);
-
-                Faces.Add(c0);
-                Faces.Add(c3);
-                Faces.Add(c2);
-            }
-            else
-            {
-                c0 = AddVerticeOctTree(flippedScale * pnts[i].X, flippedScale * -0.5, flippedScale * pnts[i].Y);
-                c1 = AddVerticeOctTree(flippedScale * pnts[i].X, flippedScale * 0.5, flippedScale * pnts[i].Y);
-                c2 = AddVerticeOctTree(flippedScale * pnts[v].X, flippedScale * 0.5, flippedScale * pnts[v].Y);
-                c3 = AddVerticeOctTree(flippedScale * pnts[v].X, flippedScale * -0.5, flippedScale * pnts[v].Y);
-                Faces.Add(c0);
-                Faces.Add(c1);
-                Faces.Add(c2);
-
-                Faces.Add(c0);
-                Faces.Add(c2);
-                Faces.Add(c3);
-            }
-            Faces.Add(c0);
-            Faces.Add(c2);
-            Faces.Add(c1);
-
-            Faces.Add(c0);
-            Faces.Add(c3);
-            Faces.Add(c2);
         }
 
         private float DistToPoly(List<Point> pnts, float x, float y)
@@ -468,7 +385,6 @@ namespace Barnacle.Dialogs
         private float FrontDist(float x, float y)
         {
             float frontDist = DistToPoly(frontpnts, x, y);
-
             return frontDist;
         }
 
@@ -506,50 +422,23 @@ namespace Barnacle.Dialogs
                 // the control is reactivated.
                 // Meaning switching from top to front view
                 // always restores the very first path.
-                // Get around this by replacing the inital path by the
+                // Get around this by replacing the initial path by the
                 // current one. A dirty hack!
                 string pth = FrontPathControl.AbsolutePathString;
                 FrontPathControl.SetPath(pth);
             }
         }
 
-        private void GenerateByBoolean()
+        private AsyncGeneratorResult GenerateBySdfAsync(float dd = 0.025F)
         {
-            Solid front = GenerateSolid(frontpnts, false);
+            Point3DCollection v1 = new Point3DCollection();
+            Int32Collection i1 = new Int32Collection();
 
-            Solid top = GenerateSolid(toppnts, true);
-
-            BooleanModeller.OperationType op = BooleanModeller.OperationType.Intersection;
-            Part Object1 = new Part(front);
-            Part Object2 = new Part(top);
-
-            BooleanModeller modeller = new BooleanModeller(front, top);
-            Solid result = modeller.GetIntersection();
-
-            ClearShape();
-            Vector3D[] vc = result.GetVertices();
-            if (vc.GetLength(0) > 0)
-            {
-                foreach (Vector3D v in vc)
-                {
-                    Point3D p = new Point3D(v.X * frontXSize, v.Y * frontYSize, v.Z * topYSize);
-                    Vertices.Add(p);
-                }
-                int[] ids = result.GetIndices();
-                for (int i = 0; i < ids.Length; i++)
-                {
-                    Faces.Add(ids[i]);
-                }
-            }
-        }
-
-        private void GenerateBySdf(float dd = 0.025F)
-        {
             CubeMarcher cm = new CubeMarcher();
             GridCell gc = new GridCell();
             List<asdflibrary.Triangle> triangles = new List<asdflibrary.Triangle>();
             octTree = CreateOctree(new Point3D(-frontXSize, -frontYSize, -topYSize),
-                  new Point3D(frontXSize, frontYSize, topYSize));
+                  new Point3D(frontXSize, frontYSize, topYSize), v1);
 
             for (float x = -0.6F; x <= 0.6; x += dd)
             {
@@ -589,139 +478,64 @@ namespace Barnacle.Dialogs
                             int p0 = AddVerticeOctTree(t.p[0].x * frontXSize, -(t.p[0].y * frontYSize), t.p[0].z * topYSize);
                             int p1 = AddVerticeOctTree(t.p[1].x * frontXSize, -(t.p[1].y * frontYSize), t.p[1].z * topYSize);
                             int p2 = AddVerticeOctTree(t.p[2].x * frontXSize, -(t.p[2].y * frontYSize), t.p[2].z * topYSize);
-
-                            AddFace(p0, p2, p1);
+                            i1.Add(p0);
+                            i1.Add(p2);
+                            i1.Add(p1);
                         }
                     }
                 }
             }
+            AsyncGeneratorResult res = new AsyncGeneratorResult();
+            // extract the vertices and indices to thread safe arrays
+            // while still in the async function
+            res.points = new Point3D[v1.Count];
+            for (int i = 0; i < v1.Count; i++)
+            {
+                res.points[i] = new Point3D(v1[i].X, v1[i].Y, v1[i].Z);
+            }
+            res.indices = new int[i1.Count];
+            for (int i = 0; i < i1.Count; i++)
+            {
+                res.indices[i] = i1[i];
+            }
+            v1.Clear();
+            i1.Clear();
+            return (res);
         }
 
-        private void GenerateShape()
+        private async void GenerateShape()
         {
             if (shapeDirty)
             {
                 ClearShape();
+
                 if (TopPathControl.PathClosed && FrontPathControl.PathClosed)
                 {
-                    if (frontpnts.Count > 3 && toppnts.Count > 3)
+                    Busy();
+                    if (frontpnts.Count >= 3 && toppnts.Count >= 3)
                     {
-                        if (intersectionMethod)
-                        {
-                            GenerateByBoolean();
-                        }
-                        else
+                        AsyncGeneratorResult result;
                         if (sdfMethod)
                         {
-                            GenerateBySdf(0.025F);
+                            result = await Task.Run(() => GenerateBySdfAsync(0.025F));
                         }
                         else
                         if (midResSdfMethod)
                         {
-                            GenerateBySdf(0.0175F);
+                            result = await Task.Run(() => GenerateBySdfAsync(0.0175F));
                         }
                         else
-                        if (hiResSdfMethod)
                         {
-                            GenerateBySdf(0.01F);
+                            result = await Task.Run(() => GenerateBySdfAsync(0.01F));
                         }
+                        GetVerticesFromAsyncResult(result);
+                        NotBusy();
                     }
                 }
+
                 CentreVertices();
                 shapeDirty = false;
             }
-        }
-
-        private Solid GenerateSolid(List<System.Windows.Point> points, bool flip)
-        {
-            ClearShape();
-            Solid res = null;
-            // points should be a list of 2d points scaled between -0.5 and .5
-            if (points != null && points.Count > 3)
-            {
-                List<System.Windows.Point> tmp = new List<System.Windows.Point>();
-                double top = 0;
-                for (int i = 0; i < points.Count; i++)
-                {
-                    if (points[i].Y > top)
-                    {
-                        top = points[i].Y;
-                    }
-                }
-
-                for (int i = 0; i < points.Count; i++)
-                {
-                    // flipping coordinates so have to reverse polygon too
-                    tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
-                }
-
-                octTree = CreateOctree(new Point3D(-2, -2, -2),
-                                  new Point3D(2, 2, 2));
-
-                for (int i = 0; i < tmp.Count; i++)
-                {
-                    CreateSideFace(tmp, i, flip);
-                }
-
-                // triangulate the basic polygon
-                TriangulationPolygon ply = new TriangulationPolygon();
-                List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
-                foreach (System.Windows.Point p in tmp)
-                {
-                    pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
-                }
-                ply.Points = pf.ToArray();
-                List<PolygonTriangulationLib.Triangle> tris = ply.Triangulate();
-
-                int c0;
-                int c1;
-                int c2;
-                foreach (PolygonTriangulationLib.Triangle t in tris)
-                {
-                    if (!flip)
-                    {
-                        c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, -0.5);
-                        c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, -0.5);
-                        c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, -0.5);
-                        AddFace(c0, c2, c1);
-                    }
-                    else
-                    {
-                        c0 = AddVerticeOctTree(flippedScale * t.Points[0].X, flippedScale * -0.5, flippedScale * t.Points[0].Y);
-                        c1 = AddVerticeOctTree(flippedScale * t.Points[1].X, flippedScale * -0.5, flippedScale * t.Points[1].Y);
-                        c2 = AddVerticeOctTree(flippedScale * t.Points[2].X, flippedScale * -0.5, flippedScale * t.Points[2].Y);
-
-                        AddFace(c0, c1, c2);
-                    }
-
-                    if (!flip)
-                    {
-                        c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, 0.5);
-                        c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, 0.5);
-                        c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, 0.5);
-                        AddFace(c0, c1, c2);
-                    }
-                    else
-                    {
-                        c0 = AddVerticeOctTree(flippedScale * t.Points[0].X, flippedScale * 0.5, flippedScale * t.Points[0].Y);
-                        c1 = AddVerticeOctTree(flippedScale * t.Points[1].X, flippedScale * 0.5, flippedScale * t.Points[1].Y);
-                        c2 = AddVerticeOctTree(flippedScale * t.Points[2].X, flippedScale * 0.5, flippedScale * t.Points[2].Y);
-                        AddFace(c0, c2, c1);
-                    }
-                }
-                CentreVertices();
-                /*
-                MeshSubdivider subdiv = new MeshSubdivider(Vertices, Faces);
-
-                Point3DCollection tmp2 = new Point3DCollection();
-                Int32Collection newTri = new Int32Collection();
-                subdiv.Subdivide(tmp2, newTri);
-
-                res = new Solid(tmp2, newTri, false);
-                */
-                res = new Solid(Vertices, Faces, false);
-            }
-            return res;
         }
 
         private double GetClosestDist(float distanceToFront, float distanceToTop)
@@ -758,7 +572,6 @@ namespace Barnacle.Dialogs
             SdfMethod = EditorParameters.GetBoolean("SdfMethod", true);
             HiResSdfMethod = EditorParameters.GetBoolean("HiResSdfMethod", false);
             MidResSdfMethod = EditorParameters.GetBoolean("MidResSdfMethod", false);
-            IntersectionMethod = EditorParameters.GetBoolean("IntersectionMethod", false);
         }
 
         private void SaveEditorParmeters()
@@ -766,7 +579,6 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("TopShape", TopPathControl.GetPath());
             EditorParameters.Set("FrontShape", FrontPathControl.GetPath());
             EditorParameters.Set("SdfMethod", SdfMethod.ToString());
-            EditorParameters.Set("IntersectionMethod", IntersectionMethod.ToString());
             EditorParameters.Set("HiResSdfMethod", HiResSdfMethod.ToString());
             EditorParameters.Set("MidResSdfMethod", MidResSdfMethod.ToString());
         }
@@ -847,11 +659,9 @@ namespace Barnacle.Dialogs
         {
             WarningText = "";
             LoadEditorParameters();
-
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             loaded = true;
-
             UpdateDisplay();
         }
     }

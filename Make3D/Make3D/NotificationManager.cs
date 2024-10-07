@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace Barnacle
 {
@@ -10,50 +11,53 @@ namespace Barnacle
 
     public static class NotificationManager
     {
+        private static bool idleMode = false;
+
+        private static int idleTimeSeconds = 5 * 60;
+
         private static List<ObserverDef> observers = new List<ObserverDef>();
+
+        // if no notifications come through for a specified time
+        // then an IdleTimer notification is sent to anyone
+        // who has subscribed to it
+        private static DispatcherTimer timer = null;
+
+        public static bool IdleMode
+        {
+            get
+            {
+                return idleMode;
+            }
+            set
+            {
+                if (value != idleMode)
+                {
+                    StopIdleTimer();
+                    idleMode = value;
+                    StartIdleTimer();
+                }
+            }
+        }
+
+        public static int IdleTimeSeconds
+        {
+            get { return idleTimeSeconds; }
+            set
+            {
+                if (idleTimeSeconds != value)
+                {
+                    StopIdleTimer();
+                    idleTimeSeconds = value;
+                    StartIdleTimer();
+                }
+            }
+        }
 
         public static void Notify(string name, object param)
         {
-            bool adjust = false;
-            List<ObserverDef> tmp = new List<ObserverDef>();
-            foreach (ObserverDef df in observers)
-            {
-                tmp.Add(df);
-            }
-
-            for (int i = 0; i < tmp.Count; i++)
-            {
-                ObserverDef df = tmp[i];
-                if (df.messageName == name)
-                {
-                    if (df.observer != null)
-                    {
-                        try
-                        {
-                            df.observer(param);
-                        }
-                        catch (Exception ex)
-                        {
-                            System.Diagnostics.Debug.WriteLine(ex.Message);
-                            df.alive = false;
-                            adjust = true;
-                        }
-                    }
-                }
-            }
-
-            if (adjust)
-            {
-                observers.Clear();
-                for (int i = 0; i < tmp.Count; i++)
-                {
-                    ObserverDef df = tmp[i];
-                    if (df.alive)
-                    {
-                        observers.Add(df);
-                    }
-                }
-            }
+            StopIdleTimer();
+            SendNotification(name, param);
+            StartIdleTimer();
         }
 
         public static async Task NotifyTask(string name, object param)
@@ -153,13 +157,86 @@ namespace Barnacle
             observers = obs;
         }
 
+        private static void SendNotification(string name, object param)
+        {
+            bool adjust = false;
+
+            List<ObserverDef> tmp = new List<ObserverDef>();
+            foreach (ObserverDef df in observers)
+            {
+                tmp.Add(df);
+            }
+
+            for (int i = 0; i < tmp.Count; i++)
+            {
+                ObserverDef df = tmp[i];
+                if (df.messageName == name)
+                {
+                    if (df.observer != null)
+                    {
+                        try
+                        {
+                            df.observer(param);
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine(ex.Message);
+                            df.alive = false;
+                            adjust = true;
+                        }
+                    }
+                }
+            }
+
+            if (adjust)
+            {
+                observers.Clear();
+                for (int i = 0; i < tmp.Count; i++)
+                {
+                    ObserverDef df = tmp[i];
+                    if (df.alive)
+                    {
+                        observers.Add(df);
+                    }
+                }
+            }
+        }
+
+        private static void StartIdleTimer()
+        {
+            if (IdleMode)
+            {
+                if (timer == null)
+                {
+                    timer = new DispatcherTimer();
+                    timer.Tick += Timer_Tick;
+                }
+                TimeSpan ts = new TimeSpan(0, 0, 0, IdleTimeSeconds);
+                timer.Interval = ts;
+                timer.Start();
+            }
+        }
+
+        private static void StopIdleTimer()
+        {
+            if (timer != null)
+            {
+                timer.Stop();
+            }
+        }
+
+        private static void Timer_Tick(object sender, EventArgs e)
+        {
+            SendNotification("IdleTimer", null);
+        }
+
         private struct ObserverDef
         {
             public bool alive;
-            public string subscriberName;
             public string messageName;
             public RXMessage observer;
             public RXMessageTask observerTask;
+            public string subscriberName;
         }
     }
 }

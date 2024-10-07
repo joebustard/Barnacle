@@ -1,12 +1,19 @@
-<local:BaseModellerDialog x:Class="Barnacle.Dialogs.DualProfileDlg"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                          xmlns:ctrls="clr-namespace:Barnacle.UserControls"
-        xmlns:local="clr-namespace:Barnacle.Dialogs"
-        mc:Ignorable="d"
-        Title="DualProfile" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
+<local:BaseModellerDialog
+    x:Class="Barnacle.Dialogs.DualProfileDlg"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ctrls="clr-namespace:Barnacle.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:u="clr-namespace:Barnacle.UserControls"
+    Title="Dual Profile"
+    Width="800"
+    Height="450"
+    Background="{StaticResource WindowBackBrush}"
+    Loaded="Window_Loaded"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -18,10 +25,10 @@
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="1" Grid.Row="0">
+        <Grid Grid.Row="0" Grid.Column="1">
 
-            <TabControl>
-                <TabItem Header="Front">
+            <TabControl IsEnabled="{Binding EditingEnabled}">
+                <TabItem Header="Side">
                     <ctrls:FlexiPathEditorControl x:Name="FrontPathControl" />
                 </TabItem>
                 <TabItem Header="Top">
@@ -29,48 +36,79 @@
                 </TabItem>
             </TabControl>
         </Grid>
-        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
+        <GridSplitter
+            Grid.Row="0"
+            Grid.Column="2"
+            Style="{StaticResource GridSplitterStyle}" />
 
-        <Border Grid.Row ="0" Grid.Column="3" Style="{StaticResource ControlBorder}">
+        <Border
+            Grid.Row="0"
+            Grid.Column="3"
+            Style="{StaticResource ControlBorder}">
             <Grid>
+
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition Height="20" />
                 </Grid.RowDefinitions>
-                <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
-              MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel" Grid.Row="0">
+                <u:SpinControl
+                    x:Name="BusyDisplay"
+                    MaxWidth="150"
+                    MaxHeight="150"
+                    Visibility="{Binding BusyVisible}" />
+                <Viewport3D
+                    Name="viewport3D1"
+                    Grid.Row="0"
+                    MouseDown="Viewport_MouseDown"
+                    MouseMove="Viewport_MouseMove"
+                    MouseWheel="Viewport_MouseWheel">
 
                     <Viewport3D.Camera>
-                        <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
-                        </PerspectiveCamera>
+                        <PerspectiveCamera
+                            x:Name="camMain"
+                            LookDirection="{Binding LookDirection}"
+                            Position="{Binding CameraPosition}" />
                     </Viewport3D.Camera>
 
                     <ModelVisual3D>
                         <ModelVisual3D.Content>
                             <Model3DGroup>
                                 <AmbientLight Color="#FF808080" />
-                                <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
-                                </DirectionalLight>
+                                <DirectionalLight
+                                    x:Name="dirLightMain"
+                                    Direction="-1,-1,-1"
+                                    Color="White" />
                             </Model3DGroup>
                         </ModelVisual3D.Content>
                     </ModelVisual3D>
 
-                    <ModelVisual3D x:Name = "MyModel">
+                    <ModelVisual3D x:Name="MyModel">
                         <ModelVisual3D.Content>
-                            <Model3DGroup x:Name="MyModelGroup">
-                            </Model3DGroup>
+                            <Model3DGroup x:Name="MyModelGroup" />
                         </ModelVisual3D.Content>
                     </ModelVisual3D>
                 </Viewport3D>
-                <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <RadioButton Content="Sdf" GroupName="MethodGroup" VerticalAlignment="Center" IsChecked="{Binding SdfMethod}" />
-                    <RadioButton Content="Mid res Sdf" GroupName="MethodGroup" VerticalAlignment="Center"
-Margin="8,0,0,0" IsChecked="{Binding MidResSdfMethod}" />
-                    <RadioButton Content="Hi res Sdf" GroupName="MethodGroup" VerticalAlignment="Center"
-Margin="8,0,0,0" IsChecked="{Binding HiResSdfMethod}" />
-                    <!--
-                    <RadioButton Content="Intersection" GroupName="MethodGroup" Margin="8,0,0,0" VerticalAlignment="Center" IsChecked="{Binding IntersectionMethod}" />
-                    -->
+                <StackPanel
+                    Grid.Row="1"
+                    IsEnabled="{Binding EditingEnabled}"
+                    Orientation="Horizontal">
+                    <RadioButton
+                        VerticalAlignment="Center"
+                        Content="Sdf"
+                        GroupName="MethodGroup"
+                        IsChecked="{Binding SdfMethod}" />
+                    <RadioButton
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center"
+                        Content="Mid res Sdf"
+                        GroupName="MethodGroup"
+                        IsChecked="{Binding MidResSdfMethod}" />
+                    <RadioButton
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center"
+                        Content="Hi res Sdf"
+                        GroupName="MethodGroup"
+                        IsChecked="{Binding HiResSdfMethod}" />
                 </StackPanel>
             </Grid>
         </Border>
@@ -80,25 +118,49 @@ Margin="8,0,0,0" IsChecked="{Binding HiResSdfMethod}" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
         </Grid>
-        <Grid Grid.Column="1" Grid.Row="1">
+        <Grid Grid.Row="1" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <CheckBox VerticalAlignment="Center" Content="Floor" Grid.Column="0" IsChecked="{Binding ShowFloor}" />
-            <CheckBox VerticalAlignment="Center" Content="Axies" Grid.Column="1" IsChecked="{Binding ShowAxies}" />
-            <Button Content="Home" Width="80" Margin="0,2,0,2" Grid.Column="2" Click="Home_Click" />
+            <CheckBox
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Content="Floor"
+                IsChecked="{Binding ShowFloor}" />
+            <CheckBox
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Content="Axies"
+                IsChecked="{Binding ShowAxies}" />
+            <Button
+                Grid.Column="2"
+                Width="80"
+                Margin="0,2,0,2"
+                Click="Home_Click"
+                Content="Home" />
         </Grid>
 
-        <Grid Grid.Column="3" Grid.Row="1">
+        <Grid
+            Grid.Row="1"
+            Grid.Column="3"
+            IsEnabled="{Binding EditingEnabled}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
-            <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" />
+            <Button
+                Grid.Column="1"
+                Margin="2,2,2,2"
+                Click="Cancel_Click"
+                Content="Cancel" />
+            <Button
+                Grid.Column="2"
+                Margin="2,2,2,2"
+                Click="Ok_Click"
+                Content="Ok" />
         </Grid>
     </Grid>
 </local:BaseModellerDialog>

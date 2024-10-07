@@ -54,7 +54,8 @@
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
-                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0" Grid.Column="1">
                         <Grid.ColumnDefinitions>
@@ -178,6 +179,9 @@
                         Content="Auto repeat hole fixing"
                         IsChecked="{Binding RepeatHoleFixes}"
                         ToolTip="Hole fixing is slow. Running it once may leave some holes that can still be fixed by running it again. If checked hole fixing runs repeatedly until no more holes can be fixed." />
+                    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Grid.Row="10" Grid.Column="1">
+                        <CheckBox Content="Auto Save Changes" IsChecked="{Binding AutoSaveChanges}" VerticalAlignment="Center" ToolTip="Automatically save any edits if the program has been idle for a while" />
+                    </StackPanel>
                 </Grid>
             </TabItem>
             <TabItem Header="Import/Export">

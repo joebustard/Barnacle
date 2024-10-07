@@ -3,106 +3,34 @@ using Barnacle.UserControls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Reflection;
 using System.Windows.Media;
 
 namespace Barnacle.ViewModels
 {
     internal class SettingsViewModel : BaseViewModel, INotifyPropertyChanged
     {
+        private bool autoSaveChanges;
         private bool autoSaveScript;
-        private AvailableColour objectColour;
         private bool clearPreviousVersionsOnExport;
+        private bool confirmNameAfterCSG;
         private Color defaultObjectColour;
         private string description;
         private bool exportEmptyDocs;
         private string exportScale;
         private bool floorAll;
         private bool importSwapAxis;
-        private string rotX;
-
-        private string rotY;
-
-        private string rotZ;
-
-        private List<String> scales;
-
-        private string selectedScale;
-
-        private bool swapAxis;
-
-        private bool versionExport;
-        private string slicerPath;
-
-        public string SlicerPath
-        {
-            get { return slicerPath; }
-            set
-            {
-                if (value != slicerPath)
-                {
-                    slicerPath = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private bool confirmNameAfterCSG;
-
-        public bool ConfirmNameAfterCSG
-        {
-            get { return confirmNameAfterCSG; }
-            set
-            {
-                if (value != confirmNameAfterCSG)
-                {
-                    confirmNameAfterCSG = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private bool repeatHoleFixes;
-
-        public bool RepeatHoleFixes
-        {
-            get { return repeatHoleFixes; }
-            set
-            {
-                repeatHoleFixes = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        private String sdCardName;
-
-        public String SDCardName
-        {
-            get { return sdCardName; }
-            set
-            {
-                if (sdCardName != value)
-                {
-                    sdCardName = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
+        private AvailableColour objectColour;
         private bool placeNewAtMarker;
-
-        public bool PlaceNewAtMarker
-        {
-            get { return placeNewAtMarker; }
-            set
-            {
-                if (placeNewAtMarker != value)
-                {
-                    placeNewAtMarker = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
+        private bool repeatHoleFixes;
+        private string rotX;
+        private string rotY;
+        private string rotZ;
+        private List<String> scales;
+        private String sdCardName;
+        private string selectedScale;
+        private string slicerPath;
+        private bool swapAxis;
+        private bool versionExport;
 
         public SettingsViewModel()
         {
@@ -125,25 +53,20 @@ namespace Barnacle.ViewModels
             SDCardName = Properties.Settings.Default.SDCardLabel;
             ConfirmNameAfterCSG = Properties.Settings.Default.ConfirmNameAfterCSG;
             RepeatHoleFixes = Properties.Settings.Default.RepeatHoleFixes;
-            // SetAvailableColours();
             ObjectColour = ColourPicker.FindAvailableColour(DefaultObjectColour);
 
             PlaceNewAtMarker = Project.SharedProjectSettings.PlaceNewAtMarker;
+            AutoSaveChanges = Properties.Settings.Default.AutoSaveOn;
         }
 
-        public AvailableColour ObjectColour
+        public bool AutoSaveChanges
         {
-            get
-            {
-                return objectColour;
-            }
+            get { return autoSaveChanges; }
             set
             {
-                if (objectColour != value)
+                if (autoSaveChanges != value)
                 {
-                    objectColour = value;
-                    System.Drawing.Color tmp = System.Drawing.Color.FromName(objectColour.Name);
-                    DefaultObjectColour = System.Windows.Media.Color.FromArgb(tmp.A, tmp.R, tmp.G, tmp.B);
+                    autoSaveChanges = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -176,6 +99,19 @@ namespace Barnacle.ViewModels
                 if (clearPreviousVersionsOnExport != value)
                 {
                     clearPreviousVersionsOnExport = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool ConfirmNameAfterCSG
+        {
+            get { return confirmNameAfterCSG; }
+            set
+            {
+                if (value != confirmNameAfterCSG)
+                {
+                    confirmNameAfterCSG = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -277,6 +213,47 @@ namespace Barnacle.ViewModels
             }
         }
 
+        public AvailableColour ObjectColour
+        {
+            get
+            {
+                return objectColour;
+            }
+            set
+            {
+                if (objectColour != value)
+                {
+                    objectColour = value;
+                    System.Drawing.Color tmp = System.Drawing.Color.FromName(objectColour.Name);
+                    DefaultObjectColour = System.Windows.Media.Color.FromArgb(tmp.A, tmp.R, tmp.G, tmp.B);
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool PlaceNewAtMarker
+        {
+            get { return placeNewAtMarker; }
+            set
+            {
+                if (placeNewAtMarker != value)
+                {
+                    placeNewAtMarker = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool RepeatHoleFixes
+        {
+            get { return repeatHoleFixes; }
+            set
+            {
+                repeatHoleFixes = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public string RotX
         {
             get
@@ -342,6 +319,19 @@ namespace Barnacle.ViewModels
             }
         }
 
+        public String SDCardName
+        {
+            get { return sdCardName; }
+            set
+            {
+                if (sdCardName != value)
+                {
+                    sdCardName = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public string SelectedScale
         {
             get
@@ -353,6 +343,19 @@ namespace Barnacle.ViewModels
                 if (selectedScale != value)
                 {
                     selectedScale = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public string SlicerPath
+        {
+            get { return slicerPath; }
+            set
+            {
+                if (value != slicerPath)
+                {
+                    slicerPath = value;
                     NotifyPropertyChanged();
                 }
             }

@@ -1,4 +1,23 @@
-﻿v1.0.6
+﻿v1.0.7
+===========
+Added
+  Autosave changes if idle for 5 minutes. Turn on and off from settings.
+  Busy indicator on Image Plaque and Dual Profile
+
+Fixed
+  Renaming the current file, switching projects, then reopening project via the recent projects menu
+  might lead to the last edited file not actually opening automatically
+  RailWheel editor was mis-remembering the main radius setting.
+
+Changed
+	Changed the header on the project explorer from "Solution" to "Project" as
+	this makes more sense for most users.
+
+	Prevent referenced groups from being ungrouped as this breaks the reference
+	Prevent referenced objects from being grouped as this breaks the reference
+
+
+v1.0.6
 ===========
 Added
 	Browse the textures folder from  the platelet dialog

@@ -53,5 +53,11 @@
     <Setting Name="DialogXml" Type="System.String" Scope="User">
       <Value Profile="(Default)">"&lt;W&gt;&lt;Top&gt;189&lt;/Top&gt;&lt;Left&gt;358&lt;/Left&gt;&lt;Height&gt;624&lt;/Height&gt;&lt;Width&gt;1315&lt;/Width&gt;&lt;WindowState&gt;Normal&lt;/WindowState&gt;&lt;/W&gt;"</Value>
     </Setting>
+    <Setting Name="AutoSaveOn" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="AutoSaveMinutes" Type="System.String" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

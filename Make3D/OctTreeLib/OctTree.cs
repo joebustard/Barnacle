@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -29,11 +28,28 @@ namespace OctTreeLib
             root.Split();
         }
 
-        public OctNode FindNodeAround(Point3D pnt)
+        public int PointCount
         {
-            OctNode res = root?.FindNodeAround(pnt);
+            get
+            {
+                if (OctNode.AllPoints == null)
+                {
+                    return 0;
+                }
+                return OctNode.AllPoints.Count;
+            }
+        }
 
-            return res;
+        public static bool equals(double v1, double v2)
+        {
+            if (Math.Abs(v1 - v2) < 0.00000001)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public void AddPoint(int index, Point3D position)
@@ -48,6 +64,24 @@ namespace OctTreeLib
             {
                 MessageBox.Show("AddPoint() " + ex.Message);
             }
+        }
+
+        public int AddPoint(Point3D p)
+        {
+            int res = PointPresent(p);
+            if (res == -1)
+            {
+                res = OctNode.AllPoints.Count;
+                AddPoint(res, p);
+            }
+            return res;
+        }
+
+        public OctNode FindNodeAround(Point3D pnt)
+        {
+            OctNode res = root?.FindNodeAround(pnt);
+
+            return res;
         }
 
         public int PointPresent(Point3D pnt)
@@ -78,29 +112,6 @@ namespace OctTreeLib
         private bool Equals(Point3D p, double x, double y, double z)
         {
             return equals(p.X, x) && equals(p.Y, y) && equals(p.Z, z);
-        }
-
-        public static bool equals(double v1, double v2)
-        {
-            if (Math.Abs(v1 - v2) < 0.00000001)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public int AddPoint(Point3D p)
-        {
-            int res = PointPresent(p);
-            if (res == -1)
-            {
-                res = OctNode.AllPoints.Count;
-                AddPoint(res, p);
-            }
-            return res;
         }
     }
 }

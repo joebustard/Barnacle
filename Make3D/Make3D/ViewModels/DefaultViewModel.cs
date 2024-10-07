@@ -67,6 +67,7 @@ namespace Barnacle.ViewModels
         private bool stadiumEnabled;
         private SubViewManager subViewMan;
 
+        private int tabPanelWidth;
         private bool tankTrackEnabled;
         private Visibility toolPaletteVisible;
         private bool tubeEnabled;
@@ -94,23 +95,16 @@ namespace Barnacle.ViewModels
             OpenRecentFileCommand = new RelayCommand(OnOpenRecent);
             SaveCommand = new RelayCommand(OnSave);
             SaveAsCommand = new RelayCommand(OnSaveAs);
-
             ReferenceCommand = new RelayCommand(OnReference);
             ScreenShotCommand = new RelayCommand(OnScreenShot);
-
             UndoCommand = new RelayCommand(OnUndo);
-            // RedoCommand = new RelayCommand(OnRedo);
-
             PasteCommand = new RelayCommand(OnPaste);
             PasteAtCommand = new RelayCommand(OnPasteAt);
             MultiPasteCommand = new RelayCommand(OnMultiPaste);
-
             AddCommand = new RelayCommand(OnAdd);
-
             ZoomInCommand = new RelayCommand(OnZoomIn);
             ZoomOutCommand = new RelayCommand(OnZoomOut);
             Zoom100Command = new RelayCommand(onZoomReset);
-
             AlignCommand = new RelayCommand(OnAlignment);
             MarkerCommand = new RelayCommand(OnMarker);
             DistributeCommand = new RelayCommand(OnDistribute);
@@ -129,25 +123,22 @@ namespace Barnacle.ViewModels
             TextAlignmentCommand = new RelayCommand(OnTextAlignment);
             MeshCutCommand = new RelayCommand(OnCutPlane);
             ToolCommand = new RelayCommand(OnTool);
-
             TwoShapeCommand = new RelayCommand(OnTwoShape);
             SpurGearCommand = new RelayCommand(OnSpurGear);
             TankTrackCommand = new RelayCommand(OnTankTrack);
             MeshEditCommand = new RelayCommand(OnMeshEdit);
             MeshHullCommand = new RelayCommand(OnHullEdit);
             DupVertexCommand = new RelayCommand(OnDupVertex);
-
             MeshSmoothCommand = new RelayCommand(OnLoopSmooth);
             ResetOriginCommand = new RelayCommand(OnReorigin);
             ViewCommand = new RelayCommand(OnView);
             MeshSubdivideCommand = new RelayCommand(OnMeshSubdivide);
             AboutCommand = new RelayCommand(OnAbout);
-            showFloorChecked = false;
 
             ExitCommand = new RelayCommand(OnExit);
             ZipProjectCommand = new RelayCommand(OnZipProject);
             Caption = BaseViewModel.Document.Caption;
-
+            showFloorChecked = false;
             FillColor = Brushes.White;
             SelectedObjectName = "";
 
@@ -184,7 +175,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("SuspendEditing", SuspendEditing);
             NotificationManager.Subscribe("GroupSelected", GroupSelected);
             NotificationManager.Subscribe("BackupProject", BackupProject);
-
+            NotificationManager.Subscribe("IdleTimer", OnIdleTimer);
             SubView = subViewMan.GetView("editor");
             CreateToolMenus();
             editingActive = true;
@@ -194,79 +185,7 @@ namespace Barnacle.ViewModels
 
             LoadShowSettings();
             LoadPartLibrary();
-        }
-
-        private void BackupProject(object param)
-        {
-            if (Document.Dirty)
-            {
-                MessageBox.Show("Document must be saved first");
-            }
-            else
-            {
-                String projRoot = Project.BaseFolder;
-                String projName = Project.ProjectName.Replace(" ", "_");
-                if (Directory.Exists(projRoot + "\\Backup"))
-                {
-                    string zipPath = projRoot + "\\Backup\\" + projName + "_" + DateTime.Now.Year.ToString() + "_"
-                                                            + DateTime.Now.Month.ToString() + "_"
-                                                            + DateTime.Now.Day.ToString() + "_"
-                                                            + DateTime.Now.Hour.ToString() + "_"
-                                                            + DateTime.Now.Minute.ToString()
-                                                            + ".zip";
-                    List<String> fileNames = new List<string>();
-                    List<String> emptyFolderNames = new List<string>();
-                    AddTargetNamesForProject(projRoot, fileNames, emptyFolderNames);
-
-                    ZipUtils.CreateZipFromFiles(zipPath, fileNames, emptyFolderNames, projRoot);
-                    MessageBox.Show("Project Zipped to file: " + zipPath);
-                }
-            }
-        }
-
-        private void OnZipProject(object obj)
-        {
-        }
-
-        private void AddTargetNamesForProject(string root, List<string> targetFiles, List<string> emptyFolderNames)
-        {
-            int fileCount = 0;
-            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "bmf");
-            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "txt");
-            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "lmp");
-            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "png");
-            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "jpg");
-            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "jpeg");
-            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "docx");
-            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "xlsx");
-            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "stl");
-            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "gcode");
-            String[] folders = Directory.GetDirectories(root);
-            foreach (string folder in folders)
-            {
-                if (!folder.EndsWith("Backup"))
-                {
-                    AddTargetNamesForProject(folder, targetFiles, emptyFolderNames);
-                }
-                else
-                {
-                    // pretend backup folder is an empty one
-                    emptyFolderNames.Add(folder);
-                }
-            }
-
-            // if this is leaf folder and it does not have any relevant files
-            if (folders.Length == 0 && fileCount == 0)
-            {
-                emptyFolderNames.Add(root);
-            }
-        }
-
-        private int AddTargetFileNamesForFolder(string root, List<string> targetFiles, string ext)
-        {
-            string[] names = Directory.GetFiles(root, "*." + ext);
-            targetFiles.AddRange(names.ToList());
-            return names.Length;
+            LoadAutoSaveSettings();
         }
 
         public ICommand AboutCommand { get; set; }
@@ -483,8 +402,6 @@ namespace Barnacle.ViewModels
         }
 
         public ICommand ExitCommand { get; set; }
-
-        public ICommand ZipProjectCommand { get; set; }
 
         public ICommand ExportCommand { get; set; }
 
@@ -1128,6 +1045,20 @@ namespace Barnacle.ViewModels
             get { return _systemFonts; }
         }
 
+        public int TabPanelWidth
+        {
+            get { return tabPanelWidth; }
+
+            set
+            {
+                if (tabPanelWidth != value)
+                {
+                    tabPanelWidth = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public ICommand TankTrackCommand { get; set; }
 
         public bool TankTrackEnabled
@@ -1142,22 +1073,6 @@ namespace Barnacle.ViewModels
                 if (tankTrackEnabled != value)
                 {
                     tankTrackEnabled = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private int tabPanelWidth;
-
-        public int TabPanelWidth
-        {
-            get { return tabPanelWidth; }
-
-            set
-            {
-                if (tabPanelWidth != value)
-                {
-                    tabPanelWidth = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -1279,6 +1194,8 @@ namespace Barnacle.ViewModels
             }
         }
 
+        public ICommand ZipProjectCommand { get; set; }
+
         public ICommand Zoom100Command { get; set; }
 
         public ICommand ZoomInCommand { get; set; }
@@ -1300,6 +1217,75 @@ namespace Barnacle.ViewModels
             {
                 currentViewName = v;
                 OnView(v);
+            }
+        }
+
+        private int AddTargetFileNamesForFolder(string root, List<string> targetFiles, string ext)
+        {
+            string[] names = Directory.GetFiles(root, "*." + ext);
+            targetFiles.AddRange(names.ToList());
+            return names.Length;
+        }
+
+        private void AddTargetNamesForProject(string root, List<string> targetFiles, List<string> emptyFolderNames)
+        {
+            int fileCount = 0;
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "bmf");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "txt");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "lmp");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "png");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "jpg");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "jpeg");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "docx");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "xlsx");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "stl");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "gcode");
+            String[] folders = Directory.GetDirectories(root);
+            foreach (string folder in folders)
+            {
+                if (!folder.EndsWith("Backup"))
+                {
+                    AddTargetNamesForProject(folder, targetFiles, emptyFolderNames);
+                }
+                else
+                {
+                    // pretend backup folder is an empty one
+                    emptyFolderNames.Add(folder);
+                }
+            }
+
+            // if this is leaf folder and it does not have any relevant files
+            if (folders.Length == 0 && fileCount == 0)
+            {
+                emptyFolderNames.Add(root);
+            }
+        }
+
+        private void BackupProject(object param)
+        {
+            if (Document.Dirty)
+            {
+                MessageBox.Show("Document must be saved first");
+            }
+            else
+            {
+                String projRoot = Project.BaseFolder;
+                String projName = Project.ProjectName.Replace(" ", "_");
+                if (Directory.Exists(projRoot + "\\Backup"))
+                {
+                    string zipPath = projRoot + "\\Backup\\" + projName + "_" + DateTime.Now.Year.ToString() + "_"
+                                                            + DateTime.Now.Month.ToString() + "_"
+                                                            + DateTime.Now.Day.ToString() + "_"
+                                                            + DateTime.Now.Hour.ToString() + "_"
+                                                            + DateTime.Now.Minute.ToString()
+                                                            + ".zip";
+                    List<String> fileNames = new List<string>();
+                    List<String> emptyFolderNames = new List<string>();
+                    AddTargetNamesForProject(projRoot, fileNames, emptyFolderNames);
+
+                    ZipUtils.CreateZipFromFiles(zipPath, fileNames, emptyFolderNames, projRoot);
+                    MessageBox.Show("Project Zipped to file: " + zipPath);
+                }
             }
         }
 
@@ -1495,6 +1481,24 @@ namespace Barnacle.ViewModels
             IsSelectedObjectAGroup = group;
         }
 
+        /// <summary>
+        /// Load up the global settings relating to autosave
+        /// </summary>
+        private void LoadAutoSaveSettings()
+        {
+            Properties.Settings.Default.Reload();
+            if (Properties.Settings.Default.AutoSaveMinutes != null)
+            {
+                NotificationManager.IdleTimeSeconds = 60 * Convert.ToInt32(Properties.Settings.Default.AutoSaveMinutes);
+            }
+            else
+            {
+                NotificationManager.IdleTimeSeconds = 300;
+            }
+
+            NotificationManager.IdleMode = Properties.Settings.Default.AutoSaveOn;
+        }
+
         private void LoadingNewFile(object param)
         {
         }
@@ -1685,6 +1689,20 @@ namespace Barnacle.ViewModels
             NotificationManager.Notify("MeshHull", null);
         }
 
+        /// <summary>
+        /// If the user hasn't done anything
+        /// for a specified time,
+        /// and autosave is enabled, then save the file
+        /// </summary>
+        /// <param name="param"></param>
+        private void OnIdleTimer(object param)
+        {
+            if (Document.Dirty)
+            {
+                OnSave(null);
+            }
+        }
+
         private void OnImport(object obj)
         {
             NotificationManager.Notify("Import", obj);
@@ -1796,7 +1814,6 @@ namespace Barnacle.ViewModels
         {
             NotificationManager.Notify("SaveFile", null);
             Caption = BaseViewModel.Document.Caption;
-            //UpdateRecentFiles(BaseViewModel.Document.FilePath);
         }
 
         private void OnSaveAs(object obj)
@@ -1885,6 +1902,10 @@ namespace Barnacle.ViewModels
             }
             subViewMan.CloseCurrent();
             SubView = subViewMan.GetView(vwName);
+        }
+
+        private void OnZipProject(object obj)
+        {
         }
 
         private void OnZoomIn(object obj)

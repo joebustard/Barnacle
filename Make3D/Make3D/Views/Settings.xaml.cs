@@ -64,6 +64,8 @@ namespace Barnacle.Views
                     Properties.Settings.Default.SDCardLabel = vm.SDCardName;
                     Properties.Settings.Default.ConfirmNameAfterCSG = vm.ConfirmNameAfterCSG;
                     Properties.Settings.Default.RepeatHoleFixes = vm.RepeatHoleFixes;
+                    Properties.Settings.Default.AutoSaveOn = vm.AutoSaveChanges;
+                    NotificationManager.IdleMode = Properties.Settings.Default.AutoSaveOn;
                     Properties.Settings.Default.Save();
                 }
                 catch (Exception)

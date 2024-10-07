@@ -229,7 +229,7 @@ namespace PolygonTriangulationLib
         // For a nice, detailed explanation of this method,
         // see Ian Garton's Web page:
         // http://www-cgrl.cs.mcgill.ca/~godfried/teaching/cg-projects/97/Ian/cutting_ears.html
-        public List<Triangle> Triangulate( bool allowDuplicatePoints = false)
+        public List<Triangle> Triangulate(bool allowDuplicatePoints = false)
         {
             List<Triangle> triangles = new List<Triangle>();
             if (Points != null)
@@ -250,7 +250,7 @@ namespace PolygonTriangulationLib
                 while (pgon.Points.Length > 3 && more)
                 {
                     // Remove an ear from the polygon.
-                    more = pgon.RemoveEar(triangles,allowDuplicatePoints);
+                    more = pgon.RemoveEar(triangles, allowDuplicatePoints);
                 }
                 if (pgon.Points.Length == 3)
                 {
@@ -308,7 +308,6 @@ namespace PolygonTriangulationLib
                             // do this is not an ear.
                             return false;
                         }
-                        
                     }
                     else
                     {
@@ -594,7 +593,7 @@ namespace PolygonTriangulationLib
         }
 
         // Find the indexes of three points that form an "ear."
-        private void FindEar(ref int A, ref int B, ref int C, bool allowDuplicatePoints)
+        private bool FindEar(ref int A, ref int B, ref int C, bool allowDuplicatePoints)
         {
             int num_points = Points.Length;
 
@@ -603,11 +602,12 @@ namespace PolygonTriangulationLib
                 B = (A + 1) % num_points;
                 C = (B + 1) % num_points;
 
-                if (FormsEar(Points, A, B, C, allowDuplicatePoints)) return;
+                if (FormsEar(Points, A, B, C, allowDuplicatePoints)) return true;
             }
 
             // We should never get here because there should
             // always be at least two ears.
+            return false;
         }
 
         // Find the initial control points.
@@ -654,17 +654,19 @@ namespace PolygonTriangulationLib
             bool removed = false;
             // Find an ear.
             int A = 0, B = 0, C = 0;
-            FindEar(ref A, ref B, ref C, allowDuplicatePoints);
-            if ((A >= 0 && A < Points.Length) &&
-                 (B >= 0 && B < Points.Length) &&
-                 (C >= 0 && C < Points.Length))
+            if (FindEar(ref A, ref B, ref C, allowDuplicatePoints))
             {
-                // Create a new triangle for the ear.
-                triangles.Add(new Triangle(Points[A], Points[B], Points[C]));
+                if ((A >= 0 && A < Points.Length) &&
+                     (B >= 0 && B < Points.Length) &&
+                     (C >= 0 && C < Points.Length))
+                {
+                    // Create a new triangle for the ear.
+                    triangles.Add(new Triangle(Points[A], Points[B], Points[C]));
 
-                // Remove the ear from the polygon.
-                RemovePointFromArray(B);
-                removed = true;
+                    // Remove the ear from the polygon.
+                    RemovePointFromArray(B);
+                    removed = true;
+                }
             }
             return removed;
         }

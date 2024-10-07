@@ -232,5 +232,29 @@ namespace Barnacle.Properties {
                 this["DialogXml"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoSaveOn {
+            get {
+                return ((bool)(this["AutoSaveOn"]));
+            }
+            set {
+                this["AutoSaveOn"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public string AutoSaveMinutes {
+            get {
+                return ((string)(this["AutoSaveMinutes"]));
+            }
+            set {
+                this["AutoSaveMinutes"] = value;
+            }
+        }
     }
 }

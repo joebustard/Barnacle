@@ -19,6 +19,7 @@ using MakerLib;
 using Microsoft.Win32;
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -31,13 +32,26 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class ImagePlaqueDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private string warningText;
-        private bool loaded;
-
-        private const double minplagueThickness = 0.5;
         private const double maxplagueThickness = 100;
-        private double plagueThickness;
+        private const double minplagueThickness = 0.5;
+        private FormatConvertedBitmap grayBitmapSource;
         private bool limitRunLengths;
+        private bool loaded;
+        private int maxRunLength;
+        private double plagueThickness;
+        private ImageSource plaqueImage;
+        private string plaqueImagePath;
+        private double solidLength;
+        private string warningText;
+
+        public ImagePlaqueDlg()
+        {
+            DataContext = this;
+            InitializeComponent();
+            ToolName = "ImagePlaque";
+            ModelGroup = MyModelGroup;
+            loaded = false;
+        }
 
         public bool LimitRunLengths
         {
@@ -53,8 +67,6 @@ namespace Barnacle.Dialogs
                 }
             }
         }
-
-        private int maxRunLength;
 
         public int MaxRunLength
         {
@@ -100,7 +112,20 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private string plaqueImagePath;
+        public ImageSource PlaqueImage
+        {
+            get { return plaqueImage; }
+
+            set
+            {
+                if (value != plaqueImage)
+                {
+                    plaqueImage = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
 
         public string PlaqueImagePath
         {
@@ -126,15 +151,6 @@ namespace Barnacle.Dialogs
             {
                 return $"PlaqueImagePath must point to a grayscale image file";
             }
-        }
-
-        public ImagePlaqueDlg()
-        {
-            InitializeComponent();
-            ToolName = "ImagePlaque";
-            DataContext = this;
-            ModelGroup = MyModelGroup;
-            loaded = false;
         }
 
         public override bool ShowAxies
@@ -173,6 +189,21 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public double SolidLength
+        {
+            get { return solidLength; }
+
+            set
+            {
+                if (value != solidLength)
+                {
+                    solidLength = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
         public string WarningText
         {
             get
@@ -197,94 +228,6 @@ namespace Barnacle.Dialogs
             Close();
         }
 
-        private double solidLength;
-
-        public double SolidLength
-        {
-            get { return solidLength; }
-
-            set
-            {
-                if (value != solidLength)
-                {
-                    solidLength = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
-            }
-        }
-
-        private void GenerateShape()
-        {
-            ClearShape();
-            if (plagueThickness > 0 && !String.IsNullOrEmpty(plaqueImagePath))
-            {
-                ImagePlaqueMaker maker = new ImagePlaqueMaker(plagueThickness, plaqueImagePath, limitRunLengths, maxRunLength, solidLength);
-                maker.Generate(Vertices, Faces);
-                CentreVertices();
-            }
-        }
-
-        private void LoadEditorParameters()
-        {
-            // load back the tool specific parameters
-
-            PlagueThickness = EditorParameters.GetDouble("PlagueThickness", 5);
-
-            PlaqueImagePath = EditorParameters.Get("PlaqueImagePath");
-            LimitRunLengths = EditorParameters.GetBoolean("LimitRunLengths", true);
-            MaxRunLength = EditorParameters.GetInt("MaxRunLength", 1);
-            SolidLength = EditorParameters.GetDouble("SolidLength", 25);
-        }
-
-        private void SaveEditorParmeters()
-        {
-            // save the parameters for the tool
-
-            EditorParameters.Set("PlagueThickness", PlagueThickness.ToString());
-            EditorParameters.Set("PlaqueImagePath", PlaqueImagePath.ToString());
-            EditorParameters.Set("LimitRunLengths", LimitRunLengths.ToString());
-            EditorParameters.Set("MaxRunLength", MaxRunLength.ToString());
-            EditorParameters.Set("SolidLength", SolidLength.ToString());
-        }
-
-        private void UpdateDisplay()
-        {
-            if (loaded)
-            {
-                GenerateShape();
-                Redisplay();
-            }
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            WarningText = "";
-            LoadEditorParameters();
-
-            UpdateCameraPos();
-            MyModelGroup.Children.Clear();
-            loaded = true;
-
-            UpdateDisplay();
-        }
-
-        private void SetDefaults()
-        {
-            loaded = false;
-            PlagueThickness = 5;
-            PlaqueImagePath = "";
-            LimitRunLengths = false;
-            MaxRunLength = 1;
-            loaded = true;
-        }
-
-        private void ResetDefaults(object sender, RoutedEventArgs e)
-        {
-            SetDefaults();
-            UpdateDisplay();
-        }
-
         private void BrowseImage_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog dlg = new OpenFileDialog();
@@ -292,29 +235,59 @@ namespace Barnacle.Dialogs
             {
                 if (System.IO.File.Exists(dlg.FileName))
                 {
-                    PlaqueImagePath = dlg.FileName;
                     LoadImageAndConvertToGrayScale(dlg.FileName);
+                    PlaqueImagePath = dlg.FileName;
                 }
             }
         }
 
-        public ImageSource PlaqueImage
+        private AsyncGeneratorResult GenerateAsync()
         {
-            get { return plaqueImage; }
+            AsyncGeneratorResult res = new AsyncGeneratorResult();
+            ImagePlaqueMaker maker = new ImagePlaqueMaker(plagueThickness, plaqueImagePath, limitRunLengths, maxRunLength, solidLength);
+            Point3DCollection v1 = new Point3DCollection();
+            Int32Collection i1 = new Int32Collection();
+            maker.Generate(v1, i1);
 
-            set
+            // extract the vertices and indices to thread safe arrays
+            // while still in the async function
+            res.points = new Point3D[v1.Count];
+            for (int i = 0; i < v1.Count; i++)
             {
-                if (value != plaqueImage)
-                {
-                    plaqueImage = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
+                res.points[i] = new Point3D(v1[i].X, v1[i].Y, v1[i].Z);
+            }
+            res.indices = new int[i1.Count];
+            for (int i = 0; i < i1.Count; i++)
+            {
+                res.indices[i] = i1[i];
+            }
+            v1.Clear();
+            i1.Clear();
+            return (res);
+        }
+
+        private async void GenerateShape()
+        {
+            ClearShape();
+            if (plagueThickness > 0 && !String.IsNullOrEmpty(plaqueImagePath))
+            {
+                Busy();
+                var result = await Task.Run(() => GenerateAsync());
+                GetVerticesFromAsyncResult(result);
+                NotBusy();
+                CentreVertices();
             }
         }
 
-        private FormatConvertedBitmap grayBitmapSource;
-        private ImageSource plaqueImage;
+        private void LoadEditorParameters()
+        {
+            // load back the tool specific parameters
+            PlagueThickness = EditorParameters.GetDouble("PlagueThickness", 5);
+            PlaqueImagePath = EditorParameters.Get("PlaqueImagePath");
+            LimitRunLengths = EditorParameters.GetBoolean("LimitRunLengths", true);
+            MaxRunLength = EditorParameters.GetInt("MaxRunLength", 1);
+            SolidLength = EditorParameters.GetDouble("SolidLength", 25);
+        }
 
         private void LoadImageAndConvertToGrayScale(String fileName)
         {
@@ -341,6 +314,52 @@ namespace Barnacle.Dialogs
             grayBitmapSource.EndInit();
 
             PlaqueImage = grayBitmapSource;
+        }
+
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
+            UpdateDisplay();
+        }
+
+        private void SaveEditorParmeters()
+        {
+            // save the parameters for the tool
+            EditorParameters.Set("PlagueThickness", PlagueThickness.ToString());
+            EditorParameters.Set("PlaqueImagePath", PlaqueImagePath.ToString());
+            EditorParameters.Set("LimitRunLengths", LimitRunLengths.ToString());
+            EditorParameters.Set("MaxRunLength", MaxRunLength.ToString());
+            EditorParameters.Set("SolidLength", SolidLength.ToString());
+        }
+
+        private void SetDefaults()
+        {
+            loaded = false;
+            PlagueThickness = 5;
+            PlaqueImagePath = "";
+            LimitRunLengths = false;
+            MaxRunLength = 1;
+            loaded = true;
+        }
+
+        private void UpdateDisplay()
+        {
+            if (loaded)
+            {
+                GenerateShape();
+                Redisplay();
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            WarningText = "";
+            NotBusy();
+            LoadEditorParameters();
+            UpdateCameraPos();
+            MyModelGroup.Children.Clear();
+            loaded = true;
+            UpdateDisplay();
         }
     }
 }

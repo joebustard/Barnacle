@@ -16,20 +16,9 @@
 **************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Barnacle.Dialogs
 {
@@ -38,7 +27,11 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class ConfirmObjectNameDlg : Window, INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        private String leftName;
+
+        private string objectName;
+
+        private String rightName;
 
         public ConfirmObjectNameDlg()
         {
@@ -46,13 +39,20 @@ namespace Barnacle.Dialogs
             DataContext = this;
         }
 
-        public void Ok_Click(object sender, RoutedEventArgs e)
-        {
-            DialogResult = true;
-            Close();
-        }
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        private string objectName;
+        public string LeftName
+        {
+            get { return leftName; }
+            set
+            {
+                if (value != leftName)
+                {
+                    leftName = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public string ObjectName
         {
@@ -68,12 +68,41 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public string RightName
+        {
+            get { return rightName; }
+            set
+            {
+                if (value != rightName)
+                {
+                    rightName = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        public void Ok_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = true;
+            Close();
+        }
+
+        private void LeftNameClicked(object sender, RoutedEventArgs e)
+        {
+            ObjectName = LeftName;
+        }
+
+        private void RightNameClicked(object sender, RoutedEventArgs e)
+        {
+            ObjectName = RightName;
         }
     }
 }

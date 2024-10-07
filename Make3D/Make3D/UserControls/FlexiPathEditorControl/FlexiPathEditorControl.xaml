@@ -35,11 +35,10 @@
                             BorderThickness="4"
                             CornerRadius="2">
                             <Button
-                            x:Name="ShowAllPointsButton"
-
-                            Command="{Binding ShowAllPointsCommand}"
-                            Style="{StaticResource SmallButton}"
-                            ToolTip="Show all the control points on the path">
+                                x:Name="ShowAllPointsButton"
+                                Command="{Binding ShowAllPointsCommand}"
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Show all the control points on the path">
                                 <Image Source="/Barnacle;component/Images/Buttons/SeeAllPoints.png" ToolTip="Show all the control points on the path" />
                             </Button>
                         </Border>

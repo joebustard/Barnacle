@@ -214,6 +214,7 @@ namespace Barnacle.Views
             {
                 LoadFileLastOpenedInProject();
             }
+
             if (BaseViewModel.Document != null)
             {
                 BaseViewModel.Document.ProjectSettings = BaseViewModel.Project.SharedProjectSettings;
@@ -612,6 +613,7 @@ namespace Barnacle.Views
                             // does the old directory contain the document we currently have open?
                             // if so we need to tell the document to sort itself out
                             BaseViewModel.Document.RenameFolder(old, renamed);
+
                             Directory.Move(old, renamed);
                         }
                         catch (Exception)
@@ -719,6 +721,7 @@ namespace Barnacle.Views
                                     // make sure document knows the name has changed to avoid it saving back into the old
                                     // file name
                                     BaseViewModel.Document.RenameCurrent(old, ren);
+                                    BaseViewModel.Project.FirstFile = fName;
                                 }
                                 if (File.Exists(ren))
                                 {

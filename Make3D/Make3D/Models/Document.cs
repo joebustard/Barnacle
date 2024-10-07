@@ -206,6 +206,17 @@ namespace Barnacle.Models
             {
                 ProjectSettings.SDCardName = Properties.Settings.Default.SDCardLabel;
             }
+
+            if (Properties.Settings.Default.AutoSaveMinutes != null)
+            {
+                ProjectSettings.AutoSaveMinutes = Convert.ToInt32(Properties.Settings.Default.AutoSaveMinutes);
+            }
+            else
+            {
+                ProjectSettings.AutoSaveMinutes = 5;
+            }
+
+            ProjectSettings.AutoSaveOn = Properties.Settings.Default.AutoSaveOn;
         }
 
         public virtual void Read(string file, bool clearFirst, bool reportMissing = true)

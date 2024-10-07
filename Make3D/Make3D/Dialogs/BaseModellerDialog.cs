@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 
 namespace Barnacle.Dialogs
 {
-    public class BaseModellerDialog : Window, INotifyPropertyChanged
+    public partial class BaseModellerDialog : Window, INotifyPropertyChanged
     {
         protected Axies axies;
         protected string defaultImagePath;
@@ -105,6 +105,31 @@ namespace Barnacle.Dialogs
                 {
                     bounds = value;
                 }
+            }
+        }
+
+        public struct AsyncGeneratorResult
+        {
+            public Point3D[] points;
+            public int[] indices;
+        }
+
+        /// <summary>
+        /// Purely used to get over a threading issue when
+        /// using async.
+        /// We can't get Point3DCollections back from an async function
+        /// so we pass points as an array and convert type afterwards
+        /// </summary>
+        /// <param name="result"></param>
+        protected void GetVerticesFromAsyncResult(AsyncGeneratorResult result)
+        {
+            foreach (Point3D p in result.points)
+            {
+                Vertices.Add(new Point3D(p.X, p.Y, p.Z));
+            }
+            foreach (int f in result.indices)
+            {
+                Faces.Add(f);
             }
         }
 
@@ -694,7 +719,6 @@ namespace Barnacle.Dialogs
             }
 
             // top
-
             for (int i = 0; i < numDiv; i++)
             {
                 x = -width + (i * div);
@@ -1278,6 +1302,54 @@ namespace Barnacle.Dialogs
         private double InchesToMM(double x)
         {
             return x * 25.4;
+        }
+
+        protected bool editingEnabled;
+
+        public bool EditingEnabled
+        {
+            get { return editingEnabled; }
+            set
+            {
+                if (editingEnabled != value)
+                {
+                    editingEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private Visibility busyVisible;
+
+        public Visibility BusyVisible
+        {
+            get { return busyVisible; }
+            set
+            {
+                if (value != busyVisible)
+                {
+                    busyVisible = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Turn off the twirlywoo and allow any controls being changed
+        /// </summary>
+        protected void NotBusy()
+        {
+            BusyVisible = Visibility.Hidden;
+            EditingEnabled = true;
+        }
+
+        /// <summary>
+        /// Turn on the twirlywoo and stop any controls being changed
+        /// </summary>
+        protected void Busy()
+        {
+            EditingEnabled = false;
+            BusyVisible = Visibility.Visible;
         }
     }
 }

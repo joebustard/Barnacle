@@ -305,20 +305,20 @@
             Grid.Row="15"
             Grid.Column="0"
             Grid.ColumnSpan="3"
-                        FontSize="14"
-            IsEnabled="{Binding CanScale}"
-            IsChecked="{Binding LockAspectRatio}"
-            ToolTip="Lock the aspect ratio. I.e. when one size is changed automatically scale the other two to maintain the relative shape"
-            VerticalContentAlignment="Center"
             Margin="8,0,0,0"
-            Content="Lock aspect ratio" />
+            VerticalContentAlignment="Center"
+            Content="Lock aspect ratio"
+            FontSize="14"
+            IsChecked="{Binding LockAspectRatio}"
+            IsEnabled="{Binding CanScale}"
+            ToolTip="Lock the aspect ratio. I.e. when one size is changed automatically scale the other two to maintain the relative shape" />
 
         <Label
             Grid.Row="16"
             Grid.ColumnSpan="3"
             HorizontalContentAlignment="Center"
-            Style="{StaticResource InverseLabel}" Content="Percent">
-        </Label>
+            Content="Percent"
+            Style="{StaticResource InverseLabel}" />
         <TextBox
             Grid.Row="17"
             Grid.RowSpan="3"
@@ -337,20 +337,23 @@
                 CommandParameter="+"
                 Content="+"
                 IsEnabled="{Binding CanScale}"
-                Style="{StaticResource SmallButton}" ToolTip="Scale up by this amount" />
+                Style="{StaticResource SmallButton}"
+                ToolTip="Scale up by this amount" />
 
             <Button
                 Command="{Binding ScaleByPercentCommand}"
                 CommandParameter="-"
                 Content="-"
                 IsEnabled="{Binding CanScale}"
-                Style="{StaticResource SmallButton}" ToolTip="Scale down by this amount" />
+                Style="{StaticResource SmallButton}"
+                ToolTip="Scale down by this amount" />
             <Button
                 Command="{Binding ScaleByPercentCommand}"
                 CommandParameter="to"
                 Content="to"
                 IsEnabled="{Binding CanScale}"
-                Style="{StaticResource SmallButton}" ToolTip="Scale to this percent" />
+                Style="{StaticResource SmallButton}"
+                ToolTip="Scale to this percent" />
         </UniformGrid>
         <Label
             Grid.Row="20"

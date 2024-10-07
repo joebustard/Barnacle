@@ -31,6 +31,7 @@ namespace Barnacle.Dialogs
         private double flangeThickness;
         private double hubRadius;
         private double hubThickness;
+        private bool loaded;
         private double mainRadius;
         private double mainThickness;
         private string warningText;
@@ -257,50 +258,32 @@ namespace Barnacle.Dialogs
             maker.Generate(Vertices, Faces);
             CentreVertices();
         }
+        private void Reset()
+        {
+            MainRadius = 6;
+            MainThickness = 4;
+            HubRadius = 2;
+            HubThickness = 2;
+            FlangeRadius = 1;
+            FlangeThickness = 1;
+            AxleBoreRadius = 1;
+        }
 
         private void LoadEditorParameters()
         {
-            // load back the tool specific parameters
-
-            if (EditorParameters.Get("MainRadius") != "")
-            {
-                MainRadius = EditorParameters.GetDouble("MainRadius");
-            }
-
-            if (EditorParameters.Get("AxleBoreRadius") != "")
-            {
-                MainRadius = EditorParameters.GetDouble("AxleBoreRadius");
-            }
-            if (EditorParameters.Get("MainThickness") != "")
-            {
-                MainThickness = EditorParameters.GetDouble("MainThickness");
-            }
-
-            if (EditorParameters.Get("FlangeRadius") != "")
-            {
-                FlangeRadius = EditorParameters.GetDouble("FlangeRadius");
-            }
-
-            if (EditorParameters.Get("FlangeThickness") != "")
-            {
-                FlangeThickness = EditorParameters.GetDouble("FlangeThickness");
-            }
-
-            if (EditorParameters.Get("HubRadius") != "")
-            {
-                HubRadius = EditorParameters.GetDouble("HubRadius");
-            }
-
-            if (EditorParameters.Get("HubThickness") != "")
-            {
-                HubThickness = EditorParameters.GetDouble("HubThickness");
-            }
+            // load back the tool specific parameters    
+            MainRadius = EditorParameters.GetDouble("MainRadius", 6);
+            AxleBoreRadius = EditorParameters.GetDouble("AxleBoreRadius",1);
+            MainThickness = EditorParameters.GetDouble("MainThickness",4);
+            FlangeRadius = EditorParameters.GetDouble("FlangeRadius",2);
+            FlangeThickness = EditorParameters.GetDouble("FlangeThickness",1);
+            HubRadius = EditorParameters.GetDouble("HubRadius");
+            HubThickness = EditorParameters.GetDouble("HubThickness",2);
         }
 
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-
             EditorParameters.Set("MainRadius", MainRadius.ToString());
             EditorParameters.Set("MainThickness", MainThickness.ToString());
             EditorParameters.Set("FlangeRadius", FlangeRadius.ToString());
@@ -312,26 +295,30 @@ namespace Barnacle.Dialogs
 
         private void UpdateDisplay()
         {
-            GenerateShape();
-            Redisplay();
+            if (loaded)
+            {
+                GenerateShape();
+                Redisplay();
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            MainRadius = 6;
-            MainThickness = 4;
-            HubRadius = 2;
-            HubThickness = 2;
-            FlangeRadius = 1;
-            FlangeThickness = 1;
-            AxleBoreRadius = 1;
-
+            loaded = false;
             LoadEditorParameters();
-            GenerateShape();
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             warningText = "";
-            Redisplay();
+            loaded = true;
+            UpdateDisplay();
+        }
+
+        
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            Reset();
+            loaded = true;
+            UpdateDisplay();
         }
     }
 }

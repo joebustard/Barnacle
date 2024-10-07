@@ -1,152 +1,155 @@
-<local:BaseModellerDialog Background="{StaticResource WindowBackBrush }"
-                          Loaded="Window_Loaded"
-                          mc:Ignorable="d"
-                          Title="Rail Wheel"
-                          WindowStartupLocation="CenterOwner"
-                          x:Class="Barnacle.Dialogs.RailWheelDlg"
-                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                          xmlns:local="clr-namespace:Barnacle.Dialogs"
-                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                          Width="800"
-                          Height="450">
+<local:BaseModellerDialog
+    x:Class="Barnacle.Dialogs.RailWheelDlg"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Rail Wheel"
+    Width="800"
+    Height="450"
+    Background="{StaticResource WindowBackBrush}"
+    Loaded="Window_Loaded"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            
+
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Border Grid.Column="1"
-                Grid.Row="0"
-                Style="{StaticResource ControlBorder}">
-        <Grid >
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-            </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1"
-                        Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
-                       Width="100">
-                Main Radius
-                </Label>
-                <TextBox Margin="8,0,0,0"
-                         Text="{Binding MainRadius}"
-                         Width="150" />
-            </StackPanel>
-            <StackPanel Grid.Row="2"
-                        Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
-                       Width="100">
-                Main Thickness
-                </Label>
-                <TextBox Margin="8,0,0,0"
-                         Text="{Binding MainThickness}"
-                         Width="150" />
-            </StackPanel>
-            <StackPanel Grid.Row="3"
-                        Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
-                       Width="100">
-                Flange Radius
-                </Label>
-                <TextBox Margin="8,0,0,0"
-                         Text="{Binding FlangeRadius}"
-                         Width="150" />
-            </StackPanel>
-            <StackPanel Grid.Row="4"
-                        Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
-                       Width="100">
-                Flange Thickness
-                </Label>
-                <TextBox Margin="8,0,0,0"
-                         Text="{Binding FlangeThickness}"
-                         Width="150" />
-            </StackPanel>
-            <StackPanel Grid.Row="5"
-                        Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
-                       Width="100">
-                Hub Radius
-                </Label>
-                <TextBox Margin="8,0,0,0"
-                         Text="{Binding HubRadius}"
-                         Width="150" />
-            </StackPanel>
-            <StackPanel Grid.Row="6"
-                        Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
-                       Width="100">
-                Hub Thickness
-                </Label>
-                <TextBox Margin="8,0,0,0"
-                         Text="{Binding HubThickness}"
-                         Width="150" />
-            </StackPanel>
-            <StackPanel Grid.Row="7"
-                        Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
-                       Width="100">
-                Axle Bore
-                </Label>
-                <TextBox Margin="8,0,0,0"
-                         Text="{Binding AxleBoreRadius}"
-                         Width="150" />
-            </StackPanel>
-            <StackPanel Grid.Row="9"
-                        Orientation="Horizontal">
-                <Label Content="{Binding WarningText}"
-                       FontSize="18"
-                       Foreground="{StaticResource WarningColour}"
-                       VerticalAlignment="Center" />
-            </StackPanel>
-        </Grid>
+        <Border
+            Grid.Row="0"
+            Grid.Column="1"
+            Style="{StaticResource ControlBorder}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">
+                        Main Radius
+                    </Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding MainRadius}" />
+                    <Button
+                        Margin="8,0,0,0"
+                        Click="ResetButton_Click"
+                        Content="Reset" />
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">
+                        Main Thickness
+                    </Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding MainThickness}" />
+                </StackPanel>
+                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">
+                        Flange Radius
+                    </Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding FlangeRadius}" />
+                </StackPanel>
+                <StackPanel Grid.Row="4" Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">
+                        Flange Thickness
+                    </Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding FlangeThickness}" />
+                </StackPanel>
+                <StackPanel Grid.Row="5" Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">
+                        Hub Radius
+                    </Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding HubRadius}" />
+                </StackPanel>
+                <StackPanel Grid.Row="6" Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">
+                        Hub Thickness
+                    </Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding HubThickness}" />
+                </StackPanel>
+                <StackPanel Grid.Row="7" Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">
+                        Axle Bore
+                    </Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding AxleBoreRadius}" />
+                </StackPanel>
+                <StackPanel Grid.Row="9" Orientation="Horizontal">
+                    <Label
+                        VerticalAlignment="Center"
+                        Content="{Binding WarningText}"
+                        FontSize="18"
+                        Foreground="{StaticResource WarningColour}" />
+                </StackPanel>
+            </Grid>
         </Border>
-        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
-        <Border Grid.Column="3"
-                Grid.Row="0"
-                Style="{StaticResource ControlBorder}">
-            <Viewport3D Name="viewport3D1"
-                        MouseDown="Viewport_MouseDown"
-                        MouseMove="Viewport_MouseMove"
-                        MouseWheel="Viewport_MouseWheel">
+        <GridSplitter
+            Grid.Row="0"
+            Grid.Column="2"
+            Style="{StaticResource GridSplitterStyle}" />
+        <Border
+            Grid.Row="0"
+            Grid.Column="3"
+            Style="{StaticResource ControlBorder}">
+            <Viewport3D
+                Name="viewport3D1"
+                MouseDown="Viewport_MouseDown"
+                MouseMove="Viewport_MouseMove"
+                MouseWheel="Viewport_MouseWheel">
                 <Viewport3D.Camera>
-                    <PerspectiveCamera LookDirection="{Binding LookDirection}"
-                                       Position="{Binding CameraPosition}"
-                                       x:Name="camMain">
-                    </PerspectiveCamera>
+                    <PerspectiveCamera
+                        x:Name="camMain"
+                        LookDirection="{Binding LookDirection}"
+                        Position="{Binding CameraPosition}" />
                 </Viewport3D.Camera>
                 <ModelVisual3D>
                     <ModelVisual3D.Content>
                         <Model3DGroup>
                             <AmbientLight Color="#FF808080" />
-                            <DirectionalLight Color="White"
-                                              Direction="-1,-1,-1"
-                                              x:Name="dirLightMain">
-                            </DirectionalLight>
+                            <DirectionalLight
+                                x:Name="dirLightMain"
+                                Direction="-1,-1,-1"
+                                Color="White" />
                         </Model3DGroup>
                     </ModelVisual3D.Content>
                 </ModelVisual3D>
                 <ModelVisual3D x:Name="MyModel">
                     <ModelVisual3D.Content>
-                        <Model3DGroup x:Name="MyModelGroup">
-                        </Model3DGroup>
+                        <Model3DGroup x:Name="MyModelGroup" />
                     </ModelVisual3D.Content>
                 </ModelVisual3D>
             </Viewport3D>
@@ -157,41 +160,46 @@
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
         </Grid>
-        <Grid Grid.Column="1"
-              Grid.Row="1">
+        <Grid Grid.Row="1" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <CheckBox Content="Floor"
-                      Grid.Column="0"
-                      IsChecked="{Binding ShowFloor}"
-                      VerticalAlignment="Center" />
-            <CheckBox Content="Axies"
-                      Grid.Column="1"
-                      IsChecked="{Binding ShowAxies}"
-                      VerticalAlignment="Center" />
-            <Button Click="Home_Click"
-                    Content="Home" Width="80" Margin="0,2,0,2"
-                    Grid.Column="2" />
+            <CheckBox
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Content="Floor"
+                IsChecked="{Binding ShowFloor}" />
+            <CheckBox
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Content="Axies"
+                IsChecked="{Binding ShowAxies}" />
+            <Button
+                Grid.Column="2"
+                Width="80"
+                Margin="0,2,0,2"
+                Click="Home_Click"
+                Content="Home" />
         </Grid>
-        <Grid Grid.Column="3"
-              Grid.Row="1">
+        <Grid Grid.Row="1" Grid.Column="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
-            <Button Click="Cancel_Click"
-                    Content="Cancel"
-                    Grid.Column="1"
-                    Margin="2,2,2,2" />
+            <Button
+                Grid.Column="1"
+                Margin="2,2,2,2"
+                Click="Cancel_Click"
+                Content="Cancel" />
 
-            <Button Click="Ok_Click"
-                    Content="Ok"
-                    Grid.Column="2"
-                    Margin="2,2,2,2" />
+            <Button
+                Grid.Column="2"
+                Margin="2,2,2,2"
+                Click="Ok_Click"
+                Content="Ok" />
         </Grid>
     </Grid>
 </local:BaseModellerDialog>

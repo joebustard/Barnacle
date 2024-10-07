@@ -1397,7 +1397,7 @@
                 x:Name="SolutionPanel"
                 Grid.Column="0"
                 HorizontalContentAlignment="Left">
-                <TabItem Header="Solution">
+                <TabItem Header="Project">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition />

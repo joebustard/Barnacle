@@ -62,15 +62,11 @@ namespace MakerLib
             double sizeZ = max.Z - min.Z;
 
             double scaleX = plaqueLength / sizeX;
-            double scaleY = scaleX;
-            if (scaleY * sizeY < 1)
-            {
-                scaleY = 1 / sizeY;
-            }
+
             for (int i = 0; i < Vertices.Count; i++)
             {
                 Point3D p = Vertices[i];
-                Vertices[i] = new Point3D(p.X * scaleX, p.Y * scaleY, p.Z * scaleX);
+                Vertices[i] = new Point3D(p.X * scaleX, p.Y /* * scaleY */ , p.Z * scaleX);
             }
         }
 
