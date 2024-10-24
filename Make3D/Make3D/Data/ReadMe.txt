@@ -4,15 +4,28 @@ Added
   Autosave changes if idle for 5 minutes. Turn on and off from settings.
   Busy indicator on Image Plaque and Dual Profile
   Turn mm lines on floor grid on and off
+  InsertPart() function to Limpet.
 
 Fixed
   Renaming the current file, switching projects, then reopening project via the recent projects menu
   might lead to the last edited file not actually opening automatically
+  
   RailWheel editor was mis-remembering the main radius setting.
+  
   Improved memory recovery after running script
   
+  Prevent symbol corruption in the interpreter when script is re-run repeatedly
+  
+  ImagePlaque handled pixels with RGB < 128 and > 128 but 
+  ignored any that are exactly 128. Fixed
+
+  Prevent double undo checkpoint when rotating via 
+  keyboard shortcuts.
 
 Changed
+	Removed scrollviewer control from default view as it was
+	causing issues on the script sub view
+
 	Changed the header on the project explorer from "Solution" to "Project" as
 	this makes more sense for most users.
 
@@ -23,6 +36,8 @@ Changed
 	Changed meaning of parameters in rail wheel tool.
 
 	Show original names of objects on csg name confirmation dialog.
+
+	Swapped panels on script view. Looks better.
 
 v1.0.6
 ===========
