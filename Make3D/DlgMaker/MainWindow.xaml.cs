@@ -140,7 +140,7 @@ public <pType> <PName>
     {
         if ( <pName> != value )
         {
-            if (value >= min<pName> && value <= max<pName>)
+            if (CheckRange(value))
             {
               <pName> = value;
               NotifyPropertyChanged();
@@ -149,11 +149,12 @@ public <pType> <PName>
         }
     }
 }
+
 public String <PName>ToolTip
 {
     get
     {
-        return $""<PName> must be in the range {min<pName>} to {max<pName>}"";
+        return ContructToolTip(""<pName>"");
     }
 }
 
@@ -176,11 +177,11 @@ public String <PName>ToolTip
 ";
 
         private static string rchklh = @"
-            if (val<pName> < <pMin> || val<pName> > <pMax> )
-            {
-                Log.Instance().AddEntry(""Make//TOOLNAME : <pName> value out of range (<pMin>..<pMax>)"");
-                inRange= false;
-            }
+            inRange = RangeCheck(maker, ""<pName>"", v<pName>) && inRange;
+";
+
+        private static string addLimit = @"
+        paramLimits.Add(""<pName>"", <pMin>, <pMax>);
 ";
 
         private string dialogName;
@@ -1194,6 +1195,8 @@ public String <PName>ToolTip
                         l = l.Replace("//SETPROPERTIES", pSet);
 
                         l = l.Replace("//SETDEFAULTS", defaultParams);
+                        l = l.Replace("\r\n\r\n", "\r\n");
+                        l = l.Replace("\n\n", "\n");
 
                         fout.WriteLine(l);
                     }
@@ -1258,6 +1261,7 @@ public String <PName>ToolTip
             string richTextParams = GetRichTextParams();
             string plainTextParams = GetPlainTextParams();
             string rangeChecks = GetRangeChecks();
+            string setLimits = GetSetLimits();
             foreach (string fn in files)
             {
                 string targetName = fn.Replace(templateRoot, targetFolder);
@@ -1280,6 +1284,9 @@ public String <PName>ToolTip
                         l = l.Replace(@"//EXPRESSIONTOSTRING", plainTextParams);
                         l = l.Replace(@"//RANGECHECKS", rangeChecks);
                         l = l.Replace(@"//COPYCOLLFIELDS", copyCollFields);
+                        l = l.Replace(@"//LIMITS", setLimits);
+                        l = l.Replace("\r\n\r\n", "\r\n");
+                        l = l.Replace("\n\n", "\n");
                         fout.WriteLine(l);
                     }
                     fin.Close();
@@ -1299,6 +1306,7 @@ public String <PName>ToolTip
                 string constructorParams = GetAllConstructorParams();
                 string fieldCopy = GetAllFieldCopies();
                 string targetName = fn.Replace(templateRoot, targetFolder);
+                string allLimits = GetSetLimits();
                 targetName = targetName.Replace("Maker", "Make" + ToolName);
                 StreamReader fin = new StreamReader(fn);
                 if (fin != null)
@@ -1311,6 +1319,9 @@ public String <PName>ToolTip
                         l = l.Replace(@"//FIELDS", fields);
                         l = l.Replace(@"/*CONSTRUCTORPARAMS*/", constructorParams);
                         l = l.Replace(@"//FIELDCOPY", fieldCopy);
+                        l = l.Replace(@"//LIMITS", allLimits);
+                        l = l.Replace("\r\n\r\n", "\r\n");
+                        l = l.Replace("\n\n", "\n");
 
                         fout.WriteLine(l);
                     }
@@ -1807,6 +1818,33 @@ public String <PName>ToolTip
             res += GetRangeCheck(P6Name, p6Min, p6Max, p6Type);
             res += GetRangeCheck(P7Name, p7Min, p7Max, p7Type);
             res += GetRangeCheck(P8Name, p8Min, p8Max, p8Type);
+            return res;
+        }
+
+        private string GetSetLimits()
+        {
+            string res = "";
+            res += GetLimitDef(P1Name, p1Min, p1Max, p1Type);
+            res += GetLimitDef(P2Name, p2Min, p2Max, p2Type);
+            res += GetLimitDef(P3Name, p3Min, p3Max, p3Type);
+            res += GetLimitDef(P4Name, p4Min, p4Max, p4Type);
+            res += GetLimitDef(P5Name, p5Min, p5Max, p5Type);
+            res += GetLimitDef(P6Name, p6Min, p6Max, p6Type);
+            res += GetLimitDef(P7Name, p7Min, p7Max, p7Type);
+            res += GetLimitDef(P8Name, p8Min, p8Max, p8Type);
+            return res;
+        }
+
+        private string GetLimitDef(string pName, string pMin, string pMax, string pType)
+        {
+            string res = "";
+            if (pName != null && pName != "")
+            {
+                res = addLimit;
+                res = res.Replace("<pName>", pName);
+                res = res.Replace("<pMin>", pMin);
+                res = res.Replace("<pMax>", pMax);
+            }
             return res;
         }
 

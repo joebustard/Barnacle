@@ -3,11 +3,14 @@
 Added
   Autosave changes if idle for 5 minutes. Turn on and off from settings.
   Busy indicator on Image Plaque and Dual Profile
+  Turn mm lines on floor grid on and off
 
 Fixed
   Renaming the current file, switching projects, then reopening project via the recent projects menu
   might lead to the last edited file not actually opening automatically
   RailWheel editor was mis-remembering the main radius setting.
+  Improved memory recovery after running script
+  
 
 Changed
 	Changed the header on the project explorer from "Solution" to "Project" as
@@ -15,7 +18,11 @@ Changed
 
 	Prevent referenced groups from being ungrouped as this breaks the reference
 	Prevent referenced objects from being grouped as this breaks the reference
+	When loading referenced groups, the lower level objects are skipped to save memory
 
+	Changed meaning of parameters in rail wheel tool.
+
+	Show original names of objects on csg name confirmation dialog.
 
 v1.0.6
 ===========

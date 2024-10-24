@@ -113,7 +113,7 @@ namespace ScriptLanguage
                                     else
                                     {
                                         ReportStatement();
-                                        Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
+                                        Log.Instance().AddEntry($"Run Time Error : Type mismatch in assignment {VariableName} is not an int, double or solid, expression is int");
                                     }
                                 }
                             }
@@ -139,7 +139,7 @@ namespace ScriptLanguage
                                 else
                                 {
                                     ReportStatement();
-                                    Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
+                                    Log.Instance().AddEntry($"Run Time Error : Type mismatch in assignment. Variable {VariableName} is not an int or double. Expression is double");
                                 }
                             }
                         }
@@ -156,7 +156,7 @@ namespace ScriptLanguage
                             else
                             {
                                 ReportStatement();
-                                Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
+                                Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment. Variable {VariableName} is not a bool.");
                             }
                         }
                         break;
@@ -172,7 +172,7 @@ namespace ScriptLanguage
                             else
                             {
                                 ReportStatement();
-                                Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
+                                Log.Instance().AddEntry($"Run Time Error : Type mismatch in assignment. Variable {VariableName} is not a string.");
                             }
                         }
                         break;
@@ -188,7 +188,7 @@ namespace ScriptLanguage
                             else
                             {
                                 ReportStatement();
-                                Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
+                                Log.Instance().AddEntry($"Run Time Error : Type mismatch in assignment. Variable {VariableName} is not a handle.");
                             }
                         }
                         break;
@@ -204,7 +204,7 @@ namespace ScriptLanguage
                             else
                             {
                                 ReportStatement();
-                                Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
+                                Log.Instance().AddEntry($"Run Time Error : Type mismatch in assignment. Variable {VariableName} is not a solid.");
                             }
                         }
                         break;

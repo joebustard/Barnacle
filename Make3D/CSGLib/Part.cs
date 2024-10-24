@@ -245,6 +245,8 @@ namespace CSGLib
             cancelToken = cancellationToken;
         }
 
+        public int MaxFacesAllowed { get; set; } = 5000000;
+
         /// <summary>
         /// Split faces so that none face is intercepted by a face of other object
         /// </summary>
@@ -261,9 +263,9 @@ namespace CSGLib
 
             int numFacesStart = NumFaces + obj.NumFaces;
             int facesLimit = 1000 * numFacesStart;
-            if (facesLimit > 2000000)
+            if (facesLimit > MaxFacesAllowed)
             {
-                facesLimit = 2000000;
+                facesLimit = MaxFacesAllowed;
             }
             //if the objects bounds overlap...
             if (_Bound.Overlap(obj._Bound))

@@ -30,31 +30,11 @@ namespace Barnacle.Models.Adorners
         private List<Object3D> content;
         private Color endColour;
         private Point3D endPoint;
+        private TextBox label;
         private Point3D labelPos;
+        private Line line;
         private Color startColour;
         private Point3D startPoint;
-        private TextBox label;
-        private Line line;
-
-        public Point3D StartPoint
-        {
-            get { return startPoint; }
-        }
-
-        public Point3D EndPoint
-        {
-            get { return endPoint; }
-        }
-
-        public Object3D StartObject
-        {
-            get; set;
-        }
-
-        public Object3D EndObject
-        {
-            get; set;
-        }
 
         public DimensionAdorner(PolarCamera camera, List<Object3D> objects, Point3D hitPos, Object3D object3D)
         {
@@ -77,40 +57,33 @@ namespace Barnacle.Models.Adorners
             NotificationManager.Subscribe("DimensionAdorner", "CameraMoved", OnCameraMoved);
         }
 
+        public Object3D EndObject
+        {
+            get; set;
+        }
+
+        public Point3D EndPoint
+        {
+            get { return endPoint; }
+        }
+
+        public Object3D StartObject
+        {
+            get; set;
+        }
+
+        public Point3D StartPoint
+        {
+            get { return startPoint; }
+        }
+
+        public bool TwoPoints { get; set; }
         internal PolarCamera Camera { get; set; }
-
-        private void OnCameraMoved(object param)
-        {
-            PositionLabel();
-            if (line != null)
-            {
-                Point point1 = CameraUtils.Convert3DPoint(startPoint, ViewPort);
-                Point point2 = CameraUtils.Convert3DPoint(endPoint, ViewPort);
-                line.X1 = point1.X;
-                line.Y1 = point1.Y;
-                line.X2 = point2.X;
-                line.Y2 = point2.Y;
-            }
-        }
-
-        private void PositionLabel()
-        {
-            Point point = CameraUtils.Convert3DPoint(labelPos, ViewPort);
-
-            Canvas.SetLeft(label, point.X);
-            Canvas.SetTop(label, point.Y);
-            if (!Overlay.Children.Contains(label))
-            {
-                Overlay.Children.Add(label);
-            }
-        }
 
         public override void AdornObject(Object3D obj)
         {
             GenerateAdornments();
         }
-
-        public bool TwoPoints { get; set; }
 
         public override void Clear()
         {
@@ -197,6 +170,34 @@ namespace Barnacle.Models.Adorners
             marker.Remesh();
 
             Adornments.Add(GetMesh(marker));
+        }
+
+        private void OnCameraMoved(object param)
+        {
+            PositionLabel();
+            if (line != null)
+            {
+                Point point1 = CameraUtils.Convert3DPoint(startPoint, ViewPort);
+                Point point2 = CameraUtils.Convert3DPoint(endPoint, ViewPort);
+                line.X1 = point1.X;
+                line.Y1 = point1.Y;
+                line.X2 = point2.X;
+                line.Y2 = point2.Y;
+            }
+        }
+
+        private void PositionLabel()
+        {
+            Point point = CameraUtils.Convert3DPoint(labelPos, ViewPort);
+            if (label != null)
+            {
+                Canvas.SetLeft(label, point.X);
+                Canvas.SetTop(label, point.Y);
+                if (!Overlay.Children.Contains(label))
+                {
+                    Overlay.Children.Add(label);
+                }
+            }
         }
     }
 }

@@ -6,15 +6,14 @@ namespace ScriptLanguage
 {
     internal class InsertPartNode : ExpressionNode
     {
-        private ExpressionNode solid;
+        private ExpressionNode partFileName;
+        private ExpressionNode partName;
 
-        public InsertPartNode()
+        public InsertPartNode
+               (ExpressionCollection coll)
         {
-        }
-
-        public InsertPartNode(ExpressionNode ls) : base(ls)
-        {
-            this.solid = ls;
+            this.partFileName = coll.Get(0);
+            this.partName = coll.Get(1);
         }
 
         /// Execute this node
@@ -25,21 +24,27 @@ namespace ScriptLanguage
             bool result = false;
             try
             {
-                string partName = "";
+                string container = "";
+                string part = "";
 
-                if (EvalExpression(solid, ref partName, "PartName", "InsertPart"))
+                if (base.EvalExpression(this.partFileName, ref container, "FileName", "InsertPart") &&
+                    base.EvalExpression(this.partName, ref part, "PartName", "InsertPart")
+                )
                 {
-                    if (partName != "" && Script.PartsLibraryPath != null && Script.PartsLibraryPath != "")
+                    if (part != "" && Script.ProjectPath != null && Script.ProjectPath != "")
                     {
-                        string fName = Script.PartsLibraryPath;
-                        fName = System.IO.Path.Combine(Script.PartsLibraryPath, partName);
+                        string fName = System.IO.Path.Combine(Script.ProjectPath, container);
+                        if (!fName.EndsWith(".txt"))
+                        {
+                            fName += ".txt";
+                        }
                         if (!System.IO.File.Exists(fName))
                         {
                             Log.Instance().AddEntry($"InsertPart : couldn't find {fName}");
                         }
                         else
                         {
-                            Object3D clone = Read(fName);
+                            Object3D clone = Read(fName, part);
                             if (clone != null)
                             {
                                 clone.CalcScale(false);
@@ -51,7 +56,7 @@ namespace ScriptLanguage
                             }
                             else
                             {
-                                Log.Instance().AddEntry("InsertPart : read failed");
+                                Log.Instance().AddEntry($"InsertPart : failed to read {part} from {partFileName}");
                             }
                         }
                     }
@@ -70,9 +75,10 @@ namespace ScriptLanguage
 
         // cut down version of read function in main document
         // only loads limited object types
-        // and only the first one from the file
-        public Object3D Read(string file)
+        // and only the named partName one from the file
+        public Object3D Read(string file, string partName)
         {
+            partName = partName.ToLower();
             Object3D res = null;
             try
             {
@@ -90,32 +96,40 @@ namespace ScriptLanguage
                     {
                         Object3D obj = new Object3D();
                         obj.Read(nd);
-
-                        obj.SetMesh();
-                        if (obj.PrimType != "Mesh")
+                        if (obj.Name.ToLower() == partName)
                         {
-                            obj = obj.ConvertToMesh();
-                        }
-                        if (!(double.IsNegativeInfinity(obj.Position.X)))
-                        {
-                            res = obj;
-                            break;
+                            obj.SetMesh();
+                            if (obj.PrimType != "Mesh")
+                            {
+                                obj = obj.ConvertToMesh();
+                            }
+                            if (!(double.IsNegativeInfinity(obj.Position.X)))
+                            {
+                                res = obj;
+                                break;
+                            }
                         }
                     }
 
                     if (ndname == "groupobj")
                     {
-                        Group3D obj = new Group3D();
-                        obj.Read(nd);
-
-                        obj.SetMesh();
-                        if (!(double.IsNegativeInfinity(obj.Position.X)))
+                        Group3D gobj = new Group3D();
+                        gobj.Read(nd);
+                        if (gobj.Name.ToLower() == partName)
                         {
-                            res = obj;
-                            break;
+                            Object3D obj = gobj.ConvertToMesh();
+
+                            obj.SetMesh();
+                            if (!(double.IsNegativeInfinity(obj.Position.X)))
+                            {
+                                res = obj;
+                                break;
+                            }
                         }
                     }
                 }
+                doc = null;
+                GC.Collect();
             }
             catch (Exception ex)
             {
@@ -131,16 +145,19 @@ namespace ScriptLanguage
         public override String ToRichText()
         {
             String result = RichTextFormatter.KeyWord("InsertPart( ");
-
-            result += solid.ToRichText();
+            result += partFileName.ToRichText();
+            result += ", ";
+            result += partName.ToRichText();
             result += " )";
             return result;
         }
 
         public override String ToString()
         {
-            String result = "Insert( ";
-            result += solid.ToString();
+            String result = "InsertPart( ";
+            result += partFileName.ToString();
+            result += ", ";
+            result += partName.ToString();
             result += " )";
             return result;
         }

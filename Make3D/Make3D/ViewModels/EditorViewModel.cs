@@ -155,6 +155,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "MeshEdit", OnMeshEdit);
             NotificationManager.Subscribe("Editor", "MeshHull", OnMeshHull);
             NotificationManager.Subscribe("Editor", "ShowFloor", OnShowFloor);
+            NotificationManager.Subscribe("Editor", "ShowFloorMM", OnShowFloorMM);
             NotificationManager.Subscribe("Editor", "ShowBuildPlate", OnShowBuildPlate);
             NotificationManager.Subscribe("Editor", "ShowFloorMarker", OnShowFloorMarker);
             NotificationManager.Subscribe("Editor", "ShowAxies", OnShowAxies);
@@ -2144,31 +2145,31 @@ namespace Barnacle.ViewModels
                             handled = true;
                             if (selectedObjectAdorner != null)
                             {
-                                CheckPointForNudge();
-                                if (ctrl)
+                                // If R is down treat as rotate
+                                if (Keyboard.IsKeyDown(Key.R))
                                 {
-                                    if (shift)
-                                    {
-                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 0.1);
-                                    }
-                                    else
-                                    {
-                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 1.0);
-                                    }
+                                    KeyboardRotation rd = GetRotationDirection(Key.Up);
+                                    OnKeyRotate(rd);
                                 }
                                 else
                                 {
-                                    if (shift)
+                                    CheckPointForNudge();
+                                    if (ctrl)
                                     {
-                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 0.1);
+                                        if (shift)
+                                        {
+                                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 0.1);
+                                        }
+                                        else
+                                        {
+                                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 1.0);
+                                        }
                                     }
                                     else
                                     {
-                                        // If R is down treat as rotate
-                                        if (Keyboard.IsKeyDown(Key.R))
+                                        if (shift)
                                         {
-                                            KeyboardRotation rd = GetRotationDirection(Key.Up);
-                                            OnKeyRotate(rd);
+                                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 0.1);
                                         }
                                         else
                                         {
@@ -2185,31 +2186,31 @@ namespace Barnacle.ViewModels
                             handled = true;
                             if (selectedObjectAdorner != null)
                             {
-                                CheckPointForNudge();
-                                if (ctrl)
+                                // If R is down treat as rotate
+                                if (Keyboard.IsKeyDown(Key.R))
                                 {
-                                    if (shift)
-                                    {
-                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 0.1);
-                                    }
-                                    else
-                                    {
-                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 1.0);
-                                    }
+                                    KeyboardRotation rd = GetRotationDirection(Key.Down);
+                                    OnKeyRotate(rd);
                                 }
                                 else
                                 {
-                                    if (shift)
+                                    CheckPointForNudge();
+                                    if (ctrl)
                                     {
-                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 0.1);
+                                        if (shift)
+                                        {
+                                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 0.1);
+                                        }
+                                        else
+                                        {
+                                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 1.0);
+                                        }
                                     }
                                     else
                                     {
-                                        // If R is down treat as rotate
-                                        if (Keyboard.IsKeyDown(Key.R))
+                                        if (shift)
                                         {
-                                            KeyboardRotation rd = GetRotationDirection(Key.Down);
-                                            OnKeyRotate(rd);
+                                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 0.1);
                                         }
                                         else
                                         {
@@ -2226,19 +2227,19 @@ namespace Barnacle.ViewModels
                             handled = true;
                             if (selectedObjectAdorner != null)
                             {
-                                CheckPointForNudge();
-                                if (shift)
+                                // If R is down treat as rotate
+                                if (Keyboard.IsKeyDown(Key.R))
                                 {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 0.1);
+                                    bool ctrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                                    KeyboardRotation rd = GetRotationDirection(Key.Left, ctrlDown);
+                                    OnKeyRotate(rd);
                                 }
                                 else
                                 {
-                                    // If R is down treat as rotate
-                                    if (Keyboard.IsKeyDown(Key.R))
+                                    CheckPointForNudge();
+                                    if (shift)
                                     {
-                                        bool ctrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
-                                        KeyboardRotation rd = GetRotationDirection(Key.Left, ctrlDown);
-                                        OnKeyRotate(rd);
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 0.1);
                                     }
                                     else
                                     {
@@ -2254,18 +2255,18 @@ namespace Barnacle.ViewModels
                             handled = true;
                             if (selectedObjectAdorner != null)
                             {
-                                CheckPointForNudge();
-                                if (shift)
+                                if (Keyboard.IsKeyDown(Key.R))
                                 {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 0.1);
+                                    bool ctrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                                    KeyboardRotation rd = GetRotationDirection(Key.Right, ctrlDown);
+                                    OnKeyRotate(rd);
                                 }
                                 else
                                 {
-                                    if (Keyboard.IsKeyDown(Key.R))
+                                    CheckPointForNudge();
+                                    if (shift)
                                     {
-                                        bool ctrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
-                                        KeyboardRotation rd = GetRotationDirection(Key.Right, ctrlDown);
-                                        OnKeyRotate(rd);
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 0.1);
                                     }
                                     else
                                     {
@@ -4190,6 +4191,13 @@ namespace Barnacle.ViewModels
         private void OnShowFloorMarker(object param)
         {
             showFloorMarker = (param as bool?) == true;
+            RegenerateDisplayList();
+        }
+
+        private void OnShowFloorMM(object param)
+        {
+            bool b = Convert.ToBoolean(param);
+            grid.ShowMillimetres = b;
             RegenerateDisplayList();
         }
 

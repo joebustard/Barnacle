@@ -256,5 +256,17 @@ namespace Barnacle.Properties {
                 this["AutoSaveMinutes"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowFloorMM {
+            get {
+                return ((bool)(this["ShowFloorMM"]));
+            }
+            set {
+                this["ShowFloorMM"] = value;
+            }
+        }
     }
 }

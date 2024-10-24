@@ -9,10 +9,13 @@ namespace Barnacle.Models
         private Model3DGroup group;
         private double length = 210;
 
+        private bool showMillimetres;
+
         public Grid3D()
         {
             group = new Model3DGroup();
             Size = 210;
+            showMillimetres = true;
             DefineModel(group);
         }
 
@@ -21,6 +24,23 @@ namespace Barnacle.Models
             get
             {
                 return group;
+            }
+        }
+
+        public bool ShowMillimetres
+        {
+            get
+            {
+                return showMillimetres;
+            }
+
+            set
+            {
+                if (value != showMillimetres)
+                {
+                    showMillimetres = value;
+                    DefineModel(group);
+                }
             }
         }
 
@@ -39,6 +59,7 @@ namespace Barnacle.Models
                 }
             }
         }
+
         internal bool Matches(GeometryModel3D geo)
         {
             foreach (GeometryModel3D gm in group.Children)
@@ -113,31 +134,34 @@ namespace Barnacle.Models
         private void DefineModel(Model3DGroup group)
         {
             group.Children.Clear();
-            MeshGeometry3D mmMesh = new MeshGeometry3D();
-
-            DefineText(group);
-            int count = 0;
-            for (double x = -length; x <= length; x += 1)
+            if (showMillimetres)
             {
-                if (count % 10 != 0)
-                {
-                    AddCubeMesh(mmMesh, x, 0, 0, 0.25, 0.15, 2 * length);
-                }
-                count++;
-            }
-            count = 0;
-            for (double z = -length; z <= length; z += 1)
-            {
-                if (count % 10 != 0)
-                {
-                    AddCubeMesh(mmMesh, 0, 0, z, 2 * length, 0.15, 0.25);
-                }
-                count++;
-            }
-            Material mmMaterial = new DiffuseMaterial(Brushes.LightBlue);
-            GeometryModel3D mmModel = new GeometryModel3D(mmMesh, mmMaterial);
-            group.Children.Add(mmModel);
+                MeshGeometry3D mmMesh = new MeshGeometry3D();
 
+                DefineText(group);
+                int count = 0;
+                for (double x = -length; x <= length; x += 1)
+                {
+                    if (count % 10 != 0)
+                    {
+                        AddCubeMesh(mmMesh, x, 0, 0, 0.25, 0.15, 2 * length);
+                    }
+                    count++;
+                }
+                count = 0;
+                for (double z = -length; z <= length; z += 1)
+                {
+                    if (count % 10 != 0)
+                    {
+                        AddCubeMesh(mmMesh, 0, 0, z, 2 * length, 0.15, 0.25);
+                    }
+                    count++;
+                }
+
+                Material mmMaterial = new DiffuseMaterial(Brushes.LightBlue);
+                GeometryModel3D mmModel = new GeometryModel3D(mmMesh, mmMaterial);
+                group.Children.Add(mmModel);
+            }
             MeshGeometry3D cmMesh = new MeshGeometry3D();
             for (double x = -length; x <= length; x += 10)
             {

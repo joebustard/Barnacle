@@ -173,6 +173,38 @@ namespace Barnacle.Models
             ProjectSettings = null;
         }
 
+        public void ImportStl(string fileName, bool swapYZ)
+        {
+            STLExporter exp = new STLExporter();
+
+            Object3D ob = new Object3D();
+            Vector3DCollection normals = ob.Normals;
+            List<P3D> pnts = ob.RelativeObjectVertices;
+            Int32Collection tris = ob.TriangleIndices;
+
+            bool wasBinary = exp.Import(fileName, ref normals, ref pnts, ref tris, swapYZ);
+
+            ob.Color = ProjectSettings.DefaultObjectColour;
+            ob.PrimType = "Mesh";
+            ob.CalcScale();
+            ob.RelativeToAbsolute();
+
+            ob.Mesh.Positions = ob.AbsoluteObjectVertices;
+            ob.Mesh.TriangleIndices = ob.TriangleIndices;
+            ob.Mesh.Normals = ob.Normals;
+            ob.Rotate(new Point3D(-90, 0, 0));
+            ob.MoveToFloor();
+            ob.Remesh();
+            Content.Add(ob);
+            ob.Name = "Object_" + Content.Count.ToString();
+            Dirty = true;
+
+            if (wasBinary)
+            {
+                RemoveDuplicateVertices(ob);
+            }
+        }
+
         public void Load(string fileName, bool reportMissing = true)
         {
             string ext = System.IO.Path.GetExtension(fileName).ToLower();
@@ -919,38 +951,6 @@ namespace Barnacle.Models
             }
         }
 
-        public void ImportStl(string fileName, bool swapYZ)
-        {
-            STLExporter exp = new STLExporter();
-
-            Object3D ob = new Object3D();
-            Vector3DCollection normals = ob.Normals;
-            List<P3D> pnts = ob.RelativeObjectVertices;
-            Int32Collection tris = ob.TriangleIndices;
-
-            bool wasBinary = exp.Import(fileName, ref normals, ref pnts, ref tris, swapYZ);
-
-            ob.Color = ProjectSettings.DefaultObjectColour;
-            ob.PrimType = "Mesh";
-            ob.CalcScale();
-            ob.RelativeToAbsolute();
-
-            ob.Mesh.Positions = ob.AbsoluteObjectVertices;
-            ob.Mesh.TriangleIndices = ob.TriangleIndices;
-            ob.Mesh.Normals = ob.Normals;
-            ob.Rotate(new Point3D(-90, 0, 0));
-            ob.MoveToFloor();
-            ob.Remesh();
-            Content.Add(ob);
-            ob.Name = "Object_" + Content.Count.ToString();
-            Dirty = true;
-
-            if (wasBinary)
-            {
-                RemoveDuplicateVertices(ob);
-            }
-        }
-
         internal void InsertFile(string fileName)
         {
             Read(fileName, false);
@@ -1067,6 +1067,14 @@ namespace Barnacle.Models
                                     Content.Add(obj);
                                 }
                             }
+
+                            // Dispose of the subobjects that
+                            // create the group.
+                            // We can't do anything with them because
+                            // you cant edit the referenced object so
+                            // we might as well recover the memory
+                            obj.LeftObject = null;
+                            obj.RightObject = null;
                         }
                     }
                 }

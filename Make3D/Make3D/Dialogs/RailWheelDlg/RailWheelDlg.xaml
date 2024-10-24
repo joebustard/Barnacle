@@ -18,7 +18,6 @@
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="10" />
@@ -40,75 +39,102 @@
                     <RowDefinition Height="25" />
                     <RowDefinition Height="25" />
                     <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <Label Width="100" VerticalAlignment="Center">
-                        Main Radius
-                    </Label>
+                    <Label
+                        Width="120"
+                        VerticalAlignment="Center"
+                        Content="Flange Diameter" />
                     <TextBox
-                        Width="150"
+                        Width="100"
                         Margin="8,0,0,0"
-                        Text="{Binding MainRadius}" />
+                        Text="{Binding FlangeDiameter}" />
                     <Button
                         Margin="8,0,0,0"
                         Click="ResetButton_Click"
                         Content="Reset" />
                 </StackPanel>
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
-                    <Label Width="100" VerticalAlignment="Center">
-                        Main Thickness
+                    <Label Width="120" VerticalAlignment="Center">
+                        Flange Height
                     </Label>
                     <TextBox
-                        Width="150"
+                        Width="100"
                         Margin="8,0,0,0"
-                        Text="{Binding MainThickness}" />
+                        Text="{Binding FlangeHeight}" />
                 </StackPanel>
                 <StackPanel Grid.Row="3" Orientation="Horizontal">
-                    <Label Width="100" VerticalAlignment="Center">
-                        Flange Radius
+                    <Label Width="120" VerticalAlignment="Center">
+                        Hub Diameter
                     </Label>
                     <TextBox
-                        Width="150"
+                        Width="100"
                         Margin="8,0,0,0"
-                        Text="{Binding FlangeRadius}" />
+                        Text="{Binding HubDiameter}" />
                 </StackPanel>
                 <StackPanel Grid.Row="4" Orientation="Horizontal">
-                    <Label Width="100" VerticalAlignment="Center">
-                        Flange Thickness
-                    </Label>
+                    <Label Width="120" VerticalAlignment="Center" Content="Hub Height" />
                     <TextBox
-                        Width="150"
+                        Width="100"
                         Margin="8,0,0,0"
-                        Text="{Binding FlangeThickness}" />
+                        Text="{Binding HubHeight}" />
                 </StackPanel>
+
                 <StackPanel Grid.Row="5" Orientation="Horizontal">
-                    <Label Width="100" VerticalAlignment="Center">
-                        Hub Radius
-                    </Label>
+                    <Label
+                        Width="120"
+                        VerticalAlignment="Center"
+                        Content="Upper Rim Diameter" />
+
                     <TextBox
-                        Width="150"
+                        Width="100"
                         Margin="8,0,0,0"
-                        Text="{Binding HubRadius}" />
+                        Text="{Binding UpperRimDiameter}" />
                 </StackPanel>
                 <StackPanel Grid.Row="6" Orientation="Horizontal">
-                    <Label Width="100" VerticalAlignment="Center">
-                        Hub Thickness
-                    </Label>
+                    <Label
+                        Width="120"
+                        VerticalAlignment="Center"
+                        Content="Lower Rim Diameter" />
+
                     <TextBox
-                        Width="150"
+                        Width="100"
                         Margin="8,0,0,0"
-                        Text="{Binding HubThickness}" />
+                        Text="{Binding LowerRimDiameter}" />
                 </StackPanel>
                 <StackPanel Grid.Row="7" Orientation="Horizontal">
-                    <Label Width="100" VerticalAlignment="Center">
-                        Axle Bore
-                    </Label>
+                    <Label
+                        Width="120"
+                        VerticalAlignment="Center"
+                        Content="Rim Height" />
                     <TextBox
-                        Width="150"
+                        Width="100"
                         Margin="8,0,0,0"
-                        Text="{Binding AxleBoreRadius}" />
+                        Text="{Binding RimHeight}" />
+                </StackPanel>
+                <StackPanel Grid.Row="8" Orientation="Horizontal">
+                    <Label
+                        Width="120"
+                        VerticalAlignment="Center"
+                        Content="Rim Thickness" />
+                    <TextBox
+                        Width="100"
+                        Margin="8,0,0,0"
+                        Text="{Binding RimThickness}" />
                 </StackPanel>
                 <StackPanel Grid.Row="9" Orientation="Horizontal">
+                    <Label
+                        Width="120"
+                        VerticalAlignment="Center"
+                        Content="Axle Bore" />
+                    <TextBox
+                        Width="100"
+                        Margin="8,0,0,0"
+                        Text="{Binding AxleBoreDiameter}" />
+                </StackPanel>
+                <StackPanel Grid.Row="10" Orientation="Horizontal">
                     <Label
                         VerticalAlignment="Center"
                         Content="{Binding WarningText}"

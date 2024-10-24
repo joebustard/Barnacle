@@ -37,37 +37,79 @@ namespace Barnacle.Object3DLib
             Y = (float)pn.Y;
             Z = (float)pn.Z;
         }
+
+        internal void Scale(float sx, float sy, float sz)
+        {
+            X *= sx;
+            Y *= sy;
+            Z *= sz;
+        }
+
+        internal void UpdatePosition(float nx, float ny, float nz)
+        {
+            X = nx;
+            Y = ny;
+            Z = nz;
+        }
     }
 
     public class Object3D
     {
         public Point3D rotation;
+
+        internal static PrimTableEntry[] PrimitiveTable =
+        {
+            new PrimTableEntry( "box",PrimitiveGenerator.GenerateCube,Colors.Pink),
+            new PrimTableEntry( "boxcell",PrimitiveGenerator.GenerateCell4, Colors.DeepPink),
+            new PrimTableEntry( "buttontop", PrimitiveGenerator.GenerateButtonTop, Colors.CornflowerBlue),
+            new PrimTableEntry( "cap",PrimitiveGenerator.GenerateCap, Colors.LimeGreen),
+            new PrimTableEntry( "cone",PrimitiveGenerator.GenerateCone, Colors.LightSeaGreen),
+            new PrimTableEntry( "cube",PrimitiveGenerator.GenerateCube,Colors.Pink),
+            new PrimTableEntry( "cylinder",PrimitiveGenerator.GenerateCylinder, Colors.Orange),
+            new PrimTableEntry( "dice",PrimitiveGenerator.GenerateDice,Colors.YellowGreen),
+            new PrimTableEntry( "egg",PrimitiveGenerator.GenerateEgg,Colors.GreenYellow),
+            new PrimTableEntry( "hexagoncell",PrimitiveGenerator.GenerateCell6, Colors.SpringGreen),
+            new PrimTableEntry( "hexcone",PrimitiveGenerator.GenerateHexCone, Colors.Yellow),
+            new PrimTableEntry( "ibar",PrimitiveGenerator.GenerateIBar, Colors.Purple),
+            new PrimTableEntry( "octahedron",PrimitiveGenerator.GenerateOctahedron, Colors.YellowGreen),
+            new PrimTableEntry( "octagoncell",PrimitiveGenerator.GenerateCell8, Color.FromRgb(0xEF, 0xAB, 0x00)),
+            new PrimTableEntry( "polygon",PrimitiveGenerator.GeneratePolygon, Colors.LightYellow),
+            new PrimTableEntry( "rightangle",PrimitiveGenerator.GenerateRightAngle, Color.FromRgb(0x00, 0xAB, 0xEF)),
+            new PrimTableEntry( "roof",PrimitiveGenerator.GenerateRoof, Colors.Lavender),
+            new PrimTableEntry( "roundroof",PrimitiveGenerator.GenerateRoundRoof, Colors.Aquamarine),
+            new PrimTableEntry( "pentagoncell",PrimitiveGenerator.GenerateCell5, Colors.Chartreuse),
+            new PrimTableEntry( "pointy",PrimitiveGenerator.GeneratePointy, Color.FromRgb(0xEF, 0xAB, 0x00)),
+            new PrimTableEntry( "pyramid",PrimitiveGenerator.GeneratePyramid, Colors.Yellow),
+            new PrimTableEntry( "pyramid2",PrimitiveGenerator.GeneratePyramid2, Colors.CadetBlue),
+            new PrimTableEntry( "sphere",PrimitiveGenerator.GenerateSphere, Colors.CadetBlue),
+            new PrimTableEntry( "star6",PrimitiveGenerator.GenerateStar6, Colors.LimeGreen),
+            new PrimTableEntry( "stellatedodec",PrimitiveGenerator.GenerateStellateDoDec,Colors.Teal),
+            new PrimTableEntry( "stellateocto",PrimitiveGenerator.GenerateStellateOcto,Colors.YellowGreen),
+            new PrimTableEntry( "torus",PrimitiveGenerator.GenerateTorus, Colors.MistyRose),
+            new PrimTableEntry( "trianglecell",PrimitiveGenerator.GenerateCell3, Colors.DarkOrchid),
+            new PrimTableEntry( "trispike",PrimitiveGenerator.GenerateTriSpike, Colors.CadetBlue),
+            new PrimTableEntry( "tube",PrimitiveGenerator.GenerateTube, Colors.Magenta),
+            new PrimTableEntry( "xbar",PrimitiveGenerator.GenerateXBar,Colors.IndianRed),
+        };
+
         protected Bounds3D absoluteBounds;
         protected Point3D position;
         protected string primType;
         protected Scale3D scale;
         private Point3DCollection absoluteObjectVertices;
         private EditorParameters editorParameters;
+        private List<int> indices;
         private Vector3DCollection normals;
 
         // private Point3DCollection relativeObjectVertices;
         private List<P3D> relativeObjectVertices;
 
+        private Transform3DGroup rotTransformation;
+
         // This mesh is used by the view to display the object
         // Its vertices are absolute, i.e. have been translated
         // and rotated etc.
         private MeshGeometry3D surfaceMesh;
-
-        private Transform3DGroup rotTransformation;
-
-        public Transform3DGroup RotationTransformation
-        {
-            get { return rotTransformation; }
-            set
-            {
-                rotTransformation = value;
-            }
-        }
 
         private Int32Collection triangleIndices;
 
@@ -101,6 +143,8 @@ namespace Barnacle.Object3DLib
             }
         }
 
+        internal delegate void GenPrim(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals);
+
         public Bounds3D AbsoluteBounds
         {
             get { return absoluteBounds; }
@@ -114,6 +158,7 @@ namespace Barnacle.Object3DLib
         }
 
         public Color Color { get; set; }
+
         public string Description { get; set; }
 
         public EditorParameters EditorParameters
@@ -129,6 +174,20 @@ namespace Barnacle.Object3DLib
         }
 
         public bool Exportable { get; set; }
+
+        public List<int> Indices
+        {
+            get
+            {
+                return indices;
+            }
+            set
+            {
+                indices = value;
+            }
+        }
+
+        public bool LockAspectRatio { get; set; }
 
         public MeshGeometry3D Mesh
         {
@@ -194,6 +253,15 @@ namespace Barnacle.Object3DLib
             }
         }
 
+        public Transform3DGroup RotationTransformation
+        {
+            get { return rotTransformation; }
+            set
+            {
+                rotTransformation = value;
+            }
+        }
+
         public Scale3D Scale
         {
             get
@@ -228,22 +296,7 @@ namespace Barnacle.Object3DLib
             set { triangleIndices = value; }
         }
 
-        private List<int> indices;
-
-        public List<int> Indices
-        {
-            get
-            {
-                return indices;
-            }
-            set
-            {
-                indices = value;
-            }
-        }
-
         protected String XmlType { get; set; }
-        public bool LockAspectRatio { get; set; }
 
         public static XmlElement FindExternalModel(string name, string path)
         {
@@ -282,6 +335,16 @@ namespace Barnacle.Object3DLib
             return res;
         }
 
+        public static List<String> PrimitiveNames()
+        {
+            List<String> res = new List<String>();
+            foreach (PrimTableEntry pt in PrimitiveTable)
+            {
+                res.Add(pt.PrimName);
+            }
+            return res;
+        }
+
         public virtual void AbsoluteToRelative()
         {
             if (absoluteObjectVertices != null)
@@ -301,94 +364,6 @@ namespace Barnacle.Object3DLib
                     relativeObjectVertices.Add(ap);
                 }
             }
-        }
-
-        public virtual void DeThread()
-        {
-            Indices = new List<int>();
-            foreach (int i in TriangleIndices)
-            {
-                Indices.Add(i);
-            }
-        }
-
-        internal delegate void GenPrim(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals);
-
-        internal struct PrimTableEntry
-        {
-            internal string PrimName;
-            internal GenPrim Generator;
-            internal Color Color;
-
-            internal PrimTableEntry(String s, GenPrim p, Color c)
-            {
-                PrimName = s;
-                Generator = p;
-                Color = c;
-            }
-        }
-
-        public static List<String> PrimitiveNames()
-        {
-            List<String> res = new List<String>();
-            foreach (PrimTableEntry pt in PrimitiveTable)
-            {
-                res.Add(pt.PrimName);
-            }
-            return res;
-        }
-
-        internal static PrimTableEntry[] PrimitiveTable =
-        {
-            new PrimTableEntry( "box",PrimitiveGenerator.GenerateCube,Colors.Pink),
-            new PrimTableEntry( "boxcell",PrimitiveGenerator.GenerateCell4, Colors.DeepPink),
-            new PrimTableEntry( "buttontop", PrimitiveGenerator.GenerateButtonTop, Colors.CornflowerBlue),
-            new PrimTableEntry( "cap",PrimitiveGenerator.GenerateCap, Colors.LimeGreen),
-            new PrimTableEntry( "cone",PrimitiveGenerator.GenerateCone, Colors.LightSeaGreen),
-            new PrimTableEntry( "cube",PrimitiveGenerator.GenerateCube,Colors.Pink),
-            new PrimTableEntry( "cylinder",PrimitiveGenerator.GenerateCylinder, Colors.Orange),
-            new PrimTableEntry( "dice",PrimitiveGenerator.GenerateDice,Colors.YellowGreen),
-            new PrimTableEntry( "egg",PrimitiveGenerator.GenerateEgg,Colors.GreenYellow),
-            new PrimTableEntry( "hexagoncell",PrimitiveGenerator.GenerateCell6, Colors.SpringGreen),
-            new PrimTableEntry( "hexcone",PrimitiveGenerator.GenerateHexCone, Colors.Yellow),
-            new PrimTableEntry( "ibar",PrimitiveGenerator.GenerateIBar, Colors.Purple),
-            new PrimTableEntry( "octahedron",PrimitiveGenerator.GenerateOctahedron, Colors.YellowGreen),
-            new PrimTableEntry( "octagoncell",PrimitiveGenerator.GenerateCell8, Color.FromRgb(0xEF, 0xAB, 0x00)),
-            new PrimTableEntry( "polygon",PrimitiveGenerator.GeneratePolygon, Colors.LightYellow),
-            new PrimTableEntry( "rightangle",PrimitiveGenerator.GenerateRightAngle, Color.FromRgb(0x00, 0xAB, 0xEF)),
-            new PrimTableEntry( "roof",PrimitiveGenerator.GenerateRoof, Colors.Lavender),
-            new PrimTableEntry( "roundroof",PrimitiveGenerator.GenerateRoundRoof, Colors.Aquamarine),
-            new PrimTableEntry( "pentagoncell",PrimitiveGenerator.GenerateCell5, Colors.Chartreuse),
-            new PrimTableEntry( "pointy",PrimitiveGenerator.GeneratePointy, Color.FromRgb(0xEF, 0xAB, 0x00)),
-            new PrimTableEntry( "pyramid",PrimitiveGenerator.GeneratePyramid, Colors.Yellow),
-            new PrimTableEntry( "pyramid2",PrimitiveGenerator.GeneratePyramid2, Colors.CadetBlue),
-            new PrimTableEntry( "sphere",PrimitiveGenerator.GenerateSphere, Colors.CadetBlue),
-            new PrimTableEntry( "star6",PrimitiveGenerator.GenerateStar6, Colors.LimeGreen),
-            new PrimTableEntry( "stellatedodec",PrimitiveGenerator.GenerateStellateDoDec,Colors.Teal),
-            new PrimTableEntry( "stellateocto",PrimitiveGenerator.GenerateStellateOcto,Colors.YellowGreen),
-            new PrimTableEntry( "torus",PrimitiveGenerator.GenerateTorus, Colors.MistyRose),
-            new PrimTableEntry( "trianglecell",PrimitiveGenerator.GenerateCell3, Colors.DarkOrchid),
-            new PrimTableEntry( "trispike",PrimitiveGenerator.GenerateTriSpike, Colors.CadetBlue),
-            new PrimTableEntry( "tube",PrimitiveGenerator.GenerateTube, Colors.Magenta),
-            new PrimTableEntry( "xbar",PrimitiveGenerator.GenerateXBar,Colors.IndianRed),
-        };
-
-        public bool LookupPrim(string s, ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
-        {
-            bool res = false;
-            s = s.ToLower();
-
-            foreach (PrimTableEntry pt in PrimitiveTable)
-            {
-                if (pt.PrimName == s)
-                {
-                    pt.Generator(ref pnts, ref indices, ref normals);
-                    AddPrimitiveToObject(pnts, indices, normals, pt.Color);
-                    res = true;
-                    break;
-                }
-            }
-            return res;
         }
 
         public bool BuildPrimitive(string obType)
@@ -499,6 +474,15 @@ namespace Barnacle.Object3DLib
             return this;
         }
 
+        public virtual void DeThread()
+        {
+            Indices = new List<int>();
+            foreach (int i in TriangleIndices)
+            {
+                Indices.Add(i);
+            }
+        }
+
         public void FlipInside()
         {
             for (int i = 0; i < triangleIndices.Count - 2; i += 3)
@@ -581,6 +565,24 @@ namespace Barnacle.Object3DLib
         public virtual bool IsSizable()
         {
             return true;
+        }
+
+        public bool LookupPrim(string s, ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+        {
+            bool res = false;
+            s = s.ToLower();
+
+            foreach (PrimTableEntry pt in PrimitiveTable)
+            {
+                if (pt.PrimName == s)
+                {
+                    pt.Generator(ref pnts, ref indices, ref normals);
+                    AddPrimitiveToObject(pnts, indices, normals, pt.Color);
+                    res = true;
+                    break;
+                }
+            }
+            return res;
         }
 
         public void MoveOriginToCentroid()
@@ -765,7 +767,7 @@ namespace Barnacle.Object3DLib
             {
                 absoluteObjectVertices.Clear();
                 absoluteObjectVertices = new Point3DCollection(relativeObjectVertices.Count);
-
+                GC.Collect();
                 List<P3D> tmp;
                 if (Rotation != null && (Rotation.X != 0 || Rotation.Y != 0 || Rotation.Z != 0))
                 {
@@ -819,42 +821,6 @@ namespace Barnacle.Object3DLib
             }
         }
 
-        /*
-        public void CreateTransformation()
-        {
-            transforms = new Transform3DGroup();
-            aar1 = new AxisAngleRotation3D(new Vector3D(1, 0, 0), 0);
-            rt1 = new RotateTransform3D(aar1);
-            aar2 = new AxisAngleRotation3D(new Vector3D(0, 1, 0), 0);
-            rt2 = new RotateTransform3D(aar2);
-            aar3 = new AxisAngleRotation3D(new Vector3D(0, 0, 1), 0);
-            rt3 = new RotateTransform3D(aar3);
-            transforms.Children.Add(rt1);
-            transforms.Children.Add(rt2);
-            transforms.Children.Add(rt3);
-            rotTransformation = transforms;
-        }
-        private Transform3DGroup transforms;
-        private RotateTransform3D rt1;
-        private RotateTransform3D rt2;
-        private RotateTransform3D rt3;
-        private AxisAngleRotation3D aar1;
-        private AxisAngleRotation3D aar2;
-        private AxisAngleRotation3D aar3;
-        public void RotateByTransform(Point3D RotateBy)
-        {
-            double r1 = DegreesToRad(RotateBy.X);
-            double r2 = DegreesToRad(RotateBy.Y);
-            double r3 = DegreesToRad(RotateBy.Z);
-            if (relativeObjectVertices != null)
-            {
-                aar1.Angle += RotateBy.X ;
-                aar2.Angle += RotateBy.Y ;
-                aar3.Angle += RotateBy.Z ;
-            }
-        }
-        */
-
         public void RotateRad(Point3D Rotation)
         {
             if (relativeObjectVertices != null)
@@ -897,6 +863,7 @@ namespace Barnacle.Object3DLib
         public void ScaleMesh(double sx, double sy, double sz)
         {
             List<P3D> tmp = new List<P3D>();
+
             foreach (P3D cp in relativeObjectVertices)
             {
                 P3D ap = new P3D();
@@ -907,6 +874,13 @@ namespace Barnacle.Object3DLib
                 tmp.Add(ap);
             }
             relativeObjectVertices = tmp;
+
+            /*
+        for (int i = 0; i < relativeObjectVertices.Count; i++)
+        {
+            relativeObjectVertices[i].Scale((float)sx, (float)sy, (float)sz);
+        }
+        */
         }
 
         public void SetMesh()
@@ -933,12 +907,10 @@ namespace Barnacle.Object3DLib
                             if (p.X < 0)
                             {
                                 double offset = (-p.X / max.X) * (1 - y);
-                                //tmp.Add(new Point3D(p.X, p.Y - (p.Y * offset), p.Z));
                                 tmp.Add(new P3D(p.X, p.Y - (p.Y * offset), p.Z));
                             }
                             else
                             {
-                                //  tmp.Add(new Point3D(p.X, p.Y, p.Z));
                                 tmp.Add(new P3D(p.X, p.Y, p.Z));
                             }
                         }
@@ -949,12 +921,10 @@ namespace Barnacle.Object3DLib
                             if (p.X > 0)
                             {
                                 double offset = (p.X / max.X) * (1 - y);
-                                //  tmp.Add(new Point3D(p.X, p.Y - (p.Y * offset), p.Z));
                                 tmp.Add(new P3D(p.X, p.Y - (p.Y * offset), p.Z));
                             }
                             else
                             {
-                                //tmp.Add(new Point3D(p.X, p.Y, p.Z));
                                 tmp.Add(new P3D(p.X, p.Y, p.Z));
                             }
                         }
@@ -965,12 +935,10 @@ namespace Barnacle.Object3DLib
                             if (p.Z < 0)
                             {
                                 double offset = (p.Z / max.Z) * (1 - y);
-                                // tmp.Add(new Point3D(p.X, p.Y - (p.Y * offset), p.Z));
                                 tmp.Add(new P3D(p.X, p.Y - (p.Y * offset), p.Z));
                             }
                             else
                             {
-                                // tmp.Add(new Point3D(p.X, p.Y, p.Z));
                                 tmp.Add(new P3D(p.X, p.Y, p.Z));
                             }
                         }
@@ -981,12 +949,10 @@ namespace Barnacle.Object3DLib
                             if (p.Z > 0)
                             {
                                 double offset = (p.Z / max.Z) * (1 - y);
-                                // tmp.Add(new Point3D(p.X, p.Y - (p.Y * offset), p.Z));
                                 tmp.Add(new P3D(p.X, p.Y - (p.Y * offset), p.Z));
                             }
                             else
                             {
-                                //tmp.Add(new Point3D(p.X, p.Y, p.Z));
                                 tmp.Add(new P3D(p.X, p.Y, p.Z));
                             }
                         }
@@ -994,7 +960,6 @@ namespace Barnacle.Object3DLib
                 }
             }
             relativeObjectVertices.Clear();
-            //   foreach (Point3D p in tmp)
             foreach (P3D p in tmp)
             {
                 relativeObjectVertices.Add(p);
@@ -1240,6 +1205,11 @@ namespace Barnacle.Object3DLib
             float Azx = -sinb;
             float Azy = cosb * sinc;
             float Azz = cosb * cosc;
+            float nx = 0F;
+            float ny = 0F;
+            float nz = 0F;
+
+            // for (int i = 0; i < pnts.Count; i++)
             foreach (P3D cp in pnts)
             {
                 P3D rp = new P3D();
@@ -1248,8 +1218,68 @@ namespace Barnacle.Object3DLib
                 rp.Z = Azx * cp.X + Azy * cp.Y + Azz * cp.Z;
                 AdjustBounds(rp);
                 tmp.Add(rp);
+                /*
+            P3D cp = pnts[i];
+            nx = Axx * cp.X + Axy * cp.Y + Axz * cp.Z;
+            ny = Ayx * cp.X + Ayy * cp.Y + Ayz * cp.Z;
+            nz = Azx * cp.X + Azy * cp.Y + Azz * cp.Z;
+            cp.UpdatePosition(nx, ny, nz);
+            AdjustBounds(cp);
+            pnts[i] = cp;
+            */
             }
             return tmp;
+            //return pnts;
         }
+
+        internal struct PrimTableEntry
+        {
+            internal Color Color;
+            internal GenPrim Generator;
+            internal string PrimName;
+
+            internal PrimTableEntry(String s, GenPrim p, Color c)
+            {
+                PrimName = s;
+                Generator = p;
+                Color = c;
+            }
+        }
+
+        /*
+        public void CreateTransformation()
+        {
+            transforms = new Transform3DGroup();
+            aar1 = new AxisAngleRotation3D(new Vector3D(1, 0, 0), 0);
+            rt1 = new RotateTransform3D(aar1);
+            aar2 = new AxisAngleRotation3D(new Vector3D(0, 1, 0), 0);
+            rt2 = new RotateTransform3D(aar2);
+            aar3 = new AxisAngleRotation3D(new Vector3D(0, 0, 1), 0);
+            rt3 = new RotateTransform3D(aar3);
+            transforms.Children.Add(rt1);
+            transforms.Children.Add(rt2);
+            transforms.Children.Add(rt3);
+            rotTransformation = transforms;
+        }
+        private Transform3DGroup transforms;
+        private RotateTransform3D rt1;
+        private RotateTransform3D rt2;
+        private RotateTransform3D rt3;
+        private AxisAngleRotation3D aar1;
+        private AxisAngleRotation3D aar2;
+        private AxisAngleRotation3D aar3;
+        public void RotateByTransform(Point3D RotateBy)
+        {
+            double r1 = DegreesToRad(RotateBy.X);
+            double r2 = DegreesToRad(RotateBy.Y);
+            double r3 = DegreesToRad(RotateBy.Z);
+            if (relativeObjectVertices != null)
+            {
+                aar1.Angle += RotateBy.X ;
+                aar2.Angle += RotateBy.Y ;
+                aar3.Angle += RotateBy.Z ;
+            }
+        }
+        */
     }
 }

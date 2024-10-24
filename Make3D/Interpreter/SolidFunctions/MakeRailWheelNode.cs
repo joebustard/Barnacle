@@ -7,34 +7,49 @@ namespace ScriptLanguage
 {
     internal class MakeRailWheelNode : ExpressionNode
     {
-        private ExpressionNode axleBoreExp;
-        private ExpressionNode flangeRadiusExp;
-        private ExpressionNode flangeThicknessExp;
-        private ExpressionNode hubRadiusExp;
-        private ExpressionNode hubThicknessExp;
-        private ExpressionNode mainRadiusExp;
-        private ExpressionNode mainThicknessExp;
+        private ExpressionNode flangeDiameterExp;
+        private ExpressionNode flangeHeightExp;
+        private ExpressionNode hubDiameterExp;
+        private ExpressionNode hubHeightExp;
+        private ExpressionNode upperRimDiameterExp;
+        private ExpressionNode lowerRimDiameterExp;
+        private ExpressionNode rimThicknessExp;
+        private ExpressionNode rimHeightExp;
+        private ExpressionNode axleBoreDiameterExp;
 
-        public MakeRailWheelNode(ExpressionNode mainRadius, ExpressionNode mainThickness, ExpressionNode flangeRadius, ExpressionNode flangeThickness, ExpressionNode hubRadius, ExpressionNode hubThickness, ExpressionNode axleBore)
+        public MakeRailWheelNode(ExpressionNode flangeDiameterExp,
+                                 ExpressionNode flangeHeightExp,
+                                 ExpressionNode hubDiameterExp,
+                                 ExpressionNode hubHeightExp,
+                                 ExpressionNode upperRimDiameterExp,
+                                 ExpressionNode lowerRimDiameterExp,
+                                 ExpressionNode rimThicknessExp,
+                                 ExpressionNode rimHeightExp,
+                                 ExpressionNode axleBoreDiameterExp
+                                 )
         {
-            this.mainRadiusExp = mainRadius;
-            this.mainThicknessExp = mainThickness;
-            this.flangeRadiusExp = flangeRadius;
-            this.flangeThicknessExp = flangeThickness;
-            this.hubRadiusExp = hubRadius;
-            this.hubThicknessExp = hubThickness;
-            this.axleBoreExp = axleBore;
+            this.flangeDiameterExp = flangeDiameterExp;
+            this.flangeHeightExp = flangeHeightExp;
+            this.hubDiameterExp = hubDiameterExp;
+            this.hubHeightExp = hubHeightExp;
+            this.upperRimDiameterExp = upperRimDiameterExp;
+            this.lowerRimDiameterExp = lowerRimDiameterExp;
+            this.rimThicknessExp = rimThicknessExp;
+            this.rimHeightExp = rimHeightExp;
+            this.axleBoreDiameterExp = axleBoreDiameterExp;
         }
 
         public MakeRailWheelNode(ExpressionCollection coll)
         {
-            this.mainRadiusExp = coll.Get(0);
-            this.mainThicknessExp = coll.Get(1);
-            this.flangeRadiusExp = coll.Get(2);
-            this.flangeThicknessExp = coll.Get(3);
-            this.hubRadiusExp = coll.Get(4);
-            this.hubThicknessExp = coll.Get(5);
-            this.axleBoreExp = coll.Get(6);
+            this.flangeDiameterExp = coll.Get(0);
+            this.flangeHeightExp = coll.Get(1);
+            this.hubDiameterExp = coll.Get(2);
+            this.hubHeightExp = coll.Get(3);
+            this.upperRimDiameterExp = coll.Get(4);
+            this.lowerRimDiameterExp = coll.Get(5);
+            this.rimThicknessExp = coll.Get(6);
+            this.rimHeightExp = coll.Get(7);
+            this.axleBoreDiameterExp = coll.Get(8);
         }
 
         /// Execute this node
@@ -43,69 +58,41 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
+            double vflangeDiameter = 0;
+            double vflangeHeight = 0;
+            double vhubDiameter = 0;
+            double vhubHeight = 0;
+            double vupperRimDiameter = 0;
+            double vlowerRimDiameter = 0;
+            double vRimThickness = 0;
+            double vRimHeight = 0;
+            double vAxleBoreDiameter = 0;
             try
             {
-                double valMainRadius = 0;
-                double valMainThickness = 0;
-                double valFlangeRadius = 0;
-                double valFlangeThickness = 0;
-                double valHubRadius = 0;
-                double valHubThickness = 0;
-                double valAxleBore = 0;
-
-                if (EvalExpression(mainRadiusExp, ref valMainRadius, "MainRadius", "MakeRailWheel") &&
-                    EvalExpression(mainThicknessExp, ref valMainThickness, "MainThickness", "MakeRailWheel") &&
-                    EvalExpression(flangeRadiusExp, ref valFlangeRadius, "FlangeRadius", "MakeRailWheel") &&
-                    EvalExpression(flangeThicknessExp, ref valFlangeThickness, "FlangeThickness", "MakeRailWheel") &&
-                    EvalExpression(hubRadiusExp, ref valHubRadius, "HubRadius", "MakeRailWheel") &&
-                    EvalExpression(hubThicknessExp, ref valHubThickness, "HubThickness", "MakeRailWheel") &&
-                    EvalExpression(axleBoreExp, ref valAxleBore, "AxleBore", "MakeRailWheel")
+                if (EvalExpression(flangeDiameterExp, ref vflangeDiameter, "FlangeDiameter", "MakeRailWheel") &&
+                    EvalExpression(flangeHeightExp, ref vflangeHeight, "FlangeHeight", "MakeRailWheel") &&
+                    EvalExpression(hubDiameterExp, ref vhubDiameter, "HubDiameter", "MakeRailWheel") &&
+                     EvalExpression(hubHeightExp, ref vhubHeight, "HubHeight", "MakeRailWheel") &&
+                    EvalExpression(upperRimDiameterExp, ref vupperRimDiameter, "UpperRimDiameter", "MakeRailWheel") &&
+                    EvalExpression(lowerRimDiameterExp, ref vlowerRimDiameter, "LowerRimDiameter", "MakeRailWheel") &&
+                    EvalExpression(rimThicknessExp, ref vRimThickness, "RimThickness", "MakeRailWheel") &&
+                    EvalExpression(rimHeightExp, ref vRimHeight, "RimHeight", "MakeRailWheel") &&
+                    EvalExpression(axleBoreDiameterExp, ref vAxleBoreDiameter, "AxleBoreDiameter", "MakeRailWheel")
                    )
                 {
+                    RailWheelMaker maker = new RailWheelMaker();
                     // check calculated values are in range
                     bool inRange = true;
+                    inRange = RangeCheck(maker, "FlangeDiameter", vflangeDiameter);
+                    inRange = RangeCheck(maker, "FlangeHeight", vflangeHeight) && inRange;
+                    inRange = RangeCheck(maker, "HubDiameter", vhubDiameter) && inRange;
+                    inRange = RangeCheck(maker, "HubHeight", vhubHeight) && inRange;
+                    inRange = RangeCheck(maker, "UpperRimDiameter", vupperRimDiameter) && inRange;
+                    inRange = RangeCheck(maker, "LowerRimDiameter", vlowerRimDiameter) && inRange;
+                    inRange = RangeCheck(maker, "RimThickness", vRimThickness) && inRange;
+                    inRange = RangeCheck(maker, "RimHeight", vRimHeight) && inRange;
+                    inRange = RangeCheck(maker, "AxleBoreDiameter", vAxleBoreDiameter) && inRange;
 
-                    if (valMainRadius < 1 || valMainRadius > 100)
-                    {
-                        Log.Instance().AddEntry("MakeRailWheel : MainRadius value out of range (1..100)");
-                        inRange = false;
-                    }
-
-                    if (valMainThickness < 1 || valMainThickness > 100)
-                    {
-                        Log.Instance().AddEntry("MakeRailWheel : MainThickness value out of range (1..100)");
-                        inRange = false;
-                    }
-
-                    if (valFlangeRadius < 1 || valFlangeRadius > 10)
-                    {
-                        Log.Instance().AddEntry("MakeRailWheel : FlangeRadius value out of range (1..10)");
-                        inRange = false;
-                    }
-
-                    if (valFlangeThickness < 1 || valFlangeThickness > 10)
-                    {
-                        Log.Instance().AddEntry("MakeRailWheel : FlangeThickness value out of range (1..10)");
-                        inRange = false;
-                    }
-
-                    if (valHubRadius < 0 || valHubRadius > 10)
-                    {
-                        Log.Instance().AddEntry("MakeRailWheel : HubRadius value out of range (0..10)");
-                        inRange = false;
-                    }
-
-                    if (valHubThickness < 0 || valHubThickness > 10)
-                    {
-                        Log.Instance().AddEntry("MakeRailWheel : HubThickness value out of range (0..10)");
-                        inRange = false;
-                    }
-
-                    if (valAxleBore < 1 || valAxleBore > 100)
-                    {
-                        Log.Instance().AddEntry("MakeRailWheel : AxleBore value out of range (1..100)");
-                        inRange = false;
-                    }
                     if (inRange)
                     {
                         result = true;
@@ -118,7 +105,15 @@ namespace ScriptLanguage
 
                         obj.Position = new Point3D(0, 0, 0);
                         Point3DCollection tmp = new Point3DCollection();
-                        RailWheelMaker maker = new RailWheelMaker(valMainRadius, valMainThickness, valFlangeRadius, valFlangeThickness, valHubRadius, valHubThickness, valAxleBore);
+                        maker.SetValues(vflangeDiameter,
+                                        vflangeHeight,
+                                        vhubDiameter,
+                                        vhubHeight,
+                                        vupperRimDiameter,
+                                        vlowerRimDiameter,
+                                        vRimThickness,
+                                        vRimHeight,
+                                        vAxleBoreDiameter);
 
                         maker.Generate(tmp, obj.TriangleIndices);
                         PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
@@ -142,19 +137,40 @@ namespace ScriptLanguage
             return result;
         }
 
+        private static bool RangeCheck(RailWheelMaker maker, string paramName, double val)
+        {
+            bool inRange = maker.CheckLimits(paramName, val);
+            if (!inRange)
+            {
+                ParamLimit pl = maker.GetLimits(paramName);
+                if (pl != null)
+                {
+                    Log.Instance().AddEntry($"MakeRailWheel : {paramName} value {val} out of range ({pl.Low}..{pl.High}");
+                }
+                else
+                {
+                    Log.Instance().AddEntry($"MakeRailWheel : Can't check parameter {paramName}");
+                }
+            }
+
+            return inRange;
+        }
+
         /// Returns a String representation of this node that can be used for
         /// Pretty Printing
         public override String ToRichText()
         {
             String result = RichTextFormatter.KeyWord("MakeRailWheel") + "( ";
 
-            result += mainRadiusExp.ToRichText() + ", ";
-            result += mainThicknessExp.ToRichText() + ", ";
-            result += flangeRadiusExp.ToRichText() + ", ";
-            result += flangeThicknessExp.ToRichText() + ", ";
-            result += hubRadiusExp.ToRichText() + ", ";
-            result += hubThicknessExp.ToRichText() + ", ";
-            result += axleBoreExp.ToRichText();
+            result += flangeDiameterExp.ToRichText() + ", ";
+            result += flangeHeightExp.ToRichText() + ", ";
+            result += hubDiameterExp.ToRichText() + ", ";
+            result += hubHeightExp.ToRichText() + ", ";
+            result += upperRimDiameterExp.ToRichText() + ", ";
+            result += lowerRimDiameterExp.ToRichText() + ", ";
+            result += rimThicknessExp.ToRichText() + ", ";
+            result += rimHeightExp.ToRichText() + ", ";
+            result += axleBoreDiameterExp.ToRichText();
             result += " )";
             return result;
         }
@@ -163,14 +179,15 @@ namespace ScriptLanguage
         {
             String result = "MakeRailWheel( ";
 
-            result += mainRadiusExp.ToString() + ", ";
-            result += mainThicknessExp.ToString() + ", ";
-            result += flangeRadiusExp.ToString() + ", ";
-            result += flangeThicknessExp.ToString() + ", ";
-            result += hubRadiusExp.ToString() + ", ";
-            result += hubThicknessExp.ToString() + ", ";
-            result += axleBoreExp.ToString();
-            result += " )";
+            result += flangeDiameterExp.ToString() + ", ";
+            result += flangeHeightExp.ToString() + ", ";
+            result += hubDiameterExp.ToString() + ", ";
+            result += hubHeightExp.ToString() + ", ";
+            result += upperRimDiameterExp.ToString() + ", ";
+            result += lowerRimDiameterExp.ToString() + ", ";
+            result += rimThicknessExp.ToString() + ", ";
+            result += rimHeightExp.ToString() + ", ";
+            result += axleBoreDiameterExp.ToString();
             return result;
         }
     }

@@ -8,21 +8,23 @@ namespace ScriptLanguage
     public class Script
     {
         public static string PartsLibraryPath = "";
-        private ParseTreeNode parseTree;
+        public static string ProjectPath = "";
 
         //   public static MdiChildForm theForm;
         private static int nextObjectId;
 
-        public static int NextObjectId
-        { get { return nextObjectId++; } set { nextObjectId = value; } }
+        private ParseTreeNode parseTree;
 
         // Instance constructor
         public Script()
         {
             parseTree = null;
-           
+
             ResultArtefacts = new Dictionary<int, Object3D>();
         }
+
+        public static int NextObjectId
+        { get { return nextObjectId++; } set { nextObjectId = value; } }
 
         // This is used a generic way of returning objects or data created when the script is
         // run.
@@ -37,6 +39,7 @@ namespace ScriptLanguage
         {
             ExecutionStack.Instance().Clear();
             ResultArtefacts.Clear();
+
             nextObjectId = 0;
             bool result = false;
             if (parseTree != null)
@@ -62,9 +65,19 @@ namespace ScriptLanguage
             return parseTree;
         }
 
+        public void SetCancelationToken(CancellationToken cancellationToken)
+        {
+            ParseTreeNode.CancellationToken = cancellationToken;
+        }
+
         public void SetPartsLibraryRoot(string v)
         {
             PartsLibraryPath = v;
+        }
+
+        public void SetProjectPathRoot(string v)
+        {
+            ProjectPath = v;
         }
 
         public void SetResultsContent(Dictionary<int, Object3D> content)
@@ -117,11 +130,6 @@ namespace ScriptLanguage
         internal void AddNode(ParseTreeNode tn)
         {
             parseTree = tn;
-        }
-
-        public void SetCancelationToken(CancellationToken cancellationToken)
-        {
-            ParseTreeNode.CancellationToken = cancellationToken;
         }
     }
 }

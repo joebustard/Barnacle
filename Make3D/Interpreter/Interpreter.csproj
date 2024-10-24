@@ -65,6 +65,7 @@
     <Compile Include="Execution\Array.cs" />
     <Compile Include="IntrinsicFunctions\Dim.cs" />
     <Compile Include="IntrinsicFunctions\RndNode.cs" />
+    <Compile Include="SolidFunctions\InsertPartNode.cs" />
     <Compile Include="SolidFunctions\MakeBarrelNode.cs" />
     <Compile Include="SolidFunctions\MakeBoxNode.cs" />
     <Compile Include="SolidFunctions\MakeBrickTowerNode.cs" />
@@ -80,7 +81,7 @@
     <Compile Include="Operators\ParenthesisNode.cs" />
     <Compile Include="Operators\StackComparator.cs" />
     <Compile Include="SolidFunctions\CopySolidNode.cs" />
-    <Compile Include="SolidFunctions\InsertPartNode.cs" />
+    <Compile Include="SolidFunctions\InsertLibPartNode.cs" />
     <Compile Include="SolidFunctions\MakeBicorn.cs" />
     <Compile Include="SolidFunctions\MakeBrickWallNode.cs" />
     <Compile Include="SolidFunctions\MakeCurvedFunnelNode.cs" />
@@ -243,6 +244,7 @@
     <Compile Include="Parser\Script.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Dialogs\" />
     <Folder Include="Libs\" />
   </ItemGroup>
   <ItemGroup>

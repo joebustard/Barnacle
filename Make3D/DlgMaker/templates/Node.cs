@@ -36,6 +36,7 @@ namespace ScriptLanguage
 
             //EVALEXPRESSIONS
             {
+                //TOOLNAMEMaker maker = new //TOOLNAMEMaker();
                 // check calculated values are in range
                 bool inRange = true;
                 //RANGECHECKS
@@ -51,7 +52,7 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     Point3DCollection tmp = new Point3DCollection();
-                    //TOOLNAMEMaker maker = new //TOOLNAMEMaker(//MAKERPARAMS);
+                    maker.SetValues(//MAKERPARAMS);
 
                     maker.Generate(tmp, obj.TriangleIndices);
                     PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
@@ -72,7 +73,7 @@ namespace ScriptLanguage
         }
 
         /// Returns a String representation of this node that can be used for
-        /// Pretty Printing
+        /// display in the editor
         ///
         ///
         public override String ToRichText()
@@ -89,6 +90,25 @@ namespace ScriptLanguage
             //EXPRESSIONTOSTRING
             result += " )";
             return result;
+        }
+
+        private static bool RangeCheck(//TOOLNAMEMaker maker, string paramName, double val)
+        {
+            bool inRange = maker.CheckLimits(paramName, val);
+            if (!inRange)
+            {
+                ParamLimit pl = maker.GetLimits(paramName);
+                if (pl != null)
+                {
+                    Log.Instance().AddEntry($"Make//TOOLNAME : {paramName} value {val} out of range ({pl.Low}..{pl.High}");
+                }
+                else
+                {
+                    Log.Instance().AddEntry($"MakeRailWheel : Can't check parameter {paramName}");
+                }
+            }
+
+            return inRange;
         }
     }
 }

@@ -860,7 +860,7 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
                             Command="{Binding GroupCommand}"
-                            CommandParameter="ForceUnion"
+                            CommandParameter="GroupForceUnion"
                             Header="Force Union"
                             ImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Make a new object containing all the points and triangles of the selected ones. The resulting object WONT be manifold" />
                         <Custom:RibbonSeparator />
@@ -1331,6 +1331,11 @@
                         x:Name="ShowFloor"
                         IsChecked="{Binding ShowFloorChecked}"
                         Label="Floor" />
+
+                    <Custom:RibbonCheckBox
+                        x:Name="ShowFloorMM"
+                        IsChecked="{Binding ShowFloorMMChecked}"
+                        Label="Floor mm" />
                     <Custom:RibbonCheckBox
                         x:Name="ShowAxis"
                         IsChecked="{Binding ShowAxiesChecked}"
@@ -1466,20 +1471,11 @@
                 Grid.Row="0"
                 Grid.Column="1"
                 Style="{StaticResource GridSplitterStyle}" />
-            <ScrollViewer
-                x:Name="Scroller"
-                Grid.Column="2"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                HorizontalScrollBarVisibility="Auto"
-                VerticalScrollBarVisibility="Auto">
+
+            <Border Style="{StaticResource ControlBorder}" Grid.Row="0" Grid.Column="2" ClipToBounds="True">
                 <ContentControl
-                    x:Name="SubViewControl"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Content="{Binding SubView}" />
-            </ScrollViewer>
-            <!--  </DockPanel> -->
+                    x:Name="SubViewControl"                   Content="{Binding SubView}" />
+            </Border>
         </Grid>
         <StatusBar Grid.Row="2">
             <StatusBar.ItemsPanel>

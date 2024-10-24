@@ -16,8 +16,8 @@ namespace MakerLib
         private int maxRunLength;
         private double plagueThickness;
         private string plaqueImagePath;
-        private int runLengthLimit;
         private double plaqueLength;
+        private int runLengthLimit;
 
         public ImagePlaqueMaker(double plagueThickness, string plaqueImagePath, bool limitRunLengths, int maxRunLength, double solidLength)
         {
@@ -128,66 +128,6 @@ namespace MakerLib
             }
         }
 
-        private void ProcessImage()
-        {
-            BitmapImage bitmap;
-            DrawingVisual drawingVisual = new DrawingVisual();
-            DrawingContext drawingContext = drawingVisual.RenderOpen();
-
-            BitmapImage plaqueBitmap = new BitmapImage();
-            plaqueBitmap.BeginInit();
-            plaqueBitmap.UriSource = new Uri(plaqueImagePath);
-            plaqueBitmap.EndInit();
-
-            // Create a FormatConvertedBitmap
-            FormatConvertedBitmap bwBitmapSource = new FormatConvertedBitmap();
-
-            // BitmapSource objects like FormatConvertedBitmap can only have their properties
-            // changed within a BeginInit/EndInit block.
-            bwBitmapSource.BeginInit();
-
-            // Use the BitmapSource object defined above as the source for this new
-            // BitmapSource (chain the BitmapSource objects together).
-            bwBitmapSource.Source = plaqueBitmap;
-
-            // Key of changing the bitmap format is DesitnationFormat property of BitmapSource.
-            // It is a type of PixelFormat. FixelFormat has dozens of options to set
-            // bitmap formatting.
-            bwBitmapSource.DestinationFormat = PixelFormats.BlackWhite;
-            bwBitmapSource.EndInit();
-
-            imageWidth = (int)(Math.Ceiling(bwBitmapSource.Width)) + 2;
-            imageHeight = (int)(Math.Ceiling(bwBitmapSource.Height)) + 2;
-            drawingContext.DrawRectangle(System.Windows.Media.Brushes.White, new System.Windows.Media.Pen(System.Windows.Media.Brushes.White, 1), new Rect(0, 0, imageWidth, imageHeight));
-            drawingContext.DrawImage(bwBitmapSource, new Rect(1, 1, bwBitmapSource.Width, bwBitmapSource.Height));
-
-            drawingContext.Close();
-
-            RenderTargetBitmap bmp = new RenderTargetBitmap(imageWidth, imageHeight, 96, 96, PixelFormats.Default);
-            bmp.Render(drawingVisual);
-            bitmap = new BitmapImage();
-            var bitmapEncoder = new PngBitmapEncoder();
-            bitmapEncoder.Frames.Add(BitmapFrame.Create(bmp));
-
-            using (var stream = new MemoryStream())
-            {
-                bitmapEncoder.Save(stream);
-                stream.Seek(0, SeekOrigin.Begin);
-                bitmap.BeginInit();
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.StreamSource = stream;
-                bitmap.EndInit();
-            }
-
-            WriteableBitmap wrb = new WriteableBitmap(bmp);
-            CreateOctree(new Point3D(-1, -0.1, -1), new Point3D(imageWidth + 1, plagueThickness + 0.1, imageHeight + 1));
-            NorthEdges(wrb);
-            SouthEdges(wrb);
-            WestEdges(wrb);
-            EastEdges(wrb);
-            FrontAndBack(wrb);
-        }
-
         private void FrontAndBack(WriteableBitmap wrb)
         {
             int y = 0;
@@ -261,7 +201,7 @@ namespace MakerLib
                         int start = x;
                         if (y == 0)
                         {
-                            while (x < imageWidth && wrb.GetPixel(x, y).R < 128 && runLength < runLengthLimit)
+                            while (x < imageWidth && wrb.GetPixel(x, y).R <= 128 && runLength < runLengthLimit)
                             {
                                 runLength++;
                                 if (runLength < runLengthLimit)
@@ -272,7 +212,7 @@ namespace MakerLib
                         }
                         else
                         {
-                            while (x < imageWidth && wrb.GetPixel(x, y).R < 128 && wrb.GetPixel(x, y - 1).R > 128 && runLength < runLengthLimit)
+                            while (x < imageWidth && wrb.GetPixel(x, y).R <= 128 && wrb.GetPixel(x, y - 1).R > 128 && runLength < runLengthLimit)
                             {
                                 runLength++;
                                 if (runLength < runLengthLimit)
@@ -300,6 +240,66 @@ namespace MakerLib
             }
         }
 
+        private void ProcessImage()
+        {
+            BitmapImage bitmap;
+            DrawingVisual drawingVisual = new DrawingVisual();
+            DrawingContext drawingContext = drawingVisual.RenderOpen();
+
+            BitmapImage plaqueBitmap = new BitmapImage();
+            plaqueBitmap.BeginInit();
+            plaqueBitmap.UriSource = new Uri(plaqueImagePath);
+            plaqueBitmap.EndInit();
+
+            // Create a FormatConvertedBitmap
+            FormatConvertedBitmap bwBitmapSource = new FormatConvertedBitmap();
+
+            // BitmapSource objects like FormatConvertedBitmap can only have their properties
+            // changed within a BeginInit/EndInit block.
+            bwBitmapSource.BeginInit();
+
+            // Use the BitmapSource object defined above as the source for this new
+            // BitmapSource (chain the BitmapSource objects together).
+            bwBitmapSource.Source = plaqueBitmap;
+
+            // Key of changing the bitmap format is DesitnationFormat property of BitmapSource.
+            // It is a type of PixelFormat. FixelFormat has dozens of options to set
+            // bitmap formatting.
+            bwBitmapSource.DestinationFormat = PixelFormats.BlackWhite;
+            bwBitmapSource.EndInit();
+
+            imageWidth = (int)(Math.Ceiling(bwBitmapSource.Width)) + 2;
+            imageHeight = (int)(Math.Ceiling(bwBitmapSource.Height)) + 2;
+            drawingContext.DrawRectangle(System.Windows.Media.Brushes.White, new System.Windows.Media.Pen(System.Windows.Media.Brushes.White, 1), new Rect(0, 0, imageWidth, imageHeight));
+            drawingContext.DrawImage(bwBitmapSource, new Rect(1, 1, bwBitmapSource.Width, bwBitmapSource.Height));
+
+            drawingContext.Close();
+
+            RenderTargetBitmap bmp = new RenderTargetBitmap(imageWidth, imageHeight, 96, 96, PixelFormats.Default);
+            bmp.Render(drawingVisual);
+            bitmap = new BitmapImage();
+            var bitmapEncoder = new PngBitmapEncoder();
+            bitmapEncoder.Frames.Add(BitmapFrame.Create(bmp));
+
+            using (var stream = new MemoryStream())
+            {
+                bitmapEncoder.Save(stream);
+                stream.Seek(0, SeekOrigin.Begin);
+                bitmap.BeginInit();
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.StreamSource = stream;
+                bitmap.EndInit();
+            }
+
+            WriteableBitmap wrb = new WriteableBitmap(bmp);
+            CreateOctree(new Point3D(-1, -0.1, -1), new Point3D(imageWidth + 1, plagueThickness + 0.1, imageHeight + 1));
+            NorthEdges(wrb);
+            SouthEdges(wrb);
+            WestEdges(wrb);
+            EastEdges(wrb);
+            FrontAndBack(wrb);
+        }
+
         private void SouthEdges(WriteableBitmap wrb)
         {
             int y = 0;
@@ -319,7 +319,7 @@ namespace MakerLib
                         int start = x;
                         if (y == imageHeight - 1)
                         {
-                            while (x < imageWidth && wrb.GetPixel(x, y).R < 128 && runLength < runLengthLimit)
+                            while (x < imageWidth && wrb.GetPixel(x, y).R <= 128 && runLength < runLengthLimit)
                             {
                                 runLength++;
                                 x++;
@@ -327,7 +327,7 @@ namespace MakerLib
                         }
                         else
                         {
-                            while (x < imageWidth && wrb.GetPixel(x, y).R < 128 && wrb.GetPixel(x, y + 1).R > 128)
+                            while (x < imageWidth && wrb.GetPixel(x, y).R <= 128 && wrb.GetPixel(x, y + 1).R > 128)
                             {
                                 runLength++;
                                 x++;
@@ -371,7 +371,7 @@ namespace MakerLib
                         int start = y;
                         if (x == 0)
                         {
-                            while (y < imageHeight && wrb.GetPixel(x, y).R < 128 && runLength < runLengthLimit)
+                            while (y < imageHeight && wrb.GetPixel(x, y).R <= 128 && runLength < runLengthLimit)
                             {
                                 runLength++;
                                 if (runLength < runLengthLimit)
@@ -382,7 +382,7 @@ namespace MakerLib
                         }
                         else
                         {
-                            while (y < imageHeight && wrb.GetPixel(x, y).R < 128 && wrb.GetPixel(x - 1, y).R > 128 && runLength < runLengthLimit)
+                            while (y < imageHeight && wrb.GetPixel(x, y).R <= 128 && wrb.GetPixel(x - 1, y).R > 128 && runLength < runLengthLimit)
                             {
                                 runLength++;
                                 if (runLength < runLengthLimit)

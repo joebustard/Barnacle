@@ -657,6 +657,7 @@ namespace Barnacle.Dialogs
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            NotBusy();
             WarningText = "";
             LoadEditorParameters();
             UpdateCameraPos();

@@ -187,6 +187,19 @@ Procedure MyProc( double px, double py, double pz, double l, double h, double w 
                         }
                         break;
 
+                    case "BlankProcedure":
+                        {
+                            ins =
+ @"
+// Name       :
+// Does       :
+// Parameters :
+Procedure MyProc(  )
+{
+}";
+                        }
+                        break;
+
                     case "FuncHead":
                         {
                             ins =
@@ -231,11 +244,13 @@ Procedure MyProc( double px, double py, double pz, double l, double h, double w 
             bool ok = false;
             TextRange tr = new TextRange(ScriptBox.Document.ContentStart, ScriptBox.Document.ContentEnd);
             string scriptText = tr.Text;
-
-            if (vm.ScriptText(scriptText))
+            if (vm.EnableRun)
             {
-                SetDisplayRtf();
-                ok = true;
+                if (vm.ScriptText(scriptText))
+                {
+                    SetDisplayRtf();
+                    ok = true;
+                }
             }
             return ok;
         }
@@ -247,7 +262,6 @@ Procedure MyProc( double px, double py, double pz, double l, double h, double w 
             if (RefreshInterpreterSource())
             {
                 vm.RunScript();
-                // CopyLanguageLogs();
             }
         }
 

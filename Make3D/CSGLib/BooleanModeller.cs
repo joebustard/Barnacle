@@ -63,19 +63,12 @@ namespace CSGLib
     public class BooleanModeller
     {
         /** solid where boolean operations will be applied */
+        private static CancellationToken cancelToken;
+        private static CSGGroupProgress currentProgress = new CSGGroupProgress();
         private Part Object1;
         private Part Object2;
 
         private Solid resultObject;
-
-        public enum OperationType
-        {
-            Union,
-            Difference,
-            Intersection,
-            ReverseDifference,
-            ForceUnion
-        }
 
         public BooleanModeller(Solid solid1, Solid solid2)
         {
@@ -117,109 +110,72 @@ namespace CSGLib
         {
         }
 
-        public struct OpResult
+        public enum OperationType
         {
-            public CSGState OperationStatus;
-            public Solid ResultObject;
+            Union,
+            Difference,
+            Intersection,
+            ReverseDifference,
+            ForceUnion
         }
 
-        public async Task<OpResult> DoModelOperationAsync(Point3DCollection lp, Int32Collection li,
-                                    Point3DCollection rp, Int32Collection ri,
-                                    OperationType op, CancellationTokenSource csgCancelation, IProgress<CSGGroupProgress> progress)
+        public CSGState State { get; set; }
+
+        public static void ReportProgress(string v1, int v2, IProgress<CSGGroupProgress> progress)
         {
-            Point3D minPnt = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
-            Point3D maxPnt = new Point3D(double.MinValue, double.MinValue, double.MinValue);
-
-            BlockingCollection<Point3D> lpnts = new BlockingCollection<Point3D>();
-            foreach (Point3D p in lp)
+            if (progress != null)
             {
-                minPnt = MinPoint(minPnt, p);
-                maxPnt = MaxPoint(maxPnt, p);
+                currentProgress.Text = v1;
+                currentProgress.Val = v2;
+                progress.Report(currentProgress);
+            }
+        }
 
-                lpnts.Add(new Point3D(p.X, p.Y, p.Z));
+        public Solid ComposeSolid(Status faceStatus1, Status faceStatus2, Status faceStatus3, Part Object1, Part Object2)
+        {
+            Vertex min1;
+            Vertex max1;
+            Vertex min2;
+            Vertex max2;
+            Object1.octTree.Bounds(out min1, out max1);
+            Object2.octTree.Bounds(out min2, out max2);
+            double minx, miny, minz;
+            double maxx, maxy, maxz;
+            minx = Math.Min(min1.Position.X, min2.Position.X);
+            miny = Math.Min(min1.Position.Y, min2.Position.Y);
+            minz = Math.Min(min1.Position.Z, min2.Position.Z);
+
+            maxx = Math.Max(max1.Position.X, max2.Position.X);
+            maxy = Math.Max(max1.Position.Y, max2.Position.Y);
+            maxz = Math.Max(max1.Position.Z, max2.Position.Z);
+
+            Vertex min = new Vertex(minx, miny, minz);
+            Vertex max = new Vertex(maxx, maxy, maxz);
+
+            var vertices = new List<Vertex>();
+            var indices = new List<int>();
+            OctTree octTree = new OctTree(vertices, min, max, 100);
+
+            //group the elements of the two solids whose faces fit with the desired status
+            GroupObjectComponents(octTree, Object1, vertices, indices, faceStatus1, faceStatus2);
+            // GroupObjectComponents(Object2, vertices, indices, faceStatus3, faceStatus3);
+            GroupObjectComponents(octTree, Object2, vertices, indices, faceStatus3, faceStatus3);
+
+            //turn the arrayLists to arrays
+            Vector3D[] verticesArray = new Vector3D[vertices.Count];
+            for (int i = 0; i < vertices.Count; i++)
+            {
+                verticesArray[i] = vertices[i].Position;
+            }
+            int[] indicesArray = new int[indices.Count];
+            for (int i = 0; i < indices.Count; i++)
+            {
+                indicesArray[i] = indices[i];
             }
 
-            BlockingCollection<int> lint = new BlockingCollection<int>();
-            foreach (int i in li)
-            {
-                lint.Add(i);
-            }
-            BlockingCollection<Point3D> rpnts = new BlockingCollection<Point3D>();
-            foreach (Point3D p in rp)
-            {
-                minPnt = MinPoint(minPnt, p);
-                maxPnt = MaxPoint(maxPnt, p);
-
-                rpnts.Add(new Point3D(p.X, p.Y, p.Z));
-            }
-
-            BlockingCollection<int> rint = new BlockingCollection<int>();
-            foreach (int i in ri)
-            {
-                rint.Add(i);
-            }
-            return await Task.Run(() =>
-            {
-                BooleanModeller btmp = new BooleanModeller();
-                btmp.SetCancelationToken(csgCancelation.Token);
-                OpResult res;
-                if (op == OperationType.ForceUnion)
-                {
-                    Point3DCollection vertices = new Point3DCollection();
-                    Int32Collection faces = new Int32Collection();
-                    OctTreeLib.OctTree octree = new OctTreeLib.OctTree(vertices, minPnt, maxPnt, 200);
-
-                    foreach (int f in li)
-                    {
-                        var sp = lp[f];
-                        Point3D p = new Point3D(sp.X, sp.Y, sp.Z);
-                        int nf = octree.AddPoint(p);
-                        faces.Add(nf);
-                    }
-                    foreach (int f in ri)
-                    {
-                        var sp = rp[f];
-                        Point3D p = new Point3D(sp.X, sp.Y, sp.Z);
-                        int nf = octree.AddPoint(p);
-                        faces.Add(nf);
-                    }
-                    res.OperationStatus = CSGState.Good;
-                    res.ResultObject = new Solid(vertices, faces, false);
-                }
-                else
-                {
-                    res = btmp.DoModelOperation(lpnts, lint, rpnts, rint, op, progress);
-                }
-                return res;
-            }, csgCancelation.Token).ConfigureAwait(true);
+            //returns the solid containing the grouped elements
+            return new Solid(verticesArray, indicesArray);
         }
-
-        private Point3D MaxPoint(Point3D p1, Point3D p2)
-        {
-            return new Point3D(
-            Math.Max(p1.X, p2.X),
-            Math.Max(p1.Y, p2.Y),
-            Math.Max(p1.Z, p2.Z)
-            );
-        }
-
-        private Point3D MinPoint(Point3D p1, Point3D p2)
-        {
-            return new Point3D(
-           Math.Min(p1.X, p2.X),
-           Math.Min(p1.Y, p2.Y),
-           Math.Min(p1.Z, p2.Z)
-           );
-        }
-
-        private static CancellationToken cancelToken;
-
-        public void SetCancelationToken(CancellationToken cancellationToken)
-        {
-            cancelToken = cancellationToken;
-        }
-
-        private static CSGGroupProgress currentProgress = new CSGGroupProgress();
 
         public OpResult DoModelOperation(BlockingCollection<Point3D> blp, BlockingCollection<int> bli,
                                       BlockingCollection<Point3D> brp, BlockingCollection<int> bri,
@@ -356,26 +312,77 @@ namespace CSGLib
             return opresult;
         }
 
-        public static void ReportProgress(string v1, int v2, IProgress<CSGGroupProgress> progress)
+        public async Task<OpResult> DoModelOperationAsync(Point3DCollection lp, Int32Collection li,
+                                    Point3DCollection rp, Int32Collection ri,
+                                    OperationType op, CancellationTokenSource csgCancelation, IProgress<CSGGroupProgress> progress)
         {
-            if (progress != null)
+            Point3D minPnt = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
+            Point3D maxPnt = new Point3D(double.MinValue, double.MinValue, double.MinValue);
+
+            BlockingCollection<Point3D> lpnts = new BlockingCollection<Point3D>();
+            foreach (Point3D p in lp)
             {
-                currentProgress.Text = v1;
-                currentProgress.Val = v2;
-                progress.Report(currentProgress);
+                minPnt = MinPoint(minPnt, p);
+                maxPnt = MaxPoint(maxPnt, p);
+
+                lpnts.Add(new Point3D(p.X, p.Y, p.Z));
             }
+
+            BlockingCollection<int> lint = new BlockingCollection<int>();
+            foreach (int i in li)
+            {
+                lint.Add(i);
+            }
+            BlockingCollection<Point3D> rpnts = new BlockingCollection<Point3D>();
+            foreach (Point3D p in rp)
+            {
+                minPnt = MinPoint(minPnt, p);
+                maxPnt = MaxPoint(maxPnt, p);
+
+                rpnts.Add(new Point3D(p.X, p.Y, p.Z));
+            }
+
+            BlockingCollection<int> rint = new BlockingCollection<int>();
+            foreach (int i in ri)
+            {
+                rint.Add(i);
+            }
+            return await Task.Run(() =>
+            {
+                BooleanModeller btmp = new BooleanModeller();
+                btmp.SetCancelationToken(csgCancelation.Token);
+                OpResult res;
+                if (op == OperationType.ForceUnion)
+                {
+                    Point3DCollection vertices = new Point3DCollection();
+                    Int32Collection faces = new Int32Collection();
+                    OctTreeLib.OctTree octree = new OctTreeLib.OctTree(vertices, minPnt, maxPnt, 200);
+                    Point3D[] lps = lpnts.ToArray();
+                    Int32[] lfs = lint.ToArray();
+                    for (int fi = 0; fi < lfs.GetLength(0); fi++)
+                    {
+                        Point3D pn = lps[lfs[fi]];
+                        int nf = octree.AddPoint(pn);
+                        faces.Add(nf);
+                    }
+                    lps = rpnts.ToArray();
+                    lfs = rint.ToArray();
+                    for (int fi = 0; fi < lfs.GetLength(0); fi++)
+                    {
+                        Point3D pn = lps[lfs[fi]];
+                        int nf = octree.AddPoint(pn);
+                        faces.Add(nf);
+                    }
+                    res.OperationStatus = CSGState.Good;
+                    res.ResultObject = new Solid(vertices, faces, false);
+                }
+                else
+                {
+                    res = btmp.DoModelOperation(lpnts, lint, rpnts, rint, op, progress);
+                }
+                return res;
+            }, csgCancelation.Token).ConfigureAwait(true);
         }
-
-        public CSGState State { get; set; }
-        //--------------------------------CONSTRUCTORS----------------------------------//
-
-        //-------------------------------BOOLEAN_OPERATIONS-----------------------------//
-
-        /**
-        * Gets the solid generated by the union of the two solids submitted to the constructor
-        *
-        * @return solid generated by the union of the two solids submitted to the constructor
-        */
 
         public Solid GetDifference()
         {
@@ -408,17 +415,10 @@ namespace CSGLib
             return ComposeSolid(Status.OUTSIDE, Status.SAME, Status.OUTSIDE);
         }
 
-        //--------------------------PRIVATES--------------------------------------------//
-
-        /**
-        * Composes a solid based on the faces status of the two operators solids:
-        * Status.INSIDE, Status.OUTSIDE, Status.SAME, Status.OPPOSITE
-        *
-        * @param faceStatus1 status expected for the first solid faces
-        * @param faceStatus2 other status expected for the first solid faces
-        * (expected a status for the faces coincident with second solid faces)
-        * @param faceStatus3 status expected for the second solid faces
-        */
+        public void SetCancelationToken(CancellationToken cancellationToken)
+        {
+            cancelToken = cancellationToken;
+        }
 
         private Solid ComposeSolid(Status faceStatus1, Status faceStatus2, Status faceStatus3)
         {
@@ -466,63 +466,6 @@ namespace CSGLib
             return new Solid(verticesArray, indicesArray);
         }
 
-        public Solid ComposeSolid(Status faceStatus1, Status faceStatus2, Status faceStatus3, Part Object1, Part Object2)
-        {
-            Vertex min1;
-            Vertex max1;
-            Vertex min2;
-            Vertex max2;
-            Object1.octTree.Bounds(out min1, out max1);
-            Object2.octTree.Bounds(out min2, out max2);
-            double minx, miny, minz;
-            double maxx, maxy, maxz;
-            minx = Math.Min(min1.Position.X, min2.Position.X);
-            miny = Math.Min(min1.Position.Y, min2.Position.Y);
-            minz = Math.Min(min1.Position.Z, min2.Position.Z);
-
-            maxx = Math.Max(max1.Position.X, max2.Position.X);
-            maxy = Math.Max(max1.Position.Y, max2.Position.Y);
-            maxz = Math.Max(max1.Position.Z, max2.Position.Z);
-
-            Vertex min = new Vertex(minx, miny, minz);
-            Vertex max = new Vertex(maxx, maxy, maxz);
-
-            var vertices = new List<Vertex>();
-            var indices = new List<int>();
-            OctTree octTree = new OctTree(vertices, min, max, 100);
-
-            //group the elements of the two solids whose faces fit with the desired status
-            GroupObjectComponents(octTree, Object1, vertices, indices, faceStatus1, faceStatus2);
-            // GroupObjectComponents(Object2, vertices, indices, faceStatus3, faceStatus3);
-            GroupObjectComponents(octTree, Object2, vertices, indices, faceStatus3, faceStatus3);
-
-            //turn the arrayLists to arrays
-            Vector3D[] verticesArray = new Vector3D[vertices.Count];
-            for (int i = 0; i < vertices.Count; i++)
-            {
-                verticesArray[i] = vertices[i].Position;
-            }
-            int[] indicesArray = new int[indices.Count];
-            for (int i = 0; i < indices.Count; i++)
-            {
-                indicesArray[i] = indices[i];
-            }
-
-            //returns the solid containing the grouped elements
-            return new Solid(verticesArray, indicesArray);
-        }
-
-        /**
-        * Fills solid arrays with data about faces of an object generated whose status
-        * is as required
-        *
-        * @param object3d solid object used to fill the arrays
-        * @param vertices vertices array to be filled
-        * @param indices indices array to be filled
-        * @param faceStatus1 a status expected for the faces used to to fill the data arrays
-        * @param faceStatus2 a status expected for the faces used to to fill the data arrays
-        */
-
         private void GroupObjectComponents(OctTree octTree, Part obj, List<Vertex> vertices, List<int> indices, Status faceStatus1, Status faceStatus2)
         {
             Face face;
@@ -551,5 +494,60 @@ namespace CSGLib
                 }
             }
         }
+
+        private Point3D MaxPoint(Point3D p1, Point3D p2)
+        {
+            return new Point3D(
+            Math.Max(p1.X, p2.X),
+            Math.Max(p1.Y, p2.Y),
+            Math.Max(p1.Z, p2.Z)
+            );
+        }
+
+        private Point3D MinPoint(Point3D p1, Point3D p2)
+        {
+            return new Point3D(
+           Math.Min(p1.X, p2.X),
+           Math.Min(p1.Y, p2.Y),
+           Math.Min(p1.Z, p2.Z)
+           );
+        }
+
+        public struct OpResult
+        {
+            public CSGState OperationStatus;
+            public Solid ResultObject;
+        }
+
+        //--------------------------------CONSTRUCTORS----------------------------------//
+
+        //-------------------------------BOOLEAN_OPERATIONS-----------------------------//
+
+        /**
+        * Gets the solid generated by the union of the two solids submitted to the constructor
+        *
+        * @return solid generated by the union of the two solids submitted to the constructor
+        */
+        //--------------------------PRIVATES--------------------------------------------//
+
+        /**
+        * Composes a solid based on the faces status of the two operators solids:
+        * Status.INSIDE, Status.OUTSIDE, Status.SAME, Status.OPPOSITE
+        *
+        * @param faceStatus1 status expected for the first solid faces
+        * @param faceStatus2 other status expected for the first solid faces
+        * (expected a status for the faces coincident with second solid faces)
+        * @param faceStatus3 status expected for the second solid faces
+        */
+        /**
+        * Fills solid arrays with data about faces of an object generated whose status
+        * is as required
+        *
+        * @param object3d solid object used to fill the arrays
+        * @param vertices vertices array to be filled
+        * @param indices indices array to be filled
+        * @param faceStatus1 a status expected for the faces used to to fill the data arrays
+        * @param faceStatus2 a status expected for the faces used to to fill the data arrays
+        */
     }
 }

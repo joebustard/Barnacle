@@ -19,6 +19,8 @@ namespace Barnacle.ViewModels
 {
     internal class ScriptViewModel : BaseViewModel, INotifyPropertyChanged
     {
+        public bool enableRun;
+
         private const String defaultSource = @"
 program ""Script Name""
 {
@@ -29,6 +31,7 @@ program ""Script Name""
 ";
 
         private static Action EmptyDelegate = delegate () { };
+        private static CancellationTokenSource s_cts;
         private Axies axies;
         private PolarCamera camera;
         private CameraModes cameraMode;
@@ -106,6 +109,19 @@ program ""Script Name""
         }
 
         public bool Dirty { get; set; }
+
+        public bool EnableRun
+        {
+            get { return enableRun; }
+            set
+            {
+                if (enableRun != value)
+                {
+                    enableRun = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public ICommand FindCommand { get; set; }
 
@@ -236,21 +252,6 @@ program ""Script Name""
             }
         }
 
-        public bool enableRun;
-
-        public bool EnableRun
-        {
-            get { return enableRun; }
-            set
-            {
-                if (enableRun != value)
-                {
-                    enableRun = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
         public int SelectedTabIndex
         {
             get
@@ -300,6 +301,8 @@ program ""Script Name""
         {
             ResultsText = "";
             Refresh(resultsBox);
+            content.Clear();
+            RegenerateDisplayList();
         }
 
         public void RegenerateDisplayList()
@@ -336,6 +339,15 @@ program ""Script Name""
             NotifyPropertyChanged("ModelItems");
         }
 
+        public void SwitchTabs()
+        {
+            if (SelectedTabIndex == 0)
+            {
+                richTextBox.RecordCurrentPosition();
+            }
+            SelectedTabIndex = 1 - SelectedTabIndex;
+        }
+
         internal void Escape()
         {
             if (s_cts != null && !s_cts.IsCancellationRequested)
@@ -344,15 +356,6 @@ program ""Script Name""
                 Logging.Log.Instance().AddEntry("Cancelled by user");
                 EnableRun = true;
             }
-        }
-
-        public void SwitchTabs()
-        {
-            if (SelectedTabIndex == 0)
-            {
-                richTextBox.RecordCurrentPosition();
-            }
-            SelectedTabIndex = 1 - SelectedTabIndex;
         }
 
         internal void KeyDown(Key key, bool v1, bool v2)
@@ -415,8 +418,6 @@ program ""Script Name""
             }
         }
 
-        private static CancellationTokenSource s_cts;
-
         internal async void RunScript()
         {
             EnableRun = false;
@@ -433,7 +434,10 @@ program ""Script Name""
                 }
             }
             content.Clear();
+            GC.Collect();
             script.SetPartsLibraryRoot(GetPartsLibraryPath());
+            script.SetProjectPathRoot(Project.BaseFolder);
+
             //  script.SetResultsContent(content);
             ClearResults();
             Refresh(resultsBox);
@@ -465,39 +469,12 @@ program ""Script Name""
             {
                 Logging.Log.Instance().AddEntry("Failed");
             }
+            res.Artefacts.Clear();
+            res.LogEntrys.Clear();
+            GC.Collect();
             Refresh(resultsBox);
             RegenerateDisplayList();
             EnableRun = true;
-        }
-
-        private struct RunRes
-        {
-            public bool Status { get; set; }
-            public Dictionary<int,Object3D> Artefacts { get; set; }
-            public List<ScriptLanguage.LogEntry> LogEntrys { get; set; }
-        }
-
-        private Task<RunRes> RunAsync(CancellationToken cancellationToken)
-        {
-            return Task.Run(() =>
-                {
-                    RunRes result = new RunRes();
-                    result.Artefacts = new Dictionary<int,Object3D>();
-                    result.LogEntrys = new List<ScriptLanguage.LogEntry>();
-                    script.SetResultsContent(result.Artefacts);
-                    script.SetCancelationToken(cancellationToken);
-                    result.Status = script.Execute();
-
-                    if (!cancellationToken.IsCancellationRequested)
-                    {
-                        foreach (ScriptLanguage.LogEntry le in ScriptLanguage.Log.Instance().LogEntrys)
-                        {
-                            result.LogEntrys.Add(new ScriptLanguage.LogEntry(le.DateStamp, le.Text));
-                        }
-                    }
-                    ScriptLanguage.Log.Instance().Clear();
-                    return result;
-                });
         }
 
         internal bool ScriptText(string scriptText)
@@ -540,6 +517,40 @@ program ""Script Name""
             mtb.Brush = new SolidColorBrush(Colors.Black);
             gm.BackMaterial = mtb;
             return gm;
+        }
+
+        private void CheckForSave()
+        {
+            if (Dirty == true && filePath != "")
+            {
+                MessageBoxResult res = MessageBox.Show("Script changed." + System.Environment.NewLine + "Save changes before closing?", "Warning", MessageBoxButton.YesNo);
+                if (res == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        File.WriteAllText(filePath, Source);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                }
+            }
+            BaseViewModel.ScriptResults = null;
+            BaseViewModel.ScriptClearBed = false;
+            if (content.Count > 0)
+            {
+                MessageBoxResult res = MessageBox.Show("Objects have been created. Do you want to save them in the model?", "Warning", MessageBoxButton.YesNo);
+                if (res == MessageBoxResult.Yes)
+                {
+                    BaseViewModel.ScriptResults = content;
+                    res = MessageBox.Show("Clear existing objects in the  model?", "Warning", MessageBoxButton.YesNo);
+                    if (res == MessageBoxResult.Yes)
+                    {
+                        BaseViewModel.ScriptClearBed = true;
+                    }
+                }
+            }
         }
 
         private TextPointer GetTextPositionAtOffset(TextPointer position, int characterCount)
@@ -601,40 +612,6 @@ program ""Script Name""
         private void OnLimpetClosing(object param)
         {
             CheckForSave();
-        }
-
-        private void CheckForSave()
-        {
-            if (Dirty == true && filePath != "")
-            {
-                MessageBoxResult res = MessageBox.Show("Script changed." + System.Environment.NewLine + "Save changes before closing?", "Warning", MessageBoxButton.YesNo);
-                if (res == MessageBoxResult.Yes)
-                {
-                    try
-                    {
-                        File.WriteAllText(filePath, Source);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                    }
-                }
-            }
-            BaseViewModel.ScriptResults = null;
-            BaseViewModel.ScriptClearBed = false;
-            if (content.Count > 0)
-            {
-                MessageBoxResult res = MessageBox.Show("Objects have been created. Do you want to save them in the model?", "Warning", MessageBoxButton.YesNo);
-                if (res == MessageBoxResult.Yes)
-                {
-                    BaseViewModel.ScriptResults = content;
-                    res = MessageBox.Show("Clear existing objects in the  model?", "Warning", MessageBoxButton.YesNo);
-                    if (res == MessageBoxResult.Yes)
-                    {
-                        BaseViewModel.ScriptClearBed = true;
-                    }
-                }
-            }
         }
 
         private void OnLimpetLoaded(object param)
@@ -713,7 +690,42 @@ program ""Script Name""
                         NotificationManager.Notify("InsertIntoScript", "SolidFunction");
                     }
                     break;
+
+                case "procedure":
+                    {
+                        NotificationManager.Notify("InsertIntoScript", "Procedure");
+                    }
+                    break;
+
+                case "blankprocedure":
+                    {
+                        NotificationManager.Notify("InsertIntoScript", "BlankProcedure");
+                    }
+                    break;
             }
+        }
+
+        private Task<RunRes> RunAsync(CancellationToken cancellationToken)
+        {
+            return Task.Run(() =>
+                {
+                    RunRes result = new RunRes();
+                    result.Artefacts = new Dictionary<int, Object3D>();
+                    result.LogEntrys = new List<ScriptLanguage.LogEntry>();
+                    script.SetResultsContent(result.Artefacts);
+                    script.SetCancelationToken(cancellationToken);
+                    result.Status = script.Execute();
+
+                    if (!cancellationToken.IsCancellationRequested)
+                    {
+                        foreach (ScriptLanguage.LogEntry le in ScriptLanguage.Log.Instance().LogEntrys)
+                        {
+                            result.LogEntrys.Add(new ScriptLanguage.LogEntry(le.DateStamp, le.Text));
+                        }
+                    }
+                    ScriptLanguage.Log.Instance().Clear();
+                    return result;
+                });
         }
 
         private void UpdateText(string s)
@@ -748,6 +760,13 @@ program ""Script Name""
             double diff = 100 - zoomPercent;
             Zoom(diff);
             zoomPercent = 100;
+        }
+
+        private struct RunRes
+        {
+            public Dictionary<int, Object3D> Artefacts { get; set; }
+            public List<ScriptLanguage.LogEntry> LogEntrys { get; set; }
+            public bool Status { get; set; }
         }
     }
 }

@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BicornMaker.cs" />
+    <Compile Include="ParameterLimits.cs" />
     <Compile Include="HollowPolyMaker.cs" />
     <Compile Include="LerpBox\LerpBox.cs" />
     <Compile Include="LerpBox\Voxel.cs" />

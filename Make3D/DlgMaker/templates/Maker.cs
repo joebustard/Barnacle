@@ -10,9 +10,21 @@ namespace MakerLib
     {
         //FIELDS
 
-        public TOOLNAMEMaker( /*CONSTRUCTORPARAMS*/ )
+        public TOOLNAMEMaker(  )
+        {
+            paramLimits = new ParamLimits();
+            SetLimits();
+        }
+
+        public void SetValues ( /*CONSTRUCTORPARAMS*/
+                              )
         {
             //FIELDCOPY
+        }
+
+        private void SetLimits()
+        {
+           //LIMITS
         }
 
         public void Generate(Point3DCollection pnts, Int32Collection faces)

@@ -57,55 +57,14 @@ namespace CSGLib
 
         /** Constructs an empty solid. */
 
+        private Vertex max;
+
+        private Vertex min;
+
         public Solid()
         {
             SetInitialFeatures();
         }
-
-        public void DumpResult()
-        {
-            Logger.Log("Results\r\n======\r\n");
-            Logger.Log($"Number Of vertice {Vertices.Length}\r\n");
-            Logger.Log($"Number Of indices {Indices.Length}\r\n");
-
-            for (int i = 0; i < Vertices.Length; i++)
-            {
-                Logger.Log($"Vertex {i}, {Vertices[i].X:F3},{Vertices[i].Y:F3},{Vertices[i].Z:F3}\r\n");
-            }
-            int face = 0;
-            for (int i = 0; i < Indices.Length; i += 3)
-            {
-                Logger.Log($"Face {face}\r\n");
-                Logger.Log($" {Vertices[Indices[i]].X},{Vertices[Indices[i]].Y},{Vertices[Indices[i]].Z}\r\n");
-                Logger.Log($" {Vertices[Indices[i + 1]].X},{Vertices[Indices[i + 1]].Y},{Vertices[Indices[i + 1]].Z}\r\n");
-                Logger.Log($" {Vertices[Indices[i + 2]].X},{Vertices[Indices[i + 2]].Y},{Vertices[Indices[i + 2]].Z}\r\n\r\n");
-                face++;
-            }
-        }
-
-        private Vertex min;
-
-        public Vertex Minimum
-        {
-            get { return min; }
-        }
-
-        private Vertex max;
-
-        public Vertex Maximum
-        {
-            get { return max; }
-        }
-
-        /**
-        * Construct a solid based on data arrays. An exception may occur in the case of
-        * abnormal arrays (indices making references to inexistent vertices, there are less
-        * colors than vertices...)
-        *
-        * @param vertices array of points defining the solid vertices
-        * @param indices array of indices for a array of vertices
-        * @param colors array of colors defining the vertices colors
-        */
 
         public Solid(Point3DCollection vertices, Int32Collection indices, bool switchWindingOrder) : this()
         {
@@ -157,18 +116,21 @@ namespace CSGLib
                 int face = 0;
                 for (int i = 0; i < indices.Count; i += 3)
                 {
-                    Indices[i] = indices[i];
-                    if (switchWindingOrder)
+                    if (i + 2 < indices.Count)
                     {
-                        Indices[i + 1] = indices[i + 2];
-                        Indices[i + 2] = indices[i + 1];
+                        Indices[i] = indices[i];
+                        if (switchWindingOrder)
+                        {
+                            Indices[i + 1] = indices[i + 2];
+                            Indices[i + 2] = indices[i + 1];
+                        }
+                        else
+                        {
+                            Indices[i + 1] = indices[i + 1];
+                            Indices[i + 2] = indices[i + 2];
+                        }
+                        face++;
                     }
-                    else
-                    {
-                        Indices[i + 1] = indices[i + 1];
-                        Indices[i + 2] = indices[i + 2];
-                    }
-                    face++;
                 }
             }
         }
@@ -178,21 +140,56 @@ namespace CSGLib
             SetData(vertices, indices);
         }
 
-        /** Sets the initial features common to all constructors */
+        public bool IsEmpty => Indices.Length == 0;
 
-        protected void SetInitialFeatures()
+        public Vertex Maximum
         {
-            Vertices = new Vector3D[0];
-            Indices = new int[0];
+            get { return max; }
         }
 
-        //---------------------------------------GETS-----------------------------------//
+        public Vertex Minimum
+        {
+            get { return min; }
+        }
+
+        public void DumpResult()
+        {
+            Logger.Log("Results\r\n======\r\n");
+            Logger.Log($"Number Of vertice {Vertices.Length}\r\n");
+            Logger.Log($"Number Of indices {Indices.Length}\r\n");
+
+            for (int i = 0; i < Vertices.Length; i++)
+            {
+                Logger.Log($"Vertex {i}, {Vertices[i].X:F3},{Vertices[i].Y:F3},{Vertices[i].Z:F3}\r\n");
+            }
+            int face = 0;
+            for (int i = 0; i < Indices.Length; i += 3)
+            {
+                Logger.Log($"Face {face}\r\n");
+                Logger.Log($" {Vertices[Indices[i]].X},{Vertices[Indices[i]].Y},{Vertices[Indices[i]].Z}\r\n");
+                Logger.Log($" {Vertices[Indices[i + 1]].X},{Vertices[Indices[i + 1]].Y},{Vertices[Indices[i + 1]].Z}\r\n");
+                Logger.Log($" {Vertices[Indices[i + 2]].X},{Vertices[Indices[i + 2]].Y},{Vertices[Indices[i + 2]].Z}\r\n\r\n");
+                face++;
+            }
+        }
 
         /**
-        * Gets the solid vertices
+        * Construct a solid based on data arrays. An exception may occur in the case of
+        * abnormal arrays (indices making references to inexistent vertices, there are less
+        * colors than vertices...)
         *
-        * @return solid vertices
+        * @param vertices array of points defining the solid vertices
+        * @param indices array of indices for a array of vertices
+        * @param colors array of colors defining the vertices colors
         */
+        /** Sets the initial features common to all constructors */
+
+        public int[] GetIndices()
+        {
+            int[] newIndices = new int[Indices.Length];
+            Array.Copy(Indices, 0, newIndices, 0, Indices.Length);
+            return newIndices;
+        }
 
         public Vector3D[] GetVertices()
         {
@@ -203,37 +200,6 @@ namespace CSGLib
             }
             return newVertices;
         }
-
-        /** Gets the solid indices for its vertices
-        *
-        * @return solid indices for its vertices
-        */
-
-        public int[] GetIndices()
-        {
-            int[] newIndices = new int[Indices.Length];
-            Array.Copy(Indices, 0, newIndices, 0, Indices.Length);
-            return newIndices;
-        }
-
-        /**
-        * Gets if the solid is empty (without any vertex)
-        *
-        * @return true if the solid is empty, false otherwise
-        */
-        public bool IsEmpty => Indices.Length == 0;
-
-        //---------------------------------------SETS-----------------------------------//
-
-        /**
-        * Sets the solid data. Each vertex may have a different color. An exception may
-        * occur in the case of abnormal arrays (e.g., indices making references to
-        * inexistent vertices, there are less colors than vertices...)
-        *
-        * @param vertices array of points defining the solid vertices
-        * @param indices array of indices for a array of vertices
-        * @param colors array of colors defining the vertices colors
-        */
 
         public void SetData(Vector3D[] vertices, int[] indices)
         {
@@ -248,23 +214,6 @@ namespace CSGLib
                 Array.Copy(indices, 0, Indices, 0, indices.Length);
             }
         }
-
-        //-------------------------GEOMETRICAL_TRANSFORMATIONS-------------------------//
-
-        /**
-        * Applies a rotation into a solid
-        *
-        * @param dx rotation on the x axis
-        * @param dy rotation on the y axis
-        */
-
-        //-----------------------------------PRIVATES--------------------------------//
-
-        /**
-        * Gets the solid mean
-        *
-        * @return point representing the mean
-        */
 
         protected Vector3D GetMean()
         {
@@ -281,5 +230,55 @@ namespace CSGLib
 
             return mean;
         }
+
+        protected void SetInitialFeatures()
+        {
+            Vertices = new Vector3D[0];
+            Indices = new int[0];
+        }
+
+        //---------------------------------------GETS-----------------------------------//
+
+        /**
+        * Gets the solid vertices
+        *
+        * @return solid vertices
+        */
+        /** Gets the solid indices for its vertices
+        *
+        * @return solid indices for its vertices
+        */
+        /**
+        * Gets if the solid is empty (without any vertex)
+        *
+        * @return true if the solid is empty, false otherwise
+        */
+        //---------------------------------------SETS-----------------------------------//
+
+        /**
+        * Sets the solid data. Each vertex may have a different color. An exception may
+        * occur in the case of abnormal arrays (e.g., indices making references to
+        * inexistent vertices, there are less colors than vertices...)
+        *
+        * @param vertices array of points defining the solid vertices
+        * @param indices array of indices for a array of vertices
+        * @param colors array of colors defining the vertices colors
+        */
+        //-------------------------GEOMETRICAL_TRANSFORMATIONS-------------------------//
+
+        /**
+        * Applies a rotation into a solid
+        *
+        * @param dx rotation on the x axis
+        * @param dy rotation on the y axis
+        */
+
+        //-----------------------------------PRIVATES--------------------------------//
+
+        /**
+        * Gets the solid mean
+        *
+        * @return point representing the mean
+        */
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Media3D;
+using System.Runtime.CompilerServices;
 
 namespace Barnacle.Dialogs
 {
@@ -13,8 +14,21 @@ namespace Barnacle.Dialogs
     {
         private string warningText;
         private bool loaded;
-
+        private BlankMaker maker;
         //TOOLPROPS
+        private string ConstructToolTip(string p)
+        {
+            string res=";
+            if ( maker != null )
+            {
+              ParamLimit pl = maker.GetLimits(p);
+               if ( pl != null )
+              {
+                  res = $"{p} must be in the range {pl.Low} to {pl.High}";
+              }
+            }
+            return res;
+        }
 
         public BlankDlg()
         {
@@ -23,6 +37,7 @@ namespace Barnacle.Dialogs
             DataContext = this;
             ModelGroup = MyModelGroup;
             loaded = false;
+            maker = new BlankMaker();
         }
 
         public override bool ShowAxies
@@ -85,11 +100,20 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-            BlankMaker maker = new BlankMaker(
-                //MAKEPARAMETERS
+            maker.SetValues(//MAKEPARAMETERS
                 );
             maker.Generate(Vertices, Faces);
             CentreVertices();
+        }
+
+        private bool CheckRange(double v, [CallerMemberName] String propertyName = "")
+        {
+            bool res = false;
+            if (maker != null)
+            {
+                res = maker.CheckLimits(propertyName, v);
+            }
+            return res;
         }
 
         private void LoadEditorParameters()
@@ -117,7 +141,6 @@ namespace Barnacle.Dialogs
         {
             WarningText = "";
             LoadEditorParameters();
-
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             loaded = true;
@@ -133,6 +156,7 @@ namespace Barnacle.Dialogs
             //SETDEFAULTS
             loaded = true;
         }
+
         private void ResetDefaults(object sender, RoutedEventArgs e)
         {
             SetDefaults();

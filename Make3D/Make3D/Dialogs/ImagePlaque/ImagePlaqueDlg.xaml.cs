@@ -235,7 +235,9 @@ namespace Barnacle.Dialogs
             {
                 if (System.IO.File.Exists(dlg.FileName))
                 {
+                    loaded = false;
                     LoadImageAndConvertToGrayScale(dlg.FileName);
+                    loaded = true;
                     PlaqueImagePath = dlg.FileName;
                 }
             }

@@ -44,24 +44,6 @@ namespace Barnacle.Views
             vm = DataContext as DefaultViewModel;
         }
 
-        private void SwitchToObjectProperties(object param)
-        {
-            SolutionPanel.SelectedIndex = 2;
-        }
-
-        private void SelectedObjectChanged(object param)
-        {
-            if (param == null)
-            {
-                LibraryExplorer.LibraryAdd = false;
-            }
-            else
-            {
-                LibraryExplorer.LibraryAdd = true;
-            }
-            LibraryExplorer.Reload();
-        }
-
         public void CheckPoint()
         {
             if (BaseViewModel.Document != null)
@@ -163,8 +145,11 @@ namespace Barnacle.Views
 
         private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Scroller.Width = MyGrid.Width;
-            Scroller.Height = MyGrid.Height;
+            // Scroller.Width = MyGrid.Width;
+            // Scroller.Height = MyGrid.Height;
+
+            SubViewControl.Width = MyGrid.Width;
+            SubViewControl.Height = MyGrid.Height;
         }
 
         private void InsertFile(object sender)
@@ -405,6 +390,19 @@ namespace Barnacle.Views
         private void ScriptEditorClosed(object param)
         {
             vm.SwitchToView("Editor", false);
+        }
+
+        private void SelectedObjectChanged(object param)
+        {
+            if (param == null)
+            {
+                LibraryExplorer.LibraryAdd = false;
+            }
+            else
+            {
+                LibraryExplorer.LibraryAdd = true;
+            }
+            LibraryExplorer.Reload();
         }
 
         private void SetLibraryImageSource(string p)
@@ -869,6 +867,11 @@ namespace Barnacle.Views
             BaseViewModel.Document.SaveGlobalSettings();
         }
 
+        private void SwitchToObjectProperties(object param)
+        {
+            SolutionPanel.SelectedIndex = 2;
+        }
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             SolutionExplorer.SolutionChanged = SolutionChangeRequest;
@@ -876,6 +879,7 @@ namespace Barnacle.Views
 
             LibraryExplorer.SolutionChanged = SolutionChangeRequest;
             LibraryExplorer.ProjectChanged(BaseViewModel.PartLibraryProject, false);
+            NotificationManager.Notify("Refresh", null);
         }
     }
 }

@@ -75,17 +75,6 @@ namespace Barnacle.Object3DLib
             scale = groupScale;
         }
 
-        public override void DeThread()
-        {
-            Indices = new List<int>();
-            foreach (int i in TriangleIndices)
-            {
-                Indices.Add(i);
-            }
-            leftObject.DeThread();
-            rightObject.DeThread();
-        }
-
         public override Object3D Clone(bool useIndices = false)
         {
             Group3D res = new Group3D();
@@ -99,9 +88,14 @@ namespace Barnacle.Object3DLib
             res.position = new Point3D(this.position.X, this.position.Y, this.position.Z);
             res.rotation = new Point3D(this.rotation.X, this.rotation.Y, this.rotation.Z);
             res.Color = this.Color;
-            res.leftObject = this.leftObject.Clone(useIndices);
-            res.rightObject = this.rightObject.Clone(useIndices);
-
+            if (this.leftObject != null)
+            {
+                res.leftObject = this.leftObject.Clone(useIndices);
+            }
+            if (this.rightObject != null)
+            {
+                res.rightObject = this.rightObject.Clone(useIndices);
+            }
             res.RelativeObjectVertices = new List<P3D>();
 
             foreach (P3D po in this.RelativeObjectVertices)
@@ -155,30 +149,22 @@ namespace Barnacle.Object3DLib
             return neo;
         }
 
-        public async Task<bool> InitAsync(CancellationTokenSource csgCancelation, IProgress<CSGGroupProgress> progress)
+        public override void DeThread()
         {
-            bool result = false;
-            if (leftObject != null && rightObject != null)
+            Indices = new List<int>();
+            foreach (int i in TriangleIndices)
             {
-                if (leftObject.RelativeObjectVertices != null && leftObject.RelativeObjectVertices.Count > 2)
-                {
-                    if (rightObject.RelativeObjectVertices != null && rightObject.RelativeObjectVertices.Count > 2)
-                    {
-                        Color = leftObject.Color;
-                        Bounds3D leftBnd = leftObject.AbsoluteBounds;
-                        Bounds3D rightBnd = rightObject.AbsoluteBounds;
-                        Point3D leftPnt = leftObject.Position;
-                        Point3D rightPnt = rightObject.Position;
-                        Bounds3D combined = new Bounds3D();
-                        combined.Add(leftBnd);
-                        combined.Add(rightBnd);
-
-                        result = await PerformOperationAsync(csgCancelation, progress);
-                    }
-                }
+                Indices.Add(i);
+            }
+            if (leftObject != null)
+            {
+                leftObject.DeThread();
             }
 
-            return result;
+            if (rightObject != null)
+            {
+                rightObject.DeThread();
+            }
         }
 
         public bool Init()
@@ -200,6 +186,32 @@ namespace Barnacle.Object3DLib
                         combined.Add(rightBnd);
 
                         result = PerformOperation();
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public async Task<bool> InitAsync(CancellationTokenSource csgCancelation, IProgress<CSGGroupProgress> progress)
+        {
+            bool result = false;
+            if (leftObject != null && rightObject != null)
+            {
+                if (leftObject.RelativeObjectVertices != null && leftObject.RelativeObjectVertices.Count > 2)
+                {
+                    if (rightObject.RelativeObjectVertices != null && rightObject.RelativeObjectVertices.Count > 2)
+                    {
+                        Color = leftObject.Color;
+                        Bounds3D leftBnd = leftObject.AbsoluteBounds;
+                        Bounds3D rightBnd = rightObject.AbsoluteBounds;
+                        Point3D leftPnt = leftObject.Position;
+                        Point3D rightPnt = rightObject.Position;
+                        Bounds3D combined = new Bounds3D();
+                        combined.Add(leftBnd);
+                        combined.Add(rightBnd);
+
+                        result = await PerformOperationAsync(csgCancelation, progress);
                     }
                 }
             }
@@ -554,6 +566,9 @@ namespace Barnacle.Object3DLib
                         leftObject = ob;
                     }
                     break;
+
+                case 2:
+                    break;
             }
             type = reader.ReadByte();
             switch (type)
@@ -572,6 +587,9 @@ namespace Barnacle.Object3DLib
                         ob.ReadBinary(reader);
                         rightObject = ob;
                     }
+                    break;
+
+                case 2:
                     break;
             }
 
@@ -664,6 +682,9 @@ namespace Barnacle.Object3DLib
             }
 
             writer.Write(TriangleIndices.Count);
+            // group should have left and right sub objects
+            // but if we have dropped them to save memory
+            // we need to put in an "ignore me" tag
             for (int i = 0; i < TriangleIndices.Count; i++)
             {
                 writer.Write(TriangleIndices[i]);
@@ -672,9 +693,17 @@ namespace Barnacle.Object3DLib
             {
                 leftObject.WriteBinary(writer);
             }
+            else
+            {
+                writer.Write((byte)2); // need a tag of some sort for deserialisation
+            }
             if (rightObject != null)
             {
                 rightObject.WriteBinary(writer);
+            }
+            else
+            {
+                writer.Write((byte)2); // need a tag of some sort for deserialisation
             }
         }
 

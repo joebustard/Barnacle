@@ -13,7 +13,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
              xmlns:Views="clr-namespace:Barnacle.Views"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Loaded="UserControl_Loaded">
     <UserControl.DataContext>
         <ViewModels:EditorViewModel />
     </UserControl.DataContext>
@@ -25,7 +25,6 @@
         <Viewport3D Name="viewport3D1"
                     KeyDown="UserControl_KeyDown"
                     KeyUp="UserControl_KeyUp" ClipToBounds="False">
-            
 
             <Viewport3D.Camera>
                 <PerspectiveCamera LookDirection="{Binding LookDirection}"

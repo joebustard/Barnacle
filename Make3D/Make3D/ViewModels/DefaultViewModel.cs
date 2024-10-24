@@ -52,8 +52,10 @@ namespace Barnacle.ViewModels
         private Visibility libraryVisibility;
         private bool linearEnabled;
         private Ribbon MainRibbon;
+
         private bool profileFuselageEnabled;
         private bool rightTextAlignment;
+
         private String selectedBuildPlate;
         private string selectedObjectName;
         private bool settingsLoaded;
@@ -62,6 +64,7 @@ namespace Barnacle.ViewModels
         private bool showBuildVolume;
         private bool showFloorChecked;
         private bool showFloorMarkerChecked;
+        private bool showFloorMMChecked;
         private bool snapMarginChecked;
         private bool spurGearEnabled;
         private bool stadiumEnabled;
@@ -139,6 +142,7 @@ namespace Barnacle.ViewModels
             ZipProjectCommand = new RelayCommand(OnZipProject);
             Caption = BaseViewModel.Document.Caption;
             showFloorChecked = false;
+            showFloorMMChecked = false;
             FillColor = Brushes.White;
             SelectedObjectName = "";
 
@@ -177,6 +181,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("BackupProject", BackupProject);
             NotificationManager.Subscribe("IdleTimer", OnIdleTimer);
             SubView = subViewMan.GetView("editor");
+
             CreateToolMenus();
             editingActive = true;
             EnableAllTools(true);
@@ -904,6 +909,28 @@ namespace Barnacle.ViewModels
             }
         }
 
+        public bool ShowFloorMMChecked
+        {
+            get
+            {
+                return showFloorMMChecked;
+            }
+
+            set
+            {
+                if (showFloorMMChecked != value)
+                {
+                    showFloorMMChecked = value;
+                    NotifyPropertyChanged();
+                    NotificationManager.Notify("ShowFloorMM", showFloorMMChecked);
+                    if (settingsLoaded)
+                    {
+                        SaveShowSettings();
+                    }
+                }
+            }
+        }
+
         public ICommand SizeCommand { get; set; }
 
         public ICommand SliceCommand { get; set; }
@@ -1523,7 +1550,6 @@ namespace Barnacle.ViewModels
                     if (!Directory.Exists(PartLibraryProject.BaseFolder))
                     {
                         Directory.CreateDirectory(PartLibraryProject.BaseFolder);
-                        // Directory.CreateDirectory(PartLibraryProject.BaseFolder + "\\Parts");
                     }
                     PartLibraryProject.CreateLibraryProject("Parts");
                     PartLibraryProject.ProjectFilePath = pth;
@@ -1545,6 +1571,7 @@ namespace Barnacle.ViewModels
             ShowBuildPlateChecked = Properties.Settings.Default.ShowBuildPlate;
             ShowBuildVolumeChecked = Properties.Settings.Default.ShowBuildVolume;
             ShowFloorChecked = Properties.Settings.Default.ShowFloor;
+            ShowFloorMMChecked = Properties.Settings.Default.ShowFloorMM;
             ShowFloorMarkerChecked = Properties.Settings.Default.ShowMarker;
             ShowAxiesChecked = Properties.Settings.Default.ShowAxis;
             SelectedBuildPlate = Properties.Settings.Default.SelectedBuildPlate;
@@ -1554,6 +1581,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Notify("ShowBuildPlate", showBuildPlate);
             NotificationManager.Notify("BuildVolume", showBuildVolume);
             NotificationManager.Notify("ShowFloor", showFloorChecked);
+            NotificationManager.Notify("ShowFloorMM", showFloorMMChecked);
             NotificationManager.Notify("ShowFloorMarker", showFloorMarkerChecked);
             NotificationManager.Notify("ShowAxies", showAxiesChecked);
             SelectedBuildPlateUpdated();
@@ -1820,7 +1848,6 @@ namespace Barnacle.ViewModels
         {
             NotificationManager.Notify("SaveAsFile", null);
             Caption = BaseViewModel.Document.Caption;
-            // UpdateRecentFiles(BaseViewModel.Document.FilePath);
         }
 
         private void OnScreenShot(object obj)
@@ -1934,6 +1961,7 @@ namespace Barnacle.ViewModels
             Properties.Settings.Default.ShowBuildPlate = ShowBuildPlateChecked;
             Properties.Settings.Default.ShowBuildVolume = ShowBuildVolumeChecked;
             Properties.Settings.Default.ShowFloor = ShowFloorChecked;
+            Properties.Settings.Default.ShowFloorMM = ShowFloorMMChecked;
             Properties.Settings.Default.ShowMarker = ShowFloorMarkerChecked;
             Properties.Settings.Default.ShowAxis = ShowAxiesChecked;
             Properties.Settings.Default.SelectedBuildPlate = SelectedBuildPlate;

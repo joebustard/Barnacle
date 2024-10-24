@@ -91,6 +91,28 @@ namespace Barnacle.Object3DLib
             }
         }
 
+        public override void ReadBinary(BinaryReader reader)
+        {
+            Name = reader.ReadString();
+            double x, y, z;
+            x = reader.ReadDouble();
+            y = reader.ReadDouble();
+            z = reader.ReadDouble();
+            Position = new Point3D(x, y, z);
+            x = reader.ReadDouble();
+            y = reader.ReadDouble();
+            z = reader.ReadDouble();
+            rotation = new Point3D(x, y, z);
+            Reference.Path = reader.ReadString();
+            int year = reader.ReadInt32();
+            int month = reader.ReadInt32();
+            int day = reader.ReadInt32();
+            int hour = reader.ReadInt32();
+            int minute = reader.ReadInt32();
+            int second = reader.ReadInt32();
+            Reference.TimeStamp = new DateTime(year, month, day, hour, minute, second);
+        }
+
         public override XmlElement Write(XmlDocument doc, XmlElement docNode)
         {
             XmlElement ele = doc.CreateElement(XmlType);
@@ -132,6 +154,7 @@ namespace Barnacle.Object3DLib
             writer.Write(Reference.TimeStamp.Year);
             writer.Write(Reference.TimeStamp.Month);
             writer.Write(Reference.TimeStamp.Day);
+            writer.Write(Reference.TimeStamp.Hour);
             writer.Write(Reference.TimeStamp.Minute);
             writer.Write(Reference.TimeStamp.Second);
         }

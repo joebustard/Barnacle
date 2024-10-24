@@ -71,6 +71,7 @@ namespace ScriptLanguage
                 "height",
                 "inputstring",
                 "insertpart",
+                "insertlibpart",
                 "intersection",
                 "len",
                 "length",
@@ -134,211 +135,6 @@ namespace ScriptLanguage
                 "val",
                 "validsolid"
             };
-        }
-
-        private ExpressionNode ParseMakeImagePlaqueFunction(string parentName)
-        {
-            ExpressionNode exp = null;
-            String label = "MakeImagePlaque";
-            String commaError = $"{label} expected ,";
-            bool parsed = true;
-            ExpressionCollection coll = new ExpressionCollection();
-            int exprCount = 2;
-
-            for (int i = 0; i < exprCount && parsed; i++)
-            {
-                ExpressionNode paramExp = ParseExpressionNode(parentName);
-                if (paramExp != null)
-                {
-                    if (i < exprCount - 1)
-                    {
-                        if (CheckForComma() == false)
-                        {
-                            ReportSyntaxError(commaError);
-                            parsed = false;
-                        }
-                    }
-                    coll.Add(paramExp);
-                }
-                else
-                {
-                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
-                    ReportSyntaxError(expError);
-                    parsed = false;
-                }
-            }
-            if (parsed && coll.Count() == exprCount)
-            {
-                MakeImagePlaqueNode mn = new MakeImagePlaqueNode(coll);
-                mn.IsInLibrary = tokeniser.InIncludeFile();
-                exp = mn;
-            }
-
-            return exp;
-        }
-
-        private ExpressionNode ParseMakeBoxFunction(string parentName)
-        {
-            ExpressionNode exp = null;
-            String label = "MakeBox";
-            String commaError = $"{label} expected ,";
-            bool parsed = true;
-            ExpressionCollection coll = new ExpressionCollection();
-            int exprCount = 8;
-
-            for (int i = 0; i < exprCount && parsed; i++)
-            {
-                ExpressionNode paramExp = ParseExpressionNode(parentName);
-                if (paramExp != null)
-                {
-                    if (i < exprCount - 1)
-                    {
-                        if (CheckForComma() == false)
-                        {
-                            ReportSyntaxError(commaError);
-                            parsed = false;
-                        }
-                    }
-                    coll.Add(paramExp);
-                }
-                else
-                {
-                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
-                    ReportSyntaxError(expError);
-                    parsed = false;
-                }
-            }
-            if (parsed && coll.Count() == exprCount)
-            {
-                MakeBoxNode mn = new MakeBoxNode(coll);
-                mn.IsInLibrary = tokeniser.InIncludeFile();
-                exp = mn;
-            }
-
-            return exp;
-        }
-
-        private ExpressionNode ParseMakeRectGrilleFunction(string parentName)
-        {
-            ExpressionNode exp = null;
-            String label = "MakeRectGrille";
-            String commaError = $"{label} expected ,";
-            bool parsed = true;
-            ExpressionCollection coll = new ExpressionCollection();
-            int exprCount = 9;
-
-            for (int i = 0; i < exprCount && parsed; i++)
-            {
-                ExpressionNode paramExp = ParseExpressionNode(parentName);
-                if (paramExp != null)
-                {
-                    if (i < exprCount - 1)
-                    {
-                        if (CheckForComma() == false)
-                        {
-                            ReportSyntaxError(commaError);
-                            parsed = false;
-                        }
-                    }
-                    coll.Add(paramExp);
-                }
-                else
-                {
-                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
-                    ReportSyntaxError(expError);
-                    parsed = false;
-                }
-            }
-            if (parsed && coll.Count() == exprCount)
-            {
-                MakeRectGrilleNode mn = new MakeRectGrilleNode(coll);
-                mn.IsInLibrary = tokeniser.InIncludeFile();
-                exp = mn;
-            }
-
-            return exp;
-        }
-
-        private ExpressionNode ParseMakePieFunction(string parentName)
-        {
-            ExpressionNode exp = null;
-            String label = "MakePie";
-            String commaError = $"{label} expected ,";
-            bool parsed = true;
-            ExpressionCollection coll = new ExpressionCollection();
-            int exprCount = 4;
-
-            for (int i = 0; i < exprCount && parsed; i++)
-            {
-                ExpressionNode paramExp = ParseExpressionNode(parentName);
-                if (paramExp != null)
-                {
-                    if (i < exprCount - 1)
-                    {
-                        if (CheckForComma() == false)
-                        {
-                            ReportSyntaxError(commaError);
-                            parsed = false;
-                        }
-                    }
-                    coll.Add(paramExp);
-                }
-                else
-                {
-                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
-                    ReportSyntaxError(expError);
-                    parsed = false;
-                }
-            }
-            if (parsed && coll.Count() == exprCount)
-            {
-                MakePieNode mn = new MakePieNode(coll);
-                mn.IsInLibrary = tokeniser.InIncludeFile();
-                exp = mn;
-            }
-
-            return exp;
-        }
-
-        private ExpressionNode ParseMakePillFunction(string parentName)
-        {
-            ExpressionNode exp = null;
-            String label = "MakePill";
-            String commaError = $"{label} expected ,";
-            bool parsed = true;
-            ExpressionCollection coll = new ExpressionCollection();
-            int exprCount = 5;
-
-            for (int i = 0; i < exprCount && parsed; i++)
-            {
-                ExpressionNode paramExp = ParseExpressionNode(parentName);
-                if (paramExp != null)
-                {
-                    if (i < exprCount - 1)
-                    {
-                        if (CheckForComma() == false)
-                        {
-                            ReportSyntaxError(commaError);
-                            parsed = false;
-                        }
-                    }
-                    coll.Add(paramExp);
-                }
-                else
-                {
-                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
-                    ReportSyntaxError(expError);
-                    parsed = false;
-                }
-            }
-            if (parsed && coll.Count() == exprCount)
-            {
-                MakePillNode mn = new MakePillNode(coll);
-                mn.IsInLibrary = tokeniser.InIncludeFile();
-                exp = mn;
-            }
-
-            return exp;
         }
 
         public bool Load(Script script, string FilePath)
@@ -484,47 +280,6 @@ namespace ScriptLanguage
                 }
             }
             return result;
-        }
-
-        private ExpressionNode ParseMakeConstructionStripFunction(string parentName)
-        {
-            ExpressionNode exp = null;
-            String label = "MakeConstructionStrip";
-            String commaError = $"{label} expected ,";
-            bool parsed = true;
-            ExpressionCollection coll = new ExpressionCollection();
-            int exprCount = 5;
-
-            for (int i = 0; i < exprCount && parsed; i++)
-            {
-                ExpressionNode paramExp = ParseExpressionNode(parentName);
-                if (paramExp != null)
-                {
-                    if (i < exprCount - 1)
-                    {
-                        if (CheckForComma() == false)
-                        {
-                            ReportSyntaxError(commaError);
-                            parsed = false;
-                        }
-                    }
-                    coll.Add(paramExp);
-                }
-                else
-                {
-                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
-                    ReportSyntaxError(expError);
-                    parsed = false;
-                }
-            }
-            if (parsed && coll.Count() == exprCount)
-            {
-                MakeConstructionStripNode mn = new MakeConstructionStripNode(coll);
-                mn.IsInLibrary = tokeniser.InIncludeFile();
-                exp = mn;
-            }
-
-            return exp;
         }
 
         private bool FetchToken(out string token, out Tokeniser.TokenType tokenType)
@@ -2604,16 +2359,57 @@ namespace ScriptLanguage
             return exp;
         }
 
-        private ExpressionNode ParseInsertPartFunction(string parentName)
+        private ExpressionNode ParseInsertLibPartFunction(string parentName)
         {
             ExpressionNode exp = null;
             ExpressionNode param = ParseExpressionNode(parentName);
             if (param != null)
             {
-                InsertPartNode mn = new InsertPartNode(param);
+                InsertLibPartNode mn = new InsertLibPartNode(param);
                 mn.IsInLibrary = tokeniser.InIncludeFile();
                 exp = mn;
             }
+            return exp;
+        }
+
+        private ExpressionNode ParseInsertPartFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "InsertPart";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 2;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                InsertPartNode mn = new InsertPartNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
             return exp;
         }
 
@@ -2714,6 +2510,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "insertlibpart":
+                            {
+                                exp = ParseInsertLibPartFunction(parentName);
+                            }
+                            break;
+
                         case "intersection":
                             {
                                 exp = ParseIntersectionFunction(parentName);
@@ -2743,11 +2545,13 @@ namespace ScriptLanguage
                                 exp = ParseMakeBarrelFunction(parentName);
                             }
                             break;
+
                         case "makeobliqueendcylinder":
                             {
                                 exp = ParseMakeObliqueEndCylinderFunction(parentName);
                             }
                             break;
+
                         case "makebicorn":
                             {
                                 exp = ParseMakeBicornFunction(parentName);
@@ -3118,291 +2922,6 @@ namespace ScriptLanguage
             return resultNode;
         }
 
-        private ExpressionNode ParseMakeSymbolFontFunction(string parentName)
-        {
-            ExpressionNode exp = null;
-            String label = "MakeSymbol";
-            String commaError = $"{label} expected ,";
-            bool parsed = true;
-            ExpressionCollection coll = new ExpressionCollection();
-            int exprCount = 2;
-
-            for (int i = 0; i < exprCount && parsed; i++)
-            {
-                ExpressionNode paramExp = ParseExpressionNode(parentName);
-                if (paramExp != null)
-                {
-                    if (i < exprCount - 1)
-                    {
-                        if (CheckForComma() == false)
-                        {
-                            ReportSyntaxError(commaError);
-                            parsed = false;
-                        }
-                    }
-                    coll.Add(paramExp);
-                }
-                else
-                {
-                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
-                    ReportSyntaxError(expError);
-                    parsed = false;
-                }
-            }
-            if (parsed && coll.Count() == exprCount)
-            {
-                MakeSymbolNode mn = new MakeSymbolNode(coll);
-                mn.IsInLibrary = tokeniser.InIncludeFile();
-                exp = mn;
-            }
-
-            return exp;
-        }
-
-        private ExpressionNode ParseMakePathLoftFunction(string parentName)
-        {
-            ExpressionNode exp = null;
-            String label = "MakePathLoft";
-            String commaError = $"{label} expected ,";
-            bool parsed = true;
-            ExpressionCollection coll = new ExpressionCollection();
-            int exprCount = 1;
-
-            for (int i = 0; i < exprCount && parsed; i++)
-            {
-                ExpressionNode paramExp = ParseExpressionNode(parentName);
-                if (paramExp != null)
-                {
-                    if (i < exprCount - 1)
-                    {
-                        if (CheckForComma() == false)
-                        {
-                            ReportSyntaxError(commaError);
-                            parsed = false;
-                        }
-                    }
-                    coll.Add(paramExp);
-                }
-                else
-                {
-                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
-                    ReportSyntaxError(expError);
-                    parsed = false;
-                }
-            }
-            if (parsed && coll.Count() == exprCount)
-            {
-                MakePathLoftNode mn = new MakePathLoftNode(coll);
-                mn.IsInLibrary = tokeniser.InIncludeFile();
-                exp = mn;
-            }
-
-            return exp;
-        }
-
-        private ExpressionNode ParseMakeTexturedTubeFunction(string parentName)
-        {
-            ExpressionNode exp = null;
-            String label = "MakeTexturedTube";
-            String commaError = $"{label} expected ,";
-            bool parsed = true;
-            ExpressionCollection coll = new ExpressionCollection();
-            int exprCount = 8;
-
-            for (int i = 0; i < exprCount && parsed; i++)
-            {
-                ExpressionNode paramExp = ParseExpressionNode(parentName);
-                if (paramExp != null)
-                {
-                    if (i < exprCount - 1)
-                    {
-                        if (CheckForComma() == false)
-                        {
-                            ReportSyntaxError(commaError);
-                            parsed = false;
-                        }
-                    }
-                    coll.Add(paramExp);
-                }
-                else
-                {
-                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
-                    ReportSyntaxError(expError);
-                    parsed = false;
-                }
-            }
-            if (parsed && coll.Count() == exprCount)
-            {
-                MakeTexturedTubeNode mn = new MakeTexturedTubeNode(coll);
-                mn.IsInLibrary = tokeniser.InIncludeFile();
-                exp = mn;
-            }
-
-            return exp;
-        }
-
-        private ExpressionNode ParseMakeTexturedDiskFunction(string parentName)
-        {
-            ExpressionNode exp = null;
-            String label = "MakeTexturedDisk";
-            String commaError = $"{label} expected ,";
-            bool parsed = true;
-            ExpressionCollection coll = new ExpressionCollection();
-            int exprCount = 6;
-
-            for (int i = 0; i < exprCount && parsed; i++)
-            {
-                ExpressionNode paramExp = ParseExpressionNode(parentName);
-                if (paramExp != null)
-                {
-                    if (i < exprCount - 1)
-                    {
-                        if (CheckForComma() == false)
-                        {
-                            ReportSyntaxError(commaError);
-                            parsed = false;
-                        }
-                    }
-                    coll.Add(paramExp);
-                }
-                else
-                {
-                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
-                    ReportSyntaxError(expError);
-                    parsed = false;
-                }
-            }
-            if (parsed && coll.Count() == exprCount)
-            {
-                MakeTexturedDiskNode mn = new MakeTexturedDiskNode(coll);
-                mn.IsInLibrary = tokeniser.InIncludeFile();
-                exp = mn;
-            }
-
-            return exp;
-        }
-
-        private ExpressionNode ParseMakeRoofRidgeFunction(string parentName)
-        {
-            ExpressionNode exp = null;
-            String label = "MakeRoofRidge";
-            String commaError = $"{label} expected ,";
-            bool parsed = true;
-            ExpressionCollection coll = new ExpressionCollection();
-            int exprCount = 7;
-
-            for (int i = 0; i < exprCount && parsed; i++)
-            {
-                ExpressionNode paramExp = ParseExpressionNode(parentName);
-                if (paramExp != null)
-                {
-                    if (i < exprCount - 1)
-                    {
-                        if (CheckForComma() == false)
-                        {
-                            ReportSyntaxError(commaError);
-                            parsed = false;
-                        }
-                    }
-                    coll.Add(paramExp);
-                }
-                else
-                {
-                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
-                    ReportSyntaxError(expError);
-                    parsed = false;
-                }
-            }
-            if (parsed && coll.Count() == exprCount)
-            {
-                MakeRoofRidgeNode mn = new MakeRoofRidgeNode(coll);
-                mn.IsInLibrary = tokeniser.InIncludeFile();
-                exp = mn;
-            }
-
-            return exp;
-        }
-        private ExpressionNode ParseMakeBarrelFunction(string parentName)
-        {
-            ExpressionNode exp = null;
-            String label = "MakeBarrel";
-            String commaError = $"{label} expected ,";
-            bool parsed = true;
-            ExpressionCollection coll = new ExpressionCollection();
-            int exprCount = 8;
-
-            for (int i = 0; i < exprCount && parsed; i++)
-            {
-                ExpressionNode paramExp = ParseExpressionNode(parentName);
-                if (paramExp != null)
-                {
-                    if (i < exprCount - 1)
-                    {
-                        if (CheckForComma() == false)
-                        {
-                            ReportSyntaxError(commaError);
-                            parsed = false;
-                        }
-                    }
-                    coll.Add(paramExp);
-                }
-                else
-                {
-                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
-                    ReportSyntaxError(expError);
-                    parsed = false;
-                }
-            }
-            if (parsed && coll.Count() == exprCount)
-            {
-                MakeBarrelNode mn = new MakeBarrelNode(coll);
-                mn.IsInLibrary = tokeniser.InIncludeFile();
-                exp = mn;
-            }
-
-            return exp;
-        }
-        private ExpressionNode ParseMakeObliqueEndCylinderFunction(string parentName)
-        {
-            ExpressionNode exp = null;
-            String label = "MakeObliqueEndCylinder";
-            String commaError = $"{label} expected ,";
-            bool parsed = true;
-            ExpressionCollection coll = new ExpressionCollection();
-            int exprCount = 5;
-
-            for (int i = 0; i < exprCount && parsed; i++)
-            {
-                ExpressionNode paramExp = ParseExpressionNode(parentName);
-                if (paramExp != null)
-                {
-                    if (i < exprCount - 1)
-                    {
-                        if (CheckForComma() == false)
-                        {
-                            ReportSyntaxError(commaError);
-                            parsed = false;
-                        }
-                    }
-                    coll.Add(paramExp);
-                }
-                else
-                {
-                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
-                    ReportSyntaxError(expError);
-                    parsed = false;
-                }
-            }
-            if (parsed && coll.Count() == exprCount)
-            {
-                MakeObliqueEndCylinderNode mn = new MakeObliqueEndCylinderNode(coll);
-                mn.IsInLibrary = tokeniser.InIncludeFile();
-                exp = mn;
-            }
-
-            return exp;
-        }
-
         private bool ParseIntStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
@@ -3478,6 +2997,47 @@ namespace ScriptLanguage
             return exp;
         }
 
+        private ExpressionNode ParseMakeBarrelFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeBarrel";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 8;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeBarrelNode mn = new MakeBarrelNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
+
         private ExpressionNode ParseMakeBicornFunction(string parentName)
         {
             ExpressionNode exp = null;
@@ -3511,6 +3071,47 @@ namespace ScriptLanguage
                     }
                 }
             }
+            return exp;
+        }
+
+        private ExpressionNode ParseMakeBoxFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeBox";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 8;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeBoxNode mn = new MakeBoxNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
             return exp;
         }
 
@@ -3589,6 +3190,47 @@ namespace ScriptLanguage
             if (parsed && coll.Count() == exprCount)
             {
                 MakeBrickWallNode mn = new MakeBrickWallNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
+
+        private ExpressionNode ParseMakeConstructionStripFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeConstructionStrip";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 5;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeConstructionStripNode mn = new MakeConstructionStripNode(coll);
                 mn.IsInLibrary = tokeniser.InIncludeFile();
                 exp = mn;
             }
@@ -3760,6 +3402,88 @@ namespace ScriptLanguage
             return exp;
         }
 
+        private ExpressionNode ParseMakeImagePlaqueFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeImagePlaque";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 2;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeImagePlaqueNode mn = new MakeImagePlaqueNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
+
+        private ExpressionNode ParseMakeObliqueEndCylinderFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeObliqueEndCylinder";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 5;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeObliqueEndCylinderNode mn = new MakeObliqueEndCylinderNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
+
         private ExpressionNode ParseMakeParabolicDishFunction(string parentName)
         {
             ExpressionNode exp = null;
@@ -3859,6 +3583,129 @@ namespace ScriptLanguage
                     }
                 }
             }
+            return exp;
+        }
+
+        private ExpressionNode ParseMakePathLoftFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakePathLoft";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 1;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakePathLoftNode mn = new MakePathLoftNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
+
+        private ExpressionNode ParseMakePieFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakePie";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 4;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakePieNode mn = new MakePieNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
+
+        private ExpressionNode ParseMakePillFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakePill";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 5;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakePillNode mn = new MakePillNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
             return exp;
         }
 
@@ -3970,7 +3817,7 @@ namespace ScriptLanguage
             String commaError = $"{label} expected ,";
             bool parsed = true;
             ExpressionCollection coll = new ExpressionCollection();
-            int exprCount = 7;
+            int exprCount = 9;
 
             for (int i = 0; i < exprCount && parsed; i++)
             {
@@ -3996,6 +3843,47 @@ namespace ScriptLanguage
             if (parsed && coll.Count() == exprCount)
             {
                 MakeRailWheelNode mn = new MakeRailWheelNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
+
+        private ExpressionNode ParseMakeRectGrilleFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeRectGrille";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 9;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeRectGrilleNode mn = new MakeRectGrilleNode(coll);
                 mn.IsInLibrary = tokeniser.InIncludeFile();
                 exp = mn;
             }
@@ -4036,6 +3924,47 @@ namespace ScriptLanguage
             if (parsed && coll.Count() == exprCount)
             {
                 MakeReuleauxNode mn = new MakeReuleauxNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
+
+        private ExpressionNode ParseMakeRoofRidgeFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeRoofRidge";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 7;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeRoofRidgeNode mn = new MakeRoofRidgeNode(coll);
                 mn.IsInLibrary = tokeniser.InIncludeFile();
                 exp = mn;
             }
@@ -4374,6 +4303,47 @@ namespace ScriptLanguage
             return exp;
         }
 
+        private ExpressionNode ParseMakeSymbolFontFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeSymbol";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 2;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeSymbolNode mn = new MakeSymbolNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
+
         private ExpressionNode ParseMakeTextFunction(string parentName)
         {
             string label = "MakeText";
@@ -4440,6 +4410,88 @@ namespace ScriptLanguage
             {
                 ReportSyntaxError($"{label} error {error}");
             }
+            return exp;
+        }
+
+        private ExpressionNode ParseMakeTexturedDiskFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeTexturedDisk";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 6;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeTexturedDiskNode mn = new MakeTexturedDiskNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
+
+        private ExpressionNode ParseMakeTexturedTubeFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeTexturedTube";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 8;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeTexturedTubeNode mn = new MakeTexturedTubeNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
             return exp;
         }
 

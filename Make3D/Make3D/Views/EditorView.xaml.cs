@@ -20,6 +20,10 @@ namespace Barnacle.Views
         private GeometryModel3D lastHitModel;
         private Point3D lastHitPoint;
         private Point lastMousePos;
+        private bool previousShowAxis;
+        private bool previousShowBuildPlate;
+        private bool previousShowFloor;
+        private bool previousShowMarker;
         private String screenShotTarget;
         private DispatcherTimer snapShotTimer;
         private EditorViewModel vm;
@@ -167,11 +171,6 @@ namespace Barnacle.Views
             }
         }
 
-        private bool previousShowFloor;
-        private bool previousShowAxis;
-        private bool previousShowBuildPlate;
-        private bool previousShowMarker;
-
         private void OnScreenShot(object param)
         {
             screenShotTarget = "";
@@ -237,6 +236,11 @@ namespace Barnacle.Views
         {
             vm.KeyUp(e.Key, Keyboard.IsKeyDown(Key.LeftShift) | Keyboard.IsKeyDown(Key.RightShift),
                              Keyboard.IsKeyDown(Key.LeftCtrl) | Keyboard.IsKeyDown(Key.RightCtrl));
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            NotificationManager.Notify("Refresh", null);
         }
     }
 }

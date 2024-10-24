@@ -16,7 +16,9 @@
 **************************************************************************/
 
 using MakerLib;
+using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 
 namespace Barnacle.Dialogs
@@ -26,15 +28,18 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class RailWheelDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private double axleBoreRadius;
-        private double flangeRadius;
-        private double flangeThickness;
-        private double hubRadius;
-        private double hubThickness;
+        private double axleBoreDiameter;
+        private double flangeDiameter;
+        private double flangeHeight;
+        private double hubDiameter;
+        private double hubHeight;
         private bool loaded;
-        private double mainRadius;
-        private double mainThickness;
+        private double lowerRimDiameter;
+        private double rimHeight;
+        private double rimThickness;
+        private double upperRimDiameter;
         private string warningText;
+        private RailWheelMaker maker;
 
         public RailWheelDlg()
         {
@@ -42,22 +47,23 @@ namespace Barnacle.Dialogs
             ToolName = "RailWheel";
             DataContext = this;
             ModelGroup = MyModelGroup;
+            maker = new RailWheelMaker();
         }
 
-        public double AxleBoreRadius
+        public double AxleBoreDiameter
         {
             get
             {
-                return axleBoreRadius;
+                return axleBoreDiameter;
             }
 
             set
             {
-                if (axleBoreRadius != value)
+                if (axleBoreDiameter != value)
                 {
-                    if (value >= 0 && value <= 100)
+                    if (CheckRange(value))
                     {
-                        axleBoreRadius = value;
+                        axleBoreDiameter = value;
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
@@ -65,20 +71,30 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public double FlangeRadius
+        private bool CheckRange(double v, [CallerMemberName] String propertyName = "")
+        {
+            bool res = false;
+            if (maker != null)
+            {
+                res = maker.CheckLimits(propertyName, v);
+            }
+            return res;
+        }
+
+        public double FlangeDiameter
         {
             get
             {
-                return flangeRadius;
+                return flangeDiameter;
             }
 
             set
             {
-                if (flangeRadius != value)
+                if (flangeDiameter != value)
                 {
-                    if (value >= 1 && value <= 10)
+                    if (CheckRange(value))
                     {
-                        flangeRadius = value;
+                        flangeDiameter = value;
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
@@ -86,20 +102,20 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public double FlangeThickness
+        public double FlangeHeight
         {
             get
             {
-                return flangeThickness;
+                return flangeHeight;
             }
 
             set
             {
-                if (flangeThickness != value)
+                if (flangeHeight != value)
                 {
-                    if (value >= 1 && value <= 10)
+                    if (CheckRange(value))
                     {
-                        flangeThickness = value;
+                        flangeHeight = value;
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
@@ -107,20 +123,20 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public double HubRadius
+        public double HubDiameter
         {
             get
             {
-                return hubRadius;
+                return hubDiameter;
             }
 
             set
             {
-                if (hubRadius != value)
+                if (hubDiameter != value)
                 {
-                    if (value >= 0 && value <= 10)
+                    if (CheckRange(value))
                     {
-                        hubRadius = value;
+                        hubDiameter = value;
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
@@ -128,20 +144,20 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public double HubThickness
+        public double HubHeight
         {
             get
             {
-                return hubThickness;
+                return hubHeight;
             }
 
             set
             {
-                if (hubThickness != value)
+                if (hubHeight != value)
                 {
-                    if (value >= 0 && value <= 10)
+                    if (CheckRange(value))
                     {
-                        hubThickness = value;
+                        hubHeight = value;
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
@@ -149,20 +165,16 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public double MainRadius
+        public double LowerRimDiameter
         {
-            get
-            {
-                return mainRadius;
-            }
-
+            get { return lowerRimDiameter; }
             set
             {
-                if (mainRadius != value)
+                if (value != lowerRimDiameter)
                 {
-                    if (value >= 1 && value <= 100)
+                    if (CheckRange(value))
                     {
-                        mainRadius = value;
+                        lowerRimDiameter = value;
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
@@ -170,20 +182,37 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public double MainThickness
+        public double RimHeight
+        {
+            get { return rimHeight; }
+            set
+            {
+                if (value != rimHeight)
+                {
+                    if (CheckRange(value))
+                    {
+                        rimHeight = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public double RimThickness
         {
             get
             {
-                return mainThickness;
+                return rimThickness;
             }
 
             set
             {
-                if (mainThickness != value)
+                if (rimThickness != value)
                 {
-                    if (value >= 1 && value <= 100)
+                    if (CheckRange(value))
                     {
-                        mainThickness = value;
+                        rimThickness = value;
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
@@ -227,6 +256,23 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public double UpperRimDiameter
+        {
+            get { return upperRimDiameter; }
+            set
+            {
+                if (value != upperRimDiameter)
+                {
+                    if (CheckRange(value))
+                    {
+                        upperRimDiameter = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
         public string WarningText
         {
             get
@@ -254,43 +300,66 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-            RailWheelMaker maker = new RailWheelMaker(mainRadius, mainThickness, flangeRadius, flangeThickness, hubRadius, hubThickness, axleBoreRadius);
+            maker.SetValues(flangeDiameter,
+                            flangeHeight,
+                            hubDiameter,
+                            hubHeight,
+                            upperRimDiameter,
+                            lowerRimDiameter,
+                            rimThickness,
+                            rimHeight,
+                            axleBoreDiameter);
+
             maker.Generate(Vertices, Faces);
             CentreVertices();
-        }
-        private void Reset()
-        {
-            MainRadius = 6;
-            MainThickness = 4;
-            HubRadius = 2;
-            HubThickness = 2;
-            FlangeRadius = 1;
-            FlangeThickness = 1;
-            AxleBoreRadius = 1;
         }
 
         private void LoadEditorParameters()
         {
-            // load back the tool specific parameters    
-            MainRadius = EditorParameters.GetDouble("MainRadius", 6);
-            AxleBoreRadius = EditorParameters.GetDouble("AxleBoreRadius",1);
-            MainThickness = EditorParameters.GetDouble("MainThickness",4);
-            FlangeRadius = EditorParameters.GetDouble("FlangeRadius",2);
-            FlangeThickness = EditorParameters.GetDouble("FlangeThickness",1);
-            HubRadius = EditorParameters.GetDouble("HubRadius");
-            HubThickness = EditorParameters.GetDouble("HubThickness",2);
+            // load back the tool specific parameters
+            FlangeDiameter = EditorParameters.GetDouble("FlangeDiameter", 15.1);
+            FlangeHeight = EditorParameters.GetDouble("FlangeHeight", 1);
+            HubDiameter = EditorParameters.GetDouble("HubDiameter", 3.8);
+            HubHeight = EditorParameters.GetDouble("HubHeight", 3.71);
+            RimHeight = EditorParameters.GetDouble("RimHeight", 3.71);
+            RimThickness = EditorParameters.GetDouble("RimThickness", 0.8);
+            AxleBoreDiameter = EditorParameters.GetDouble("AxleBoreRadius", 0.5);
+            UpperRimDiameter = EditorParameters.GetDouble("UpperRimDiameter", 12);
+            LowerRimDiameter = EditorParameters.GetDouble("LowerRimDiameter", 12.8);
+        }
+
+        private void Reset()
+        {
+            FlangeDiameter = 15.1;
+            FlangeHeight = 1;
+            HubDiameter = 3.8;
+            HubHeight = 3.71;
+            UpperRimDiameter = 12.0;
+            LowerRimDiameter = 12.8;
+            RimThickness = 0.8;
+            RimHeight = 3.71;
+            AxleBoreDiameter = 0.5;
+        }
+
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            Reset();
+            loaded = true;
+            UpdateDisplay();
         }
 
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-            EditorParameters.Set("MainRadius", MainRadius.ToString());
-            EditorParameters.Set("MainThickness", MainThickness.ToString());
-            EditorParameters.Set("FlangeRadius", FlangeRadius.ToString());
-            EditorParameters.Set("FlangeThickness", FlangeThickness.ToString());
-            EditorParameters.Set("HubRadius", HubRadius.ToString());
-            EditorParameters.Set("HubThickness", HubThickness.ToString());
-            EditorParameters.Set("AxleBoreRadius", AxleBoreRadius.ToString());
+            EditorParameters.Set("FlangeDiameter", FlangeDiameter);
+            EditorParameters.Set("FlangeHeight", FlangeHeight);
+            EditorParameters.Set("HubDiameter", HubDiameter);
+            EditorParameters.Set("HubHeight", HubHeight);
+            EditorParameters.Set("UpperRimDiameter", UpperRimDiameter);
+            EditorParameters.Set("LowerRimDiameter", LowerRimDiameter);
+            EditorParameters.Set("RimHeight", RimHeight);
+            EditorParameters.Set("RimThickness", RimThickness);
+            EditorParameters.Set("AxleBoreRadius", AxleBoreDiameter);
         }
 
         private void UpdateDisplay()
@@ -309,14 +378,6 @@ namespace Barnacle.Dialogs
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             warningText = "";
-            loaded = true;
-            UpdateDisplay();
-        }
-
-        
-        private void ResetButton_Click(object sender, RoutedEventArgs e)
-        {
-            Reset();
             loaded = true;
             UpdateDisplay();
         }

@@ -5,9 +5,37 @@ namespace Barnacle.Models
 {
     public class Floor
     {
+        private GeometryModel3D floorMesh;
+
+        private Vector3DCollection floorNormals;
+
+        private Point3DCollection floorObjectVertices;
+
+        private Int32Collection floorTriangleIndices;
+
         public Floor()
         {
             floorMesh = CreateMesh();
+        }
+
+        public GeometryModel3D FloorMesh
+        {
+            get { return floorMesh; }
+        }
+
+        public Point3DCollection FloorObjectVertices
+        {
+            get
+            {
+                return floorObjectVertices;
+            }
+            set
+            {
+                if (floorObjectVertices != value)
+                {
+                    floorObjectVertices = value;
+                }
+            }
         }
 
         public Point3DCollection FloorPoints3D
@@ -80,11 +108,6 @@ namespace Barnacle.Models
             }
         }
 
-        private GeometryModel3D floorMesh;
-        private Vector3DCollection floorNormals;
-        private Point3DCollection floorObjectVertices;
-        private Int32Collection floorTriangleIndices;
-
         public Int32Collection FloorTriangleIndices
         {
             get
@@ -97,6 +120,21 @@ namespace Barnacle.Models
                 {
                     floorTriangleIndices = value;
                     // NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private Vector3DCollection FloorNormals
+        {
+            get
+            {
+                return floorNormals;
+            }
+            set
+            {
+                if (floorNormals != value)
+                {
+                    floorNormals = value;
                 }
             }
         }
@@ -119,43 +157,6 @@ namespace Barnacle.Models
             mtb.Brush = new SolidColorBrush(Color.FromArgb(60, 100, 100, 100)); ;
             gm.BackMaterial = mtb;
             return gm;
-        }
-
-        private Vector3DCollection FloorNormals
-        {
-            get
-            {
-                return floorNormals;
-            }
-            set
-            {
-                if (floorNormals != value)
-                {
-                    floorNormals = value;
-                    // NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public GeometryModel3D FloorMesh
-        {
-            get { return floorMesh; }
-        }
-
-        public Point3DCollection FloorObjectVertices
-        {
-            get
-            {
-                return floorObjectVertices;
-            }
-            set
-            {
-                if (floorObjectVertices != value)
-                {
-                    floorObjectVertices = value;
-                    // NotifyPropertyChanged();
-                }
-            }
         }
 
         internal bool Matches(GeometryModel3D geo)

@@ -12,6 +12,7 @@ namespace MakerLib
 {
     public class MakerBase
     {
+        protected ParamLimits paramLimits;
         private OctTree octTree;
         private Int32Collection tris;
         private Point3DCollection vertices;
@@ -688,6 +689,22 @@ namespace MakerLib
                     Faces.Add(c2);
                 }
             }
+        }
+
+        public bool CheckLimits(string propertyName, double v)
+        {
+            bool res = false;
+            if (paramLimits != null)
+            {
+                res = paramLimits.Check(propertyName, v);
+            }
+            return res;
+        }
+
+        public ParamLimit GetLimits(string v)
+        {
+            ParamLimit res = paramLimits.GetLimits(v.ToLower());
+            return res;
         }
     }
 }
