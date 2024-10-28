@@ -90,6 +90,8 @@ namespace Barnacle.Object3DLib
             new PrimTableEntry( "trispike",PrimitiveGenerator.GenerateTriSpike, Colors.CadetBlue),
             new PrimTableEntry( "tube",PrimitiveGenerator.GenerateTube, Colors.Magenta),
             new PrimTableEntry( "xbar",PrimitiveGenerator.GenerateXBar,Colors.IndianRed),
+             new PrimTableEntry( "ubeam",PrimitiveGenerator.GenerateUBeam,Colors.LightSteelBlue),
+             new PrimTableEntry( "boxframe",PrimitiveGenerator.GenerateBoxFrame,Colors.SteelBlue),
         };
 
         protected Bounds3D absoluteBounds;

@@ -98,11 +98,15 @@ namespace Barnacle.Dialogs
         private void LeftNameClicked(object sender, RoutedEventArgs e)
         {
             ObjectName = LeftName;
+            DialogResult = true;
+            Close();
         }
 
         private void RightNameClicked(object sender, RoutedEventArgs e)
         {
             ObjectName = RightName;
+            DialogResult = true;
+            Close();
         }
     }
 }

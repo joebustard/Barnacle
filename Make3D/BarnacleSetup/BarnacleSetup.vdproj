@@ -45,6 +45,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_1145ED3E079241D9A3232DA8009B39AA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_13BECADFF11E4E018136435772F35BB4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -226,6 +232,12 @@
         "Entry"
         {
         "MsmKey" = "8:_5639CE54194A47A2AE0AE954334078BE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_56CF170029954DC286454C055767F723"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -435,6 +447,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_9A59173D658946A2ABA24BDC1396A64F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_9BD0F0D05F9D420B442A0E027B2042A5"
         "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
         "MsmSig" = "8:_UNDEFINED"
@@ -574,6 +592,12 @@
         "Entry"
         {
         "MsmKey" = "8:_C562464A1FD34540A27093757F10D2BC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C5DE5456710D4E01B4D08B4FCE1B1D23"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1166,6 +1190,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1145ED3E079241D9A3232DA8009B39AA"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\VerticalPanel.png"
+            "TargetName" = "8:VerticalPanel.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_13BECADFF11E4E018136435772F35BB4"
             {
             "SourcePath" = "8:..\\Make3D\\Data\\Textures\\Circle.png"
@@ -1711,6 +1755,26 @@
             "TargetName" = "8:AircraftBillOfMaterials.xlsx"
             "Tag" = "8:"
             "Folder" = "8:_23862707349949B195647F45758B8C14"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_56CF170029954DC286454C055767F723"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\HorizontalLine.png"
+            "TargetName" = "8:HorizontalLine.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2377,6 +2441,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9A59173D658946A2ABA24BDC1396A64F"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\HorizontalPanel.png"
+            "TargetName" = "8:HorizontalPanel.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_9BD0F0D05F9D420B442A0E027B2042A5"
             {
             "AssemblyRegister" = "3:1"
@@ -2831,6 +2915,26 @@
             {
             "SourcePath" = "8:..\\Make3D\\Data\\Textures\\Gear1.png"
             "TargetName" = "8:Gear1.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C5DE5456710D4E01B4D08B4FCE1B1D23"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\VerticalLine.png"
+            "TargetName" = "8:VerticalLine.png"
             "Tag" = "8:"
             "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
             "Condition" = "8:"
@@ -3360,7 +3464,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Barnacle3D"
         "ProductCode" = "8:{5A17B6E7-E51A-4DF9-B568-81D170C30EB8}"
-        "PackageCode" = "8:{9F9C1D84-D961-490A-B21B-A0DE2A3C50C9}"
+        "PackageCode" = "8:{64759D5F-D569-4270-8785-8EB49574BB2F}"
         "UpgradeCode" = "8:{6F2FD966-929F-4C74-8C4C-BF438CF79394}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

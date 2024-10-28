@@ -257,7 +257,9 @@ Procedure MyProc(  )
 
         private void Run()
         {
+            dispatcherTimer.Stop();
             ResultsBox.Text = "";
+
             vm.ClearResults();
             if (RefreshInterpreterSource())
             {

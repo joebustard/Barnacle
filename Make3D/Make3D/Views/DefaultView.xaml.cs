@@ -338,6 +338,9 @@ namespace Barnacle.Views
                 {
                     content.Clear();
                     script.SetResultsContent(content);
+                    script.SetPartsLibraryRoot(BaseViewModel.PartLibraryProject.BaseFolder);
+                    script.SetProjectPathRoot(BaseViewModel.Project.BaseFolder);
+
                     if (!script.Execute())
                     {
                         MessageBox.Show("Script failed to run");

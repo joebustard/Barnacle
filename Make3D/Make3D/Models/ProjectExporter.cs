@@ -1,5 +1,6 @@
 ﻿using Barnacle.Dialogs;
 using Barnacle.Object3DLib;
+using Barnacle.ViewModels;
 using System;
 using System.Threading.Tasks;
 using VisualSolutionExplorer;
@@ -31,6 +32,8 @@ namespace Barnacle.Models
             Document doc = new Document();
             doc.ParentProject = prj;
             doc.Load(f);
+            doc.ProjectSettings = BaseViewModel.Project.SharedProjectSettings;
+
             Bounds3D allBounds = new Bounds3D();
             allBounds.Zero();
             bool hasContent = false;

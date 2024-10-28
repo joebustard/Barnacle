@@ -146,6 +146,14 @@
             </Button>
             <Button
                 Command="{Binding AddCommand}"
+                CommandParameter="UBeam"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource ImageButton}"
+                ToolTip="Add a U beam object">
+                <Image Source="/Barnacle;component/Images/Buttons/UBeam.png" />
+            </Button>
+            <Button
+                Command="{Binding AddCommand}"
                 CommandParameter="Pyramid2"
                 IsEnabled="{Binding EditingActive}"
                 Style="{StaticResource ImageButton}"
@@ -210,7 +218,6 @@
                 <Image Source="/Barnacle;component/Images/Buttons/Tube.png" />
             </Button>
 
-
             <Button
                 Command="{Binding AddCommand}"
                 CommandParameter="stellatedodec"
@@ -226,6 +233,14 @@
                 Style="{StaticResource ImageButton}"
                 ToolTip="Add a Stellate Octahedron">
                 <Image Source="/Barnacle;component/Images/Buttons/StellateOcto.png" />
+            </Button>
+            <Button
+                Command="{Binding AddCommand}"
+                CommandParameter="BoxFrame"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource ImageButton}"
+                ToolTip="Add a box frame object">
+                <Image Source="/Barnacle;component/Images/Buttons/BoxFrame.png" />
             </Button>
             <Button
                 Command="{Binding AddCommand}"

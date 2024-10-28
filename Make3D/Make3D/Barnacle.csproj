@@ -1410,6 +1410,12 @@
     <Resource Include="Images\Buttons\RightNotBevelled.png" />
     <Resource Include="Images\Buttons\TopBevelled.png" />
     <Resource Include="Images\Buttons\TopNotBevelled.png" />
+    <Resource Include="Images\Buttons\UBeam.png" />
+    <Resource Include="Images\Buttons\BoxFrame.png" />
+    <Resource Include="Data\Textures\HorizontalLine.png" />
+    <Resource Include="Data\Textures\HorizontalPanel.png" />
+    <Resource Include="Data\Textures\VerticalLine.png" />
+    <Resource Include="Data\Textures\VerticalPanel.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

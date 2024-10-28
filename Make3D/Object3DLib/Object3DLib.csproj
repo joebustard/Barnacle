@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Bounds3D.cs" />
     <Compile Include="ExternalReference.cs" />
+    <Compile Include="ExtraPrimitives\BoxFrame.cs" />
     <Compile Include="ExtraPrimitives\ButtonTop.cs" />
     <Compile Include="ExtraPrimitives\Dice.cs" />
     <Compile Include="ExtraPrimitives\Egg.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="ExtraPrimitives\Star6.cs" />
     <Compile Include="ExtraPrimitives\StellateDoDecahedron.cs" />
     <Compile Include="ExtraPrimitives\StellateOctahedron.cs" />
+    <Compile Include="ExtraPrimitives\UBeam.cs" />
     <Compile Include="ExtraPrimitives\XBar.cs" />
     <Compile Include="Group3D.cs" />
     <Compile Include="IcoSphereCreator.cs" />

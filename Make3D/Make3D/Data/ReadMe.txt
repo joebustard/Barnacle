@@ -5,6 +5,9 @@ Added
   Busy indicator on Image Plaque and Dual Profile
   Turn mm lines on floor grid on and off
   InsertPart() function to Limpet.
+  Boxframe primitive.
+  U-Beam primitive
+  Two more basic textures for platelets
 
 Fixed
   Renaming the current file, switching projects, then reopening project via the recent projects menu
@@ -12,7 +15,7 @@ Fixed
   
   RailWheel editor was mis-remembering the main radius setting.
   
-  Improved memory recovery after running script
+  Improved memory recovery after running limpet script
   
   Prevent symbol corruption in the interpreter when script is re-run repeatedly
   
@@ -21,6 +24,9 @@ Fixed
 
   Prevent double undo checkpoint when rotating via 
   keyboard shortcuts.
+
+  Export project was always doing a "floor all" even if this 
+  option was turned off in the project settings
 
 Changed
 	Removed scrollviewer control from default view as it was
