@@ -154,6 +154,14 @@
             </Button>
             <Button
                 Command="{Binding AddCommand}"
+                CommandParameter="ShallowUBeam"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource ImageButton}"
+                ToolTip="Add a Shallow U beam object">
+                <Image Source="/Barnacle;component/Images/Buttons/ShallowUBeam.png" />
+            </Button>
+            <Button
+                Command="{Binding AddCommand}"
                 CommandParameter="Pyramid2"
                 IsEnabled="{Binding EditingActive}"
                 Style="{StaticResource ImageButton}"

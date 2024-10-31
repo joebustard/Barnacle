@@ -99,14 +99,7 @@ namespace Barnacle.Object3DLib
 2,1,26,
         };
 
-            for (int i = 0; i < v.GetLength(0); i += 3)
-            {
-                pnts.Add(new Point3D(v[i], v[i + 1], v[i + 2]));
-            }
-            for (int j = 0; j < f.GetLength(0); j++)
-            {
-                indices.Add(f[j]);
-            }
+            BuildPrimitive(pnts, indices, v, f);
         }
     }
 }

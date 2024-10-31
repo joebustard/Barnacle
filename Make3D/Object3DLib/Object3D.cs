@@ -92,6 +92,7 @@ namespace Barnacle.Object3DLib
             new PrimTableEntry( "xbar",PrimitiveGenerator.GenerateXBar,Colors.IndianRed),
              new PrimTableEntry( "ubeam",PrimitiveGenerator.GenerateUBeam,Colors.LightSteelBlue),
              new PrimTableEntry( "boxframe",PrimitiveGenerator.GenerateBoxFrame,Colors.SteelBlue),
+             new PrimTableEntry( "shallowubeam",PrimitiveGenerator.GenerateShallowUBeam,Colors.MediumOrchid),
         };
 
         protected Bounds3D absoluteBounds;
@@ -103,7 +104,6 @@ namespace Barnacle.Object3DLib
         private List<int> indices;
         private Vector3DCollection normals;
 
-        // private Point3DCollection relativeObjectVertices;
         private List<P3D> relativeObjectVertices;
 
         private Transform3DGroup rotTransformation;

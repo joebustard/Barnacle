@@ -4546,6 +4546,180 @@ namespace Barnacle.Object3DLib
             SwitchInsideOut(indices);
         }
 
+        public static void GenerateCell(int numsides, ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+        {
+            double innerR = 0.4;
+            double outterR = 0.5;
+            double dt = (Math.PI * 2.0) / numsides;
+            double theta = 0;
+            for (int i = 0; i < numsides; i++)
+            {
+                double x = innerR * Math.Sin(theta);
+                double y = innerR * Math.Cos(theta);
+                theta += dt;
+                pnts.Add(new Point3D(x, y, -0.5));
+            }
+
+            theta = 0;
+            for (int i = 0; i < numsides; i++)
+            {
+                double x = outterR * Math.Sin(theta);
+                double y = outterR * Math.Cos(theta);
+                theta += dt;
+                pnts.Add(new Point3D(x, y, -0.5));
+            }
+
+            theta = 0;
+            for (int i = 0; i < numsides; i++)
+            {
+                double x = innerR * Math.Sin(theta);
+                double y = innerR * Math.Cos(theta);
+                theta += dt;
+                pnts.Add(new Point3D(x, y, 0.5));
+            }
+
+            theta = 0;
+            for (int i = 0; i < numsides; i++)
+            {
+                double x = outterR * Math.Sin(theta);
+                double y = outterR * Math.Cos(theta);
+                theta += dt;
+                pnts.Add(new Point3D(x, y, 0.5));
+            }
+
+            double minx = double.MaxValue;
+            double maxx = double.MinValue;
+            double miny = double.MaxValue;
+            double maxy = double.MinValue;
+            for (int i = 0; i < pnts.Count; i++)
+            {
+                if (pnts[i].X < minx) minx = pnts[i].X;
+                if (pnts[i].X > maxx) maxx = pnts[i].X;
+                if (pnts[i].Y < miny) miny = pnts[i].Y;
+                if (pnts[i].Y > maxy) maxy = pnts[i].Y;
+            }
+            double xs = (maxx - minx);
+            double ys = (maxy - miny);
+            if (xs > 0 && ys > 0)
+            {
+                for (int i = 0; i < pnts.Count; i++)
+                {
+                    pnts[i] = new Point3D(pnts[i].X / xs, (pnts[i].Y) / ys, pnts[i].Z);
+                }
+            }
+            for (int i = 0; i < numsides; i++)
+            {
+                int j = i + 1;
+                if (j == numsides)
+                {
+                    j = 0;
+                }
+                int k = i + (2 * numsides);
+                int l = k + 1;
+                if (l == 3 * numsides)
+                {
+                    l = 2 * numsides;
+                }
+                // tri 1 of inner
+                indices.Add(i);
+                indices.Add(j);
+                indices.Add(k);
+
+                // tri 2 of inner
+                indices.Add(j);
+                indices.Add(l);
+                indices.Add(k);
+            }
+
+            for (int i = numsides; i < numsides * 2; i++)
+            {
+                int j = i + 1;
+                if (j == numsides * 2)
+                {
+                    j = numsides;
+                }
+                int k = i + (2 * numsides);
+                int l = j + (2 * numsides);
+
+                // tri 1 of outter
+                indices.Add(k);
+                indices.Add(j);
+                indices.Add(i);
+
+                // tri 2 of outter
+                indices.Add(l);
+                indices.Add(j);
+                indices.Add(k);
+            }
+
+            // bottom
+            for (int i = 0; i < numsides; i++)
+            {
+                int j = i + 1;
+                if (j == numsides)
+                {
+                    j = 0;
+                }
+                int k = i + numsides;
+                int l = j + numsides;
+
+                // tri 1 of outter
+                indices.Add(i);
+                indices.Add(k);
+                indices.Add(j);
+
+                indices.Add(j);
+                indices.Add(k);
+                indices.Add(l);
+            }
+
+            // top
+            for (int i = numsides * 2; i < 3 * numsides; i++)
+            {
+                int j = i + 1;
+                if (j == 3 * numsides)
+                {
+                    j = 2 * numsides;
+                }
+                int k = i + numsides;
+                int l = j + numsides;
+
+                // tri 1 of outter
+                indices.Add(i);
+                indices.Add(j);
+                indices.Add(k);
+
+                indices.Add(j);
+                indices.Add(l);
+                indices.Add(k);
+            }
+        }
+
+        public static void GenerateCell3(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+        {
+            GenerateCell(3, ref pnts, ref indices, ref normals);
+        }
+
+        public static void GenerateCell4(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+        {
+            GenerateCell(4, ref pnts, ref indices, ref normals);
+        }
+
+        public static void GenerateCell5(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+        {
+            GenerateCell(5, ref pnts, ref indices, ref normals);
+        }
+
+        public static void GenerateCell6(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+        {
+            GenerateCell(6, ref pnts, ref indices, ref normals);
+        }
+
+        public static void GenerateCell8(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+        {
+            GenerateCell(8, ref pnts, ref indices, ref normals);
+        }
+
         public static void GenerateCone(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
         {
             pnts = new Point3DCollection();
@@ -4747,30 +4921,6 @@ namespace Barnacle.Object3DLib
             AddTriangle(indices, 2, 0, 1);
         }
 
-        public static void GenerateOctahedron(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
-        {
-            pnts = new Point3DCollection();
-            pnts.Add(new Point3D(0, -0.5, 0.5));
-            pnts.Add(new Point3D(0, 0.5, 0.5));
-            pnts.Add(new Point3D(0, 0.5, -0.5));
-            pnts.Add(new Point3D(0, -0.5, -0.5));
-            pnts.Add(new Point3D(0.5, 0, 0));
-            pnts.Add(new Point3D(-0.5, 0, 0));
-
-            indices = new Int32Collection();
-            AddTriangle(indices, 0, 4, 1);
-            AddTriangle(indices, 1, 4, 2);
-
-            AddTriangle(indices, 2, 4, 3);
-            AddTriangle(indices, 3, 4, 0);
-
-            AddTriangle(indices, 0, 1, 5);
-            AddTriangle(indices, 1, 2, 5);
-
-            AddTriangle(indices, 2, 3, 5);
-            AddTriangle(indices, 3, 0, 5);
-        }
-
         public static void GenerateCylinder(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
         {
             pnts = new Point3DCollection();
@@ -4811,6 +4961,30 @@ namespace Barnacle.Object3DLib
                 // vertical 2
                 AddTriangle(pnts, indices, bottom[i], top[l], bottom[j]);
             }
+        }
+
+        public static void GenerateOctahedron(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+        {
+            pnts = new Point3DCollection();
+            pnts.Add(new Point3D(0, -0.5, 0.5));
+            pnts.Add(new Point3D(0, 0.5, 0.5));
+            pnts.Add(new Point3D(0, 0.5, -0.5));
+            pnts.Add(new Point3D(0, -0.5, -0.5));
+            pnts.Add(new Point3D(0.5, 0, 0));
+            pnts.Add(new Point3D(-0.5, 0, 0));
+
+            indices = new Int32Collection();
+            AddTriangle(indices, 0, 4, 1);
+            AddTriangle(indices, 1, 4, 2);
+
+            AddTriangle(indices, 2, 4, 3);
+            AddTriangle(indices, 3, 4, 0);
+
+            AddTriangle(indices, 0, 1, 5);
+            AddTriangle(indices, 1, 2, 5);
+
+            AddTriangle(indices, 2, 3, 5);
+            AddTriangle(indices, 3, 0, 5);
         }
 
         public static void GeneratePointy(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
@@ -4958,176 +5132,6 @@ namespace Barnacle.Object3DLib
             indices.Add(14);
             indices.Add(8);
             SwitchInsideOut(indices);
-        }
-        public static void GenerateCell3( ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
-        {
-            GenerateCell(3, ref pnts, ref indices, ref normals);
-        }
-        public static void GenerateCell4(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
-        {
-            GenerateCell(4, ref pnts, ref indices, ref normals);
-        }
-        public static void GenerateCell5(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
-        {
-            GenerateCell(5, ref pnts, ref indices, ref normals);
-        }
-        public static void GenerateCell6(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
-        {
-            GenerateCell(6, ref pnts, ref indices, ref normals);
-        }
-        public static void GenerateCell8(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
-        {
-            GenerateCell(8, ref pnts, ref indices, ref normals);
-        }
-
-
-        public static void GenerateCell(int numsides, ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
-        {
-            double innerR = 0.4;
-            double outterR = 0.5;
-            double dt = (Math.PI * 2.0) / numsides;
-            double theta = 0;
-            for (int i = 0; i < numsides; i++)
-            {
-                double x = innerR * Math.Sin(theta);
-                double y = innerR * Math.Cos(theta);
-                theta += dt;
-                pnts.Add(new Point3D(x, y, -0.5));
-            }
-
-            theta = 0;
-            for (int i = 0; i < numsides; i++)
-            {
-                double x = outterR * Math.Sin(theta);
-                double y = outterR * Math.Cos(theta);
-                theta += dt;
-                pnts.Add(new Point3D(x, y, -0.5));
-            }
-
-            theta = 0;
-            for (int i = 0; i < numsides; i++)
-            {
-                double x = innerR * Math.Sin(theta);
-                double y = innerR * Math.Cos(theta);
-                theta += dt;
-                pnts.Add(new Point3D(x, y, 0.5));
-            }
-
-            theta = 0;
-            for (int i = 0; i < numsides; i++)
-            {
-                double x = outterR * Math.Sin(theta);
-                double y = outterR * Math.Cos(theta);
-                theta += dt;
-                pnts.Add(new Point3D(x, y, 0.5));
-            }
-
-            double minx = double.MaxValue;
-            double maxx = double.MinValue;
-            double miny = double.MaxValue;
-            double maxy = double.MinValue;
-            for (int i = 0; i < pnts.Count; i++)
-            {
-                if (pnts[i].X < minx) minx = pnts[i].X;
-                if (pnts[i].X > maxx) maxx = pnts[i].X;
-                if (pnts[i].Y < miny) miny = pnts[i].Y;
-                if (pnts[i].Y > maxy) maxy = pnts[i].Y;
-            }
-            double xs = (maxx - minx);
-            double ys = (maxy - miny);
-            if (xs > 0 && ys > 0)
-            {
-                for (int i = 0; i < pnts.Count; i++)
-                {
-                    pnts[i] = new Point3D(pnts[i].X / xs, (pnts[i].Y) / ys, pnts[i].Z);
-                }
-            }
-            for (int i = 0; i < numsides; i++)
-            {
-                int j = i + 1;
-                if (j == numsides)
-                {
-                    j = 0;
-                }
-                int k = i + (2 * numsides);
-                int l = k + 1;
-                if (l == 3 * numsides)
-                {
-                    l = 2 * numsides;
-                }
-                // tri 1 of inner
-                indices.Add(i);
-                indices.Add(j);
-                indices.Add(k);
-
-                // tri 2 of inner
-                indices.Add(j);
-                indices.Add(l);
-                indices.Add(k);
-            }
-
-            for (int i = numsides; i < numsides * 2; i++)
-            {
-                int j = i + 1;
-                if (j == numsides * 2)
-                {
-                    j = numsides;
-                }
-                int k = i + (2 * numsides);
-                int l = j + (2 * numsides);
-
-                // tri 1 of outter
-                indices.Add(k);
-                indices.Add(j);
-                indices.Add(i);
-
-                // tri 2 of outter
-                indices.Add(l);
-                indices.Add(j);
-                indices.Add(k);
-            }
-
-            // bottom
-            for (int i = 0; i < numsides; i++)
-            {
-                int j = i + 1;
-                if (j == numsides)
-                {
-                    j = 0;
-                }
-                int k = i + numsides;
-                int l = j + numsides;
-
-                // tri 1 of outter
-                indices.Add(i);
-                indices.Add(k);
-                indices.Add(j);
-
-                indices.Add(j);
-                indices.Add(k);
-                indices.Add(l);
-            }
-
-            // top
-            for (int i = numsides * 2; i < 3 * numsides; i++)
-            {
-                int j = i + 1;
-                if (j == 3 * numsides)
-                {
-                    j = 2 * numsides;
-                }
-                int k = i + numsides;
-                int l = j + numsides;
-
-                // tri 1 of outter
-                indices.Add(i);
-                indices.Add(j);
-                indices.Add(k);
-
-                indices.Add(j);
-                indices.Add(l);
-                indices.Add(k);
-            }
         }
 
         public static void GeneratePolygon(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
@@ -8525,6 +8529,91 @@ namespace Barnacle.Object3DLib
             indices.Add(93);
         }
 
+        public static void GenerateTriSpike(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+        {
+            double[] v =
+            {
+0.500,0.000,0.000,
+0.167,0.000,-0.167,
+0.125,0.500,-0.125,
+0.250,1.000,0.000,
+0.125,0.500,0.125,
+0.167,0.000,0.167,
+0.000,0.000,0.000,
+0.000,0.000,-0.250,
+0.250,0.000,0.000,
+-0.250,1.000,0.000,
+-0.125,0.500,-0.125,
+-0.167,0.000,-0.167,
+-0.500,0.000,0.000,
+-0.167,0.000,0.167,
+-0.125,0.500,0.125,
+-0.250,0.000,0.000,
+0.000,0.000,0.250,
+-0.063,0.250,0.063,
+0.000,0.000,-0.500,
+0.000,1.000,-0.250,
+0.000,1.000,0.250,
+0.000,0.000,0.500,
+-0.063,0.250,-0.063,
+};
+            int[] f =
+            {
+0,1,2,
+0,2,3,
+3,4,5,
+3,5,0,
+3,2,6,
+7,1,8,
+1,0,8,
+9,10,11,
+9,11,12,
+12,13,14,
+12,14,9,
+12,11,15,
+11,7,15,
+4,3,6,
+0,5,8,
+5,16,8,
+16,6,8,
+6,7,8,
+10,17,6,
+9,14,17,
+9,17,10,
+7,6,15,
+6,16,15,
+16,13,15,
+13,12,15,
+18,11,10,
+18,10,19,
+19,2,1,
+19,1,18,
+18,1,7,
+20,14,13,
+20,13,21,
+21,5,4,
+21,4,20,
+20,4,6,
+5,21,16,
+2,22,6,
+19,10,22,
+19,22,2,
+11,18,7,
+20,6,17,
+21,13,16,
+14,20,17,
+};
+
+            for (int i = 0; i < v.GetLength(0); i += 3)
+            {
+                pnts.Add(new Point3D(v[i], v[i + 1], v[i + 2]));
+            }
+            for (int j = 0; j < f.GetLength(0); j++)
+            {
+                indices.Add(f[j]);
+            }
+        }
+
         public static void GenerateTube(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
         {
             pnts.Add(new Point3D(-0.097, 0.362, -0.500));
@@ -9255,91 +9344,8 @@ namespace Barnacle.Object3DLib
             return res;
         }
 
-        private static void SwitchInsideOut(Int32Collection indices)
+        private static void BuildPrimitive(Point3DCollection pnts, Int32Collection indices, double[] v, int[] f)
         {
-            for (int i = 0; i < indices.Count; i += 3)
-            {
-                int tmp = indices[i + 1];
-                indices[i + 1] = indices[i + 2];
-                indices[i + 2] = tmp;
-            }
-        }
-
-        public static void GenerateTriSpike(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
-        {
-            double[] v =
-            {
-0.500,0.000,0.000,
-0.167,0.000,-0.167,
-0.125,0.500,-0.125,
-0.250,1.000,0.000,
-0.125,0.500,0.125,
-0.167,0.000,0.167,
-0.000,0.000,0.000,
-0.000,0.000,-0.250,
-0.250,0.000,0.000,
--0.250,1.000,0.000,
--0.125,0.500,-0.125,
--0.167,0.000,-0.167,
--0.500,0.000,0.000,
--0.167,0.000,0.167,
--0.125,0.500,0.125,
--0.250,0.000,0.000,
-0.000,0.000,0.250,
--0.063,0.250,0.063,
-0.000,0.000,-0.500,
-0.000,1.000,-0.250,
-0.000,1.000,0.250,
-0.000,0.000,0.500,
--0.063,0.250,-0.063,
-};
-            int[] f =
-            {
-0,1,2,
-0,2,3,
-3,4,5,
-3,5,0,
-3,2,6,
-7,1,8,
-1,0,8,
-9,10,11,
-9,11,12,
-12,13,14,
-12,14,9,
-12,11,15,
-11,7,15,
-4,3,6,
-0,5,8,
-5,16,8,
-16,6,8,
-6,7,8,
-10,17,6,
-9,14,17,
-9,17,10,
-7,6,15,
-6,16,15,
-16,13,15,
-13,12,15,
-18,11,10,
-18,10,19,
-19,2,1,
-19,1,18,
-18,1,7,
-20,14,13,
-20,13,21,
-21,5,4,
-21,4,20,
-20,4,6,
-5,21,16,
-2,22,6,
-19,10,22,
-19,22,2,
-11,18,7,
-20,6,17,
-21,13,16,
-14,20,17,
-};
-
             for (int i = 0; i < v.GetLength(0); i += 3)
             {
                 pnts.Add(new Point3D(v[i], v[i + 1], v[i + 2]));
@@ -9347,6 +9353,16 @@ namespace Barnacle.Object3DLib
             for (int j = 0; j < f.GetLength(0); j++)
             {
                 indices.Add(f[j]);
+            }
+        }
+
+        private static void SwitchInsideOut(Int32Collection indices)
+        {
+            for (int i = 0; i < indices.Count; i += 3)
+            {
+                int tmp = indices[i + 1];
+                indices[i + 1] = indices[i + 2];
+                indices[i + 2] = tmp;
             }
         }
     }

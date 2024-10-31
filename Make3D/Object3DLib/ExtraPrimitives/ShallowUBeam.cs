@@ -1,4 +1,8 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -6,7 +10,7 @@ namespace Barnacle.Object3DLib
 {
     public partial class PrimitiveGenerator
     {
-        public static void GenerateUBeam(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+        public static void GenerateShallowUBeam(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
         {
             double[] v =
             {
@@ -18,10 +22,10 @@ namespace Barnacle.Object3DLib
             0.500,0.000,0.375,
             0.500,1.000,0.175,
             0.500,0.000,0.175,
-            -0.25,1.000,0.175,
-            -0.25,0.000,0.175,
-            -0.25,1.000,-0.425,
-            -0.25,0.000,-0.425,
+            0.25,1.000,0.175,
+            0.25,0.000,0.175,
+            0.25,1.000,-0.425,
+            0.25,0.000,-0.425,
             0.500,1.000,-0.425,
             0.500,0.000,-0.425,
             0.500,1.000,-0.625,
@@ -63,6 +67,7 @@ namespace Barnacle.Object3DLib
             0,0,15,
             2,14,2,
         };
+
             BuildPrimitive(pnts, indices, v, f);
         }
     }

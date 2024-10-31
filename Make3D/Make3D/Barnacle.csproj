@@ -1416,6 +1416,7 @@
     <Resource Include="Data\Textures\HorizontalPanel.png" />
     <Resource Include="Data\Textures\VerticalLine.png" />
     <Resource Include="Data\Textures\VerticalPanel.png" />
+    <Resource Include="Images\Buttons\ShallowUBeam.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

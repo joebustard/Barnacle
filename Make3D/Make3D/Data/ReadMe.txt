@@ -7,42 +7,32 @@ Added
   InsertPart() function to Limpet.
   Boxframe primitive.
   U-Beam primitive
+  Shallow U-Beam primitive
   Two more basic textures for platelets
 
 Fixed
   Renaming the current file, switching projects, then reopening project via the recent projects menu
   might lead to the last edited file not actually opening automatically
-  
   RailWheel editor was mis-remembering the main radius setting.
-  
   Improved memory recovery after running limpet script
-  
   Prevent symbol corruption in the interpreter when script is re-run repeatedly
-  
   ImagePlaque handled pixels with RGB < 128 and > 128 but 
   ignored any that are exactly 128. Fixed
-
   Prevent double undo checkpoint when rotating via 
   keyboard shortcuts.
-
   Export project was always doing a "floor all" even if this 
   option was turned off in the project settings
 
 Changed
 	Removed scrollviewer control from default view as it was
 	causing issues on the script sub view
-
 	Changed the header on the project explorer from "Solution" to "Project" as
 	this makes more sense for most users.
-
 	Prevent referenced groups from being ungrouped as this breaks the reference
 	Prevent referenced objects from being grouped as this breaks the reference
 	When loading referenced groups, the lower level objects are skipped to save memory
-
 	Changed meaning of parameters in rail wheel tool.
-
 	Show original names of objects on csg name confirmation dialog.
-
 	Swapped panels on script view. Looks better.
 
 v1.0.6

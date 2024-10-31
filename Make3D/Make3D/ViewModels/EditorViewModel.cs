@@ -176,7 +176,13 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "CutPlane", OnCutPlane);
             NotificationManager.Subscribe("Editor", "UpdateModels", OnUpdateModels);
             NotificationManager.Subscribe("Editor", "MeshSubdivide", OnMeshSubdivide);
+            NotificationManager.Subscribe("Editor", "OpenFile", OnOpenFile);
+            NotificationManager.Subscribe("Editor", "OpenRecentFile", OnOpenFile);
+            NotificationManager.Subscribe("Editor", "NewFile", OnOpenFile);
+            NotificationManager.Subscribe("Editor", "NewProject", OnOpenFile);
+
             ReportCameraPosition();
+
             selectedItems = new List<Object3D>();
             allBounds = new Bounds3D();
             allBounds.Adjust(new Point3D(0, 0, 0));
@@ -4075,6 +4081,16 @@ namespace Barnacle.ViewModels
             HomeCamera();
             selectedItems = new List<Object3D>();
             NotificationManager.Notify("ObjectNamesChanged", null);
+        }
+
+        private void OnOpenFile(object param)
+        {
+            // When opening file
+            // get rid of the selection adorner
+            // so its not hanging around pointing at objects
+            // that are not in the newly loaded file
+            selectedObjectAdorner = null;
+            RegenerateDisplayList();
         }
 
         private void OnPaste(object param)

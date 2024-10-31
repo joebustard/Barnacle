@@ -54,6 +54,7 @@
     <Compile Include="ExtraPrimitives\Egg.cs" />
     <Compile Include="ExtraPrimitives\HexCone.cs" />
     <Compile Include="ExtraPrimitives\IBar.cs" />
+    <Compile Include="ExtraPrimitives\ShallowUBeam.cs" />
     <Compile Include="ExtraPrimitives\Star6.cs" />
     <Compile Include="ExtraPrimitives\StellateDoDecahedron.cs" />
     <Compile Include="ExtraPrimitives\StellateOctahedron.cs" />

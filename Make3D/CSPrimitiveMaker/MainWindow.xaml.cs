@@ -14,6 +14,7 @@ namespace CSPrimitiveMaker
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private String primName;
+
         private string source =
 @"
 using System;
@@ -36,21 +37,14 @@ namespace Barnacle.Object3DLib
 !FACES!
         };
 
-        for ( int i = 0 ; i < v.GetLength(0); i += 3)
-        {
-            pnts.Add(new Point3D( v[i],v[i+1],v[i+2]));
-        }
-        for ( int j = 0; j < f.GetLength(0); j ++)
-        {
-            indices.Add(f[j]);
-        }
-
+           BuildPrimitive(pnts, indices, v, f);
     }
     }
 }
 ";
 
         private String stlPath;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -74,6 +68,7 @@ namespace Barnacle.Object3DLib
                 }
             }
         }
+
         public String STLPath
         {
             get { return stlPath; }
@@ -86,6 +81,7 @@ namespace Barnacle.Object3DLib
                 }
             }
         }
+
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             if (PropertyChanged != null)
@@ -140,6 +136,7 @@ namespace Barnacle.Object3DLib
                 }
             }
         }
+
         private void ExportCSharpe(Object3D ob)
         {
             String target = System.IO.Path.ChangeExtension(stlPath, ".cs");
