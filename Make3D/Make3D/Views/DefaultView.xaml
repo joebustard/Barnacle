@@ -445,6 +445,16 @@
                             IsEnabled="{Binding CanSlice}"
                             ToolTip="Export current file to stl, slice with CuraEngine" />
 
+                        <Custom:RibbonMenuItem
+                            x:Name="SliceSeparateParts"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding SliceCommand}"
+                            CommandParameter="SliceParts"
+                            Header="Seperate Parts"
+                            ImageSource="/Barnacle;component/Images/Buttons/SliceProject.png"
+                            IsEnabled="{Binding CanSlice}"
+                            ToolTip="Export the parts in the current file to seperate stls, slice with CuraEngine" />
                         <Custom:RibbonSeparator />
                     </Custom:RibbonMenuButton>
 

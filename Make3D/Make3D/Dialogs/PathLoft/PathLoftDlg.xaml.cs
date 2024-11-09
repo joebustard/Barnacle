@@ -16,7 +16,6 @@
 **************************************************************************/
 
 using Barnacle.Models.BufferedPolyline;
-using Barnacle.Object3DLib;
 using OctTreeLib;
 using PolygonTriangulationLib;
 using System;
@@ -36,70 +35,25 @@ namespace Barnacle.Dialogs
     {
         private const double maxloftHeight = 200;
         private const double maxloftThickness = 200;
+        private const double minBaseThickness = 0.1;
         private const double minloftHeight = 0.1;
         private const double minloftThickness = 0.1;
-        private double blx = 0;
-        private double bly = 0;
+        private double baseThickness;
+
+        private bool flatShape;
         private bool loaded;
         private double loftHeight;
         private double loftThickness;
         private OctTree octTree;
         private List<Point> pathPoints;
-        private double triy = 0;
-        private double trx = 0;
+        private bool roundShape;
+        private bool squareShape;
+
+        private Visibility ubeamVisibility;
+        private bool uShape;
         private string warningText;
         private double xExtent;
         private double yExtent;
-        private bool flatShape;
-
-        public bool FlatShape
-        {
-            get { return flatShape; }
-
-            set
-            {
-                if (value != flatShape)
-                {
-                    flatShape = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
-            }
-        }
-
-        private bool squareShape;
-
-        public bool SquareShape
-        {
-            get { return squareShape; }
-
-            set
-            {
-                if (value != squareShape)
-                {
-                    squareShape = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
-            }
-        }
-
-        private bool roundShape;
-
-        public bool RoundShape
-        {
-            get { return roundShape; }
-
-            set
-            {
-                if (value != roundShape)
-                {
-                    roundShape = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
-            }
-        }
 
         public PathLoftDlg()
         {
@@ -114,6 +68,46 @@ namespace Barnacle.Dialogs
             PathEditor.HasPresets = false;
             PathEditor.ShowAppend = true;
             PathEditor.ContinuousPointsNotify = true;
+        }
+
+        public double BaseThickness
+        {
+            get { return baseThickness; }
+            set
+            {
+                if (value != baseThickness)
+                {
+                    if (value > minBaseThickness)
+                    {
+                        baseThickness = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public String BaseThicknessToolTip
+        {
+            get
+            {
+                return $"BaseThickness must be in the range {minBaseThickness} to Loft Thickness";
+            }
+        }
+
+        public bool FlatShape
+        {
+            get { return flatShape; }
+
+            set
+            {
+                if (value != flatShape)
+                {
+                    flatShape = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
         }
 
         public double LoftHeight
@@ -175,6 +169,21 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public bool RoundShape
+        {
+            get { return roundShape; }
+
+            set
+            {
+                if (value != roundShape)
+                {
+                    roundShape = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
         public override bool ShowAxies
         {
             get
@@ -207,6 +216,57 @@ namespace Barnacle.Dialogs
                     showFloor = value;
                     NotifyPropertyChanged();
                     Redisplay();
+                }
+            }
+        }
+
+        public bool SquareShape
+        {
+            get { return squareShape; }
+
+            set
+            {
+                if (value != squareShape)
+                {
+                    squareShape = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public Visibility UBeamVisibility
+        {
+            get { return ubeamVisibility; }
+            set
+            {
+                if (value != ubeamVisibility)
+                {
+                    ubeamVisibility = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool UShape
+        {
+            get { return uShape; }
+
+            set
+            {
+                if (value != uShape)
+                {
+                    uShape = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                    if (uShape)
+                    {
+                        UBeamVisibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        UBeamVisibility = Visibility.Hidden;
+                    }
                 }
             }
         }
@@ -275,21 +335,13 @@ namespace Barnacle.Dialogs
             yExtent = ty - by;
         }
 
-        private void CreateSideFace(List<System.Windows.Point> pnts, int i, bool autoclose = true)
+        private void CreateSideFace(List<System.Windows.Point> pnts, int i)
         {
             int v = i + 1;
 
             if (v == pnts.Count)
             {
-                if (autoclose)
-                {
-                    v = 0;
-                }
-                else
-                {
-                    // dont process the final point if caller doesn't want it
-                    return;
-                }
+                v = 0;
             }
 
             int c0 = AddVerticeOctTree(pnts[i].X, pnts[i].Y, 0.0);
@@ -305,25 +357,26 @@ namespace Barnacle.Dialogs
             Faces.Add(c2);
         }
 
-        private void GenerateShape()
+        private void CreateTubeInnerSideFace(List<System.Windows.Point> pnts, int i, double baseHeight)
         {
-            ClearShape();
-            if (pathPoints != null && pathPoints.Count > 0)
+            int v = i + 1;
+
+            if (v == pnts.Count)
             {
-                if (flatShape)
-                {
-                    GenerateFlat();
-                }
-                else
-                if (squareShape)
-                {
-                    GenerateRound(4);
-                }
-                else
-                {
-                    GenerateRound(36);
-                }
+                v = 0;
             }
+
+            int c0 = AddVerticeOctTree(pnts[i].X, pnts[i].Y, baseHeight);
+            int c1 = AddVerticeOctTree(pnts[i].X, pnts[i].Y, loftHeight);
+            int c2 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, loftHeight);
+            int c3 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, baseHeight);
+            Faces.Add(c0);
+            Faces.Add(c1);
+            Faces.Add(c2);
+
+            Faces.Add(c0);
+            Faces.Add(c2);
+            Faces.Add(c3);
         }
 
         private void GenerateFlat()
@@ -497,6 +550,311 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void GenerateShape()
+        {
+            ClearShape();
+            if (pathPoints != null && pathPoints.Count > 0)
+            {
+                if (flatShape)
+                {
+                    GenerateFlat();
+                }
+                else
+                if (UShape)
+                {
+                    GenerateU();
+                }
+                else
+                if (squareShape)
+                {
+                    GenerateRound(4);
+                }
+                else
+                {
+                    GenerateRound(36);
+                }
+            }
+        }
+
+        private void GenerateU()
+        {
+            double backThickness = loftThickness / 2;
+            double frontThickness = backThickness * 0.5;
+            double baseHeight = baseThickness;
+            if (baseHeight > loftHeight)
+            {
+                baseHeight = loftHeight;
+            }
+            double top = 0;
+            Point startEdgeP0 = new Point(0, 0);
+            Point startEdgeP1 = new Point(0, 0);
+            Point startEdgeP2 = new Point(0, 0);
+            Point startEdgeP3 = new Point(0, 0);
+
+            Point endEdgeP0 = new Point(0, 0);
+            Point endEdgeP1 = new Point(0, 0);
+            Point endEdgeP2 = new Point(0, 0);
+            Point endEdgeP3 = new Point(0, 0);
+
+            int c0;
+            int c1;
+            int c2;
+            int c3;
+
+            int endOfOutbound = -1;
+            List<System.Windows.Point> tmp;
+            tmp = new List<System.Windows.Point>();
+            List<System.Windows.Point> tmp2;
+            tmp2 = new List<System.Windows.Point>();
+            // generate back
+            BufferedPolyline bl = new BufferedPolyline(pathPoints);
+            bl.BufferRadius = backThickness;
+            List<Point> outline = bl.GenerateBufferOutline();
+            endOfOutbound = bl.LastOutBoundIndex;
+            if (outline != null && outline.Count > 3)
+            {
+                for (int i = 0; i < outline.Count; i++)
+                {
+                    if (outline[i].Y > top)
+                    {
+                        top = outline[i].Y;
+                    }
+                }
+                for (int i = 0; i < outline.Count; i++)
+                {
+                    tmp.Add(new Point(outline[i].X, top - outline[i].Y));
+                }
+                startEdgeP0 = tmp[0];
+                startEdgeP1 = tmp[tmp.Count - 1];
+                endEdgeP0 = tmp[endOfOutbound];
+                endEdgeP1 = tmp[endOfOutbound + 1];
+                double lx, rx, ty, by;
+                CalculateExtents(tmp, out lx, out rx, out ty, out by);
+
+                octTree = CreateOctree(new Point3D(-lx, -by, -1),
+                                        new Point3D(+rx, +ty, loftHeight + 1));
+
+                // triangulate the basic polygon
+                TriangulationPolygon ply = new TriangulationPolygon();
+                List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
+                foreach (System.Windows.Point p in tmp)
+                {
+                    pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
+                }
+                ply.Points = pf.ToArray();
+                List<Triangle> tris = ply.Triangulate();
+                foreach (Triangle t in tris)
+                {
+                    c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, 0.0);
+                    c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, 0.0);
+                    c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, 0.0);
+
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+                }
+
+                for (int i = 0; i < endOfOutbound /*- 1*/; i++)
+                {
+                    CreateSideFace(tmp, i);
+                }
+
+                for (int i = endOfOutbound + 1; i < tmp.Count - 1; i++)
+                {
+                    CreateSideFace(tmp, i);
+                }
+            }
+
+            // generate front of base
+            bl = new BufferedPolyline(pathPoints);
+            bl.BufferRadius = frontThickness;
+            outline = new List<Point>();
+            outline = bl.GenerateBufferOutline();
+            if (outline != null && outline.Count > 3)
+            {
+                for (int i = 0; i < outline.Count; i++)
+                {
+                    tmp2.Add(new Point(outline[i].X, top - outline[i].Y));
+                }
+                startEdgeP2 = tmp2[0];
+                startEdgeP3 = tmp2[tmp2.Count - 1];
+                endEdgeP2 = tmp2[endOfOutbound];
+                endEdgeP3 = tmp2[endOfOutbound + 1];
+                // triangulate the basic polygon
+                TriangulationPolygon ply = new TriangulationPolygon();
+                List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
+                foreach (System.Windows.Point p in tmp2)
+                {
+                    pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
+                }
+                ply.Points = pf.ToArray();
+                List<Triangle> tris = ply.Triangulate();
+                foreach (Triangle t in tris)
+                {
+                    c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, baseHeight);
+                    c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, baseHeight);
+                    c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, baseHeight);
+
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+                }
+
+                for (int i = 0; i < endOfOutbound /*- 1*/; i++)
+                {
+                    CreateTubeInnerSideFace(tmp2, i, baseHeight);
+                }
+
+                for (int i = endOfOutbound + 1; i < tmp2.Count - 1; i++)
+                {
+                    CreateTubeInnerSideFace(tmp2, i, baseHeight);
+                }
+
+                for (int i = 0; i < (tmp2.Count / 2) - 1; i++)
+                {
+                    c0 = AddVerticeOctTree(tmp[i].X, tmp[i].Y, loftHeight);
+                    c1 = AddVerticeOctTree(tmp[i + 1].X, tmp[i + 1].Y, loftHeight);
+                    c2 = AddVerticeOctTree(tmp2[i].X, tmp2[i].Y, loftHeight);
+                    c3 = AddVerticeOctTree(tmp2[i + 1].X, tmp2[i + 1].Y, loftHeight);
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+
+                    Faces.Add(c1);
+                    Faces.Add(c3);
+                    Faces.Add(c2);
+                }
+
+                for (int i = (tmp2.Count / 2); i < tmp2.Count - 1; i++)
+                {
+                    c0 = AddVerticeOctTree(tmp[i].X, tmp[i].Y, loftHeight);
+                    c1 = AddVerticeOctTree(tmp[i + 1].X, tmp[i + 1].Y, loftHeight);
+                    c2 = AddVerticeOctTree(tmp2[i].X, tmp2[i].Y, loftHeight);
+                    c3 = AddVerticeOctTree(tmp2[i + 1].X, tmp2[i + 1].Y, loftHeight);
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+
+                    Faces.Add(c1);
+                    Faces.Add(c3);
+                    Faces.Add(c2);
+                }
+
+                // close start end
+                // central area
+                c0 = AddVerticeOctTree(startEdgeP2.X, startEdgeP2.Y, 0);
+                c1 = AddVerticeOctTree(startEdgeP2.X, startEdgeP2.Y, baseHeight);
+                c2 = AddVerticeOctTree(startEdgeP3.X, startEdgeP3.Y, 0);
+                c3 = AddVerticeOctTree(startEdgeP3.X, startEdgeP3.Y, baseHeight);
+                Faces.Add(c0);
+                Faces.Add(c1);
+                Faces.Add(c2);
+
+                Faces.Add(c1);
+                Faces.Add(c3);
+                Faces.Add(c2);
+
+                // raised edge
+                c0 = AddVerticeOctTree(startEdgeP0.X, startEdgeP0.Y, 0);
+                c1 = AddVerticeOctTree(startEdgeP0.X, startEdgeP0.Y, loftHeight);
+                c2 = AddVerticeOctTree(startEdgeP2.X, startEdgeP2.Y, 0);
+                c3 = AddVerticeOctTree(startEdgeP2.X, startEdgeP2.Y, loftHeight);
+                Faces.Add(c0);
+                Faces.Add(c1);
+                Faces.Add(c2);
+
+                Faces.Add(c1);
+                Faces.Add(c3);
+                Faces.Add(c2);
+
+                c0 = AddVerticeOctTree(startEdgeP1.X, startEdgeP1.Y, 0);
+                c1 = AddVerticeOctTree(startEdgeP1.X, startEdgeP1.Y, loftHeight);
+                c2 = AddVerticeOctTree(startEdgeP3.X, startEdgeP3.Y, 0);
+                c3 = AddVerticeOctTree(startEdgeP3.X, startEdgeP3.Y, loftHeight);
+                Faces.Add(c0);
+                Faces.Add(c2);
+                Faces.Add(c1);
+
+                Faces.Add(c1);
+                Faces.Add(c2);
+                Faces.Add(c3);
+
+                // close start end
+                // central area
+                c0 = AddVerticeOctTree(endEdgeP2.X, endEdgeP2.Y, 0);
+                c1 = AddVerticeOctTree(endEdgeP2.X, endEdgeP2.Y, baseHeight);
+                c2 = AddVerticeOctTree(endEdgeP3.X, endEdgeP3.Y, 0);
+                c3 = AddVerticeOctTree(endEdgeP3.X, endEdgeP3.Y, baseHeight);
+                Faces.Add(c0);
+                Faces.Add(c2);
+                Faces.Add(c1);
+
+                Faces.Add(c1);
+                Faces.Add(c2);
+                Faces.Add(c3);
+
+                // raised edge
+                c0 = AddVerticeOctTree(endEdgeP0.X, endEdgeP0.Y, 0);
+                c1 = AddVerticeOctTree(endEdgeP0.X, endEdgeP0.Y, loftHeight);
+                c2 = AddVerticeOctTree(endEdgeP2.X, endEdgeP2.Y, 0);
+                c3 = AddVerticeOctTree(endEdgeP2.X, endEdgeP2.Y, loftHeight);
+                Faces.Add(c0);
+                Faces.Add(c2);
+                Faces.Add(c1);
+
+                Faces.Add(c1);
+                Faces.Add(c2);
+                Faces.Add(c3);
+
+                c0 = AddVerticeOctTree(endEdgeP1.X, endEdgeP1.Y, 0);
+                c1 = AddVerticeOctTree(endEdgeP1.X, endEdgeP1.Y, loftHeight);
+                c2 = AddVerticeOctTree(endEdgeP3.X, endEdgeP3.Y, 0);
+                c3 = AddVerticeOctTree(endEdgeP3.X, endEdgeP3.Y, loftHeight);
+                Faces.Add(c0);
+                Faces.Add(c1);
+                Faces.Add(c2);
+
+                Faces.Add(c1);
+                Faces.Add(c3);
+                Faces.Add(c2);
+            }
+            CentreVertices();
+        }
+
+        private void LoadEditorParameters()
+        {
+            // load back the tool specific parameters
+            string imageName = EditorParameters.Get("ImagePath");
+            if (imageName != "")
+            {
+                PathEditor.LoadImage(imageName);
+            }
+            LoftHeight = EditorParameters.GetDouble("LoftHeight", 10);
+            LoftThickness = EditorParameters.GetDouble("LoftThickness", 5);
+            String s = EditorParameters.Get("Path");
+            if (s != "")
+            {
+                PathEditor.FromString(s);
+            }
+            FlatShape = EditorParameters.GetBoolean("FlatShape", true);
+            RoundShape = EditorParameters.GetBoolean("RoundShape", false);
+            SquareShape = EditorParameters.GetBoolean("SquareShape", false);
+            UShape = EditorParameters.GetBoolean("UShape", false);
+            BaseThickness = EditorParameters.GetDouble("BaseThickness", 1);
+        }
+
+        private void PathPointsChanged(List<Point> points)
+        {
+            pathPoints.Clear();
+            foreach (Point p in points)
+            {
+                pathPoints.Insert(0, new Point(p.X, p.Y));
+            }
+
+            GenerateShape();
+            Redisplay();
+        }
+
         private List<Point3D> RotatePoints(List<Point3D> pnts, double r1, double r2, double r3)
         {
             List<Point3D> tmp = new List<Point3D>();
@@ -532,49 +890,6 @@ namespace Barnacle.Dialogs
             return tmp;
         }
 
-        private void TestCurve()
-        {
-            List<Point> pnts = new List<Point>();
-            pnts.Add(new Point(10, 10));
-            pnts.Add(new Point(20, 10));
-            pnts.Add(new Point(25, 0));
-            BufferedPolyline bl = new BufferedPolyline(pnts);
-            bl.BufferRadius = loftThickness / 2;
-            List<CurvePoint> curvePoints = bl.GenerateBufferCurvePoints();
-        }
-
-        private void LoadEditorParameters()
-        {
-            // load back the tool specific parameters
-            string imageName = EditorParameters.Get("ImagePath");
-            if (imageName != "")
-            {
-                PathEditor.LoadImage(imageName);
-            }
-            LoftHeight = EditorParameters.GetDouble("LoftHeight", 10);
-            LoftThickness = EditorParameters.GetDouble("LoftThickness", 5);
-            String s = EditorParameters.Get("Path");
-            if (s != "")
-            {
-                PathEditor.FromString(s);
-            }
-            FlatShape = EditorParameters.GetBoolean("FlatShape", true);
-            RoundShape = EditorParameters.GetBoolean("RoundShape", false);
-            SquareShape = EditorParameters.GetBoolean("SquareShape", false);
-        }
-
-        private void PathPointsChanged(List<Point> points)
-        {
-            pathPoints.Clear();
-            foreach (Point p in points)
-            {
-                pathPoints.Insert(0, new Point(p.X, p.Y));
-            }
-
-            GenerateShape();
-            Redisplay();
-        }
-
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
@@ -585,6 +900,19 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("ImagePath", PathEditor.ImagePath);
             EditorParameters.Set("FlatShape", FlatShape.ToString());
             EditorParameters.Set("RoundShape", RoundShape.ToString());
+            EditorParameters.Set("UShape", UShape.ToString());
+            EditorParameters.Set("BaseThickness", BaseThickness.ToString());
+        }
+
+        private void TestCurve()
+        {
+            List<Point> pnts = new List<Point>();
+            pnts.Add(new Point(10, 10));
+            pnts.Add(new Point(20, 10));
+            pnts.Add(new Point(25, 0));
+            BufferedPolyline bl = new BufferedPolyline(pnts);
+            bl.BufferRadius = loftThickness / 2;
+            List<CurvePoint> curvePoints = bl.GenerateBufferCurvePoints();
         }
 
         private void UpdateDisplay()

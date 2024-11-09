@@ -37,8 +37,8 @@ namespace Barnacle.Object3DLib
 !FACES!
         };
 
-           BuildPrimitive(pnts, indices, v, f);
-    }
+        BuildPrimitive(pnts, indices, v, f);
+      }
     }
 }
 ";

@@ -41,6 +41,10 @@ namespace Barnacle.Dialogs.Slice
         private String selectedUserProfile;
         private DispatcherTimer timer;
 
+        private string UserProfilePath = "";
+
+        private string UserProfilePathNoSlash = "";
+
         public SliceControl()
         {
             InitializeComponent();
@@ -50,6 +54,8 @@ namespace Barnacle.Dialogs.Slice
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public Bounds3D AllBounds { get; internal set; }
 
         public List<String> BarnaclePrinterNames
         {
@@ -249,6 +255,33 @@ namespace Barnacle.Dialogs.Slice
             }
         }
 
+        public List<string> GetAvailableUserProfiles()
+        {
+            if (!Directory.Exists(UserProfilePath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(UserProfilePath);
+                }
+                catch (Exception ex)
+                {
+                    LoggerLib.Logger.LogException(ex);
+                }
+            }
+            List<string> res = new List<string>();
+            res.Add("None");
+            String[] files = Directory.GetFiles(UserProfilePath, "*.profile");
+            if (files.GetLength(0) > 0)
+            {
+                foreach (string s in files)
+                {
+                    res.Add(Path.GetFileNameWithoutExtension(s));
+                }
+            }
+
+            return res;
+        }
+
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             if (PropertyChanged != null)
@@ -307,6 +340,28 @@ namespace Barnacle.Dialogs.Slice
             Close();
         }
 
+        private void CopyProfileClicked(object sender, RoutedEventArgs e)
+        {
+            if (!String.IsNullOrEmpty(selectedUserProfile))
+            {
+                String defProfile = UserProfilePath + $"{selectedUserProfile}.profile";
+                if (File.Exists(defProfile))
+                {
+                    try
+                    {
+                        String copyName = UserProfilePath + $"{selectedUserProfile}_Copy.profile";
+                        File.Copy(defProfile, copyName, true);
+                        // refresh profiles list
+                        Profiles = GetAvailableUserProfiles();
+                    }
+                    catch (Exception ex)
+                    {
+                        LoggerLib.Logger.LogException(ex);
+                    }
+                }
+            }
+        }
+
         private void CopySingleFile(string fn, string trg, string name)
         {
             try
@@ -344,28 +399,6 @@ namespace Barnacle.Dialogs.Slice
             }
         }
 
-        private void CopyProfileClicked(object sender, RoutedEventArgs e)
-        {
-            if (!String.IsNullOrEmpty(selectedUserProfile))
-            {
-                String defProfile = UserProfilePath + $"{selectedUserProfile}.profile";
-                if (File.Exists(defProfile))
-                {
-                    try
-                    {
-                        String copyName = UserProfilePath + $"{selectedUserProfile}_Copy.profile";
-                        File.Copy(defProfile, copyName, true);
-                        // refresh profiles list
-                        Profiles = GetAvailableUserProfiles();
-                    }
-                    catch (Exception ex)
-                    {
-                        LoggerLib.Logger.LogException(ex);
-                    }
-                }
-            }
-        }
-
         private void EditPrinterClicked(object sender, RoutedEventArgs e)
         {
             if (selectedPrinter != null && selectedPrinter != "")
@@ -393,16 +426,6 @@ namespace Barnacle.Dialogs.Slice
                     }
                 }
             }
-        }
-
-        private string SlashN(string str)
-        {
-            return str.Replace("\\n", "\n");
-        }
-
-        private string UnSlashN(string str)
-        {
-            return str.Replace("\n", "\\n");
         }
 
         private void EditProfileClicked(object sender, RoutedEventArgs e)
@@ -575,6 +598,11 @@ M84 ; Disable stepper motors
             }
         }
 
+        private string SlashN(string str)
+        {
+            return str.Replace("\\n", "\n");
+        }
+
         private async void SliceClicked(object sender, RoutedEventArgs e)
         {
             CanClose = false;
@@ -591,6 +619,19 @@ M84 ; Disable stepper motors
             {
                 Directory.CreateDirectory(printerPath);
             }
+            if (ModelMode == "SliceParts")
+            {
+                String exportFolderPath = BaseViewModel.Project.BaseFolder + "\\export";
+                List<String> parts = BaseViewModel.Document.ExportAllPartsSeparately(AllBounds, exportFolderPath);
+                if (parts != null && parts.Count > 0)
+                {
+                    foreach (string partFile in parts)
+                    {
+                        await Task.Run(() => SliceSingleStl(partFile, printerPath));
+                    }
+                }
+            }
+            else
             if (ModelMode == "SliceModel")
             {
                 string fullPath = modelPath;
@@ -682,6 +723,54 @@ M84 ; Disable stepper motors
             }
         }
 
+        private async Task SliceSingleStl(string stlPath, string printerPath)
+        {
+            string modelName = Path.GetFileNameWithoutExtension(stlPath);
+
+            string gcodePath = Path.Combine(printerPath, modelName + ".gcode");
+
+            string logPath = Path.GetTempPath() + modelName + "_slicelog.log";
+            lastLog = logPath;
+
+            string prf = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PrinterProfiles\\" + selectedUserProfile + ".profile";
+
+            AppendResults(modelName.PadRight(16) + ", ", false);
+            string curaPrinterName;
+            string curaExtruderName;
+            BarnaclePrinter bp = printerManager.FindPrinter(selectedPrinter);
+            curaPrinterName = bp.CuraPrinterFile + ".def.json";
+            curaExtruderName = bp.CuraExtruderFile + ".def.json";
+
+            // start and end gcode may have a macro $NAME in it.
+            //Both must be a single line of text when passed to cura engine
+            string sg = bp.StartGCode.Replace("$NAME", modelName);
+            sg = sg.Replace("\r\n", "\\n");
+            sg = sg.Replace("\n", "\\n");
+
+            string eg = bp.EndGCode.Replace("$NAME", modelName);
+            eg = eg.Replace("\r\n", "\\n");
+            eg = eg.Replace("\n", "\\n");
+
+            SliceResult sliceRes;
+            sliceRes = await Task.Run(() => (CuraEngineInterface.Slice(stlPath, gcodePath, logPath,
+                                                                       Properties.Settings.Default.SDCardLabel,
+                                                                       SlicerPath,
+                                                                       curaPrinterName,
+                                                                       curaExtruderName,
+                                                                       prf, sg, eg)));
+            if (sliceRes.Result)
+            {
+                int exportedParts = 1;
+
+                string timeFormat = sliceRes.Hours.ToString("00") + ":" + sliceRes.Minutes.ToString("00") + ":" + sliceRes.Seconds.ToString("00");
+                AppendResults($"{exportedParts.ToString().PadRight(3)}, {timeFormat}, {sliceRes.Filament}");
+            }
+            else
+            {
+                AppendResults(" FAILED View Logfile  at " + logPath);
+            }
+        }
+
         private void TimerTick(object sender, EventArgs e)
         {
             timer.Stop();
@@ -692,8 +781,10 @@ M84 ; Disable stepper motors
             timer.Start();
         }
 
-        private string UserProfilePath = "";
-        private string UserProfilePathNoSlash = "";
+        private string UnSlashN(string str)
+        {
+            return str.Replace("\n", "\\n");
+        }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -721,33 +812,6 @@ M84 ; Disable stepper motors
                 CanSlice = false;
             }
             CheckIfSDCopyShouldBeEnabled();
-        }
-
-        public List<string> GetAvailableUserProfiles()
-        {
-            if (!Directory.Exists(UserProfilePath))
-            {
-                try
-                {
-                    Directory.CreateDirectory(UserProfilePath);
-                }
-                catch (Exception ex)
-                {
-                    LoggerLib.Logger.LogException(ex);
-                }
-            }
-            List<string> res = new List<string>();
-            res.Add("None");
-            String[] files = Directory.GetFiles(UserProfilePath, "*.profile");
-            if (files.GetLength(0) > 0)
-            {
-                foreach (string s in files)
-                {
-                    res.Add(Path.GetFileNameWithoutExtension(s));
-                }
-            }
-
-            return res;
         }
     }
 }

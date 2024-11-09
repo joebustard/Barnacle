@@ -4,11 +4,15 @@ Added
   Autosave changes if idle for 5 minutes. Turn on and off from settings.
   Busy indicator on Image Plaque and Dual Profile
   Turn mm lines on floor grid on and off
-  InsertPart() function to Limpet.
+  InsertPart() function to Limpet interpreter.
   Boxframe primitive.
   U-Beam primitive
   Shallow U-Beam primitive
   Two more basic textures for platelets
+  Shift-Home key for back camera
+  Insert for left camera
+  Page Up for right camera
+  U-Beam profile for path loft
 
 Fixed
   Renaming the current file, switching projects, then reopening project via the recent projects menu

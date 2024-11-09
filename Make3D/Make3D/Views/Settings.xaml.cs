@@ -17,12 +17,22 @@ namespace Barnacle.Views
             ColourOfNewObject.PropertyChanged += ColourOfNewObject_PropertyChanged;
         }
 
-        private void ColourOfNewObject_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
             SettingsViewModel vm = DataContext as SettingsViewModel;
-            if (vm != null)
+            FolderBrowserDialog dlg = new FolderBrowserDialog();
+            if (vm.SlicerPath != "")
             {
-                vm.ObjectColour = ColourOfNewObject.SelectedColour;
+                string pth = System.IO.Path.GetDirectoryName(vm.SlicerPath);
+                if (pth != "" && System.IO.Directory.Exists(pth))
+                {
+                    dlg.SelectedPath = pth;
+                }
+            }
+
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                vm.SlicerPath = dlg.SelectedPath;
             }
         }
 
@@ -30,6 +40,15 @@ namespace Barnacle.Views
         {
             DialogResult = false;
             Close();
+        }
+
+        private void ColourOfNewObject_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            SettingsViewModel vm = DataContext as SettingsViewModel;
+            if (vm != null)
+            {
+                vm.ObjectColour = ColourOfNewObject.SelectedColour;
+            }
         }
 
         private void OkButtonClicked(object sender, RoutedEventArgs e)
@@ -73,25 +92,6 @@ namespace Barnacle.Views
                 }
             }
             Close();
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            SettingsViewModel vm = DataContext as SettingsViewModel;
-            FolderBrowserDialog dlg = new FolderBrowserDialog();
-            if (vm.SlicerPath != "")
-            {
-                string pth = System.IO.Path.GetDirectoryName(vm.SlicerPath);
-                if (pth != "" && System.IO.Directory.Exists(pth))
-                {
-                    dlg.SelectedPath = pth;
-                }
-            }
-
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                vm.SlicerPath = dlg.SelectedPath;
-            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

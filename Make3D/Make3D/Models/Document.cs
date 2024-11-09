@@ -684,14 +684,15 @@ namespace Barnacle.Models
             return res;
         }
 
-        internal string ExportAllPartsSeparately(string v, Bounds3D bnds, string exportFolderPath)
+        internal List<string> ExportAllPartsSeparately(Bounds3D bnds, string exportFolderPath)
         {
+            List<string> allpaths = new List<string>();
             String pth = exportFolderPath;
             if (!Directory.Exists(pth))
             {
                 Directory.CreateDirectory(pth);
             }
-            string res = "";
+
             double scalefactor = 1.0;
             if (ProjectSettings.BaseScale != ProjectSettings.ExportScale)
             {
@@ -717,11 +718,11 @@ namespace Barnacle.Models
                     string expName = System.IO.Path.Combine(pth, ob.Name + ".stl");
                     exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
                     exportList.Clear();
+                    allpaths.Add(expName);
                 }
             }
-            res = pth;
 
-            return res;
+            return allpaths;
         }
 
         internal string ExportSelectedParts(string v, Bounds3D bnds, List<Object3D> parts, string exportFolderPath)

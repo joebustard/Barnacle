@@ -8,6 +8,8 @@ namespace Barnacle.Models.BufferedPolyline
     {
         private const double EquityTolerance = 0.0000001d;
 
+        private double bufferRadius;
+
         public BufferedPolyline()
         {
             coreSegments = new List<CoreSegment>();
@@ -30,8 +32,6 @@ namespace Barnacle.Models.BufferedPolyline
             }
         }
 
-        private double bufferRadius;
-
         public double BufferRadius
         {
             get { return bufferRadius; }
@@ -45,36 +45,18 @@ namespace Barnacle.Models.BufferedPolyline
             }
         }
 
+        public int LastOutBoundIndex { get; set; }
         private List<CoreSegment> coreSegments { get; set; }
         private List<Segment> sideSegments { get; set; }
-
-        public List<Point> GenerateBufferOutline(double br)
-        {
-            if (br > 0)
-            {
-                BufferRadius = br;
-            }
-            else
-            {
-                BufferRadius = 1;
-            }
-            return GenerateBufferOutline();
-        }
-
-        public struct CurvePoint
-        {
-            public Point point;
-            public Vector direction;
-            public double radius;
-            public double angle;
-        }
 
         public List<CurvePoint> GenerateBufferCurvePoints()
         {
             sideSegments.Clear();
+            LastOutBoundIndex = -1;
             List<CurvePoint> curvePoints = new List<CurvePoint>();
             if (coreSegments != null)
             {
+                // construct the raw out bound edges
                 foreach (CoreSegment seg in coreSegments)
                 {
                     Point sp = new Point(seg.Start.X, seg.Start.Y);
@@ -82,17 +64,22 @@ namespace Barnacle.Models.BufferedPolyline
 
                     GetOffsetEdge(sp, se);
                 }
+                // construct the raw inbound edges
                 for (int si = coreSegments.Count - 1; si >= 0; si--)
                 {
                     CoreSegment seg = coreSegments[si];
                     Point sp = new Point(seg.End.X, seg.End.Y);
                     Point se = new Point(seg.Start.X, seg.Start.Y);
                     GetOffsetEdge(sp, se, false);
+
+                    // twin the new inbound with its equivalent out bound
                     sideSegments[sideSegments.Count - 1].Twin = si;
                     sideSegments[si].Twin = sideSegments.Count - 1;
                 }
 
                 FixOutlineConnections(sideSegments);
+
+                // create the first point of the outline
                 CurvePoint cp = new CurvePoint();
                 cp.radius = bufferRadius;
                 cp.point = new Point(coreSegments[0].Start.X, coreSegments[0].Start.Y);
@@ -100,6 +87,7 @@ namespace Barnacle.Models.BufferedPolyline
                 cp.angle = Math.Atan2(cp.direction.Y, cp.direction.X);
                 curvePoints.Add(cp);
                 LoggerLib.Logger.LogLine($"GenerateBufferCurvePoints ");
+
                 for (int i = 0; i < coreSegments.Count; i++)
                 {
                     int twin = sideSegments[i].Twin;
@@ -152,6 +140,10 @@ namespace Barnacle.Models.BufferedPolyline
                             cp.direction = new Vector(midPoint2.X - midPoint.X, midPoint2.Y - midPoint.Y);
                             cp.angle = Math.Atan2(cp.direction.Y, cp.direction.X);
                             curvePoints.Add(cp);
+                            if (sideSegments[i].Outbound)
+                            {
+                                LastOutBoundIndex = curvePoints.Count;
+                            }
                         }
                         if (i < coreSegments.Count - 1)
                         {
@@ -161,6 +153,10 @@ namespace Barnacle.Models.BufferedPolyline
                             cp.direction = new Vector(coreSegments[i + 1].End.X - cp.point.X, coreSegments[i + 1].End.Y - cp.point.Y);
                             cp.angle = Math.Atan2(cp.direction.Y, cp.direction.X);
                             curvePoints.Add(cp);
+                            if (sideSegments[i].Outbound)
+                            {
+                                LastOutBoundIndex = curvePoints.Count;
+                            }
                         }
                         addEnd = false;
                     }
@@ -174,6 +170,10 @@ namespace Barnacle.Models.BufferedPolyline
                         cp.direction = new Vector(coreSegments[i].End.X - coreSegments[i].Start.X, coreSegments[i].End.Y - coreSegments[i].Start.Y);
                         cp.angle = Math.Atan2(cp.direction.Y, cp.direction.X);
                         curvePoints.Add(cp);
+                        if (sideSegments[i].Outbound)
+                        {
+                            LastOutBoundIndex = curvePoints.Count;
+                        }
                     }
                 }
                 LoggerLib.Logger.LogLine($"add end");
@@ -193,6 +193,20 @@ namespace Barnacle.Models.BufferedPolyline
             return curvePoints;
         }
 
+        public List<Point> GenerateBufferOutline(double br)
+        {
+            LastOutBoundIndex = -1;
+            if (br > 0)
+            {
+                BufferRadius = br;
+            }
+            else
+            {
+                BufferRadius = 1;
+            }
+            return GenerateBufferOutline();
+        }
+
         /// <summary>
         /// Assuming we have been given a polyline and its been stored in the Coresegments, generate
         /// the outline, offset by BufferRadius
@@ -201,6 +215,7 @@ namespace Barnacle.Models.BufferedPolyline
         public List<Point> GenerateBufferOutline()
         {
             List<Point> outline = new List<Point>();
+            LastOutBoundIndex = -1;
             /*
             for reference,
             points are orientated around the core like this
@@ -271,6 +286,20 @@ namespace Barnacle.Models.BufferedPolyline
         }
 
         /// <summary>
+        /// Add a new point to the end of a list as long as it doesn't cause duplicates
+        /// </summary>
+        /// <param name="outline"></param>
+        /// <param name="pt"></param>
+        private void AddNoDup(List<Point> outline, Point pt)
+        {
+            int last = outline.Count - 1;
+            if (!PointsEqual(outline[last], pt))
+            {
+                outline.Add(pt);
+            }
+        }
+
+        /// <summary>
         /// Fill the gap between the start of one line segment and an other with segments following
         /// an arc from one point to another.
         /// </summary>
@@ -317,17 +346,26 @@ namespace Barnacle.Models.BufferedPolyline
             }
         }
 
-        /// <summary>
-        /// Add a new point to the end of a list as long as it doesn't cause duplicates
-        /// </summary>
-        /// <param name="outline"></param>
-        /// <param name="pt"></param>
-        private void AddNoDup(List<Point> outline, Point pt)
+        private double Distance(Point p1, Point p2)
         {
-            int last = outline.Count - 1;
-            if (!PointsEqual(outline[last], pt))
+            double dist = (p2.X - p1.X) * (p2.X - p1.X) +
+                 (p2.Y - p1.Y) * (p2.Y - p1.Y);
+            return Math.Sqrt(dist);
+        }
+
+        private void DumpSegments(List<Segment> side)
+        {
+            foreach (Segment seg in side)
             {
-                outline.Add(pt);
+                System.Diagnostics.Debug.WriteLine($"{seg.Start.X},{seg.Start.Y}   {seg.End.X},{seg.End.Y}");
+
+                if (seg.Extensions != null)
+                {
+                    foreach (Segment ext in seg.Extensions)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"{ext.Start.X},{ext.Start.Y} {ext.End.X},{ext.End.Y}");
+                    }
+                }
             }
         }
 
@@ -339,15 +377,27 @@ namespace Barnacle.Models.BufferedPolyline
                 {
                     outline.Add(seg.Start);
                     outline.Add(seg.End);
+                    if (seg.Outbound)
+                    {
+                        LastOutBoundIndex = outline.Count - 1;
+                    }
                 }
                 else
                 {
                     AddNoDup(outline, seg.Start);
                     AddNoDup(outline, seg.End);
+                    if (seg.Outbound)
+                    {
+                        LastOutBoundIndex = outline.Count - 1;
+                    }
                 }
                 if (seg.Extensions != null)
                 {
                     ExtractOutlinePoints(outline, seg.Extensions);
+                    if (seg.Outbound)
+                    {
+                        LastOutBoundIndex = outline.Count - 1;
+                    }
                 }
             }
         }
@@ -387,22 +437,6 @@ namespace Barnacle.Models.BufferedPolyline
                             // edge only the start and ens matter
                             Segment ext = new Segment(side[i].End, side[i + 1].Start, side[i].ExtensionCentre, true);
                         }
-                    }
-                }
-            }
-        }
-
-        private void DumpSegments(List<Segment> side)
-        {
-            foreach (Segment seg in side)
-            {
-                System.Diagnostics.Debug.WriteLine($"{seg.Start.X},{seg.Start.Y}   {seg.End.X},{seg.End.Y}");
-
-                if (seg.Extensions != null)
-                {
-                    foreach (Segment ext in seg.Extensions)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"{ext.Start.X},{ext.Start.Y} {ext.End.X},{ext.End.Y}");
                     }
                 }
             }
@@ -480,11 +514,12 @@ namespace Barnacle.Models.BufferedPolyline
             return res;
         }
 
-        private double Distance(Point p1, Point p2)
+        public struct CurvePoint
         {
-            double dist = (p2.X - p1.X) * (p2.X - p1.X) +
-                 (p2.Y - p1.Y) * (p2.Y - p1.Y);
-            return Math.Sqrt(dist);
+            public double angle;
+            public Vector direction;
+            public Point point;
+            public double radius;
         }
     }
 }

@@ -884,7 +884,7 @@ namespace MakerLib
                     double vdx2 = cx - vx2;
                     if (Math.Abs(vdx1) > innerRadius || Math.Abs(vdx2) > innerRadius)
                     {
-                        bool buggered = true;
+                        bool breakhere = true;
                     }
 
                     //Uppers
@@ -906,7 +906,7 @@ namespace MakerLib
                     p2.barId = "V" + i.ToString();
                     p2.X = vx2;
                     p2.Y = cy + h2;
-                    //double t2 = Math.Atan2(h2 + cy, vdx2);
+
                     double t2 = Math.Atan2(h2, vx2);
 
                     p2.theta = t2;

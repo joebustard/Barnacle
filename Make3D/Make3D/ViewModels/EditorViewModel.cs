@@ -494,7 +494,7 @@ namespace Barnacle.ViewModels
             }
             else
             {
-                handled = HandleKeyWhenEditingDisabled(key);
+                handled = HandleKeyWhenEditingDisabled(key, shift);
             }
             return handled;
         }
@@ -2080,7 +2080,7 @@ namespace Barnacle.ViewModels
             return handled;
         }
 
-        private bool HandleKeyWhenEditingDisabled(Key key)
+        private bool HandleKeyWhenEditingDisabled(Key key, bool shift)
         {
             bool handled = false;
             switch (key)
@@ -2096,10 +2096,31 @@ namespace Barnacle.ViewModels
                     }
                     break;
 
+                case Key.Insert:
+                    {
+                        handled = true;
+                        LeftCamera();
+                    }
+                    break;
+
+                case Key.PageUp:
+                    {
+                        handled = true;
+                        RightCamera();
+                    }
+                    break;
+
                 case Key.Home:
                     {
                         handled = true;
-                        HomeCamera();
+                        if (shift)
+                        {
+                            BackCamera();
+                        }
+                        else
+                        {
+                            HomeCamera();
+                        }
                     }
                     break;
 
@@ -2445,10 +2466,31 @@ namespace Barnacle.ViewModels
                         }
                         break;
 
+                    case Key.Insert:
+                        {
+                            handled = true;
+                            LeftCamera();
+                        }
+                        break;
+
+                    case Key.PageUp:
+                        {
+                            handled = true;
+                            RightCamera();
+                        }
+                        break;
+
                     case Key.Home:
                         {
                             handled = true;
-                            HomeCamera();
+                            if (shift)
+                            {
+                                BackCamera();
+                            }
+                            else
+                            {
+                                HomeCamera();
+                            }
                         }
                         break;
 
@@ -3573,11 +3615,11 @@ namespace Barnacle.ViewModels
         private void OnExportParts(object param)
         {
             String exportFolderPath = BaseViewModel.Project.BaseFolder + "\\export";
-            string exportedPath = Document.ExportAllPartsSeparately(param.ToString(), allBounds, exportFolderPath);
+            List<string> exportedPaths = Document.ExportAllPartsSeparately(allBounds, exportFolderPath);
 
             STLExportedPartsConfirmation dlg = new STLExportedPartsConfirmation();
             dlg.Owner = Application.Current.MainWindow;
-            dlg.ExportPath = exportedPath;
+            dlg.ExportPath = exportFolderPath;
             dlg.ShowDialog();
             NotificationManager.Notify("ExportRefresh", null);
         }
@@ -4249,6 +4291,7 @@ namespace Barnacle.ViewModels
                 SliceControl dlg = new SliceControl();
                 dlg.ModelMode = s;
                 dlg.ModelPath = Document.FilePath;
+                dlg.AllBounds = allBounds;
                 dlg.SlicerPath = Properties.Settings.Default.SlicerPath;
 
                 dlg.ShowDialog();
