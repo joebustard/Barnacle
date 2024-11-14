@@ -102,6 +102,17 @@ namespace Barnacle.Object3DLib
             }
         }
 
+        public void Expand(Point3D diff)
+        {
+            lower.X = lower.X - diff.X;
+            lower.Y = lower.Y - diff.Y;
+            lower.Z = lower.Z - diff.Z;
+
+            upper.X = upper.X + diff.X;
+            upper.Y = upper.Y + diff.Y;
+            upper.Z = upper.Z + diff.Z;
+        }
+
         public Point3D MidPoint()
         {
             Point3D res = new Point3D();

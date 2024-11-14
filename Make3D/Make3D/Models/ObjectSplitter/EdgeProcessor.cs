@@ -20,21 +20,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Media3D;
 
-namespace Barnacle.Dialogs
+namespace Barnacle.Models
 {
     public class EdgeProcessor
     {
-        public List<EdgeRecord> EdgeRecords { get; set; }
-
         public EdgeProcessor()
         {
             EdgeRecords = new List<EdgeRecord>();
         }
 
+        public List<EdgeRecord> EdgeRecords { get; set; }
+
         public void Add(int s, int e)
         {
             EdgeRecords.Add(new EdgeRecord(s, e));
+        }
+
+        internal void Add(Point3D sP, Point3D eP)
+        {
+            throw new NotImplementedException();
         }
 
         internal List<EdgeRecord> MakeLoop()

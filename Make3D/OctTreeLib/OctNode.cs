@@ -9,8 +9,7 @@ namespace OctTreeLib
     public class OctNode
     {
         // The whole list of All the points.
-        // This list is shared by all the nodes
-        public static Point3DCollection AllPoints;
+        public Point3DCollection AllPoints;
 
         // the subnodes of this node
         public OctNode[,,] Nodes;
@@ -31,13 +30,14 @@ namespace OctTreeLib
         // of this node
         public Int32Collection PointsInOctNode { get; set; }
 
-        public void Create(Int32Collection pntsInThisNode, Point3D low, Point3D high, int depth)
+        public void Create(Int32Collection pntsInThisNode, Point3D low, Point3D high, int depth, Point3DCollection allPoints)
         {
             Low = low;
             High = high;
             Depth = depth;
             PointsInOctNode = pntsInThisNode;
             Nodes = null;
+            AllPoints = allPoints;
         }
 
         public void Split()
@@ -69,6 +69,7 @@ namespace OctTreeLib
                                 double lowZ = Low.Z + (k * dz);
                                 double highZ = lowZ + dz;
                                 Nodes[i, j, k] = new OctNode();
+                                Nodes[i, j, k].AllPoints = AllPoints;
                                 Nodes[i, j, k].Depth = Depth + 1;
                                 Nodes[i, j, k].PointsInOctNode = new Int32Collection();
                                 Nodes[i, j, k].Low = new Point3D(lowX, lowY, lowZ);

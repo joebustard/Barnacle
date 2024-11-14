@@ -904,7 +904,7 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
                             Command="{Binding SplitCommand}"
-                            CommandParameter="X"
+                            CommandParameter="FrontBack"
                             Header="Front and Back"
                             ImageSource="/Barnacle;component/Images/Buttons/SplitX.png"
                             ToolTip="Split selected object to get the front and back halfs" />
@@ -913,7 +913,7 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
                             Command="{Binding SplitCommand}"
-                            CommandParameter="Y"
+                            CommandParameter="TopBottom"
                             Header="Top and Bottom"
                             ImageSource="/Barnacle;component/Images/Buttons/SplitY.png"
                             ToolTip="Split selected object to get the top and bottom halfs" />
@@ -922,7 +922,7 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
                             Command="{Binding SplitCommand}"
-                            CommandParameter="Z"
+                            CommandParameter="LeftRight"
                             Header="Left and Right"
                             ImageSource="/Barnacle;component/Images/Buttons/SplitZ.png"
                             ToolTip="Split selected object to get the left and right halfs" />

@@ -21,7 +21,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Barnacle.Dialogs
+namespace Barnacle.Models
 {
     public class EdgeRecord
     {
@@ -31,7 +31,7 @@ namespace Barnacle.Dialogs
             this.End = e;
         }
 
-        public int Start { get; set; }
         public int End { get; set; }
+        public int Start { get; set; }
     }
 }

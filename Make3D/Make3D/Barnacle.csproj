@@ -131,8 +131,8 @@
     <Compile Include="Dialogs\ConstructionStrip\ConstructionStripDlg.xaml.cs" />
     <Compile Include="Dialogs\CurvedFunnel\CurvedFunnelDlg.xaml.cs" />
     <Compile Include="Dialogs\CutHPlane\CutHorizontalPlaneDlg.xaml.cs" />
-    <Compile Include="Dialogs\CutHPlane\EdgeProcessor.cs" />
-    <Compile Include="Dialogs\CutHPlane\EdgeRecord.cs" />
+    <Compile Include="Models\ObjectSplitter\EdgeProcessor.cs" />
+    <Compile Include="Models\ObjectSplitter\EdgeRecord.cs" />
     <Compile Include="Dialogs\DecimatorSettings.xaml.cs">
       <DependentUpon>DecimatorSettings.xaml</DependentUpon>
     </Compile>
@@ -338,6 +338,7 @@
     <Compile Include="Models\GridData.cs" />
     <Compile Include="Models\HorizontalPlane.cs" />
     <Compile Include="Models\MeshSubdivider.cs" />
+    <Compile Include="Models\ObjectSplitter\ObjectSplitter.cs" />
     <Compile Include="Models\Point3DExtensions.cs" />
     <Compile Include="Models\PrinterPlate.cs" />
     <Compile Include="Models\SDCard\SDCardUtils.cs" />

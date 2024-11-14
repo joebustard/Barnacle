@@ -5162,158 +5162,74 @@ namespace Barnacle.ViewModels
             Document.Dirty = true;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="ob"></param>
+        /// <param name="plane"></param>
+        /// <param name="splitOrientation"></param>
+        /// <param name="desc1"></param>
+        /// <param name="desc2"></param>
+        private void SplitObject(Object3D ob, double plane, ObjectSplitter.SplitterOrientation splitOrientation, string desc1, string desc2)
+        {
+            DateTime start = DateTime.Now;
+            ObjectSplitter splitter = new ObjectSplitter(ob.AbsoluteObjectVertices,
+                                                         ob.TriangleIndices,
+                                                         splitOrientation);
+
+            splitter.Plane = plane;
+            splitter.Split();
+            document.Content.Remove(ob);
+
+            Object3D partA = splitter.GetObject1();
+            partA.Name = ob.Name + "_" + desc1;
+            partA.Color = ob.Color;
+            partA.Remesh();
+            document.Content.Add(partA);
+
+            Object3D partB = splitter.GetObject2();
+            partB.Name = ob.Name + "_" + desc2;
+            partB.Color = ob.Color;
+            partB.Remesh();
+            document.Content.Add(partB);
+
+            document.Dirty = true;
+            NotificationManager.Notify("ObjectNamesChanged", null);
+            RemoveSelections();
+            RegenerateDisplayList();
+            TimeSpan ts = DateTime.Now - start;
+            Logger.Log($"Split took {ts.Hours}:{ts.Minutes}:{ts.Seconds}");
+        }
+
+        /// <summary>
+        /// Split an object into two new ones, along its middle
+        /// </summary>
+        /// <param name="ob"></param>
+        /// <param name="ori"></param>
         private void SplitObjectInHalf(Object3D ob, string ori)
         {
             if (ob != null)
             {
-                // we will need a copy
-                Object3D clone = ob.Clone();
-
-                // and a box
-                Object3D clipBox = new Object3D();
-                clipBox.BuildPrimitive("box");
-                clipBox.Position = new Point3D(ob.Position.X, ob.Position.Y, ob.Position.Z);
-                // make the clipbox 0.01 mm bigger than the original object in all dimensions
-                clipBox.ScaleMesh(ob.Scale.X + 0.01, ob.Scale.Y + 0.01, ob.Scale.Z + 0.01);
-                clipBox.CalcScale();
-                clipBox.Remesh(); ;
-
-                // where should the clipbox be positioned
                 switch (ori)
                 {
-                    case "X":
+                    case "FrontBack":
                         {
-                            // move the clipbox so its front is positioned exactly on the middle x
-                            // line of the ob. Note you can't rely on the origin position being in
-                            // the middle so you have to find it
                             Point3D obMid = ob.AbsoluteBounds.MidPoint();
-                            double x = obMid.X;
-                            double y = obMid.Y;
-                            double z = obMid.Z - (clipBox.Scale.Z / 2);
-                            clipBox.Position = new Point3D(x, y, z);
-                            clipBox.Remesh();
-                            // now clipbox should sitting over all the points we want to remove. so
-                            // do a group difference
-                            Group3D grp = new Group3D();
-
-                            grp.LeftObject = ob;
-                            grp.RightObject = clipBox;
-                            grp.PrimType = "groupdifference";
-                            grp.Init();
-                            Object3D front = grp.ConvertToMesh();
-                            front.Name = ob.Name + "_Front";
-                            front.Remesh();
-                            document.Content.Add(front);
-
-                            z = obMid.Z + (clipBox.Scale.Z / 2);
-                            clipBox.Position = new Point3D(x, y, z);
-                            clipBox.Remesh();
-                            // now clipbox should sitting over all the points we want to remove. so
-                            // do a group difference
-                            grp = new Group3D();
-
-                            grp.LeftObject = ob;
-                            grp.RightObject = clipBox;
-                            grp.PrimType = "groupdifference";
-                            grp.Init();
-                            Object3D back = grp.ConvertToMesh();
-                            back.Name = ob.Name + "_Back";
-                            back.Remesh();
-                            document.Content.Add(back);
-                            document.Content.Remove(ob);
-                            document.Dirty = true;
-                            NotificationManager.Notify("ObjectNamesChanged", null);
-                            RemoveSelections();
-                            RegenerateDisplayList();
+                            SplitObject(ob, obMid.Z, ObjectSplitter.SplitterOrientation.Distal, "Front", "Back");
                         }
                         break;
 
-                    case "Y":
+                    case "TopBottom":
                         {
                             Point3D obMid = ob.AbsoluteBounds.MidPoint();
-                            double x = obMid.X;
-                            double y = obMid.Y - (clipBox.Scale.Y / 2);
-                            double z = obMid.Z;
-                            clipBox.Position = new Point3D(x, y, z);
-                            clipBox.Remesh();
-                            // now clipbox should sitting over all the points we want to remove. so
-                            // do a group difference
-                            Group3D grp = new Group3D();
-
-                            grp.LeftObject = ob;
-                            grp.RightObject = clipBox;
-                            grp.PrimType = "groupdifference";
-                            grp.Init();
-                            Object3D front = grp.ConvertToMesh();
-                            front.Name = ob.Name + "_Top";
-                            front.Remesh();
-                            document.Content.Add(front);
-
-                            y = obMid.Y + (clipBox.Scale.Y / 2);
-                            clipBox.Position = new Point3D(x, y, z);
-                            clipBox.Remesh();
-                            // now clipbox should sitting over all the points we want to remove. so
-                            // do a group difference
-                            grp = new Group3D();
-
-                            grp.LeftObject = ob;
-                            grp.RightObject = clipBox;
-                            grp.PrimType = "groupdifference";
-                            grp.Init();
-                            Object3D back = grp.ConvertToMesh();
-                            back.Name = ob.Name + "_Bottom";
-                            back.Remesh();
-                            document.Content.Add(back);
-                            document.Content.Remove(ob);
-                            document.Dirty = true;
-                            NotificationManager.Notify("ObjectNamesChanged", null);
-                            RemoveSelections();
-                            RegenerateDisplayList();
+                            SplitObject(ob, obMid.Y, ObjectSplitter.SplitterOrientation.Vertical, "Top", "Bottom");
                         }
                         break;
 
-                    case "Z":
+                    case "LeftRight":
                         {
                             Point3D obMid = ob.AbsoluteBounds.MidPoint();
-                            double x = obMid.X - (clipBox.Scale.X / 2);
-                            double y = obMid.Y;
-
-                            double z = obMid.Z;
-                            clipBox.Position = new Point3D(x, y, z);
-                            clipBox.Remesh();
-                            // now clipbox should sitting over all the points we want to remove. so
-                            // do a group difference
-                            Group3D grp = new Group3D();
-
-                            grp.LeftObject = ob;
-                            grp.RightObject = clipBox;
-                            grp.PrimType = "groupdifference";
-                            grp.Init();
-                            Object3D front = grp.ConvertToMesh();
-                            front.Name = ob.Name + "_Right";
-                            front.Remesh();
-                            document.Content.Add(front);
-
-                            x = obMid.X + (clipBox.Scale.X / 2);
-                            clipBox.Position = new Point3D(x, y, z);
-                            clipBox.Remesh();
-                            // now clipbox should sitting over all the points we want to remove. so
-                            // do a group difference
-                            grp = new Group3D();
-
-                            grp.LeftObject = ob;
-                            grp.RightObject = clipBox;
-                            grp.PrimType = "groupdifference";
-                            grp.Init();
-                            Object3D back = grp.ConvertToMesh();
-                            back.Name = ob.Name + "_Left";
-                            back.Remesh();
-                            document.Content.Add(back);
-                            document.Content.Remove(ob);
-                            document.Dirty = true;
-                            NotificationManager.Notify("ObjectNamesChanged", null);
-                            RemoveSelections();
-                            RegenerateDisplayList();
+                            SplitObject(ob, obMid.X, ObjectSplitter.SplitterOrientation.Horizontal, "Right", "Left");
                         }
                         break;
 
@@ -5323,6 +5239,10 @@ namespace Barnacle.ViewModels
             }
         }
 
+        /// <summary>
+        /// Replace every triangle by 4 smaller ones
+        /// </summary>
+        /// <param name="object3D"></param>
         private void SubdivideObject(Object3D object3D)
         {
             CheckPoint();

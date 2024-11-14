@@ -13,6 +13,7 @@ Added
   Insert for left camera
   Page Up for right camera
   U-Beam profile for path loft
+  Slice individual parts in current file into separate gcode files
 
 Fixed
   Renaming the current file, switching projects, then reopening project via the recent projects menu

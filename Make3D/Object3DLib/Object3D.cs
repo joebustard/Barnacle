@@ -355,7 +355,6 @@ namespace Barnacle.Object3DLib
                 relativeObjectVertices = new List<P3D>(absoluteObjectVertices.Count);
                 absoluteBounds = new Bounds3D();
                 foreach (Point3D cp in absoluteObjectVertices)
-
                 {
                     AdjustBounds(cp);
                     P3D ap = new P3D();

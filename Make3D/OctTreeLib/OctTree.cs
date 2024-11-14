@@ -8,6 +8,7 @@ namespace OctTreeLib
     public class OctTree
     {
         private const int MaxPointsPerNode = 500;
+        private Point3DCollection AllPoints;
         private OctNode root;
 
         public OctTree(Point3DCollection pnts, Point3D minPnt, Point3D maxPnt, int maxTreeDepth = 200)
@@ -17,14 +18,15 @@ namespace OctTreeLib
             maxPnt += new Vector3D(10, 10, 10);
 
             OctNode.MaxTreeDepth = maxTreeDepth;
-            OctNode.AllPoints = pnts;
+            AllPoints = pnts;
             OctNode.MaxPointsPerNode = MaxPointsPerNode;
             Int32Collection indices = new Int32Collection(pnts.Count);
             for (int i = 0; i < pnts.Count; i++)
             {
                 indices.Add(i);
             }
-            root.Create(indices, minPnt, maxPnt, 0);
+
+            root.Create(indices, minPnt, maxPnt, 0, AllPoints);
             root.Split();
         }
 
@@ -32,11 +34,11 @@ namespace OctTreeLib
         {
             get
             {
-                if (OctNode.AllPoints == null)
+                if (AllPoints == null)
                 {
                     return 0;
                 }
-                return OctNode.AllPoints.Count;
+                return AllPoints.Count;
             }
         }
 
@@ -57,7 +59,7 @@ namespace OctTreeLib
             try
             {
                 OctNode container = root.AddPoint(index, position);
-                OctNode.AllPoints.Add(position);
+                AllPoints.Add(position);
                 container?.Split();
             }
             catch (Exception ex)
@@ -71,9 +73,16 @@ namespace OctTreeLib
             int res = PointPresent(p);
             if (res == -1)
             {
-                res = OctNode.AllPoints.Count;
+                res = AllPoints.Count;
                 AddPoint(res, p);
             }
+            return res;
+        }
+
+        public int AddPoint(double x, double y, double z)
+        {
+            Point3D p = new Point3D(x, y, z);
+            int res = AddPoint(p);
             return res;
         }
 
@@ -94,7 +103,7 @@ namespace OctTreeLib
                 {
                     foreach (int index in node.PointsInOctNode)
                     {
-                        if (Equals(OctNode.AllPoints[index], pnt.X, pnt.Y, pnt.Z))
+                        if (Equals(AllPoints[index], pnt.X, pnt.Y, pnt.Z))
                         {
                             res = index;
                             break;

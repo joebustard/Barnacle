@@ -1932,6 +1932,7 @@ namespace Barnacle.ViewModels
 
         private void OnZipProject(object obj)
         {
+            NotificationManager.Notify("BackupProject", null);
         }
 
         private void OnZoomIn(object obj)
