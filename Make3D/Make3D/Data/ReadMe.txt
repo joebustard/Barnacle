@@ -39,6 +39,7 @@ Changed
 	Changed meaning of parameters in rail wheel tool.
 	Show original names of objects on csg name confirmation dialog.
 	Swapped panels on script view. Looks better.
+	Replaced the code used to split objects in half. Much, much faster
 
 v1.0.6
 ===========
