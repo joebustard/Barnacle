@@ -1,4 +1,13 @@
-﻿v1.0.7
+﻿v1.0.8
+===========
+Added
+
+Fixed
+Bicorn tool was not saving and restoring editor parameters
+
+Changed
+
+v1.0.7
 ===========
 Added
   Autosave changes if idle for 5 minutes. Turn on and off from settings.

@@ -87,6 +87,22 @@ namespace MakerLib
             return res;
         }
 
+        public bool CheckLimits(string propertyName, double v)
+        {
+            bool res = false;
+            if (paramLimits != null)
+            {
+                res = paramLimits.Check(propertyName, v);
+            }
+            return res;
+        }
+
+        public ParamLimit GetLimits(string v)
+        {
+            ParamLimit res = paramLimits.GetLimits(v.ToLower());
+            return res;
+        }
+
         public void MakeHSquareFace(double x1, double y1, double z1, double x2, double y2, double z2, bool useOctTree = true)
         {
             if (!useOctTree)
@@ -689,22 +705,6 @@ namespace MakerLib
                     Faces.Add(c2);
                 }
             }
-        }
-
-        public bool CheckLimits(string propertyName, double v)
-        {
-            bool res = false;
-            if (paramLimits != null)
-            {
-                res = paramLimits.Check(propertyName, v);
-            }
-            return res;
-        }
-
-        public ParamLimit GetLimits(string v)
-        {
-            ParamLimit res = paramLimits.GetLimits(v.ToLower());
-            return res;
         }
     }
 }

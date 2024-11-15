@@ -27,9 +27,10 @@ namespace Barnacle.Dialogs
     public partial class BicornDlg : BaseModellerDialog, INotifyPropertyChanged
     {
         private bool doubleup;
-        private double height;
+        private bool loaded;
         private double radius1;
         private double radius2;
+        private double shapeHeight;
         private string warningText;
 
         public BicornDlg()
@@ -41,7 +42,7 @@ namespace Barnacle.Dialogs
             Radius1 = 5;
             Radius2 = 10;
             DoubleUp = false;
-            height = 10;
+            shapeHeight = 10;
         }
 
         public bool DoubleUp
@@ -102,16 +103,16 @@ namespace Barnacle.Dialogs
         {
             get
             {
-                return height;
+                return shapeHeight;
             }
 
             set
             {
-                if (height != value)
+                if (shapeHeight != value)
                 {
                     if (value > 0)
                     {
-                        height = value;
+                        shapeHeight = value;
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
@@ -183,34 +184,47 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-            BicornMaker maker = new BicornMaker(radius1, radius2, height, doubleup);
+            BicornMaker maker = new BicornMaker(radius1, radius2, shapeHeight, doubleup);
             maker.Generate(Vertices, Faces);
         }
 
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
+            Radius1 = EditorParameters.GetDouble("Radius1", 5);
+            Radius2 = EditorParameters.GetDouble("Radius2", 10);
+            DoubleUp = EditorParameters.GetBoolean("DoubleUp", false);
+            ShapeHeight = EditorParameters.GetDouble("ShapeHeight", 10);
         }
 
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
+            EditorParameters.Set("Radius1", Radius1.ToString());
+            EditorParameters.Set("Radius2", Radius2.ToString());
+            EditorParameters.Set("DoubleUp", DoubleUp.ToString());
+            EditorParameters.Set("ShapeHeight", ShapeHeight.ToString());
         }
 
         private void UpdateDisplay()
         {
-            GenerateShape();
-            Redisplay();
+            if (loaded)
+            {
+                GenerateShape();
+                Redisplay();
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            loaded = false;
             LoadEditorParameters();
             GenerateShape();
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             warningText = "";
-            Redisplay();
+            loaded = true;
+            UpdateDisplay();
         }
     }
 }
