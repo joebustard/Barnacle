@@ -1,4 +1,21 @@
-﻿using System;
+﻿// **************************************************************************
+// *   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+// *                                                                         *
+// *   This file is part of the Barnacle 3D application.                     *
+// *                                                                         *
+// *   This application is free software. You can redistribute it and/or     *
+// *   modify it under the terms of the GNU Library General Public           *
+// *   License as published by the Free Software Foundation. Either          *
+// *   version 2 of the License, or (at your option) any later version.      *
+// *                                                                         *
+// *   This application is distributed in the hope that it will be useful,   *
+// *   but WITHOUT ANY WARRANTY. Without even the implied warranty of        *
+// *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+// *   GNU Library General Public License for more details.                  *
+// *                                                                         *
+// *************************************************************************
+
+using System;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,36 +28,13 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class NUDBox : UserControl
     {
-        public delegate void ValueChanged(double i);
-
         public ValueChanged OnValueChanged;
 
-        private double minvalue = 0;
         private double maxvalue = 100;
+
+        private double minvalue = 0;
+
         private double startvalue = 10;
-
-        public double Value
-        {
-            get; set;
-        }
-
-        public double MinimumValue
-        {
-            get { return minvalue; }
-            set { minvalue = value; }
-        }
-
-        public double MaximumValue
-        {
-            get { return maxvalue; }
-            set { maxvalue = value; }
-        }
-
-        public double StartValue
-        {
-            get { return startvalue; }
-            set { startvalue = value; Value = value; NUDTextBox.Text = startvalue.ToString(); }
-        }
 
         public NUDBox()
         {
@@ -49,13 +43,47 @@ namespace Barnacle.Dialogs
             OnValueChanged = null;
         }
 
-        private void NUDButtonUP_Click(object sender, RoutedEventArgs e)
+        public delegate void ValueChanged(double i);
+
+        public double MaximumValue
         {
-            int number;
-            if (NUDTextBox.Text != "") number = Convert.ToInt32(NUDTextBox.Text);
-            else number = 0;
-            if (number < maxvalue)
-                NUDTextBox.Text = Convert.ToString(number + 1);
+            get
+            {
+                return maxvalue;
+            }
+            set
+            {
+                maxvalue = value;
+            }
+        }
+
+        public double MinimumValue
+        {
+            get
+            {
+                return minvalue;
+            }
+            set
+            {
+                minvalue = value;
+            }
+        }
+
+        public double StartValue
+        {
+            get
+            {
+                return startvalue;
+            }
+            set
+            {
+                startvalue = value; Value = value; NUDTextBox.Text = startvalue.ToString();
+            }
+        }
+
+        public double Value
+        {
+            get; set;
         }
 
         private void NUDButtonDown_Click(object sender, RoutedEventArgs e)
@@ -65,6 +93,15 @@ namespace Barnacle.Dialogs
             else number = 0;
             if (number > minvalue)
                 NUDTextBox.Text = Convert.ToString(number - 1);
+        }
+
+        private void NUDButtonUP_Click(object sender, RoutedEventArgs e)
+        {
+            int number;
+            if (NUDTextBox.Text != "") number = Convert.ToInt32(NUDTextBox.Text);
+            else number = 0;
+            if (number < maxvalue)
+                NUDTextBox.Text = Convert.ToString(number + 1);
         }
 
         private void NUDTextBox_PreviewKeyDown(object sender, KeyEventArgs e)

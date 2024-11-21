@@ -13,7 +13,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
              xmlns:Views="clr-namespace:Barnacle.Views"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Loaded="UserControl_Loaded">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Loaded="UserControl_Loaded" SizeChanged="UserControl_SizeChanged">
     <UserControl.DataContext>
         <ViewModels:EditorViewModel />
     </UserControl.DataContext>
@@ -24,13 +24,12 @@
           MouseWheel="Grid_MouseWheel">
         <Viewport3D Name="viewport3D1"
                     KeyDown="UserControl_KeyDown"
-                    KeyUp="UserControl_KeyUp" ClipToBounds="False">
+                    KeyUp="UserControl_KeyUp" ClipToBounds="False" Width="{Binding ViewPortWidth}" Height="{Binding ViewPortHeight}">
 
             <Viewport3D.Camera>
                 <PerspectiveCamera LookDirection="{Binding LookDirection}"
                                    Position="{Binding CameraPos}"
-                                   x:Name="camMain">
-                </PerspectiveCamera>
+                                   x:Name="camMain" NearPlaneDistance="25" />
             </Viewport3D.Camera>
             <ModelVisual3D>
                 <ModelVisual3D.Content>

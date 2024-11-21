@@ -1,4 +1,21 @@
-﻿using Barnacle.Dialogs;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using Barnacle.Dialogs;
 using Barnacle.Dialogs.Slice;
 using Barnacle.EditorParameterLib;
 using Barnacle.Models;
@@ -45,60 +62,36 @@ namespace Barnacle.ViewModels
         };
 
         private Bounds3D allBounds;
-
         private Axies axies;
-
+        private double bendAngle;
         private PolarCamera camera;
-
         private Point3D CameraLookObject = new Point3D(0, 0, 0);
-
         private CameraModes cameraMode;
-
         private Point3D CameraScrollDelta = new Point3D(1, 1, 0);
-
         private Floor floor;
-
         private FloorMarker floorMarker;
-
         private Grid3D grid;
-
         private String holdKey = "";
         private bool isEditingEnabled;
-
         private double keyrotationx = 90;
-
         private double keyrotationy = 90;
-
         private double keyrotationz = 90;
-
         private Point lastMouse;
-
         private Vector3D lookDirection;
-
         private Model3DCollection modelItems;
-
         private double onePercentZoom;
-
         private PrinterPlate printerPlate;
-
         private List<Object3D> selectedItems;
-
         private Adorner selectedObjectAdorner;
-
         private bool showAdorners;
-
         private bool showAxies;
-
         private bool showBuildPlate;
-
         private bool showFloor;
-
         private bool showFloorMarker;
-
         private int totalFaces;
-
         private int totalVertices;
-
+        private double viewPortHeight;
+        private double viewPortWidth;
         private double zoomPercent = 100;
 
         public EditorViewModel()
@@ -180,6 +173,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "OpenRecentFile", OnOpenFile);
             NotificationManager.Subscribe("Editor", "NewFile", OnOpenFile);
             NotificationManager.Subscribe("Editor", "NewProject", OnOpenFile);
+            NotificationManager.Subscribe("Editor", "BendAngle", OnBendAngle);
 
             ReportCameraPosition();
 
@@ -190,10 +184,10 @@ namespace Barnacle.ViewModels
             showAxies = true;
             showFloor = true;
             showAdorners = true;
-
             showFloorMarker = true;
             showBuildPlate = true;
             isEditingEnabled = true;
+            bendAngle = 10;
             CheckForScriptResults();
             RegenerateDisplayList();
         }
@@ -296,6 +290,32 @@ namespace Barnacle.ViewModels
             set { showFloorMarker = value; }
         }
 
+        public double ViewPortHeight
+        {
+            get { return viewPortHeight; }
+            set
+            {
+                if (value != viewPortHeight)
+                {
+                    viewPortHeight = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double ViewPortWidth
+        {
+            get { return viewPortWidth; }
+            set
+            {
+                if (value != viewPortWidth)
+                {
+                    viewPortWidth = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         /// <summary>
         /// Calculate total number of faces of all objects
         /// </summary>
@@ -364,26 +384,7 @@ namespace Barnacle.ViewModels
         /// rather than elsewhere
         /// </summary>
         public void RegenerateDisplayList()
-        {/*
-            AdaptiveSignedDistanceField adfTest = new AdaptiveSignedDistanceField();
-            AdaptiveSignedDistanceField.OnCalculateDistance += asdflibrary.Functions.Sphere;
-            asdflibrary.Functions.SphereRadius = 5;
-            adfTest.SetDimensions(-10F, -10F, -10F, 10F, 10F, 10F);
-            adfTest.Dump();
-            adfTest.SplitRoot();
-            System.Diagnostics.Debug.WriteLine("After split");
-            adfTest.Dump();
-            Object3D cb = new Object3D();
-            Point3DCollection pnts = new Point3DCollection();
-            Int32Collection tris = new Int32Collection();
-            adfTest.GetCube(7, pnts, tris);
-            cb.TriangleIndices = tris;
-            foreach( Point3D p in pnts)
-            {
-                cb.RelativeObjectVertices.Add(new P3D(p.X, p.Y, p.Z));
-            }
-            cb.Remesh();
-            */
+        {
             try
             {
                 // CountFaces();
@@ -922,28 +923,12 @@ namespace Barnacle.ViewModels
             zoomPercent = 100;
         }
 
-        private void BendObjectInHalf(Object3D ob, string ori, bool fold = false)
+        private void BendObjectInHalf(Object3D ob, string ori, double angleDegrees, bool fold = false)
         {
-            double smallObjectsLimit = 100;
-            double bendAngle = 10 * Math.PI / 180.0;
+            double smallObjectsLimit = 500;
+            double bendAngle = angleDegrees * Math.PI / 180.0;
             if (ob != null)
             {
-                // objects with a small number of vertices dont bend well
-                if (ob.RelativeObjectVertices.Count < smallObjectsLimit)
-                {
-                    LoopSmoother cms = new LoopSmoother();
-
-                    Point3DCollection p3col = new Point3DCollection();
-                    PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, p3col);
-                    Int32Collection icol = ob.TriangleIndices;
-                    while (p3col.Count < smallObjectsLimit)
-                    {
-                        cms.Subdivide(ref p3col, ref icol);
-                    }
-                    PointUtils.PointCollectionToP3D(p3col, ob.RelativeObjectVertices);
-                    ob.TriangleIndices = icol;
-                    ob.Remesh();
-                }
                 // calculate the bend forces that will applied to the points
                 int numForces = 100;
                 double limit = numForces * numForces;
@@ -951,7 +936,6 @@ namespace Barnacle.ViewModels
 
                 for (int i = 0; i < numForces; i++)
                 {
-                    // forces[i] = Math.Cos(theta)* Math.Cos(theta);
                     if (fold)
                     {
                         forces[i] = 1.0;
@@ -967,6 +951,10 @@ namespace Barnacle.ViewModels
                     case "XDown":
                     case "XUp":
                         {
+                            Point3D obMid = ob.AbsoluteBounds.MidPoint();
+                            SeamObject(ob, obMid.Z, ObjectSeamer.SeamerOrientation.Distal);
+                            SubdivideSmallObject(ob, smallObjectsLimit);
+
                             double halfWidth = ob.Scale.Z / 2.0;
                             for (int i = 0; i < ob.RelativeObjectVertices.Count; i++)
                             {
@@ -1003,6 +991,11 @@ namespace Barnacle.ViewModels
                     case "YDown":
                     case "YUp":
                         {
+                            Point3D obMid = ob.AbsoluteBounds.MidPoint();
+
+                            SeamObject(ob, obMid.X, ObjectSeamer.SeamerOrientation.Horizontal);
+                            SubdivideSmallObject(ob, smallObjectsLimit);
+
                             double halfWidth = ob.Scale.X / 2.0;
                             for (int i = 0; i < ob.RelativeObjectVertices.Count; i++)
                             {
@@ -1033,6 +1026,10 @@ namespace Barnacle.ViewModels
                     case "ZUp":
                     case "ZDown":
                         {
+                            Point3D obMid = ob.AbsoluteBounds.MidPoint();
+                            SeamObject(ob, obMid.X, ObjectSeamer.SeamerOrientation.Horizontal);
+                            SubdivideSmallObject(ob, smallObjectsLimit);
+
                             double halfWidth = ob.Scale.X / 2.0;
                             for (int i = 0; i < ob.RelativeObjectVertices.Count; i++)
                             {
@@ -1066,7 +1063,7 @@ namespace Barnacle.ViewModels
             }
         }
 
-        private void BendOver(object param, bool fold)
+        private void BendOver(object param, double angleDegrees, bool fold)
         {
             bool warning = true;
 
@@ -1095,7 +1092,9 @@ namespace Barnacle.ViewModels
                     {
                         CheckPoint();
                         string ori = param.ToString();
-                        BendObjectInHalf(ob, ori, fold);
+                        // divide the anle by 2 because we bent one side half way
+                        // then the other half the opposite way
+                        BendObjectInHalf(ob, ori, angleDegrees / 2, fold);
                     }
                     warning = false;
                 }
@@ -2531,6 +2530,21 @@ namespace Barnacle.ViewModels
                             RotateCamera(0.0, 0.5);
                         }
                         break;
+
+                    case Key.F12:
+                        {
+                            if (shift)
+                            {
+                                handled = true;
+                                LoadCamera();
+                            }
+                            else
+                            {
+                                handled = true;
+                                SaveCamera();
+                            }
+                        }
+                        break;
                 }
             }
             return handled;
@@ -2602,6 +2616,15 @@ namespace Barnacle.ViewModels
             CameraScrollDelta = new Point3D(0, 1, 1);
             LookToCenter();
             zoomPercent = 100;
+        }
+
+        private void LoadCamera()
+        {
+            string dataPath = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Barnacle");
+            camera.Read(dataPath);
+            LookToCenter();
+            ReportCameraPosition();
+            NotifyPropertyChanged("CameraPos");
         }
 
         private void LoadingNewFile(object param)
@@ -2997,69 +3020,77 @@ namespace Barnacle.ViewModels
 
         private void OnAddObject(object param)
         {
-            CheckPoint();
-            string obType = param.ToString();
-            obType = obType.ToLower();
-            Color color = Colors.Beige;
-            Object3D obj = new Object3D();
-            bool added = true;
-            DeselectAll();
-            obj.Name = Document.NextName;
-            obj.Description = obType;
+            try
+            {
+                CheckPoint();
+                string obType = param.ToString();
+                Logger.Log($"OnAddObject {obType}");
+                obType = obType.ToLower();
+                Color color = Colors.Beige;
+                Object3D obj = new Object3D();
+                bool added = true;
+                DeselectAll();
+                obj.Name = Document.NextName;
+                obj.Description = obType;
 
-            obj.Scale = new Scale3D(20, 20, 20);
-            RecalculateAllBounds();
-            // default position of object is at right of everything
-            obj.Position = new Point3D(allBounds.Upper.X + obj.Scale.X / 2, obj.Scale.Y / 2, 0);
-            // if the user wants it placed at the marker AND there is a marker, put it there instead
-            if (Project.SharedProjectSettings.PlaceNewAtMarker && floorMarker != null)
-            {
-                obj.Position = floorMarker.Position;
-            }
-
-            if (obType == "vaseloft" || obType == "shapeloft" || obType == "fuselageloft")
-            {
-                added = Loft(obj, obType);
-            }
-            else
-            {
-                obj.BuildPrimitive(obType);
-                if (obType == "star6")
+                obj.Scale = new Scale3D(20, 20, 20);
+                RecalculateAllBounds();
+                // default position of object is at right of everything
+                obj.Position = new Point3D(allBounds.Upper.X + obj.Scale.X / 2, obj.Scale.Y / 2, 0);
+                // if the user wants it placed at the marker AND there is a marker, put it there instead
+                if (Project.SharedProjectSettings.PlaceNewAtMarker && floorMarker != null)
                 {
-                    obj.ScaleMesh(20.0, 5, 17.5);
+                    obj.Position = floorMarker.Position;
                 }
-                else
-                if (obType == "egg")
+
+                if (obType == "vaseloft" || obType == "shapeloft" || obType == "fuselageloft")
                 {
-                    obj.ScaleMesh(20, 25, 20);
+                    added = Loft(obj, obType);
                 }
                 else
                 {
-                    obj.ScaleMesh(20.0, 20.0, 20.0);
-                }
-            }
-            if (added)
-            {
-                obj.PrimType = "Mesh";
-                for (int i = 0; i < rotatedPrimitives.GetLength(0); i++)
-                {
-                    if (rotatedPrimitives[i] == obType)
+                    obj.BuildPrimitive(obType);
+                    if (obType == "star6")
                     {
-                        obj.SwapYZAxies();
-
-                        break;
+                        obj.ScaleMesh(20.0, 5, 17.5);
+                    }
+                    else
+                    if (obType == "egg")
+                    {
+                        obj.ScaleMesh(20, 25, 20);
+                    }
+                    else
+                    {
+                        obj.ScaleMesh(20.0, 20.0, 20.0);
                     }
                 }
-                obj.Remesh();
-                allBounds += obj.AbsoluteBounds;
-                obj.MoveToFloor();
-                GeometryModel3D gm = GetMesh(obj);
+                if (added)
+                {
+                    obj.PrimType = "Mesh";
+                    for (int i = 0; i < rotatedPrimitives.GetLength(0); i++)
+                    {
+                        if (rotatedPrimitives[i] == obType)
+                        {
+                            obj.SwapYZAxies();
 
-                Document.Content.Add(obj);
-                Document.Dirty = true;
-                RegenerateDisplayList();
+                            break;
+                        }
+                    }
+                    obj.Remesh();
+                    allBounds += obj.AbsoluteBounds;
+                    obj.MoveToFloor();
+                    GeometryModel3D gm = GetMesh(obj);
 
-                NotificationManager.Notify("ObjectNamesChanged", null);
+                    Document.Content.Add(obj);
+                    Document.Dirty = true;
+                    RegenerateDisplayList();
+
+                    NotificationManager.Notify("ObjectNamesChanged", null);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"Exception {ex.Message}");
             }
         }
 
@@ -3112,7 +3143,12 @@ namespace Barnacle.ViewModels
 
         private void OnBend(object param)
         {
-            BendOver(param, false);
+            BendOver(param, bendAngle, false);
+        }
+
+        private void OnBendAngle(object param)
+        {
+            bendAngle = Convert.ToDouble(param as string);
         }
 
         private void OnCameraCommand(object param)
@@ -3639,7 +3675,7 @@ namespace Barnacle.ViewModels
 
         private void OnFold(object param)
         {
-            BendOver(param, true);
+            BendOver(param, bendAngle, true);
         }
 
         private void OnFuselage(object param)
@@ -4351,10 +4387,7 @@ namespace Barnacle.ViewModels
 
         private void OnUndo(object param)
         {
-            if (selectedObjectAdorner != null)
-            {
-                selectedObjectAdorner.Clear();
-            }
+            RemoveSelections();
             Undo();
         }
 
@@ -4732,6 +4765,22 @@ namespace Barnacle.ViewModels
                 NotificationManager.Notify("RefreshAdorners", null);
                 Document.Dirty = true;
             }
+        }
+
+        private void SaveCamera()
+        {
+            string dataPath = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Barnacle");
+            camera.Save(dataPath);
+        }
+
+        private void SeamObject(Object3D ob, double plane, ObjectSeamer.SeamerOrientation seamOrientation)
+        {
+            ObjectSeamer seamer = new ObjectSeamer(ob.AbsoluteObjectVertices,
+                                                 ob.TriangleIndices,
+                                                 seamOrientation);
+            seamer.Plane = plane;
+            seamer.Seam();
+            ob.AbsoluteToRelative();
         }
 
         private void Select(object param)
@@ -5246,6 +5295,15 @@ namespace Barnacle.ViewModels
         private void SubdivideObject(Object3D object3D)
         {
             CheckPoint();
+            SubdivideObjectTriangles(object3D);
+
+            GeometryModel3D gm = GetMesh(object3D);
+            RegenerateDisplayList();
+            Document.Dirty = true;
+        }
+
+        private void SubdivideObjectTriangles(Object3D object3D)
+        {
             Point3DCollection tmp = new Point3DCollection();
             PointUtils.P3DToPointCollection(object3D.RelativeObjectVertices, tmp);
             MeshSubdivider subdiv = new MeshSubdivider(tmp, object3D.TriangleIndices);
@@ -5259,10 +5317,29 @@ namespace Barnacle.ViewModels
             object3D.Remesh();
             object3D.CalcScale(false);
             allBounds += object3D.AbsoluteBounds;
+        }
 
-            GeometryModel3D gm = GetMesh(object3D);
-            RegenerateDisplayList();
-            Document.Dirty = true;
+        private void SubdivideSmallObject(Object3D ob, double smallObjectsLimit)
+        {
+            // objects with a small number of vertices dont bend well
+            while (ob.RelativeObjectVertices.Count < smallObjectsLimit)
+            {
+                /*
+                    LoopSmoother cms = new LoopSmoother();
+
+                    Point3DCollection p3col = new Point3DCollection();
+                    PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, p3col);
+                    Int32Collection icol = ob.TriangleIndices;
+                    while (p3col.Count < smallObjectsLimit)
+                    {
+                        cms.Subdivide(ref p3col, ref icol);
+                    }
+                    PointUtils.PointCollectionToP3D(p3col, ob.RelativeObjectVertices);
+                    ob.TriangleIndices = icol;
+                    ob.Remesh();
+                    */
+                SubdivideObjectTriangles(ob);
+            }
         }
 
         private void SwitchToObjectProperties()

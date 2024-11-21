@@ -1,4 +1,21 @@
-﻿using Barnacle.Models;
+﻿// **************************************************************************
+// *   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+// *                                                                         *
+// *   This file is part of the Barnacle 3D application.                     *
+// *                                                                         *
+// *   This application is free software. You can redistribute it and/or     *
+// *   modify it under the terms of the GNU Library General Public           *
+// *   License as published by the Free Software Foundation. Either          *
+// *   version 2 of the License, or (at your option) any later version.      *
+// *                                                                         *
+// *   This application is distributed in the hope that it will be useful,   *
+// *   but WITHOUT ANY WARRANTY. Without even the implied warranty of        *
+// *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+// *   GNU Library General Public License for more details.                  *
+// *                                                                         *
+// *************************************************************************
+
+using Barnacle.Models;
 using Barnacle.Object3DLib;
 using Barnacle.ViewModels;
 using System;
@@ -59,7 +76,10 @@ namespace Barnacle.Dialogs
 
         public bool CloseEnabled
         {
-            get { return closeEnabled; }
+            get
+            {
+                return closeEnabled;
+            }
 
             set
             {
@@ -73,7 +93,10 @@ namespace Barnacle.Dialogs
 
         public Visibility FolderVisibility
         {
-            get { return folderVisible; }
+            get
+            {
+                return folderVisible;
+            }
 
             set
             {
@@ -87,7 +110,10 @@ namespace Barnacle.Dialogs
 
         public bool ImportFolderChecked
         {
-            get { return importFolderChecked; }
+            get
+            {
+                return importFolderChecked;
+            }
 
             set
             {
@@ -106,7 +132,10 @@ namespace Barnacle.Dialogs
 
         public string ImportPath
         {
-            get { return importPath; }
+            get
+            {
+                return importPath;
+            }
 
             set
             {
@@ -120,7 +149,10 @@ namespace Barnacle.Dialogs
 
         public bool ImportZipChecked
         {
-            get { return importZipChecked; }
+            get
+            {
+                return importZipChecked;
+            }
 
             set
             {
@@ -139,7 +171,10 @@ namespace Barnacle.Dialogs
 
         public string ImportZipPath
         {
-            get { return importZipPath; }
+            get
+            {
+                return importZipPath;
+            }
 
             set
             {
@@ -153,7 +188,10 @@ namespace Barnacle.Dialogs
 
         public int MaxModelsPerFile
         {
-            get { return maxModelsPerFile; }
+            get
+            {
+                return maxModelsPerFile;
+            }
 
             set
             {
@@ -167,7 +205,10 @@ namespace Barnacle.Dialogs
 
         public int MaxProgress
         {
-            get { return maxProgress; }
+            get
+            {
+                return maxProgress;
+            }
 
             set
             {
@@ -181,7 +222,10 @@ namespace Barnacle.Dialogs
 
         public string NewFolderName
         {
-            get { return newFolderName; }
+            get
+            {
+                return newFolderName;
+            }
 
             set
             {
@@ -198,7 +242,10 @@ namespace Barnacle.Dialogs
 
         public bool OverWrite
         {
-            get { return overWrite; }
+            get
+            {
+                return overWrite;
+            }
 
             set
             {
@@ -212,7 +259,10 @@ namespace Barnacle.Dialogs
 
         public double ProgressValue
         {
-            get { return progressValue; }
+            get
+            {
+                return progressValue;
+            }
 
             set
             {
@@ -226,7 +276,10 @@ namespace Barnacle.Dialogs
 
         public string ResultsText
         {
-            get { return resultsText; }
+            get
+            {
+                return resultsText;
+            }
 
             set
             {
@@ -240,7 +293,10 @@ namespace Barnacle.Dialogs
 
         public bool StartEnabled
         {
-            get { return startEnabled; }
+            get
+            {
+                return startEnabled;
+            }
 
             set
             {
@@ -254,7 +310,10 @@ namespace Barnacle.Dialogs
 
         public double XRotation
         {
-            get { return xRotation; }
+            get
+            {
+                return xRotation;
+            }
 
             set
             {
@@ -268,7 +327,10 @@ namespace Barnacle.Dialogs
 
         public double YRotation
         {
-            get { return yRotation; }
+            get
+            {
+                return yRotation;
+            }
 
             set
             {
@@ -282,7 +344,10 @@ namespace Barnacle.Dialogs
 
         public Visibility ZipVisibility
         {
-            get { return zipVisible; }
+            get
+            {
+                return zipVisible;
+            }
 
             set
             {
@@ -296,7 +361,10 @@ namespace Barnacle.Dialogs
 
         public double ZRotation
         {
-            get { return zRotation; }
+            get
+            {
+                return zRotation;
+            }
 
             set
             {
@@ -517,8 +585,7 @@ namespace Barnacle.Dialogs
         {
             if (Directory.Exists(ImportPath))
             {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
+                Application.Current.Dispatcher.Invoke(() => {
                     CloseEnabled = false;
                     StartEnabled = false;
                 });
@@ -540,8 +607,7 @@ namespace Barnacle.Dialogs
 
                 foreach (string fpath in files)
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
+                    Application.Current.Dispatcher.Invoke(() => {
                         ProgressValue = prog;
 
                         AppendResults("Importing " + System.IO.Path.GetFileName(fpath));
@@ -561,8 +627,7 @@ namespace Barnacle.Dialogs
         {
             if (File.Exists(ImportZipPath))
             {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
+                Application.Current.Dispatcher.Invoke(() => {
                     CloseEnabled = false;
                     StartEnabled = false;
                 });
@@ -578,8 +643,7 @@ namespace Barnacle.Dialogs
                 }
                 foreach (string fpath in files)
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
+                    Application.Current.Dispatcher.Invoke(() => {
                         ProgressValue = prog;
 
                         AppendResults("Importing " + System.IO.Path.GetFileName(fpath));

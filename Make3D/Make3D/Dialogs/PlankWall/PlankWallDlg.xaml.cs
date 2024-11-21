@@ -26,55 +26,18 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class PlankWallDlg : BaseModellerDialog, INotifyPropertyChanged
     {
+        private bool bottomBevel;
         private double gap;
         private double gapDepth;
+        private bool leftBevel;
         private bool loaded;
         private double plankWidth;
+        private bool rightBevel;
+        private bool topBevel;
         private double wallHeight;
         private double wallLength;
         private double wallWidth;
         private string warningText;
-        private bool topBevel;
-        private bool bottomBevel;
-        private bool leftBevel;
-        private bool rightBevel;
-
-        private void BevelSelector_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (loaded)
-            {
-                switch (e.PropertyName)
-                {
-                    case "TopBevelled":
-                        {
-                            topBevel = BevelSelector.TopBevelled;
-                            UpdateDisplay();
-                        }
-                        break;
-
-                    case "BottomBevelled":
-                        {
-                            bottomBevel = BevelSelector.BottomBevelled;
-                            UpdateDisplay();
-                        }
-                        break;
-
-                    case "LeftBevelled":
-                        {
-                            leftBevel = BevelSelector.LeftBevelled;
-                            UpdateDisplay();
-                        }
-                        break;
-
-                    case "RightBevelled":
-                        {
-                            rightBevel = BevelSelector.RightBevelled;
-                            UpdateDisplay();
-                        }
-                        break;
-                }
-            }
-        }
 
         public PlankWallDlg()
         {
@@ -278,6 +241,43 @@ namespace Barnacle.Dialogs
             Close();
         }
 
+        private void BevelSelector_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (loaded)
+            {
+                switch (e.PropertyName)
+                {
+                    case "TopBevelled":
+                        {
+                            topBevel = BevelSelector.TopBevelled;
+                            UpdateDisplay();
+                        }
+                        break;
+
+                    case "BottomBevelled":
+                        {
+                            bottomBevel = BevelSelector.BottomBevelled;
+                            UpdateDisplay();
+                        }
+                        break;
+
+                    case "LeftBevelled":
+                        {
+                            leftBevel = BevelSelector.LeftBevelled;
+                            UpdateDisplay();
+                        }
+                        break;
+
+                    case "RightBevelled":
+                        {
+                            rightBevel = BevelSelector.RightBevelled;
+                            UpdateDisplay();
+                        }
+                        break;
+                }
+            }
+        }
+
         private void GenerateShape()
         {
             ClearShape();
@@ -286,6 +286,7 @@ namespace Barnacle.Dialogs
                 );
             maker.SetBevels(topBevel, bottomBevel, leftBevel, rightBevel);
             maker.Generate(Vertices, Faces);
+            CentreVertices();
         }
 
         private void LoadEditorParameters()

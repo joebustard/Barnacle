@@ -1,5 +1,23 @@
-﻿using Barnacle.Object3DLib;
+﻿// **************************************************************************
+// *   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+// *                                                                         *
+// *   This file is part of the Barnacle 3D application.                     *
+// *                                                                         *
+// *   This application is free software. You can redistribute it and/or     *
+// *   modify it under the terms of the GNU Library General Public           *
+// *   License as published by the Free Software Foundation. Either          *
+// *   version 2 of the License, or (at your option) any later version.      *
+// *                                                                         *
+// *   This application is distributed in the hope that it will be useful,   *
+// *   but WITHOUT ANY WARRANTY. Without even the implied warranty of        *
+// *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+// *   GNU Library General Public License for more details.                  *
+// *                                                                         *
+// *************************************************************************
+
+using Barnacle.Object3DLib;
 using System;
+using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Media.Media3D;
@@ -10,14 +28,12 @@ namespace Barnacle.Models
     {
         private const double piBy2 = Math.PI / 2.0;
         private Point3D cameraPos;
-
         private double distance;
-
         private double fieldOfView;
-
         private double homeDistance;
-
         private Orientations horizontalOrientation;
+        private Orientations oldHorizontalOrientation = Orientations.Unknown;
+        private Orientations oldVerticalOrientation = Orientations.Unknown;
         private PolarCoordinate polarBackHome;
         private PolarCoordinate polarBottomHome;
         private PolarCoordinate polarFrontHome;
@@ -86,7 +102,7 @@ namespace Barnacle.Models
                 }
             }
         }
-        private Orientations oldHorizontalOrientation=Orientations.Unknown;
+
         public Orientations HorizontalOrientation
         {
             get
@@ -95,7 +111,6 @@ namespace Barnacle.Models
             }
         }
 
-        private Orientations oldVerticalOrientation = Orientations.Unknown;
         public Orientations VerticalOrientation
         {
             get
@@ -204,16 +219,51 @@ namespace Barnacle.Models
                 polarPos.Phi += dp;
 
                 ConvertPolarTo3D();
-               
             }
         }
 
-        internal void RotateDegrees(double dt,double dp)
+        internal void Read(string dataPath)
+        {
+            string fileName = dataPath + "\\camerapos.txt";
+            if (File.Exists(fileName))
+            {
+                try
+                {
+                    StreamReader sw = new StreamReader(dataPath + "\\camerapos.txt");
+                    polarPos.Phi = Convert.ToDouble(sw.ReadLine());
+                    polarPos.Theta = Convert.ToDouble(sw.ReadLine());
+                    polarPos.Rho = Convert.ToDouble(sw.ReadLine());
+                    ConvertPolarTo3D();
+                    sw.Close();
+                }
+                catch (Exception e)
+                {
+                    Logger.Log("Exception: " + e.Message);
+                }
+            }
+        }
+
+        internal void RotateDegrees(double dt, double dp)
         {
             polarPos.Theta += (dt * Math.PI) / 180.0;
             polarPos.Phi += (dp * Math.PI) / 180.0;
-
             ConvertPolarTo3D();
+        }
+
+        internal void Save(string dataPath)
+        {
+            try
+            {
+                StreamWriter sw = new StreamWriter(dataPath + "\\camerapos.txt");
+                sw.WriteLine($"{polarPos.Phi}");
+                sw.WriteLine($"{polarPos.Theta}");
+                sw.WriteLine($"{polarPos.Rho}");
+                sw.Close();
+            }
+            catch (Exception e)
+            {
+                Logger.Log("Exception: " + e.Message);
+            }
         }
 
         internal void Zoom(double v)
@@ -234,7 +284,7 @@ namespace Barnacle.Models
             double z = polarPos.Rho * Math.Sin(polarPos.Phi) * Math.Sin(polarPos.Theta);
             double y = polarPos.Rho * Math.Cos(polarPos.Phi);
             cameraPos = new Point3D(x + polarOrigin.X, y + polarOrigin.Y, z + polarOrigin.Z);
-            distance = polarPos.Rho; 
+            distance = polarPos.Rho;
             NotificationManager.Notify("CameraMoved", null);
             SetOrientation();
         }
@@ -305,7 +355,7 @@ namespace Barnacle.Models
             {
                 verticalOrientation = Orientations.Bottom;
             }
-            if ( ( oldHorizontalOrientation != horizontalOrientation) || (oldVerticalOrientation != verticalOrientation))
+            if ((oldHorizontalOrientation != horizontalOrientation) || (oldVerticalOrientation != verticalOrientation))
             {
                 NotificationManager.Notify("CameraOrientation", null);
             }

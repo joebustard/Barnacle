@@ -154,6 +154,14 @@
             </Button>
             <Button
                 Command="{Binding AddCommand}"
+                CommandParameter="MidUBeam"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource ImageButton}"
+                ToolTip="Add a Mid U beam object">
+                <Image Source="/Barnacle;component/Images/Buttons/MidUBeam.png" />
+            </Button>
+            <Button
+                Command="{Binding AddCommand}"
                 CommandParameter="ShallowUBeam"
                 IsEnabled="{Binding EditingActive}"
                 Style="{StaticResource ImageButton}"

@@ -1,4 +1,21 @@
-﻿using MakerLib;
+﻿// **************************************************************************
+// *   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+// *                                                                         *
+// *   This file is part of the Barnacle 3D application.                     *
+// *                                                                         *
+// *   This application is free software. You can redistribute it and/or     *
+// *   modify it under the terms of the GNU Library General Public           *
+// *   License as published by the Free Software Foundation. Either          *
+// *   version 2 of the License, or (at your option) any later version.      *
+// *                                                                         *
+// *   This application is distributed in the hope that it will be useful,   *
+// *   but WITHOUT ANY WARRANTY. Without even the implied warranty of        *
+// *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+// *   GNU Library General Public License for more details.                  *
+// *                                                                         *
+// *************************************************************************
+
+using MakerLib;
 using System.ComponentModel;
 using System.Windows;
 
@@ -9,6 +26,7 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class TrapezoidDlg : BaseModellerDialog, INotifyPropertyChanged
     {
+        private bool loaded;
         private double shapeBevel;
         private double shapeBottomLength;
         private double shapeHeight;
@@ -22,11 +40,6 @@ namespace Barnacle.Dialogs
             ToolName = "Trapezoid";
             DataContext = this;
             ModelGroup = MyModelGroup;
-            shapeTopLength = 20;
-            shapeBottomLength = 16;
-            shapeHeight = 10;
-            shapeWidth = 10;
-            shapeBevel = 0;
         }
 
         public double ShapeBevel
@@ -49,6 +62,23 @@ namespace Barnacle.Dialogs
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
+                }
+            }
+        }
+
+        public double ShapeBottomLength
+        {
+            get
+            {
+                return shapeBottomLength;
+            }
+            set
+            {
+                if (shapeBottomLength != value)
+                {
+                    shapeBottomLength = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
                 }
             }
         }
@@ -81,23 +111,6 @@ namespace Barnacle.Dialogs
                 if (shapeTopLength != value)
                 {
                     shapeTopLength = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
-            }
-        }
-
-        public double ShapeBottomLength
-        {
-            get
-            {
-                return shapeBottomLength;
-            }
-            set
-            {
-                if (shapeBottomLength != value)
-                {
-                    shapeBottomLength = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
@@ -171,6 +184,17 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public void Reset()
+        {
+            loaded = false;
+            ShapeTopLength = 20;
+            ShapeBottomLength = 16;
+            ShapeHeight = 10;
+            ShapeWidth = 10;
+            loaded = true;
+            ShapeBevel = 0;
+        }
+
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             SaveEditorParmeters();
@@ -203,16 +227,17 @@ namespace Barnacle.Dialogs
 
         private void LoadEditorParameters()
         {
-            string s = EditorParameters.Get("ShapeTopLength");
-            if (s != "")
-            {
-                shapeTopLength = EditorParameters.GetDouble("ShapeTopLength");
-                shapeBottomLength = EditorParameters.GetDouble("ShapeBottomLength");
-                shapeWidth = EditorParameters.GetDouble("ShapeWidth");
-                shapeHeight = EditorParameters.GetDouble("ShapeHeight");
+            ShapeTopLength = EditorParameters.GetDouble("ShapeTopLength", 20);
+            ShapeBottomLength = EditorParameters.GetDouble("ShapeBottomLength", 16);
+            ShapeWidth = EditorParameters.GetDouble("ShapeWidth", 10);
+            ShapeHeight = EditorParameters.GetDouble("ShapeHeight", 10);
+            ShapeBevel = EditorParameters.GetDouble("ShapeBevel", 0);
+        }
 
-                shapeBevel = EditorParameters.GetDouble("ShapeBevel");
-            }
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            Reset();
+            UpdateDisplay();
         }
 
         private void SaveEditorParmeters()
@@ -226,18 +251,23 @@ namespace Barnacle.Dialogs
 
         private void UpdateDisplay()
         {
-            GenerateShape();
-            Redisplay();
+            if (loaded)
+            {
+                GenerateShape();
+                Redisplay();
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            loaded = false;
             LoadEditorParameters();
-            GenerateShape();
+
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             warningText = "";
-            Redisplay();
+            loaded = true;
+            UpdateDisplay();
         }
     }
 }

@@ -1000,6 +1000,10 @@
                                 ImageSource="/Barnacle;component/Images/Buttons/BendZ2.png"
                                 ToolTip="Bend selected object in half left around Z axis" />
                         </Custom:RibbonMenuItem>
+                        <StackPanel Orientation="Horizontal" ToolTip="The angle to bend or fold the selected object. Between 1 and 90 degrees.">
+                            <Label Content="Angle" />
+                            <TextBox Margin="4,0,0,0" Width="30" Text="{Binding BendAngle}" />
+                        </StackPanel>
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton
                         x:Name="Fold"
@@ -1074,6 +1078,10 @@
                                 ImageSource="/Barnacle;component/Images/Buttons/BendZ2.png"
                                 ToolTip="Fold selected object in half left around Z axis" />
                         </Custom:RibbonMenuItem>
+                        <StackPanel Orientation="Horizontal" ToolTip="The angle to bend or fold the selected object. Between 1 and 90 degrees.">
+                            <Label Content="Angle" />
+                            <TextBox Margin="4,0,0,0" Width="30" Text="{Binding BendAngle}" />
+                        </StackPanel>
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton
                         x:Name="Mirror"

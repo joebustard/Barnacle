@@ -20,6 +20,7 @@ namespace Barnacle.Object3DLib
                     path += "\\log.txt";
                     File.WriteAllText(path, DateTime.Now.ToString() + "\r\n");
                     initialised = true;
+                    File.AppendAllText(path, "\n");
                 }
                 catch (Exception ex)
                 {
@@ -29,6 +30,7 @@ namespace Barnacle.Object3DLib
             try
             {
                 File.AppendAllText(path, s);
+                File.AppendAllText(path, "\n");
             }
             catch
             {

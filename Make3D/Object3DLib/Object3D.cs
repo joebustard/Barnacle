@@ -93,6 +93,7 @@ namespace Barnacle.Object3DLib
              new PrimTableEntry( "ubeam",PrimitiveGenerator.GenerateUBeam,Colors.LightSteelBlue),
              new PrimTableEntry( "boxframe",PrimitiveGenerator.GenerateBoxFrame,Colors.SteelBlue),
              new PrimTableEntry( "shallowubeam",PrimitiveGenerator.GenerateShallowUBeam,Colors.MediumOrchid),
+             new PrimTableEntry( "midubeam",PrimitiveGenerator.GenerateMidUBeam,Colors.Coral),
         };
 
         protected Bounds3D absoluteBounds;
@@ -369,6 +370,7 @@ namespace Barnacle.Object3DLib
 
         public bool BuildPrimitive(string obType)
         {
+            Logger.Log($"BuildPrimitive {obType}");
             bool built = false;
             Point3DCollection pnts = new Point3DCollection();
             Int32Collection indices = new Int32Collection();
@@ -572,7 +574,7 @@ namespace Barnacle.Object3DLib
         {
             bool res = false;
             s = s.ToLower();
-
+            Logger.Log($"LookUpPrim {s}");
             foreach (PrimTableEntry pt in PrimitiveTable)
             {
                 if (pt.PrimName == s)

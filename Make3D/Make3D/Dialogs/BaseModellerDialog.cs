@@ -1,4 +1,21 @@
-﻿using Barnacle.EditorParameterLib;
+﻿// **************************************************************************
+// *   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+// *                                                                         *
+// *   This file is part of the Barnacle 3D application.                     *
+// *                                                                         *
+// *   This application is free software. You can redistribute it and/or     *
+// *   modify it under the terms of the GNU Library General Public           *
+// *   License as published by the Free Software Foundation. Either          *
+// *   version 2 of the License, or (at your option) any later version.      *
+// *                                                                         *
+// *   This application is distributed in the hope that it will be useful,   *
+// *   but WITHOUT ANY WARRANTY. Without even the implied warranty of        *
+// *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+// *   GNU Library General Public License for more details.                  *
+// *                                                                         *
+// *************************************************************************
+
+using Barnacle.EditorParameterLib;
 using Barnacle.Models;
 using Barnacle.Object3DLib;
 using HalfEdgeLib;
@@ -19,6 +36,7 @@ namespace Barnacle.Dialogs
     {
         protected Axies axies;
         protected string defaultImagePath;
+        protected bool editingEnabled;
         protected Floor floor;
         protected Grid3D grid;
         protected GeometryModel3D lastHitModel;
@@ -31,6 +49,7 @@ namespace Barnacle.Dialogs
         protected bool showAxies;
         protected bool showFloor;
         private Bounds3D bounds;
+        private Visibility busyVisible;
         private Point3D cameraPosition;
         private EditorParameters editorParameters;
 
@@ -65,31 +84,6 @@ namespace Barnacle.Dialogs
             spaceTreeRoot = null;
         }
 
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            this.SaveSizeAndLocation(true);
-            base.OnClosing(e);
-        }
-
-        protected void RestoreSizeAndLocation()
-        {
-            this.RestoreSizeAndLocation(true);
-        }
-
-        protected void ScaleVertices(double x, double y, double z)
-        {
-            for (int i = 0; i < Vertices.Count; i++)
-            {
-                Point3D p = Vertices[i];
-                Vertices[i] = new Point3D(p.X * x, p.Y * y, p.Z * z);
-            }
-        }
-
-        internal void SaveSizeAndLocation()
-        {
-            this.SaveSizeAndLocation(true);
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Bounds3D Bounds
@@ -108,28 +102,19 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public struct AsyncGeneratorResult
+        public Visibility BusyVisible
         {
-            public Point3D[] points;
-            public int[] indices;
-        }
-
-        /// <summary>
-        /// Purely used to get over a threading issue when
-        /// using async.
-        /// We can't get Point3DCollections back from an async function
-        /// so we pass points as an array and convert type afterwards
-        /// </summary>
-        /// <param name="result"></param>
-        protected void GetVerticesFromAsyncResult(AsyncGeneratorResult result)
-        {
-            foreach (Point3D p in result.points)
+            get
             {
-                Vertices.Add(new Point3D(p.X, p.Y, p.Z));
+                return busyVisible;
             }
-            foreach (int f in result.indices)
+            set
             {
-                Faces.Add(f);
+                if (value != busyVisible)
+                {
+                    busyVisible = value;
+                    NotifyPropertyChanged();
+                }
             }
         }
 
@@ -163,76 +148,32 @@ namespace Barnacle.Dialogs
             }
         }
 
-        protected void SurfaceToSolid(Point3DCollection vertices, Int32Collection tris, double thickness)
-        {
-            Mesh hemesh = new HalfEdgeLib.Mesh(vertices, tris);
-            Vector3D[] normals = new Vector3D[vertices.Count];
-            for (int i = 0; i < vertices.Count; i++)
-            {
-                normals[i] = hemesh.GetVertexNormal(i);
-            }
-
-            Point3DCollection innerVerts = new Point3DCollection();
-            for (int i = 0; i < vertices.Count; i++)
-            {
-                Point3D p = new Point3D(vertices[i].X + (normals[i].X * thickness),
-                                        vertices[i].Y + (normals[i].Y * thickness),
-                                        vertices[i].Z + (normals[i].Z * thickness));
-                innerVerts.Add(p);
-            }
-
-            int faceOffset = tris.Count;
-            for (int findex = 0; findex < faceOffset; findex += 3)
-            {
-                int f0 = tris[findex];
-                int f1 = tris[findex + 1];
-                int f2 = tris[findex + 2];
-
-                int v0 = AddPoint(vertices, innerVerts[f0]);
-                int v1 = AddPoint(vertices, innerVerts[f1]);
-                int v2 = AddPoint(vertices, innerVerts[f2]);
-
-                tris.Add(v0);
-                tris.Add(v2);
-                tris.Add(v1);
-            }
-
-            // close sides, The Fake face used to close the boundary of the inner surface has
-            // vertices which correspond to there outer counter parts. i.e. Vertex 0 in the inner is
-            // vertex 0 of the outer but moved along the normal so in effect we triangulate the
-            // rectangle formed by two outer and and the corresponding two inner vertices
-            foreach (List<HalfEdge> lhe in hemesh.Boundaries)
-            {
-                foreach (HalfEdge he in lhe)
-                {
-                    // outer indices
-                    int f0 = he.StartVertex;
-                    int f1 = he.EndVertex;
-
-                    // inner indices
-                    int v0 = AddPoint(vertices, innerVerts[f0]);
-                    int v1 = AddPoint(vertices, innerVerts[f1]);
-
-                    // make a triangle
-                    tris.Add(f0);
-                    tris.Add(f1);
-                    tris.Add(v0);
-
-                    // make the other triangle
-                    tris.Add(f1);
-                    tris.Add(v1);
-                    tris.Add(v0);
-                }
-            }
-        }
-
         public string DefaultImagePath
         {
-            get { return defaultImagePath; }
+            get
+            {
+                return defaultImagePath;
+            }
 
             set
             {
                 defaultImagePath = value;
+            }
+        }
+
+        public bool EditingEnabled
+        {
+            get
+            {
+                return editingEnabled;
+            }
+            set
+            {
+                if (editingEnabled != value)
+                {
+                    editingEnabled = value;
+                    NotifyPropertyChanged();
+                }
             }
         }
 
@@ -309,7 +250,10 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public Model3DGroup ModelGroup { get; set; }
+        public Model3DGroup ModelGroup
+        {
+            get; set;
+        }
 
         public virtual bool ShowAxies
         {
@@ -750,6 +694,11 @@ namespace Barnacle.Dialogs
             }
         }
 
+        internal void SaveSizeAndLocation()
+        {
+            this.SaveSizeAndLocation(true);
+        }
+
         internal void SweepPolarProfilePhi(List<PolarCoordinate> polarProfile, double cx, double cy, double sweepRange, int numSegs, bool clear = true)
         {
             // now we have a lovely copy of the profile in polar coordinates.
@@ -1017,6 +966,15 @@ namespace Barnacle.Dialogs
             return res;
         }
 
+        /// <summary>
+        /// Turn on the twirlywoo and stop any controls being changed
+        /// </summary>
+        protected void Busy()
+        {
+            EditingEnabled = false;
+            BusyVisible = Visibility.Visible;
+        }
+
         protected Point CalcPoint(double theta, double r)
         {
             Point p = new Point();
@@ -1199,6 +1157,25 @@ namespace Barnacle.Dialogs
             return gm;
         }
 
+        /// <summary>
+        /// Purely used to get over a threading issue when
+        /// using async.
+        /// We can't get Point3DCollections back from an async function
+        /// so we pass points as an array and convert type afterwards
+        /// </summary>
+        /// <param name="result"></param>
+        protected void GetVerticesFromAsyncResult(AsyncGeneratorResult result)
+        {
+            foreach (Point3D p in result.points)
+            {
+                Vertices.Add(new Point3D(p.X, p.Y, p.Z));
+            }
+            foreach (int f in result.indices)
+            {
+                Faces.Add(f);
+            }
+        }
+
         protected virtual void Home_Click(object sender, RoutedEventArgs e)
         {
             Camera.HomeFront();
@@ -1206,10 +1183,25 @@ namespace Barnacle.Dialogs
             UpdateCameraPos();
         }
 
+        /// <summary>
+        /// Turn off the twirlywoo and allow any controls being changed
+        /// </summary>
+        protected void NotBusy()
+        {
+            BusyVisible = Visibility.Hidden;
+            EditingEnabled = true;
+        }
+
         protected virtual void Ok_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
             Close();
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            this.SaveSizeAndLocation(true);
+            base.OnClosing(e);
         }
 
         protected virtual void Redisplay()
@@ -1240,6 +1232,20 @@ namespace Barnacle.Dialogs
             }
         }
 
+        protected void RestoreSizeAndLocation()
+        {
+            this.RestoreSizeAndLocation(true);
+        }
+
+        protected void ScaleVertices(double x, double y, double z)
+        {
+            for (int i = 0; i < Vertices.Count; i++)
+            {
+                Point3D p = Vertices[i];
+                Vertices[i] = new Point3D(p.X * x, p.Y * y, p.Z * z);
+            }
+        }
+
         protected void SetCameraDistance(bool sideView = false)
         {
             Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
@@ -1255,6 +1261,69 @@ namespace Barnacle.Dialogs
             else
             {
                 Camera.DistanceToFit(w, h, d * 1.5);
+            }
+        }
+
+        protected void SurfaceToSolid(Point3DCollection vertices, Int32Collection tris, double thickness)
+        {
+            Mesh hemesh = new HalfEdgeLib.Mesh(vertices, tris);
+            Vector3D[] normals = new Vector3D[vertices.Count];
+            for (int i = 0; i < vertices.Count; i++)
+            {
+                normals[i] = hemesh.GetVertexNormal(i);
+            }
+
+            Point3DCollection innerVerts = new Point3DCollection();
+            for (int i = 0; i < vertices.Count; i++)
+            {
+                Point3D p = new Point3D(vertices[i].X + (normals[i].X * thickness),
+                                        vertices[i].Y + (normals[i].Y * thickness),
+                                        vertices[i].Z + (normals[i].Z * thickness));
+                innerVerts.Add(p);
+            }
+
+            int faceOffset = tris.Count;
+            for (int findex = 0; findex < faceOffset; findex += 3)
+            {
+                int f0 = tris[findex];
+                int f1 = tris[findex + 1];
+                int f2 = tris[findex + 2];
+
+                int v0 = AddPoint(vertices, innerVerts[f0]);
+                int v1 = AddPoint(vertices, innerVerts[f1]);
+                int v2 = AddPoint(vertices, innerVerts[f2]);
+
+                tris.Add(v0);
+                tris.Add(v2);
+                tris.Add(v1);
+            }
+
+            // close sides, The Fake face used to close the boundary of the inner surface has
+            // vertices which correspond to there outer counter parts. i.e. Vertex 0 in the inner is
+            // vertex 0 of the outer but moved along the normal so in effect we triangulate the
+            // rectangle formed by two outer and and the corresponding two inner vertices
+            foreach (List<HalfEdge> lhe in hemesh.Boundaries)
+            {
+                foreach (HalfEdge he in lhe)
+                {
+                    // outer indices
+                    int f0 = he.StartVertex;
+                    int f1 = he.EndVertex;
+
+                    // inner indices
+                    int v0 = AddPoint(vertices, innerVerts[f0]);
+                    int v1 = AddPoint(vertices, innerVerts[f1]);
+
+                    // make a triangle
+                    tris.Add(f0);
+                    tris.Add(f1);
+                    tris.Add(v0);
+
+                    // make the other triangle
+                    tris.Add(f1);
+                    tris.Add(v1);
+                    tris.Add(v0);
+                }
             }
         }
 
@@ -1304,52 +1373,10 @@ namespace Barnacle.Dialogs
             return x * 25.4;
         }
 
-        protected bool editingEnabled;
-
-        public bool EditingEnabled
+        public struct AsyncGeneratorResult
         {
-            get { return editingEnabled; }
-            set
-            {
-                if (editingEnabled != value)
-                {
-                    editingEnabled = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private Visibility busyVisible;
-
-        public Visibility BusyVisible
-        {
-            get { return busyVisible; }
-            set
-            {
-                if (value != busyVisible)
-                {
-                    busyVisible = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Turn off the twirlywoo and allow any controls being changed
-        /// </summary>
-        protected void NotBusy()
-        {
-            BusyVisible = Visibility.Hidden;
-            EditingEnabled = true;
-        }
-
-        /// <summary>
-        /// Turn on the twirlywoo and stop any controls being changed
-        /// </summary>
-        protected void Busy()
-        {
-            EditingEnabled = false;
-            BusyVisible = Visibility.Visible;
+            public int[] indices;
+            public Point3D[] points;
         }
     }
 }

@@ -1,61 +1,47 @@
-﻿using System;
+﻿// **************************************************************************
+// *   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+// *                                                                         *
+// *   This file is part of the Barnacle 3D application.                     *
+// *                                                                         *
+// *   This application is free software. You can redistribute it and/or     *
+// *   modify it under the terms of the GNU Library General Public           *
+// *   License as published by the Free Software Foundation. Either          *
+// *   version 2 of the License, or (at your option) any later version.      *
+// *                                                                         *
+// *   This application is distributed in the hope that it will be useful,   *
+// *   but WITHOUT ANY WARRANTY. Without even the implied warranty of        *
+// *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+// *   GNU Library General Public License for more details.                  *
+// *                                                                         *
+// *************************************************************************
+
+using System;
 using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {
     internal class SpaceTreeNode
     {
+        public NodeColour Colour;
+
+        private const double leftRightTolerance = 1E-4;
+
+        private const double tolerance = 1E-7;
+
+        public SpaceTreeNode(Point3D v)
+        {
+            Vertex = v;
+        }
+
         public enum NodeColour
         {
             Red,
             Black
         }
 
-        private const double tolerance = 1E-7;
-        private const double leftRightTolerance = 1E-4;
-
-        public NodeColour Colour;
-
-        private static SpaceTreeNode RotateLeft(SpaceTreeNode node)
+        public int Id
         {
-            SpaceTreeNode x = node.Right;
-            node.Right = x.Left;
-            x.Left = node;
-            x.Colour = node.Colour;
-            node.Colour = NodeColour.Red;
-            return x;
-        }
-
-        private static SpaceTreeNode RotateRight(SpaceTreeNode node)
-        {
-            SpaceTreeNode x = node.Left;
-            node.Left = x.Right;
-            x.Right = node;
-            x.Colour = node.Colour;
-            node.Colour = NodeColour.Red;
-            return x;
-        }
-
-        private static void ColourFlip(SpaceTreeNode node)
-        {
-            node.Colour = NodeColour.Red;
-            node.Left.Colour = NodeColour.Black;
-            node.Right.Colour = NodeColour.Black;
-        }
-
-        private static bool IsRed(SpaceTreeNode node)
-        {
-            bool res = true;
-            if (node != null && node.Colour == NodeColour.Black)
-            {
-                res = false;
-            }
-            return res;
-        }
-
-        public SpaceTreeNode(Point3D v)
-        {
-            Vertex = v;
+            get; set;
         }
 
         public SpaceTreeNode Left
@@ -76,46 +62,6 @@ namespace Barnacle.Dialogs
         public Point3D Vertex
         {
             get; set;
-        }
-
-        public int Id { get; set; }
-
-        public int Present(Point3D v)
-        {
-            int result = -1;
-
-            double dx = v.X - Vertex.X;
-            if (dx < -leftRightTolerance)
-            {
-                if (Left != null)
-                {
-                    result = Left.Present(v);
-                }
-            }
-            else
-            if (dx > leftRightTolerance)
-            {
-                if (Right != null)
-                {
-                    result = Right.Present(v);
-                }
-            }
-            else
-            {
-                if (Math.Abs(v.X - Vertex.X) < tolerance && Math.Abs(v.Y - Vertex.Y) < tolerance && Math.Abs(v.Z - Vertex.Z) < tolerance)
-                {
-                    result = Id;
-                }
-                else
-                {
-                    if (Mid != null)
-                    {
-                        result = Mid.Present(v);
-                    }
-                }
-            }
-
-            return result;
         }
 
         public static SpaceTreeNode Create(Point3D v, int id)
@@ -171,6 +117,44 @@ namespace Barnacle.Dialogs
                     ColourFlip(node);
                 }
             }
+            return result;
+        }
+
+        public int Present(Point3D v)
+        {
+            int result = -1;
+
+            double dx = v.X - Vertex.X;
+            if (dx < -leftRightTolerance)
+            {
+                if (Left != null)
+                {
+                    result = Left.Present(v);
+                }
+            }
+            else
+            if (dx > leftRightTolerance)
+            {
+                if (Right != null)
+                {
+                    result = Right.Present(v);
+                }
+            }
+            else
+            {
+                if (Math.Abs(v.X - Vertex.X) < tolerance && Math.Abs(v.Y - Vertex.Y) < tolerance && Math.Abs(v.Z - Vertex.Z) < tolerance)
+                {
+                    result = Id;
+                }
+                else
+                {
+                    if (Mid != null)
+                    {
+                        result = Mid.Present(v);
+                    }
+                }
+            }
+
             return result;
         }
 
@@ -238,6 +222,43 @@ namespace Barnacle.Dialogs
             {
                 Right.Sort();
             }
+        }
+
+        private static void ColourFlip(SpaceTreeNode node)
+        {
+            node.Colour = NodeColour.Red;
+            node.Left.Colour = NodeColour.Black;
+            node.Right.Colour = NodeColour.Black;
+        }
+
+        private static bool IsRed(SpaceTreeNode node)
+        {
+            bool res = true;
+            if (node != null && node.Colour == NodeColour.Black)
+            {
+                res = false;
+            }
+            return res;
+        }
+
+        private static SpaceTreeNode RotateLeft(SpaceTreeNode node)
+        {
+            SpaceTreeNode x = node.Right;
+            node.Right = x.Left;
+            x.Left = node;
+            x.Colour = node.Colour;
+            node.Colour = NodeColour.Red;
+            return x;
+        }
+
+        private static SpaceTreeNode RotateRight(SpaceTreeNode node)
+        {
+            SpaceTreeNode x = node.Left;
+            node.Left = x.Right;
+            x.Right = node;
+            x.Colour = node.Colour;
+            node.Colour = NodeColour.Red;
+            return x;
         }
     }
 }

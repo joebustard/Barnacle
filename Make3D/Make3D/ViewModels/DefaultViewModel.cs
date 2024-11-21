@@ -1,4 +1,21 @@
-﻿using Barnacle.Dialogs;
+﻿// **************************************************************************
+// *   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+// *                                                                         *
+// *   This file is part of the Barnacle 3D application.                     *
+// *                                                                         *
+// *   This application is free software. You can redistribute it and/or     *
+// *   modify it under the terms of the GNU Library General Public           *
+// *   License as published by the Free Software Foundation. Either          *
+// *   version 2 of the License, or (at your option) any later version.      *
+// *                                                                         *
+// *   This application is distributed in the hope that it will be useful,   *
+// *   but WITHOUT ANY WARRANTY. Without even the implied warranty of        *
+// *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+// *   GNU Library General Public License for more details.                  *
+// *                                                                         *
+// *************************************************************************
+
+using Barnacle.Dialogs;
 using Barnacle.Models;
 using Barnacle.Models.Mru;
 using Barnacle.ViewModel.BuildPlates;
@@ -32,6 +49,7 @@ namespace Barnacle.ViewModels
         private static string statusBlockText3;
         private static Control subView;
         private ObservableCollection<FontFamily> _systemFonts = new ObservableCollection<FontFamily>();
+        private double bendAngle;
         private bool bezierRingEnabled;
         private bool boldChecked;
         private BuildPlateManager buildPlateManager;
@@ -152,7 +170,7 @@ namespace Barnacle.ViewModels
             tabPanelWidth = 180;
             StatusBlockText1 = "Status Text 1";
             StatusBlockText2 = "V" + SoftwareVersion;
-
+            bendAngle = 10;
             buildPlateNames = new List<string>();
             buildPlateManager = new BuildPlateManager();
             buildPlateManager.Initialise();
@@ -193,11 +211,20 @@ namespace Barnacle.ViewModels
             LoadAutoSaveSettings();
         }
 
-        public ICommand AboutCommand { get; set; }
+        public ICommand AboutCommand
+        {
+            get; set;
+        }
 
-        public ICommand AddCommand { get; set; }
+        public ICommand AddCommand
+        {
+            get; set;
+        }
 
-        public ICommand AddPageCommand { get; set; }
+        public ICommand AddPageCommand
+        {
+            get; set;
+        }
 
         public List<ToolDef> AircraftToolsToShow
         {
@@ -216,11 +243,41 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand AlignCommand { get; set; }
+        public ICommand AlignCommand
+        {
+            get; set;
+        }
 
-        public RelayCommand AutoFixCommand { get; set; }
+        public RelayCommand AutoFixCommand
+        {
+            get; set;
+        }
 
-        public ICommand BendCommand { get; set; }
+        public double BendAngle
+        {
+            get
+            {
+                return bendAngle;
+            }
+            set
+            {
+                if (value != bendAngle)
+                {
+                    if (value >= 1 && value <= 90)
+                    {
+                        bendAngle = value;
+
+                        NotifyPropertyChanged();
+                        NotificationManager.Notify("BendAngle", bendAngle.ToString());
+                    }
+                }
+            }
+        }
+
+        public ICommand BendCommand
+        {
+            get; set;
+        }
 
         public bool BezierRingEnabled
         {
@@ -293,7 +350,10 @@ namespace Barnacle.ViewModels
 
         public bool CanSlice
         {
-            get { return canSlice; }
+            get
+            {
+                return canSlice;
+            }
 
             set
             {
@@ -339,13 +399,25 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand CircularPasteCommand { get; set; }
+        public ICommand CircularPasteCommand
+        {
+            get; set;
+        }
 
-        public ICommand CloneInPlaceCommand { get; set; }
+        public ICommand CloneInPlaceCommand
+        {
+            get; set;
+        }
 
-        public ICommand CopyCommand { get; set; }
+        public ICommand CopyCommand
+        {
+            get; set;
+        }
 
-        public ICommand CutCommand { get; set; }
+        public ICommand CutCommand
+        {
+            get; set;
+        }
 
         public List<ToolDef> DecorativeToolsToShow
         {
@@ -364,11 +436,20 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand DistributeCommand { get; set; }
+        public ICommand DistributeCommand
+        {
+            get; set;
+        }
 
-        public ICommand DoNothingCommand { get; set; }
+        public ICommand DoNothingCommand
+        {
+            get; set;
+        }
 
-        public ICommand DoughnutCommand { get; set; }
+        public ICommand DoughnutCommand
+        {
+            get; set;
+        }
 
         public bool DoughnutEnabled
         {
@@ -387,7 +468,10 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand DupVertexCommand { get; set; }
+        public ICommand DupVertexCommand
+        {
+            get; set;
+        }
 
         public bool EditingActive
         {
@@ -406,17 +490,35 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand ExitCommand { get; set; }
+        public ICommand ExitCommand
+        {
+            get; set;
+        }
 
-        public ICommand ExportCommand { get; set; }
+        public ICommand ExportCommand
+        {
+            get; set;
+        }
 
-        public ICommand ExportPartsCommand { get; set; }
+        public ICommand ExportPartsCommand
+        {
+            get; set;
+        }
 
-        public ICommand FixHolesCommand { get; set; }
+        public ICommand FixHolesCommand
+        {
+            get; set;
+        }
 
-        public ICommand FlipCommand { get; set; }
+        public ICommand FlipCommand
+        {
+            get; set;
+        }
 
-        public ICommand FoldCommand { get; set; }
+        public ICommand FoldCommand
+        {
+            get; set;
+        }
 
         public String FontSize
         {
@@ -436,7 +538,10 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand FuselageCommand { get; set; }
+        public ICommand FuselageCommand
+        {
+            get; set;
+        }
 
         public bool FuselageEnabled
         {
@@ -472,11 +577,20 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand GroupCommand { get; set; }
+        public ICommand GroupCommand
+        {
+            get; set;
+        }
 
-        public ICommand ImportCommand { get; set; }
+        public ICommand ImportCommand
+        {
+            get; set;
+        }
 
-        public ICommand InsertCommand { get; set; }
+        public ICommand InsertCommand
+        {
+            get; set;
+        }
 
         public bool IrregularEnabled
         {
@@ -497,7 +611,10 @@ namespace Barnacle.ViewModels
 
         public bool IsSelectedObjectAGroup
         {
-            get { return isSelectedObjectAGroup; }
+            get
+            {
+                return isSelectedObjectAGroup;
+            }
 
             set
             {
@@ -578,7 +695,10 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand LinearCommand { get; set; }
+        public ICommand LinearCommand
+        {
+            get; set;
+        }
 
         public bool LinearEnabled
         {
@@ -614,9 +734,15 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand ManifoldCommand { get; set; }
+        public ICommand ManifoldCommand
+        {
+            get; set;
+        }
 
-        public ICommand MarkerCommand { get; set; }
+        public ICommand MarkerCommand
+        {
+            get; set;
+        }
 
         public List<ToolDef> MechanicalToolsToShow
         {
@@ -635,23 +761,50 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand MeshCutCommand { get; set; }
+        public ICommand MeshCutCommand
+        {
+            get; set;
+        }
 
-        public ICommand MeshEditCommand { get; set; }
+        public ICommand MeshEditCommand
+        {
+            get; set;
+        }
 
-        public ICommand MeshHullCommand { get; set; }
+        public ICommand MeshHullCommand
+        {
+            get; set;
+        }
 
-        public ICommand MeshSmoothCommand { get; set; }
+        public ICommand MeshSmoothCommand
+        {
+            get; set;
+        }
 
-        public ICommand MeshSubdivideCommand { get; set; }
+        public ICommand MeshSubdivideCommand
+        {
+            get; set;
+        }
 
-        public RelayCommand MirrorCommand { get; private set; }
+        public RelayCommand MirrorCommand
+        {
+            get; private set;
+        }
 
-        public ICommand MultiPasteCommand { get; set; }
+        public ICommand MultiPasteCommand
+        {
+            get; set;
+        }
 
-        public ICommand NewCommand { get; set; }
+        public ICommand NewCommand
+        {
+            get; set;
+        }
 
-        public ICommand NewProjectCommand { get; set; }
+        public ICommand NewProjectCommand
+        {
+            get; set;
+        }
 
         public ObservableCollection<string> ObjectNames
         {
@@ -666,13 +819,25 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand OpenCommand { get; set; }
+        public ICommand OpenCommand
+        {
+            get; set;
+        }
 
-        public ICommand OpenProjectCommand { get; set; }
+        public ICommand OpenProjectCommand
+        {
+            get; set;
+        }
 
-        public ICommand OpenRecentFileCommand { get; set; }
+        public ICommand OpenRecentFileCommand
+        {
+            get; set;
+        }
 
-        public ICommand PageCommand { get; set; }
+        public ICommand PageCommand
+        {
+            get; set;
+        }
 
         public List<ToolDef> ParametricToolsToShow
         {
@@ -691,13 +856,25 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand PasteAtCommand { get; set; }
+        public ICommand PasteAtCommand
+        {
+            get; set;
+        }
 
-        public ICommand PasteCommand { get; set; }
+        public ICommand PasteCommand
+        {
+            get; set;
+        }
 
-        public ICommand PrintCommand { get; set; }
+        public ICommand PrintCommand
+        {
+            get; set;
+        }
 
-        public ICommand PrintPreviewCommand { get; set; }
+        public ICommand PrintPreviewCommand
+        {
+            get; set;
+        }
 
         public bool ProfileFuselageEnabled
         {
@@ -724,11 +901,20 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand RedoCommand { get; set; }
+        public ICommand RedoCommand
+        {
+            get; set;
+        }
 
-        public ICommand ReferenceCommand { get; set; }
+        public ICommand ReferenceCommand
+        {
+            get; set;
+        }
 
-        public ICommand ResetOriginCommand { get; set; }
+        public ICommand ResetOriginCommand
+        {
+            get; set;
+        }
 
         public bool RightTextAlignment
         {
@@ -747,13 +933,25 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand SaveAsCommand { get; set; }
+        public ICommand SaveAsCommand
+        {
+            get; set;
+        }
 
-        public ICommand SaveCommand { get; set; }
+        public ICommand SaveCommand
+        {
+            get; set;
+        }
 
-        public RelayCommand ScreenShotCommand { get; private set; }
+        public RelayCommand ScreenShotCommand
+        {
+            get; private set;
+        }
 
-        public ICommand SelectCommand { get; set; }
+        public ICommand SelectCommand
+        {
+            get; set;
+        }
 
         public String SelectedBuildPlate
         {
@@ -799,7 +997,10 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand SettingsCommand { get; set; }
+        public ICommand SettingsCommand
+        {
+            get; set;
+        }
 
         public bool ShowAxiesChecked
         {
@@ -931,9 +1132,15 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand SizeCommand { get; set; }
+        public ICommand SizeCommand
+        {
+            get; set;
+        }
 
-        public ICommand SliceCommand { get; set; }
+        public ICommand SliceCommand
+        {
+            get; set;
+        }
 
         public bool SnapMarginChecked
         {
@@ -961,9 +1168,15 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand SplitCommand { get; set; }
+        public ICommand SplitCommand
+        {
+            get; set;
+        }
 
-        public ICommand SpurGearCommand { get; set; }
+        public ICommand SpurGearCommand
+        {
+            get; set;
+        }
 
         public bool SpurGearEnabled
         {
@@ -1069,12 +1282,18 @@ namespace Barnacle.ViewModels
 
         public ObservableCollection<FontFamily> SystemFonts
         {
-            get { return _systemFonts; }
+            get
+            {
+                return _systemFonts;
+            }
         }
 
         public int TabPanelWidth
         {
-            get { return tabPanelWidth; }
+            get
+            {
+                return tabPanelWidth;
+            }
 
             set
             {
@@ -1086,7 +1305,10 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand TankTrackCommand { get; set; }
+        public ICommand TankTrackCommand
+        {
+            get; set;
+        }
 
         public bool TankTrackEnabled
         {
@@ -1105,9 +1327,15 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand TextAlignmentCommand { get; set; }
+        public ICommand TextAlignmentCommand
+        {
+            get; set;
+        }
 
-        public ICommand ToolCommand { get; set; }
+        public ICommand ToolCommand
+        {
+            get; set;
+        }
 
         public Visibility ToolPaletteVisible
         {
@@ -1144,7 +1372,10 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand TwoShapeCommand { get; set; }
+        public ICommand TwoShapeCommand
+        {
+            get; set;
+        }
 
         public bool TwoShapeEnabled
         {
@@ -1181,9 +1412,15 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand UndoCommand { get; set; }
+        public ICommand UndoCommand
+        {
+            get; set;
+        }
 
-        public ICommand UnrefVertexCommand { get; set; }
+        public ICommand UnrefVertexCommand
+        {
+            get; set;
+        }
 
         public List<ToolDef> VehicleToolsToShow
         {
@@ -1202,7 +1439,10 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand ViewCommand { get; set; }
+        public ICommand ViewCommand
+        {
+            get; set;
+        }
 
         public bool WingEnabled
         {
@@ -1221,13 +1461,25 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand ZipProjectCommand { get; set; }
+        public ICommand ZipProjectCommand
+        {
+            get; set;
+        }
 
-        public ICommand Zoom100Command { get; set; }
+        public ICommand Zoom100Command
+        {
+            get; set;
+        }
 
-        public ICommand ZoomInCommand { get; set; }
+        public ICommand ZoomInCommand
+        {
+            get; set;
+        }
 
-        public ICommand ZoomOutCommand { get; set; }
+        public ICommand ZoomOutCommand
+        {
+            get; set;
+        }
 
         internal void SetRibbonMenu(Ribbon mainRibbon)
         {

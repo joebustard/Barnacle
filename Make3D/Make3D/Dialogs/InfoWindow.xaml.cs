@@ -1,4 +1,21 @@
-﻿using System;
+﻿/**************************************************************************
+*   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+*                                                                         *
+*   This file is part of the Barnacle 3D application.                     *
+*                                                                         *
+*   This application is free software; you can redistribute it and/or     *
+*   modify it under the terms of the GNU Library General Public           *
+*   License as published by the Free Software Foundation; either          *
+*   version 2 of the License, or (at your option) any later version.      *
+*                                                                         *
+*   This application is distributed in the hope that it will be useful,   *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License for more details.                  *
+*                                                                         *
+**************************************************************************/
+
+using System;
 using System.Windows;
 
 namespace Barnacle.Dialogs
@@ -18,17 +35,13 @@ namespace Barnacle.Dialogs
             Closed += InfoWindow_Closed;
         }
 
-        private void InfoWindow_Closed(object sender, EventArgs e)
-        {
-            IsClosed = true;
-        }
+        public bool IsClosed { get; set; } = false;
 
         public static InfoWindow Instance()
         {
             if (instance == null)
             {
                 instance = new InfoWindow();
-
             }
             else
             {
@@ -41,20 +54,6 @@ namespace Barnacle.Dialogs
             instance.Topmost = true;
             MoveToCenterOfOwner();
             return instance;
-        }
-
-        private static void MoveToCenterOfOwner()
-        {
-            if (instance != null && instance.Owner != null)
-            {
-                if (instance.Owner.WindowState != WindowState.Minimized)
-                {
-                    double w = instance.Owner.ActualWidth;
-                    double h = instance.Owner.ActualHeight;
-                    instance.Top = (h - instance.ActualHeight)/2;
-                    instance.Left = (w - instance.ActualWidth) / 2;
-                }
-            }
         }
 
         public static void Refresh(System.Windows.UIElement uiElement)
@@ -72,8 +71,6 @@ namespace Barnacle.Dialogs
         {
             Instance().Show();
         }
-
-        public bool IsClosed { get; set; } = false;
 
         public void ShowInfo(String title)
         {
@@ -98,6 +95,25 @@ namespace Barnacle.Dialogs
         {
             MoveToCenterOfOwner();
             instance.InfoLabel.Content = s;
+        }
+
+        private static void MoveToCenterOfOwner()
+        {
+            if (instance != null && instance.Owner != null)
+            {
+                if (instance.Owner.WindowState != WindowState.Minimized)
+                {
+                    double w = instance.Owner.ActualWidth;
+                    double h = instance.Owner.ActualHeight;
+                    instance.Top = (h - instance.ActualHeight) / 2;
+                    instance.Left = (w - instance.ActualWidth) / 2;
+                }
+            }
+        }
+
+        private void InfoWindow_Closed(object sender, EventArgs e)
+        {
+            IsClosed = true;
         }
     }
 }

@@ -1,38 +1,44 @@
-﻿using Barnacle.Object3DLib;
+﻿// **************************************************************************
+// *   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
+// *                                                                         *
+// *   This file is part of the Barnacle 3D application.                     *
+// *                                                                         *
+// *   This application is free software. You can redistribute it and/or     *
+// *   modify it under the terms of the GNU Library General Public           *
+// *   License as published by the Free Software Foundation. Either          *
+// *   version 2 of the License, or (at your option) any later version.      *
+// *                                                                         *
+// *   This application is distributed in the hope that it will be useful,   *
+// *   but WITHOUT ANY WARRANTY. Without even the implied warranty of        *
+// *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+// *   GNU Library General Public License for more details.                  *
+// *                                                                         *
+// *************************************************************************
+
+using Barnacle.Object3DLib;
 using OctTreeLib;
-using PolygonTriangulationLib;
-using System;
-using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace Barnacle.Models
 {
-    public class ObjectSplitter
+    public class ObjectSeamer
     {
         private Bounds3D bounds;
+        private OctTree ResultOctTree;
 
-        private OctTree Result1OctTree;
-
-        private OctTree Result2OctTree;
-
-        public ObjectSplitter()
+        public ObjectSeamer()
         {
-            Orientation = SplitterOrientation.Vertical;
+            Orientation = SeamerOrientation.Vertical;
             OriginalVertices = null;
             OriginalFaces = null;
-
-            Result1Vertices = null;
-            Result1Faces = null;
-            Result2Vertices = null;
-            Result2Faces = null;
-
+            ResultVertices = null;
+            ResultFaces = null;
             Plane = 0;
-            Result1OctTree = null;
-            Result2OctTree = null;
+            ResultOctTree = null;
         }
 
-        public ObjectSplitter(Point3DCollection v, Int32Collection f, SplitterOrientation o)
+        public ObjectSeamer(Point3DCollection v, Int32Collection f, SeamerOrientation o)
         {
             OriginalVertices = v;
             OriginalFaces = f;
@@ -47,69 +53,51 @@ namespace Barnacle.Models
                 }
                 bounds.Expand(new Point3D(1, 1, 1));
             }
-            Result1Vertices = null;
-            Result1Faces = null;
-            Result2Vertices = null;
-            Result2Faces = null;
-
+            ResultVertices = null;
+            ResultFaces = null;
             Plane = 0;
         }
 
-        public enum SplitterOrientation
+        public enum SeamerOrientation
         {
             Horizontal,
             Vertical,
             Distal
         }
 
-        public SplitterOrientation Orientation { get; set; }
+        public SeamerOrientation Orientation { get; set; }
         public Int32Collection OriginalFaces { get; set; }
         public Point3DCollection OriginalVertices { get; set; }
         public double Plane { get; set; }
-        public Int32Collection Result1Faces { get; set; }
-        public Point3DCollection Result1Vertices { get; set; }
-        public Int32Collection Result2Faces { get; set; }
-        public Point3DCollection Result2Vertices { get; set; }
+        public Int32Collection ResultFaces { get; set; }
+        public Point3DCollection ResultVertices { get; set; }
 
-        public bool Split()
+        public void Seam()
         {
-            bool result = false;
-
             if (OriginalFaces != null && OriginalFaces.Count > 0)
             {
                 if (OriginalVertices != null && OriginalVertices.Count > 0)
                 {
-                    EdgeProcessor edgeProc = new EdgeProcessor();
+                    ResultVertices = new Point3DCollection();
+                    ResultFaces = new Int32Collection();
+                    ResultOctTree = new OctTree(ResultVertices, bounds.Lower, bounds.Upper);
 
-                    Result1Vertices = new Point3DCollection();
-                    Result1Faces = new Int32Collection();
-                    Result1OctTree = new OctTree(Result1Vertices, bounds.Lower, bounds.Upper);
-
-                    Result2Vertices = new Point3DCollection();
-                    Result2Faces = new Int32Collection();
-                    Result2OctTree = new OctTree(Result2Vertices, bounds.Lower, bounds.Upper);
-
-                    SeperateSurfaces(edgeProc);
-
-                    CloseEnds(edgeProc);
+                    SeperateSurfaces();
                 }
             }
-            return false;
-        }
+            OriginalFaces.Clear();
+            OriginalVertices.Clear();
+            for (int i = 0; i < ResultFaces.Count; i++)
+            {
+                OriginalFaces.Add(ResultFaces[i]);
+            }
 
-        /// <summary>
-        /// returns the vertices and edges of the first object soup
-        /// as a new Object3D
-        /// </summary>
-        /// <returns></returns>
-        internal Object3D GetObject1()
-        {
-            return GetObject(Result1Vertices, Result1Faces);
-        }
-
-        internal Object3D GetObject2()
-        {
-            return GetObject(Result2Vertices, Result2Faces);
+            for (int i = 0; i < ResultVertices.Count; i++)
+            {
+                OriginalVertices.Add(new Point3D(ResultVertices[i].X,
+                                              ResultVertices[i].Y,
+                                              ResultVertices[i].Z));
+            }
         }
 
         /// <summary>
@@ -134,126 +122,6 @@ namespace Barnacle.Models
             faces.Add(v0);
             faces.Add(v1);
             faces.Add(v2);
-        }
-
-        /// <summary>
-        /// Close up the ends of the two new objects that
-        /// are currently open
-        /// </summary>
-        /// <param name="edgeProc"></param>
-        private void CloseEnds(EdgeProcessor edgeProc)
-        {
-            // stitch and triangulate edge for Result1
-            bool moreLoops = true;
-            while (moreLoops)
-            {
-                moreLoops = false;
-                List<EdgeRecord> loop = edgeProc.MakeLoop();
-                if (loop.Count > 3)
-                {
-                    TriangulationPolygon ply = new TriangulationPolygon();
-                    List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
-                    foreach (EdgeRecord er in loop)
-                    {
-                        Point3D p = Result1Vertices[er.Start];
-                        switch (Orientation)
-                        {
-                            case SplitterOrientation.Horizontal:
-                                {
-                                    pf.Add(new System.Drawing.PointF((float)p.Z, (float)p.Y));
-                                }
-                                break;
-
-                            case SplitterOrientation.Vertical:
-                                {
-                                    pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Z));
-                                }
-                                break;
-
-                            case SplitterOrientation.Distal:
-                                {
-                                    pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
-                                }
-                                break;
-                        }
-                    }
-                    ply.Points = pf.ToArray();
-                    List<Triangle> tris = ply.Triangulate();
-                    foreach (Triangle t in tris)
-                    {
-                        int c0 = 0;
-                        int c1 = 0;
-                        int c2 = 0;
-                        // close bottom of  top
-                        switch (Orientation)
-                        {
-                            case SplitterOrientation.Horizontal:
-                                {
-                                    c0 = Result1OctTree.AddPoint(Plane, t.Points[0].Y, t.Points[0].X);
-                                    c1 = Result1OctTree.AddPoint(Plane, t.Points[1].Y, t.Points[1].X);
-                                    c2 = Result1OctTree.AddPoint(Plane, t.Points[2].Y, t.Points[2].X);
-                                }
-                                break;
-
-                            case SplitterOrientation.Vertical:
-                                {
-                                    c0 = Result1OctTree.AddPoint(t.Points[0].X, Plane, t.Points[0].Y);
-                                    c1 = Result1OctTree.AddPoint(t.Points[1].X, Plane, t.Points[1].Y);
-                                    c2 = Result1OctTree.AddPoint(t.Points[2].X, Plane, t.Points[2].Y);
-                                }
-                                break;
-
-                            case SplitterOrientation.Distal:
-                                {
-                                    c0 = Result1OctTree.AddPoint(t.Points[0].X, t.Points[0].Y, Plane);
-                                    c2 = Result1OctTree.AddPoint(t.Points[1].X, t.Points[1].Y, Plane);
-                                    c1 = Result1OctTree.AddPoint(t.Points[2].X, t.Points[2].Y, Plane);
-                                }
-                                break;
-                        }
-
-                        Result1Faces.Add(c0);
-                        Result1Faces.Add(c1);
-                        Result1Faces.Add(c2);
-
-                        // close top of  bottom
-                        switch (Orientation)
-                        {
-                            case SplitterOrientation.Horizontal:
-                                {
-                                    c0 = Result2OctTree.AddPoint(Plane, t.Points[0].Y, t.Points[0].X);
-                                    c1 = Result2OctTree.AddPoint(Plane, t.Points[1].Y, t.Points[1].X);
-                                    c2 = Result2OctTree.AddPoint(Plane, t.Points[2].Y, t.Points[2].X);
-                                }
-                                break;
-
-                            case SplitterOrientation.Vertical:
-                                {
-                                    c0 = Result2OctTree.AddPoint(t.Points[0].X, Plane, t.Points[0].Y);
-                                    c1 = Result2OctTree.AddPoint(t.Points[1].X, Plane, t.Points[1].Y);
-                                    c2 = Result2OctTree.AddPoint(t.Points[2].X, Plane, t.Points[2].Y);
-                                }
-                                break;
-
-                            case SplitterOrientation.Distal:
-                                {
-                                    c0 = Result2OctTree.AddPoint(t.Points[0].X, t.Points[0].Y, Plane);
-                                    c2 = Result2OctTree.AddPoint(t.Points[1].X, t.Points[1].Y, Plane);
-                                    c1 = Result2OctTree.AddPoint(t.Points[2].X, t.Points[2].Y, Plane);
-                                }
-                                break;
-                        }
-
-                        Result2Faces.Add(c0);
-                        Result2Faces.Add(c2);
-                        Result2Faces.Add(c1);
-                    }
-                }
-                if (loop.Count != 0 && edgeProc.EdgeRecords.Count > 0)
-                {
-                    moreLoops = true;
-                }
-            }
         }
 
         /// <summary>
@@ -283,12 +151,11 @@ namespace Barnacle.Models
         }
 
         /// <summary>
-        /// Reallocate triangles of original object to either
-        /// of the two new ones. Split triangles which cross
+        /// Reallocate triangles of original object
+        /// to the  new one. Split triangles which cross
         /// the border
         /// </summary>
-        /// <param name="edgeProc"></param>
-        private void SeperateSurfaces(EdgeProcessor edgeProc)
+        private void SeperateSurfaces()
         {
             for (int i = 0; i < OriginalFaces.Count; i += 3)
             {
@@ -308,7 +175,7 @@ namespace Barnacle.Models
                     case 0:
                         {
                             // all three points of triangle are on or below the cut plane
-                            AddTriangle(aP, bP, cP, Result2OctTree, Result2Faces);
+                            AddTriangle(aP, bP, cP, ResultOctTree, ResultFaces);
                         }
                         break;
 
@@ -320,53 +187,41 @@ namespace Barnacle.Models
                             {
                                 Point3D sP = SplitEdge(aP, bP);
                                 Point3D eP = SplitEdge(aP, cP);
-                                // add triangle aP, sP, eP to Result 1
-                                AddTriangle(aP, sP, eP, Result1OctTree, Result1Faces);
+                                // add triangle aP, sP, eP
+                                AddTriangle(aP, sP, eP, ResultOctTree, ResultFaces);
 
-                                // add triangle  bP, sP, eP to result 2
-                                AddTriangle(bP, eP, sP, Result2OctTree, Result2Faces);
+                                // add triangle  bP, sP, eP
+                                AddTriangle(bP, eP, sP, ResultOctTree, ResultFaces);
 
-                                // add triangle bp , eP cP to result 2
-                                AddTriangle(bP, cP, eP, Result2OctTree, Result2Faces);
-
-                                int s = Result1OctTree.PointPresent(sP);
-                                int e = Result1OctTree.PointPresent(eP);
-                                edgeProc.Add(s, e);
+                                // add triangle bp , eP cP
+                                AddTriangle(bP, cP, eP, ResultOctTree, ResultFaces);
                             }
                             else if (bUp)
                             {
                                 Point3D sP = SplitEdge(bP, cP);
                                 Point3D eP = SplitEdge(bP, aP);
-                                // add triangle bP, sP, eP to Result 1
-                                AddTriangle(bP, sP, eP, Result1OctTree, Result1Faces);
+                                // add triangle bP, sP, eP
+                                AddTriangle(bP, sP, eP, ResultOctTree, ResultFaces);
 
-                                // add triangle  aP, sP, eP to result 2
-                                AddTriangle(aP, eP, sP, Result2OctTree, Result2Faces);
+                                // add triangle  aP, sP, eP
+                                AddTriangle(aP, eP, sP, ResultOctTree, ResultFaces);
 
-                                // add triangle ap , eP cP to result 2
-                                AddTriangle(aP, sP, cP, Result2OctTree, Result2Faces);
-
-                                int s = Result1OctTree.PointPresent(sP);
-                                int e = Result1OctTree.PointPresent(eP);
-                                edgeProc.Add(s, e);
+                                // add triangle ap , eP cP
+                                AddTriangle(aP, sP, cP, ResultOctTree, ResultFaces);
                             }
                             else if (cUp)
                             {
                                 Point3D sP = SplitEdge(cP, aP);
                                 Point3D eP = SplitEdge(cP, bP);
 
-                                // add triangle cP, sP, eP to Result 1
-                                AddTriangle(cP, sP, eP, Result1OctTree, Result1Faces);
+                                // add triangle cP, sP, eP
+                                AddTriangle(cP, sP, eP, ResultOctTree, ResultFaces);
 
-                                // add triangle  bP, sP, eP to result 2
-                                AddTriangle(bP, eP, sP, Result2OctTree, Result2Faces);
+                                // add triangle  bP, sP, eP
+                                AddTriangle(bP, eP, sP, ResultOctTree, ResultFaces);
 
-                                // add triangle bp , eP aP to result 2
-                                AddTriangle(bP, sP, aP, Result2OctTree, Result2Faces);
-
-                                int s = Result1OctTree.PointPresent(sP);
-                                int e = Result1OctTree.PointPresent(eP);
-                                edgeProc.Add(s, e);
+                                // add triangle bp , eP aP
+                                AddTriangle(bP, sP, aP, ResultOctTree, ResultFaces);
                             }
                         }
                         break;
@@ -379,42 +234,29 @@ namespace Barnacle.Models
                                 Point3D sP = SplitEdge(bP, cP);
                                 Point3D eP = SplitEdge(aP, cP);
 
-                                AddTriangle(aP, bP, sP, Result1OctTree, Result1Faces);
-                                AddTriangle(aP, sP, eP, Result1OctTree, Result1Faces);
+                                AddTriangle(aP, bP, sP, ResultOctTree, ResultFaces);
+                                AddTriangle(aP, sP, eP, ResultOctTree, ResultFaces);
 
-                                int s = Result1OctTree.PointPresent(sP);
-                                int e = Result1OctTree.PointPresent(eP);
-                                edgeProc.Add(s, e);
-
-                                AddTriangle(cP, eP, sP, Result2OctTree, Result2Faces);
+                                AddTriangle(cP, eP, sP, ResultOctTree, ResultFaces);
                             }
                             else if (bUp && cUp)
                             {
                                 Point3D sP = SplitEdge(cP, aP);
                                 Point3D eP = SplitEdge(aP, bP);
 
-                                AddTriangle(bP, cP, sP, Result1OctTree, Result1Faces);
-                                AddTriangle(bP, sP, eP, Result1OctTree, Result1Faces);
+                                AddTriangle(bP, cP, sP, ResultOctTree, ResultFaces);
+                                AddTriangle(bP, sP, eP, ResultOctTree, ResultFaces);
 
-                                int s = Result1OctTree.PointPresent(sP);
-                                int e = Result1OctTree.PointPresent(eP);
-                                edgeProc.Add(s, e);
-
-                                AddTriangle(aP, eP, sP, Result2OctTree, Result2Faces);
+                                AddTriangle(aP, eP, sP, ResultOctTree, ResultFaces);
                             }
                             else if (cUp && aUp)
                             {
                                 Point3D sP = SplitEdge(aP, bP);
                                 Point3D eP = SplitEdge(bP, cP);
 
-                                AddTriangle(aP, sP, cP, Result1OctTree, Result1Faces);
-                                AddTriangle(cP, sP, eP, Result1OctTree, Result1Faces);
-
-                                int s = Result1OctTree.PointPresent(sP);
-                                int e = Result1OctTree.PointPresent(eP);
-                                edgeProc.Add(s, e);
-
-                                AddTriangle(bP, eP, sP, Result2OctTree, Result2Faces);
+                                AddTriangle(aP, sP, cP, ResultOctTree, ResultFaces);
+                                AddTriangle(cP, sP, eP, ResultOctTree, ResultFaces);
+                                AddTriangle(bP, eP, sP, ResultOctTree, ResultFaces);
                             }
                         }
                         break;
@@ -423,7 +265,7 @@ namespace Barnacle.Models
                         {
                             //all three points of triangle are above the cut plane
                             // entire triangle should be taken as is
-                            AddTriangle(aP, bP, cP, Result1OctTree, Result1Faces);
+                            AddTriangle(aP, bP, cP, ResultOctTree, ResultFaces);
                         }
                         break;
                 }
@@ -443,7 +285,7 @@ namespace Barnacle.Models
             Point3D res = new Point3D(0, 0, 0);
             switch (Orientation)
             {
-                case SplitterOrientation.Horizontal:
+                case SeamerOrientation.Horizontal:
                     {
                         if (a.X != b.X)
                         {
@@ -456,7 +298,7 @@ namespace Barnacle.Models
                     }
                     break;
 
-                case SplitterOrientation.Vertical:
+                case SeamerOrientation.Vertical:
                     {
                         if (a.Y != b.Y)
                         {
@@ -468,7 +310,7 @@ namespace Barnacle.Models
                     }
                     break;
 
-                case SplitterOrientation.Distal:
+                case SeamerOrientation.Distal:
                     {
                         if (a.Z != b.Z)
                         {
@@ -504,19 +346,19 @@ namespace Barnacle.Models
             cOn = false;
             switch (Orientation)
             {
-                case SplitterOrientation.Horizontal:
+                case SeamerOrientation.Horizontal:
                     {
                         res = TriPointsX(a, b, c, ref aOn, ref bOn, ref cOn);
                     }
                     break;
 
-                case SplitterOrientation.Vertical:
+                case SeamerOrientation.Vertical:
                     {
                         res = TriPointsY(a, b, c, ref aOn, ref bOn, ref cOn);
                     }
                     break;
 
-                case SplitterOrientation.Distal:
+                case SeamerOrientation.Distal:
                     {
                         res = TriPointsZ(a, b, c, ref aOn, ref bOn, ref cOn);
                     }
