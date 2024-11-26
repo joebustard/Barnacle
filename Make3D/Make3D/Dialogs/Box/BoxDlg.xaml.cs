@@ -45,243 +45,42 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class BoxDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private string warningText;
-        private bool loaded;
-
-        private const double minboxLength = 1;
-        private const double maxboxLength = 200;
-        private double boxLength;
-
-        public double BoxLength
-        {
-            get
-            {
-                return boxLength;
-            }
-
-            set
-            {
-                if (boxLength != value)
-                {
-                    if (value >= minboxLength && value <= maxboxLength)
-                    {
-                        boxLength = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public String BoxLengthToolTip
-        {
-            get
-            {
-                return $"Box Length must be in the range {minboxLength} to {maxboxLength}";
-            }
-        }
-
-        private const double minboxHeight = 1;
-        private const double maxboxHeight = 200;
-        private double boxHeight;
-
-        public double BoxHeight
-        {
-            get
-            {
-                return boxHeight;
-            }
-
-            set
-            {
-                if (boxHeight != value)
-                {
-                    if (value >= minboxHeight && value <= maxboxHeight)
-                    {
-                        boxHeight = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public String BoxHeightToolTip
-        {
-            get
-            {
-                return $"Box Height must be in the range {minboxHeight} to {maxboxHeight}";
-            }
-        }
-
-        private const double minboxWidth = 1;
-        private const double maxboxWidth = 200;
-        private double boxWidth;
-
-        public double BoxWidth
-        {
-            get
-            {
-                return boxWidth;
-            }
-
-            set
-            {
-                if (boxWidth != value)
-                {
-                    if (value >= minboxWidth && value <= maxboxWidth)
-                    {
-                        boxWidth = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public String BoxWidthToolTip
-        {
-            get
-            {
-                return $"Box Width must be in the range {minboxWidth} to {maxboxWidth}";
-            }
-        }
-
-        private const double minbaseThickness = 1;
-        private const double maxbaseThickness = 20;
-        private double baseThickness;
-
-        public double BaseThickness
-        {
-            get
-            {
-                return baseThickness;
-            }
-
-            set
-            {
-                if (baseThickness != value)
-                {
-                    if (value >= minbaseThickness && value <= maxbaseThickness)
-                    {
-                        baseThickness = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public String BaseThicknessToolTip
-        {
-            get
-            {
-                return $"Base Thickness must be in the range {minbaseThickness} to {maxbaseThickness}";
-            }
-        }
-
-        private const double minleftThickness = 1;
-        private const double maxleftThickness = 20;
-        private double leftThickness;
-
-        public double LeftThickness
-        {
-            get
-            {
-                return leftThickness;
-            }
-
-            set
-            {
-                if (leftThickness != value)
-                {
-                    if (value >= minleftThickness && value <= maxleftThickness)
-                    {
-                        leftThickness = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public String LeftThicknessToolTip
-        {
-            get
-            {
-                return $"Left Thickness must be in the range {minleftThickness} to {maxleftThickness}";
-            }
-        }
-
-        private const double minrightThickness = 1;
-        private const double maxrightThickness = 20;
-        private double rightThickness;
-
-        public double RightThickness
-        {
-            get
-            {
-                return rightThickness;
-            }
-
-            set
-            {
-                if (rightThickness != value)
-                {
-                    if (value >= minrightThickness && value <= maxrightThickness)
-                    {
-                        rightThickness = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public String RightThicknessToolTip
-        {
-            get
-            {
-                return $"Right Thickness must be in the range {minrightThickness} to {maxrightThickness}";
-            }
-        }
-
-        private const double minfrontThickness = 1;
-        private const double maxfrontThickness = 20;
-        private double frontThickness;
-
-        public double FrontThickness
-        {
-            get
-            {
-                return frontThickness;
-            }
-
-            set
-            {
-                if (frontThickness != value)
-                {
-                    if (value >= minfrontThickness && value <= maxfrontThickness)
-                    {
-                        frontThickness = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public String FrontThicknessToolTip
-        {
-            get
-            {
-                return $"Front Thickness must be in the range {minfrontThickness} to {maxfrontThickness}";
-            }
-        }
-
-        private const double minbackThickness = 1;
         private const double maxbackThickness = 20;
+        private const double maxbaseThickness = 20;
+        private const double maxboxHeight = 200;
+        private const double maxboxLength = 200;
+        private const double maxboxWidth = 200;
+        private const double maxfrontThickness = 20;
+        private const double maxleftThickness = 20;
+        private const double maxrightThickness = 20;
+        private const double minbackThickness = 1;
+        private const double minbaseThickness = 1;
+        private const double minboxHeight = 1;
+        private const double minboxLength = 1;
+        private const double minboxWidth = 1;
+        private const double minfrontThickness = 1;
+        private const double minleftThickness = 1;
+        private const double minrightThickness = 1;
         private double backThickness;
+        private double baseThickness;
+        private double boxHeight;
+        private double boxLength;
+        private double boxWidth;
+        private double frontThickness;
+        private double leftThickness;
+        private bool loaded;
+        private double rightThickness;
+        private string warningText;
+
+        public BoxDlg()
+        {
+            InitializeComponent();
+
+            ToolName = "Box";
+            DataContext = this;
+
+            loaded = false;
+        }
 
         public double BackThickness
         {
@@ -312,49 +111,206 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public BoxDlg()
-        {
-            InitializeComponent();
-
-            ToolName = "Box";
-            DataContext = this;
-            ModelGroup = MyModelGroup;
-            loaded = false;
-        }
-
-        public override bool ShowAxies
+        public double BaseThickness
         {
             get
             {
-                return showAxies;
+                return baseThickness;
             }
 
             set
             {
-                if (showAxies != value)
+                if (baseThickness != value)
                 {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
+                    if (value >= minbaseThickness && value <= maxbaseThickness)
+                    {
+                        baseThickness = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
                 }
             }
         }
 
-        public override bool ShowFloor
+        public String BaseThicknessToolTip
         {
             get
             {
-                return showFloor;
+                return $"Base Thickness must be in the range {minbaseThickness} to {maxbaseThickness}";
+            }
+        }
+
+        public double BoxHeight
+        {
+            get
+            {
+                return boxHeight;
             }
 
             set
             {
-                if (showFloor != value)
+                if (boxHeight != value)
                 {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
+                    if (value >= minboxHeight && value <= maxboxHeight)
+                    {
+                        boxHeight = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
                 }
+            }
+        }
+
+        public String BoxHeightToolTip
+        {
+            get
+            {
+                return $"Box Height must be in the range {minboxHeight} to {maxboxHeight}";
+            }
+        }
+
+        public double BoxLength
+        {
+            get
+            {
+                return boxLength;
+            }
+
+            set
+            {
+                if (boxLength != value)
+                {
+                    if (value >= minboxLength && value <= maxboxLength)
+                    {
+                        boxLength = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public String BoxLengthToolTip
+        {
+            get
+            {
+                return $"Box Length must be in the range {minboxLength} to {maxboxLength}";
+            }
+        }
+
+        public double BoxWidth
+        {
+            get
+            {
+                return boxWidth;
+            }
+
+            set
+            {
+                if (boxWidth != value)
+                {
+                    if (value >= minboxWidth && value <= maxboxWidth)
+                    {
+                        boxWidth = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public String BoxWidthToolTip
+        {
+            get
+            {
+                return $"Box Width must be in the range {minboxWidth} to {maxboxWidth}";
+            }
+        }
+
+        public double FrontThickness
+        {
+            get
+            {
+                return frontThickness;
+            }
+
+            set
+            {
+                if (frontThickness != value)
+                {
+                    if (value >= minfrontThickness && value <= maxfrontThickness)
+                    {
+                        frontThickness = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public String FrontThicknessToolTip
+        {
+            get
+            {
+                return $"Front Thickness must be in the range {minfrontThickness} to {maxfrontThickness}";
+            }
+        }
+
+        public double LeftThickness
+        {
+            get
+            {
+                return leftThickness;
+            }
+
+            set
+            {
+                if (leftThickness != value)
+                {
+                    if (value >= minleftThickness && value <= maxleftThickness)
+                    {
+                        leftThickness = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public String LeftThicknessToolTip
+        {
+            get
+            {
+                return $"Left Thickness must be in the range {minleftThickness} to {maxleftThickness}";
+            }
+        }
+
+        public double RightThickness
+        {
+            get
+            {
+                return rightThickness;
+            }
+
+            set
+            {
+                if (rightThickness != value)
+                {
+                    if (value >= minrightThickness && value <= maxrightThickness)
+                    {
+                        rightThickness = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public String RightThicknessToolTip
+        {
+            get
+            {
+                return $"Right Thickness must be in the range {minrightThickness} to {maxrightThickness}";
             }
         }
 
@@ -407,22 +363,33 @@ namespace Barnacle.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-
             BoxLength = EditorParameters.GetDouble("BoxLength", 50);
-
             BoxHeight = EditorParameters.GetDouble("BoxHeight", 50);
-
             BoxWidth = EditorParameters.GetDouble("BoxWidth", 50);
-
             BaseThickness = EditorParameters.GetDouble("BaseThickness", 1);
-
             LeftThickness = EditorParameters.GetDouble("LeftThickness", 1);
-
             RightThickness = EditorParameters.GetDouble("RightThickness", 1);
-
             FrontThickness = EditorParameters.GetDouble("FrontThickness", 1);
-
             BackThickness = EditorParameters.GetDouble("BackThickness", 1);
+        }
+
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
+            UpdateDisplay();
+        }
+
+        private void SaveEditorParmeters()
+        {
+            // save the parameters for the tool
+            EditorParameters.Set("BoxLength", BoxLength.ToString());
+            EditorParameters.Set("BoxHeight", BoxHeight.ToString());
+            EditorParameters.Set("BoxWidth", BoxWidth.ToString());
+            EditorParameters.Set("BaseThickness", BaseThickness.ToString());
+            EditorParameters.Set("LeftThickness", LeftThickness.ToString());
+            EditorParameters.Set("RightThickness", RightThickness.ToString());
+            EditorParameters.Set("FrontThickness", FrontThickness.ToString());
+            EditorParameters.Set("BackThickness", BackThickness.ToString());
         }
 
         private void SetDefaults()
@@ -439,26 +406,12 @@ namespace Barnacle.Dialogs
             loaded = true;
         }
 
-        private void SaveEditorParmeters()
-        {
-            // save the parameters for the tool
-
-            EditorParameters.Set("BoxLength", BoxLength.ToString());
-            EditorParameters.Set("BoxHeight", BoxHeight.ToString());
-            EditorParameters.Set("BoxWidth", BoxWidth.ToString());
-            EditorParameters.Set("BaseThickness", BaseThickness.ToString());
-            EditorParameters.Set("LeftThickness", LeftThickness.ToString());
-            EditorParameters.Set("RightThickness", RightThickness.ToString());
-            EditorParameters.Set("FrontThickness", FrontThickness.ToString());
-            EditorParameters.Set("BackThickness", BackThickness.ToString());
-        }
-
         private void UpdateDisplay()
         {
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -466,17 +419,9 @@ namespace Barnacle.Dialogs
         {
             WarningText = "";
             LoadEditorParameters();
-
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
-
-            UpdateDisplay();
-        }
-
-        private void ResetDefaults(object sender, RoutedEventArgs e)
-        {
-            SetDefaults();
             UpdateDisplay();
         }
     }

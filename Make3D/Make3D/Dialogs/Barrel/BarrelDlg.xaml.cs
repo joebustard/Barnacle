@@ -19,6 +19,7 @@ using MakerLib;
 using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {
@@ -55,7 +56,7 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "Barrel";
             DataContext = this;
-            ModelGroup = MyModelGroup;
+
             loaded = false;
             shellVisibility = Visibility.Hidden;
         }
@@ -207,47 +208,16 @@ namespace Barnacle.Dialogs
 
         public Visibility ShellVisibility
         {
-            get { return shellVisibility; }
+            get
+            {
+                return shellVisibility;
+            }
             set
             {
                 if (shellVisibility != value)
                 {
                     shellVisibility = value;
                     NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
                 }
             }
         }
@@ -397,7 +367,7 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -405,8 +375,7 @@ namespace Barnacle.Dialogs
         {
             WarningText = "";
             LoadEditorParameters();
-            UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
             UpdateDisplay();
         }

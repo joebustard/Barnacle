@@ -60,7 +60,7 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "PathLoft";
             DataContext = this;
-            ModelGroup = MyModelGroup;
+
             loaded = false;
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
             pathPoints = new List<Point>();
@@ -72,7 +72,10 @@ namespace Barnacle.Dialogs
 
         public double BaseThickness
         {
-            get { return baseThickness; }
+            get
+            {
+                return baseThickness;
+            }
             set
             {
                 if (value != baseThickness)
@@ -97,7 +100,10 @@ namespace Barnacle.Dialogs
 
         public bool FlatShape
         {
-            get { return flatShape; }
+            get
+            {
+                return flatShape;
+            }
 
             set
             {
@@ -171,7 +177,10 @@ namespace Barnacle.Dialogs
 
         public bool RoundShape
         {
-            get { return roundShape; }
+            get
+            {
+                return roundShape;
+            }
 
             set
             {
@@ -184,45 +193,12 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
         public bool SquareShape
         {
-            get { return squareShape; }
+            get
+            {
+                return squareShape;
+            }
 
             set
             {
@@ -237,7 +213,10 @@ namespace Barnacle.Dialogs
 
         public Visibility UBeamVisibility
         {
-            get { return ubeamVisibility; }
+            get
+            {
+                return ubeamVisibility;
+            }
             set
             {
                 if (value != ubeamVisibility)
@@ -250,7 +229,10 @@ namespace Barnacle.Dialogs
 
         public bool UShape
         {
-            get { return uShape; }
+            get
+            {
+                return uShape;
+            }
 
             set
             {
@@ -920,7 +902,7 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -933,9 +915,8 @@ namespace Barnacle.Dialogs
             LoadEditorParameters();
 
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
-
             UpdateDisplay();
         }
     }

@@ -35,43 +35,9 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "Blank";
             DataContext = this;
-            ModelGroup = MyModelGroup;
+
             loaded = false;
             maker = new BlankMaker();
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
         }
 
         public string WarningText
@@ -133,7 +99,7 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -141,8 +107,8 @@ namespace Barnacle.Dialogs
         {
             WarningText = "";
             LoadEditorParameters();
-            UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+
+            Viewer.Clear();
             loaded = true;
 
             //SETPROPERTIES

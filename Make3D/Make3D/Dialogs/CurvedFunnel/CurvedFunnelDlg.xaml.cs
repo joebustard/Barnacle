@@ -26,33 +26,20 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class CurvedFunnelDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private string warningText;
+        private double factorA;
         private bool loaded;
+        private double radius;
+        private double shapeHeight;
+        private double wallThickness;
+        private string warningText;
 
-        private double radius = 10;
-
-        public double Radius
+        public CurvedFunnelDlg()
         {
-            get
-            {
-                return radius;
-            }
-
-            set
-            {
-                if (radius != value)
-                {
-                    if (value >= 1 && value <= 100)
-                    {
-                        radius = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
+            InitializeComponent();
+            ToolName = "CurvedFunnel";
+            DataContext = this;
+            loaded = false;
         }
-
-        private double factorA = 0.75;
 
         public double FactorA
         {
@@ -75,30 +62,26 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private double wallThickness = 1;
-
-        public double WallThickness
+        public double Radius
         {
             get
             {
-                return wallThickness;
+                return radius;
             }
 
             set
             {
-                if (wallThickness != value)
+                if (radius != value)
                 {
-                    if (value >= 1 && value <= 10)
+                    if (value >= 1 && value <= 100)
                     {
-                        wallThickness = value;
+                        radius = value;
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
                 }
             }
         }
-
-        private double shapeHeight = 20;
 
         public double ShapeHeight
         {
@@ -121,47 +104,23 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public CurvedFunnelDlg()
-        {
-            InitializeComponent();
-            ToolName = "CurvedFunnel";
-            DataContext = this;
-            ModelGroup = MyModelGroup;
-            loaded = false;
-        }
-
-        public override bool ShowAxies
+        public double WallThickness
         {
             get
             {
-                return showAxies;
+                return wallThickness;
             }
 
             set
             {
-                if (showAxies != value)
+                if (wallThickness != value)
                 {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
+                    if (value >= 1 && value <= 10)
+                    {
+                        wallThickness = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
                 }
             }
         }
@@ -210,36 +169,35 @@ namespace Barnacle.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
+            Radius = EditorParameters.GetDouble("Radius", 10);
+            FactorA = EditorParameters.GetDouble("FactorA", 0.75);
+            WallThickness = EditorParameters.GetDouble("WallThickness", 1);
+            ShapeHeight = EditorParameters.GetDouble("Height", 20);
+        }
 
-            if (EditorParameters.Get("Radius") != "")
-            {
-                Radius = EditorParameters.GetDouble("Radius");
-            }
-
-            if (EditorParameters.Get("FactorA") != "")
-            {
-                FactorA = EditorParameters.GetDouble("FactorA");
-            }
-
-            if (EditorParameters.Get("WallThickness") != "")
-            {
-                WallThickness = EditorParameters.GetDouble("WallThickness");
-            }
-
-            if (EditorParameters.Get("Height") != "")
-            {
-                ShapeHeight = EditorParameters.GetDouble("Height");
-            }
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
+            UpdateDisplay();
         }
 
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-
             EditorParameters.Set("Radius", Radius.ToString());
             EditorParameters.Set("FactorA", FactorA.ToString());
             EditorParameters.Set("WallThickness", WallThickness.ToString());
             EditorParameters.Set("Height", ShapeHeight.ToString());
+        }
+
+        private void SetDefaults()
+        {
+            loaded = false;
+            Radius = 10;
+            FactorA = 0.75;
+            WallThickness = 1;
+            ShapeHeight = 20;
+            loaded = true;
         }
 
         private void UpdateDisplay()
@@ -247,7 +205,7 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -255,11 +213,9 @@ namespace Barnacle.Dialogs
         {
             WarningText = "";
             LoadEditorParameters();
-
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
-
             UpdateDisplay();
         }
     }

@@ -26,115 +26,28 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class BrickWallDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private string warningText;
-        private bool loaded;
-
-        private double wallLength;
-
-        public double WallLength
-        {
-            get
-            {
-                return wallLength;
-            }
-
-            set
-            {
-                if (wallLength != value)
-                {
-                    if (value >= 1 && value <= 200)
-                    {
-                        wallLength = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public bool TopBevelled
-        {
-            get { return topBevelled; }
-            set
-            {
-                if (value != topBevelled)
-                {
-                    topBevelled = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private double wallHeight;
-
-        public double WallHeight
-        {
-            get
-            {
-                return wallHeight;
-            }
-
-            set
-            {
-                if (wallHeight != value)
-                {
-                    if (value >= 1 && value <= 200)
-                    {
-                        wallHeight = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        private double wallWidth;
-
-        public double WallWidth
-        {
-            get
-            {
-                return wallWidth;
-            }
-
-            set
-            {
-                if (wallWidth != value)
-                {
-                    if (value >= 1 && value <= 600)
-                    {
-                        wallWidth = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        private double brickLength;
-
-        public double BrickLength
-        {
-            get
-            {
-                return brickLength;
-            }
-
-            set
-            {
-                if (brickLength != value)
-                {
-                    if (value >= 1 && value <= 100)
-                    {
-                        brickLength = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
+        private bool bottomBevel;
         private double brickHeight;
+        private double brickLength;
+        private bool leftBevel;
+        private bool loaded;
+        private double mortarGap;
+        private bool rightBevel;
+        private bool topBevel;
+        private bool topBevelled;
+        private double wallHeight;
+        private double wallLength;
+        private double wallWidth;
+        private string warningText;
+
+        public BrickWallDlg()
+        {
+            InitializeComponent();
+            ToolName = "BrickWall";
+            DataContext = this;
+            loaded = false;
+            BevelSelector.PropertyChanged += BevelSelector_PropertyChanged;
+        }
 
         public double BrickHeight
         {
@@ -157,8 +70,26 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private double mortarGap;
-        private bool topBevelled;
+        public double BrickLength
+        {
+            get
+            {
+                return brickLength;
+            }
+
+            set
+            {
+                if (brickLength != value)
+                {
+                    if (value >= 1 && value <= 100)
+                    {
+                        brickLength = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
 
         public double MortarGap
         {
@@ -181,20 +112,108 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private bool topBevel;
-        private bool bottomBevel;
-        private bool leftBevel;
-        private bool rightBevel;
-
-        public BrickWallDlg()
+        public bool TopBevelled
         {
-            InitializeComponent();
+            get
+            {
+                return topBevelled;
+            }
+            set
+            {
+                if (value != topBevelled)
+                {
+                    topBevelled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
-            ToolName = "BrickWall";
-            DataContext = this;
-            ModelGroup = MyModelGroup;
-            loaded = false;
-            BevelSelector.PropertyChanged += BevelSelector_PropertyChanged;
+        public double WallHeight
+        {
+            get
+            {
+                return wallHeight;
+            }
+
+            set
+            {
+                if (wallHeight != value)
+                {
+                    if (value >= 1 && value <= 200)
+                    {
+                        wallHeight = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public double WallLength
+        {
+            get
+            {
+                return wallLength;
+            }
+
+            set
+            {
+                if (wallLength != value)
+                {
+                    if (value >= 1 && value <= 200)
+                    {
+                        wallLength = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public double WallWidth
+        {
+            get
+            {
+                return wallWidth;
+            }
+
+            set
+            {
+                if (wallWidth != value)
+                {
+                    if (value >= 1 && value <= 600)
+                    {
+                        wallWidth = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public string WarningText
+        {
+            get
+            {
+                return warningText;
+            }
+
+            set
+            {
+                if (warningText != value)
+                {
+                    warningText = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        protected override void Ok_Click(object sender, RoutedEventArgs e)
+        {
+            SaveEditorParmeters();
+            base.SaveSizeAndLocation();
+            DialogResult = true;
+            Close();
         }
 
         private void BevelSelector_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -234,67 +253,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public string WarningText
-        {
-            get
-            {
-                return warningText;
-            }
-
-            set
-            {
-                if (warningText != value)
-                {
-                    warningText = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        protected override void Ok_Click(object sender, RoutedEventArgs e)
-        {
-            SaveEditorParmeters();
-            base.SaveSizeAndLocation();
-            DialogResult = true;
-            Close();
-        }
-
         private void GenerateShape()
         {
             ClearShape();
@@ -307,51 +265,33 @@ namespace Barnacle.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
+            WallLength = EditorParameters.GetDouble("WallLength", 50);
 
-            if (EditorParameters.Get("WallLength") != "")
-            {
-                wallLength = EditorParameters.GetDouble("WallLength");
-            }
+            WallHeight = EditorParameters.GetDouble("WallHeight", 50);
 
-            if (EditorParameters.Get("WallHeight") != "")
-            {
-                wallHeight = EditorParameters.GetDouble("WallHeight");
-            }
-
-            if (EditorParameters.Get("WallWidth") != "")
-            {
-                wallWidth = EditorParameters.GetDouble("WallWidth");
-            }
-
-            if (EditorParameters.Get("BrickLength") != "")
-            {
-                brickLength = EditorParameters.GetDouble("BrickLength");
-            }
-
-            if (EditorParameters.Get("BrickHeight") != "")
-            {
-                brickHeight = EditorParameters.GetDouble("BrickHeight");
-            }
-
-            if (EditorParameters.Get("MortarGap") != "")
-            {
-                mortarGap = EditorParameters.GetDouble("MortarGap");
-            }
+            WallWidth = EditorParameters.GetDouble("WallWidth", 2);
+            BrickLength = EditorParameters.GetDouble("BrickLength", 3.3);
+            BrickHeight = EditorParameters.GetDouble("BrickHeight", 1.1);
+            MortarGap = EditorParameters.GetDouble("MortarGap", 0.25);
             topBevel = EditorParameters.GetBoolean("TopBevel", false);
             bottomBevel = EditorParameters.GetBoolean("BottomBevel", false);
             leftBevel = EditorParameters.GetBoolean("LeftBevel", false);
             rightBevel = EditorParameters.GetBoolean("RightBevel", false);
         }
 
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
+            UpdateDisplay();
+        }
+
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-
             EditorParameters.Set("WallLength", WallLength.ToString());
             EditorParameters.Set("WallHeight", WallHeight.ToString());
             EditorParameters.Set("WallWidth", WallWidth.ToString());
             EditorParameters.Set("BrickLength", BrickLength.ToString());
-
             EditorParameters.Set("BrickHeight", BrickHeight.ToString());
             EditorParameters.Set("MortarGap", MortarGap.ToString());
             EditorParameters.Set("TopBevel", topBevel.ToString());
@@ -360,47 +300,45 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("RightBevel", rightBevel.ToString());
         }
 
+        private void SetDefaults()
+        {
+            loaded = false;
+            WallLength = 50;
+            WallHeight = 50;
+            WallWidth = 2;
+            BrickLength = 3.3;
+            BrickHeight = 1.1;
+            MortarGap = 0.25;
+            topBevel = false;
+            bottomBevel = false;
+            leftBevel = false;
+            rightBevel = false;
+            BevelSelector.TopBevelled = topBevel;
+            BevelSelector.BottomBevelled = bottomBevel;
+            BevelSelector.RightBevelled = rightBevel;
+            loaded = true;
+            BevelSelector.LeftBevelled = leftBevel;
+        }
+
         private void UpdateDisplay()
         {
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             WarningText = "";
-            wallLength = 50;
-            wallHeight = 50;
-            wallWidth = 2;
-            brickLength = 3.3;
-
-            brickHeight = 1.1;
-            mortarGap = 0.25;
-            topBevel = false;
-            bottomBevel = false;
-            leftBevel = false;
-            rightBevel = false;
             LoadEditorParameters();
-
+            Viewer.Clear();
             BevelSelector.TopBevelled = topBevel;
             BevelSelector.BottomBevelled = bottomBevel;
             BevelSelector.RightBevelled = rightBevel;
             BevelSelector.LeftBevelled = leftBevel;
-            UpdateCameraPos();
-            MyModelGroup.Children.Clear();
             loaded = true;
-
-            NotifyPropertyChanged("WallLength");
-            NotifyPropertyChanged("WallHeight");
-
-            NotifyPropertyChanged("WallWidth");
-            NotifyPropertyChanged("BrickLength");
-            NotifyPropertyChanged("BrickHeight");
-            NotifyPropertyChanged("MortarGap");
-
             UpdateDisplay();
         }
     }

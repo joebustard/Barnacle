@@ -27,111 +27,31 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class ConstructionStripDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private string warningText;
-        private bool loaded;
-
-        private const double minstripHeight = 1;
-        private const double maxstripHeight = 10;
-        private double stripHeight;
-
-        public double StripHeight
-        {
-            get
-            {
-                return stripHeight;
-            }
-
-            set
-            {
-                if (stripHeight != value)
-                {
-                    if (value >= minstripHeight && value <= maxstripHeight)
-                    {
-                        stripHeight = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public String StripHeightToolTip
-        {
-            get
-            {
-                return $"StripHeight must be in the range {minstripHeight} to {maxstripHeight}";
-            }
-        }
-
-        private const double minstripWidth = 5;
-        private const double maxstripWidth = 100;
-        private double stripWidth;
-
-        public double StripWidth
-        {
-            get
-            {
-                return stripWidth;
-            }
-
-            set
-            {
-                if (stripWidth != value)
-                {
-                    if (value >= minstripWidth && value <= maxstripWidth)
-                    {
-                        stripWidth = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public String StripWidthToolTip
-        {
-            get
-            {
-                return $"StripWidth must be in the range {minstripWidth} to {maxstripWidth}";
-            }
-        }
-
-        private const double minstripRepeats = 1;
-        private const double maxstripRepeats = 20;
-        private int stripRepeats;
-
-        public int StripRepeats
-        {
-            get
-            {
-                return stripRepeats;
-            }
-
-            set
-            {
-                if (stripRepeats != value)
-                {
-                    if (value >= minstripRepeats && value <= maxstripRepeats)
-                    {
-                        stripRepeats = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public String StripRepeatsToolTip
-        {
-            get
-            {
-                return $"StripRepeats must be in the range {minstripRepeats} to {maxstripRepeats}";
-            }
-        }
-
-        private const double minholeRadius = 2;
         private const double maxholeRadius = 98;
+        private const double maxnumberOfHoles = 20;
+        private const double maxstripHeight = 10;
+        private const double maxstripRepeats = 20;
+        private const double maxstripWidth = 100;
+        private const double minholeRadius = 2;
+        private const double minnumberOfHoles = 2;
+        private const double minstripHeight = 1;
+        private const double minstripRepeats = 1;
+        private const double minstripWidth = 5;
         private double holeRadius;
+        private bool loaded;
+        private int numberOfHoles;
+        private double stripHeight;
+        private int stripRepeats;
+        private double stripWidth;
+        private string warningText;
+
+        public ConstructionStripDlg()
+        {
+            InitializeComponent();
+            ToolName = "ConstructionStrip";
+            DataContext = this;
+            loaded = false;
+        }
 
         public double HoleRadius
         {
@@ -162,10 +82,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private const double minnumberOfHoles = 2;
-        private const double maxnumberOfHoles = 20;
-        private int numberOfHoles;
-
         public int NumberOfHoles
         {
             get
@@ -195,48 +111,90 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public ConstructionStripDlg()
-        {
-            InitializeComponent();
-            ToolName = "ConstructionStrip";
-            DataContext = this;
-            ModelGroup = MyModelGroup;
-            loaded = false;
-        }
-
-        public override bool ShowAxies
+        public double StripHeight
         {
             get
             {
-                return showAxies;
+                return stripHeight;
             }
 
             set
             {
-                if (showAxies != value)
+                if (stripHeight != value)
                 {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
+                    if (value >= minstripHeight && value <= maxstripHeight)
+                    {
+                        stripHeight = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
                 }
             }
         }
 
-        public override bool ShowFloor
+        public String StripHeightToolTip
         {
             get
             {
-                return showFloor;
+                return $"StripHeight must be in the range {minstripHeight} to {maxstripHeight}";
+            }
+        }
+
+        public int StripRepeats
+        {
+            get
+            {
+                return stripRepeats;
             }
 
             set
             {
-                if (showFloor != value)
+                if (stripRepeats != value)
                 {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
+                    if (value >= minstripRepeats && value <= maxstripRepeats)
+                    {
+                        stripRepeats = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
                 }
+            }
+        }
+
+        public String StripRepeatsToolTip
+        {
+            get
+            {
+                return $"StripRepeats must be in the range {minstripRepeats} to {maxstripRepeats}";
+            }
+        }
+
+        public double StripWidth
+        {
+            get
+            {
+                return stripWidth;
+            }
+
+            set
+            {
+                if (stripWidth != value)
+                {
+                    if (value >= minstripWidth && value <= maxstripWidth)
+                    {
+                        stripWidth = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public String StripWidthToolTip
+        {
+            get
+            {
+                return $"StripWidth must be in the range {minstripWidth} to {maxstripWidth}";
             }
         }
 
@@ -283,6 +241,12 @@ namespace Barnacle.Dialogs
             NumberOfHoles = EditorParameters.GetInt("NumberOfHoles", 3);
         }
 
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
+            UpdateDisplay();
+        }
+
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
@@ -293,12 +257,23 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("NumberOfHoles", NumberOfHoles.ToString());
         }
 
+        private void SetDefaults()
+        {
+            loaded = false;
+            StripHeight = 2.5;
+            StripWidth = 17;
+            StripRepeats = 1;
+            HoleRadius = 4.5;
+            NumberOfHoles = 3;
+            loaded = true;
+        }
+
         private void UpdateDisplay()
         {
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -306,30 +281,9 @@ namespace Barnacle.Dialogs
         {
             WarningText = "";
             LoadEditorParameters();
-
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
-
-            UpdateDisplay();
-        }
-
-        private void SetDefaults()
-        {
-            loaded = false;
-
-            StripHeight = 2.5;
-            StripWidth = 17;
-            StripRepeats = 1;
-            HoleRadius = 4.5;
-            NumberOfHoles = 3;
-
-            loaded = true;
-        }
-
-        private void ResetDefaults(object sender, RoutedEventArgs e)
-        {
-            SetDefaults();
             UpdateDisplay();
         }
     }

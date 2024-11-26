@@ -13,8 +13,8 @@
     <Grid>
         <Image
             Name="loadingImage"
-            RenderTransformOrigin="0.5,0.5"
             Margin="10,10,10,10"
+            RenderTransformOrigin="0.5,0.5"
             Source="/Barnacle;component/Images/Spinner.png">
             <Image.RenderTransform>
                 <RotateTransform Angle="0.0" />

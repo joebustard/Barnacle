@@ -16,6 +16,7 @@
 **************************************************************************/
 
 using MakerLib;
+using System;
 using System.ComponentModel;
 using System.Windows;
 
@@ -26,6 +27,7 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class PGramDlg : BaseModellerDialog, INotifyPropertyChanged
     {
+        private bool loaded;
         private double shapeAngle;
         private double shapeBevel;
         private double shapeHeight;
@@ -38,7 +40,6 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "PGram";
             DataContext = this;
-            ModelGroup = MyModelGroup;
             shapeAngle = 45;
             shapeLength = 20;
             shapeHeight = 10;
@@ -151,42 +152,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
         public string WarningText
         {
             get
@@ -232,15 +197,17 @@ namespace Barnacle.Dialogs
 
         private void LoadEditorParameters()
         {
-            string s = EditorParameters.Get("ShapeLength");
-            if (s != "")
-            {
-                shapeLength = EditorParameters.GetDouble("ShapeLength");
-                shapeWidth = EditorParameters.GetDouble("ShapeWidth");
-                shapeHeight = EditorParameters.GetDouble("ShapeHeight");
-                shapeAngle = EditorParameters.GetDouble("ShapeAngle");
-                shapeBevel = EditorParameters.GetDouble("ShapeBevel");
-            }
+            ShapeLength = EditorParameters.GetDouble("ShapeLength", 10);
+            ShapeWidth = EditorParameters.GetDouble("ShapeWidth", 10);
+            ShapeHeight = EditorParameters.GetDouble("ShapeHeight", 10);
+            ShapeAngle = EditorParameters.GetDouble("ShapeAngle", 45);
+            ShapeBevel = EditorParameters.GetDouble("ShapeBevel", 0);
+        }
+
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
+            UpdateDisplay();
         }
 
         private void SaveEditorParmeters()
@@ -252,20 +219,36 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("ShapeBevel", shapeBevel.ToString());
         }
 
+        private void SetDefaults()
+        {
+            loaded = false;
+            ShapeLength = 10;
+            ShapeWidth = 10;
+            ShapeHeight = 10;
+            ShapeAngle = 45;
+            ShapeBevel = 0;
+            loaded = true;
+        }
+
         private void UpdateDisplay()
         {
-            GenerateShape();
-            Redisplay();
+            if (loaded)
+            {
+                GenerateShape();
+                Viewer.Model = GetModel();
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            loaded = false;
             LoadEditorParameters();
             GenerateShape();
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             warningText = "";
-            Redisplay();
+            loaded = true;
+            UpdateDisplay();
         }
     }
 }

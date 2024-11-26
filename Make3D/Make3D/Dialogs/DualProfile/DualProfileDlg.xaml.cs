@@ -73,7 +73,7 @@ namespace Barnacle.Dialogs
             TopPathControl.OnFlexiPathChanged += TopPointsChanged;
             FrontPathControl.AbsolutePaths = true;
             TopPathControl.AbsolutePaths = true;
-            ModelGroup = MyModelGroup;
+
             loaded = false;
             shapeDirty = true;
             // It looks odd if the user chances a value but the
@@ -153,42 +153,6 @@ namespace Barnacle.Dialogs
                         NotifyPropertyChanged();
                         StartUpdateTimer();
                     }
-                }
-            }
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
                 }
             }
         }
@@ -299,6 +263,15 @@ namespace Barnacle.Dialogs
             SaveEditorParmeters();
             DialogResult = true;
             Close();
+        }
+
+        /// <summary>
+        /// Turn off the twirlywoo and allow any controls being changed
+        /// </summary>
+        private void Busy()
+        {
+            Viewer.Busy();
+            EditingEnabled = false;
         }
 
         private void CalculateExtents(List<Point> tmp, out double lx, out double rx, out double ty, out double by)
@@ -574,6 +547,15 @@ namespace Barnacle.Dialogs
             MidResSdfMethod = EditorParameters.GetBoolean("MidResSdfMethod", false);
         }
 
+        /// <summary>
+        /// Turn off the twirlywoo and allow any controls being changed
+        /// </summary>
+        private void NotBusy()
+        {
+            Viewer.NotBusy();
+            EditingEnabled = true;
+        }
+
         private void SaveEditorParmeters()
         {
             EditorParameters.Set("TopShape", TopPathControl.GetPath());
@@ -593,8 +575,7 @@ namespace Barnacle.Dialogs
             timer.Stop();
             if (shapeDirty)
             {
-                GenerateShape();
-                Redisplay();
+                UpdateDisplay();
             }
         }
 
@@ -651,7 +632,7 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -661,7 +642,7 @@ namespace Barnacle.Dialogs
             WarningText = "";
             LoadEditorParameters();
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
             UpdateDisplay();
         }

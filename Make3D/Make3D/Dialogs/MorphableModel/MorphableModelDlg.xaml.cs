@@ -15,13 +15,11 @@
 *                                                                         *
 **************************************************************************/
 
-using MakerLib;
 using MakerLib.MorphableModel;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 
 namespace Barnacle.Dialogs
@@ -39,11 +37,15 @@ namespace Barnacle.Dialogs
         private const double minmodelLength = 1;
         private const double minmodelWidth = 1;
         private const double minwarpFactor = 0;
+        private String factorText;
         private bool loaded;
         private MorphableModelMaker maker;
         private double modelHeight;
         private double modelLength;
         private double modelWidth;
+        private double oldWarpFactor;
+        private bool regen;
+        private DispatcherTimer regenTimer;
         private string shape1;
         private ObservableCollection<String> shape1Items;
         private string shape2;
@@ -60,17 +62,28 @@ namespace Barnacle.Dialogs
 
             ToolName = "Morphable";
             DataContext = this;
-            ModelGroup = MyModelGroup;
             loaded = false;
             regenTimer = new DispatcherTimer();
             regenTimer.Interval = new TimeSpan(0, 0, 1);
             regenTimer.Tick += RegenTick;
         }
 
-        private void RegenTick(object sender, EventArgs e)
+        public String FactorText
         {
-            regenTimer.Stop();
-            UpdateDisplay();
+            get
+            {
+                return factorText;
+            }
+
+            set
+            {
+                if (value != factorText)
+                {
+                    factorText = value;
+
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
         public double ModelHeight
@@ -165,7 +178,10 @@ namespace Barnacle.Dialogs
 
         public string Shape1
         {
-            get { return shape1; }
+            get
+            {
+                return shape1;
+            }
 
             set
             {
@@ -185,7 +201,10 @@ namespace Barnacle.Dialogs
 
         public ObservableCollection<String> Shape1Items
         {
-            get { return shape1Items; }
+            get
+            {
+                return shape1Items;
+            }
 
             set
             {
@@ -200,12 +219,18 @@ namespace Barnacle.Dialogs
 
         public String shape1ToolTip
         {
-            get { return "Shape1 Text"; }
+            get
+            {
+                return "Shape1 Text";
+            }
         }
 
         public string Shape2
         {
-            get { return shape2; }
+            get
+            {
+                return shape2;
+            }
 
             set
             {
@@ -225,7 +250,10 @@ namespace Barnacle.Dialogs
 
         public ObservableCollection<String> Shape2Items
         {
-            get { return shape2Items; }
+            get
+            {
+                return shape2Items;
+            }
 
             set
             {
@@ -240,42 +268,9 @@ namespace Barnacle.Dialogs
 
         public String shape2ToolTip
         {
-            get { return "Shape2 Text"; }
-        }
-
-        public override bool ShowAxies
-        {
             get
             {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
+                return "Shape2 Text";
             }
         }
 
@@ -295,9 +290,6 @@ namespace Barnacle.Dialogs
                 }
             }
         }
-
-        private bool regen;
-        private DispatcherTimer regenTimer;
 
         public double WarpFactor
         {
@@ -322,20 +314,6 @@ namespace Barnacle.Dialogs
                         NotifyPropertyChanged();
                     }
                 }
-            }
-        }
-
-        private void StartRegen()
-        {
-            regenTimer.Stop();
-            regenTimer.Start();
-        }
-
-        public String WarpFactorToolTip
-        {
-            get
-            {
-                return $"WarpFactor must be in the range {minwarpFactor} to {maxwarpFactor}";
             }
         }
 
@@ -366,31 +344,11 @@ namespace Barnacle.Dialogs
             return res;
         }
 
-        private String factorText;
-
-        public String FactorText
-        {
-            get { return factorText; }
-
-            set
-            {
-                if (value != factorText)
-                {
-                    factorText = value;
-
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private double oldWarpFactor;
-
         private void GenerateShape()
         {
             if (Math.Abs(warpFactor - oldWarpFactor) > 0.01)
             {
                 ClearShape();
-
                 maker.Generate(warpFactor, Vertices, Faces);
                 ScaleVertices(modelLength, modelHeight, modelWidth);
                 CentreVertices();
@@ -401,22 +359,22 @@ namespace Barnacle.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-
             ModelLength = EditorParameters.GetDouble("ModelLength", 40);
-
             ModelHeight = EditorParameters.GetDouble("ModelHeight", 40);
-
             ModelWidth = EditorParameters.GetDouble("ModelWidth", 40);
-
             WarpFactor = EditorParameters.GetDouble("WarpFactor", 0.5);
-
             Shape1 = EditorParameters.Get("Shape1");
             if (Shape1 == "")
             {
                 Shape1 = "Cube";
             }
-
             Shape2 = EditorParameters.Get("Shape2");
+        }
+
+        private void RegenTick(object sender, EventArgs e)
+        {
+            regenTimer.Stop();
+            UpdateDisplay();
         }
 
         private void ResetDefaults(object sender, RoutedEventArgs e)
@@ -428,7 +386,6 @@ namespace Barnacle.Dialogs
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-
             EditorParameters.Set("ModelLength", ModelLength.ToString());
             EditorParameters.Set("ModelHeight", ModelHeight.ToString());
             EditorParameters.Set("ModelWidth", ModelWidth.ToString());
@@ -446,8 +403,13 @@ namespace Barnacle.Dialogs
             WarpFactor = 0.5;
             Shape1 = "Cube";
             Shape2 = "Sphere";
-
             loaded = true;
+        }
+
+        private void StartRegen()
+        {
+            regenTimer.Stop();
+            regenTimer.Start();
         }
 
         private void UpdateDisplay()
@@ -455,7 +417,7 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -464,11 +426,9 @@ namespace Barnacle.Dialogs
             WarningText = "";
             oldWarpFactor = -1;
             LoadEditorParameters();
-
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
-
             UpdateDisplay();
         }
     }

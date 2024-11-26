@@ -969,7 +969,7 @@ namespace Barnacle.Dialogs
         /// <summary>
         /// Turn on the twirlywoo and stop any controls being changed
         /// </summary>
-        protected void Busy()
+        protected virtual void Busy()
         {
             EditingEnabled = false;
             BusyVisible = Visibility.Visible;
@@ -1186,7 +1186,7 @@ namespace Barnacle.Dialogs
         /// <summary>
         /// Turn off the twirlywoo and allow any controls being changed
         /// </summary>
-        protected void NotBusy()
+        protected virtual void NotBusy()
         {
             BusyVisible = Visibility.Hidden;
             EditingEnabled = true;

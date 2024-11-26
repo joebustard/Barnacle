@@ -35,86 +35,35 @@ namespace Barnacle.Dialogs
     {
         private const double maxplaneLevel = 300;
         private const double minplaneLevel = -300;
+        private Bounds3D bounds;
+        private DpiScale dpi;
         private bool loaded;
         private HorizontalPlane plane;
         private double planeLevel;
-        private string warningText;
         private bool planeSelected;
-        private DpiScale dpi;
+        private string warningText;
 
         public CutHorizontalPlaneDlg()
         {
             InitializeComponent();
             ToolName = "CutHorizontalPlane";
             DataContext = this;
-            ModelGroup = MyModelGroup;
+
             loaded = false;
             planeLevel = 5;
             planeSelected = false;
             dpi = VisualTreeHelper.GetDpi(this);
         }
 
-        private void Viewport_MouseUp(object sender, System.Windows.Input.MouseEventArgs e)
+        public Int32Collection OriginalFaces
         {
-            planeSelected = true;
+            get; internal set;
         }
 
-        protected override void Viewport_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
+        public Point3DCollection OriginalVertices
         {
-            Viewport3D vp = sender as Viewport3D;
-            if (vp != null)
-            {
-                if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
-                {
-                    lastHitModel = null;
-
-                    oldMousePos = e.GetPosition(vp);
-                    HitTest(vp, oldMousePos);
-                    if (plane.Matches(lastHitModel))
-                    {
-                        planeSelected = true;
-                    }
-
-                    if (floor.Matches(lastHitModel) || grid.Matches(lastHitModel))
-                    {
-                        planeSelected = false;
-                    }
-                }
-            }
-        }
-
-        protected override void Viewport_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            Viewport3D vp = sender as Viewport3D;
-            if (vp != null)
-            {
-                if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
-                {
-                    Point pn = e.GetPosition(vp);
-                    double dx = pn.X - oldMousePos.X;
-                    double dy = pn.Y - oldMousePos.Y;
-                    if (planeSelected)
-                    {
-                        double ny = PlaneLevel - (dy / dpi.PixelsPerInchY * 25.4);
-                        if (ny < 0)
-                        {
-                            ny = 0;
-                        }
-                        else if (ny > bounds.Height)
-                        {
-                            ny = Height;
-                        }
-                        PlaneLevel = ny;
-                    }
-                    else
-                    {
-                        Camera.Move(dx, -dy);
-                        UpdateCameraPos();
-                    }
-                    oldMousePos = pn;
-                    e.Handled = true;
-                }
-            }
+            get;
+            set;
         }
 
         public double PlaneLevel
@@ -204,14 +153,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public Point3DCollection OriginalVertices
-        {
-            get;
-            set;
-        }
-
-        public Int32Collection OriginalFaces { get; internal set; }
-
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
@@ -251,74 +192,79 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void GenerateShape()
+        protected override void Viewport_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
         {
-        }
-
-        private void ResetDefaults(object sender, RoutedEventArgs e)
-        {
-            SetDefaults();
-            UpdateDisplay();
-        }
-
-        private void SetDefaults()
-        {
-            loaded = false;
-            PlaneLevel = 0;
-
-            loaded = true;
-        }
-
-        private void UpdateDisplay()
-        {
-            if (loaded)
+            Viewport3D vp = sender as Viewport3D;
+            if (vp != null)
             {
-                GenerateShape();
-                Redisplay();
-            }
-        }
-
-        private Bounds3D bounds;
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            WarningText = "";
-
-            UpdateCameraPos();
-            MyModelGroup.Children.Clear();
-            loaded = true;
-            RestoreOriginal();
-            plane = new HorizontalPlane(planeLevel, bounds.Width + 20, bounds.Depth + 20);
-            plane.MoveTo(PlaneLevel);
-            UpdateDisplay();
-        }
-
-        private void RestoreOriginal()
-        {
-            bounds = new Bounds3D();
-            bounds.Zero();
-            ClearShape();
-            if (OriginalFaces != null)
-            {
-                foreach (int i in OriginalFaces)
+                if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
                 {
-                    Point3D p = OriginalVertices[i];
-                    bounds.Adjust(p);
-                    int k = AddVertice(p);
-                    Faces.Add(k);
+                    lastHitModel = null;
+
+                    oldMousePos = e.GetPosition(vp);
+                    HitTest(vp, oldMousePos);
+                    if (plane.Matches(lastHitModel))
+                    {
+                        planeSelected = true;
+                    }
+
+                    if (floor.Matches(lastHitModel) || grid.Matches(lastHitModel))
+                    {
+                        planeSelected = false;
+                    }
                 }
             }
-            /*
-            if (OriginalVertices != null)
+        }
+
+        protected override void Viewport_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Viewport3D vp = sender as Viewport3D;
+            if (vp != null)
             {
-                foreach (Point3D p in OriginalVertices)
+                if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
                 {
-                    bounds.Adjust(p);
+                    Point pn = e.GetPosition(vp);
+                    double dx = pn.X - oldMousePos.X;
+                    double dy = pn.Y - oldMousePos.Y;
+                    if (planeSelected)
+                    {
+                        double ny = PlaneLevel - (dy / dpi.PixelsPerInchY * 25.4);
+                        if (ny < 0)
+                        {
+                            ny = 0;
+                        }
+                        else if (ny > bounds.Height)
+                        {
+                            ny = Height;
+                        }
+                        PlaneLevel = ny;
+                    }
+                    else
+                    {
+                        Camera.Move(dx, -dy);
+                        UpdateCameraPos();
+                    }
+                    oldMousePos = pn;
+                    e.Handled = true;
                 }
             }
-           */
+        }
 
-            CentreVertices();
+        private int CrossingPoint(int a, int b)
+        {
+            double t;
+            double x0 = Vertices[a].X;
+            double y0 = Vertices[a].Y;
+            double z0 = Vertices[a].Z;
+            double x1 = Vertices[b].X;
+            double y1 = Vertices[b].Y;
+            double z1 = Vertices[b].Z;
+            t = (planeLevel - y0) / (y1 - y0);
+
+            double x = x0 + t * (x1 - x0);
+            double z = z0 + t * (z1 - z0);
+            int res = AddVertice(x, planeLevel, z);
+            return res;
         }
 
         private void CutButton_Click(object sender, RoutedEventArgs e)
@@ -493,21 +439,8 @@ namespace Barnacle.Dialogs
             UpdateDisplay();
         }
 
-        private int CrossingPoint(int a, int b)
+        private void GenerateShape()
         {
-            double t;
-            double x0 = Vertices[a].X;
-            double y0 = Vertices[a].Y;
-            double z0 = Vertices[a].Z;
-            double x1 = Vertices[b].X;
-            double y1 = Vertices[b].Y;
-            double z1 = Vertices[b].Z;
-            t = (planeLevel - y0) / (y1 - y0);
-
-            double x = x0 + t * (x1 - x0);
-            double z = z0 + t * (z1 - z0);
-            int res = AddVertice(x, planeLevel, z);
-            return res;
         }
 
         private void MakeTri1(int a, ref int b, ref int c)
@@ -537,9 +470,78 @@ namespace Barnacle.Dialogs
             c = AddVertice(x, planeLevel, z);
         }
 
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
+            UpdateDisplay();
+        }
+
+        private void RestoreOriginal()
+        {
+            bounds = new Bounds3D();
+            bounds.Zero();
+            ClearShape();
+            if (OriginalFaces != null)
+            {
+                foreach (int i in OriginalFaces)
+                {
+                    Point3D p = OriginalVertices[i];
+                    bounds.Adjust(p);
+                    int k = AddVertice(p);
+                    Faces.Add(k);
+                }
+            }
+            /*
+            if (OriginalVertices != null)
+            {
+                foreach (Point3D p in OriginalVertices)
+                {
+                    bounds.Adjust(p);
+                }
+            }
+           */
+
+            CentreVertices();
+        }
+
+        private void SetDefaults()
+        {
+            loaded = false;
+            PlaneLevel = 0;
+
+            loaded = true;
+        }
+
         private void UncutButton_Click(object sender, RoutedEventArgs e)
         {
             RestoreOriginal();
+            UpdateDisplay();
+        }
+
+        private void UpdateDisplay()
+        {
+            if (loaded)
+            {
+                GenerateShape();
+                Redisplay();
+            }
+        }
+
+        private void Viewport_MouseUp(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            planeSelected = true;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            WarningText = "";
+
+            UpdateCameraPos();
+            MyModelGroup.Children.Clear();
+            loaded = true;
+            RestoreOriginal();
+            plane = new HorizontalPlane(planeLevel, bounds.Width + 20, bounds.Depth + 20);
+            plane.MoveTo(PlaneLevel);
             UpdateDisplay();
         }
     }

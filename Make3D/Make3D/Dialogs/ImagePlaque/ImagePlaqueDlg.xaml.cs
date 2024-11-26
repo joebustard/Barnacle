@@ -49,13 +49,16 @@ namespace Barnacle.Dialogs
             DataContext = this;
             InitializeComponent();
             ToolName = "ImagePlaque";
-            ModelGroup = MyModelGroup;
+
             loaded = false;
         }
 
         public bool LimitRunLengths
         {
-            get { return limitRunLengths; }
+            get
+            {
+                return limitRunLengths;
+            }
 
             set
             {
@@ -70,7 +73,10 @@ namespace Barnacle.Dialogs
 
         public int MaxRunLength
         {
-            get { return maxRunLength; }
+            get
+            {
+                return maxRunLength;
+            }
 
             set
             {
@@ -114,7 +120,10 @@ namespace Barnacle.Dialogs
 
         public ImageSource PlaqueImage
         {
-            get { return plaqueImage; }
+            get
+            {
+                return plaqueImage;
+            }
 
             set
             {
@@ -153,45 +162,12 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
         public double SolidLength
         {
-            get { return solidLength; }
+            get
+            {
+                return solidLength;
+            }
 
             set
             {
@@ -219,6 +195,24 @@ namespace Barnacle.Dialogs
                     NotifyPropertyChanged();
                 }
             }
+        }
+
+        /// <summary>
+        /// Turn on the twirlywoo and allow any controls being changed
+        /// </summary>
+        protected override void Busy()
+        {
+            Viewer.BusyVisible = Visibility.Visible;
+            EditingEnabled = false;
+        }
+
+        /// <summary>
+        /// Turn off the twirlywoo and allow any controls being changed
+        /// </summary>
+        protected override void NotBusy()
+        {
+            Viewer.BusyVisible = Visibility.Hidden;
+            EditingEnabled = true;
         }
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
@@ -276,8 +270,9 @@ namespace Barnacle.Dialogs
                 Busy();
                 var result = await Task.Run(() => GenerateAsync());
                 GetVerticesFromAsyncResult(result);
-                NotBusy();
+
                 CentreVertices();
+                NotBusy();
             }
         }
 
@@ -349,7 +344,7 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -359,7 +354,7 @@ namespace Barnacle.Dialogs
             NotBusy();
             LoadEditorParameters();
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
             UpdateDisplay();
         }

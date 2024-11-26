@@ -54,7 +54,6 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "Pie";
             DataContext = this;
-            ModelGroup = MyModelGroup;
             loaded = false;
             centreThicknessVisibility = Visibility.Hidden;
         }
@@ -134,42 +133,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
         public double Sweep
         {
             get
@@ -239,7 +202,10 @@ namespace Barnacle.Dialogs
 
         public bool WedgeSelected
         {
-            get { return wedgeSelected; }
+            get
+            {
+                return wedgeSelected;
+            }
 
             set
             {
@@ -289,21 +255,35 @@ namespace Barnacle.Dialogs
             Radius = EditorParameters.GetDouble("Radius", 20);
             Thickness = EditorParameters.GetDouble("Thickness", 5);
             Sweep = EditorParameters.GetDouble("Sweep", 90);
-
             WedgeSelected = EditorParameters.GetBoolean("WedgeSelected", false);
             CentreThickness = EditorParameters.GetDouble("CentreThickness", 1);
+        }
+
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
+            UpdateDisplay();
         }
 
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-
             EditorParameters.Set("Radius", Radius.ToString());
             EditorParameters.Set("Thickness", Thickness.ToString());
             EditorParameters.Set("Sweep", Sweep.ToString());
-
             EditorParameters.Set("WedgeSelected", WedgeSelected.ToString());
             EditorParameters.Set("CentreThickness", CentreThickness.ToString());
+        }
+
+        private void SetDefaults()
+        {
+            loaded = false;
+            Radius = 20;
+            Thickness = 5;
+            Sweep = 90;
+            WedgeSelected = false;
+            CentreThickness = 1;
+            loaded = true;
         }
 
         private void UpdateDisplay()
@@ -311,7 +291,7 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -319,11 +299,9 @@ namespace Barnacle.Dialogs
         {
             WarningText = "";
             LoadEditorParameters();
-
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
-
             UpdateDisplay();
         }
     }

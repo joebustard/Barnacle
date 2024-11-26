@@ -38,7 +38,6 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "Bicorn";
             DataContext = this;
-            ModelGroup = MyModelGroup;
             Radius1 = 5;
             Radius2 = 10;
             DoubleUp = false;
@@ -120,42 +119,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
         public string WarningText
         {
             get
@@ -211,7 +174,7 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -221,7 +184,7 @@ namespace Barnacle.Dialogs
             LoadEditorParameters();
             GenerateShape();
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             warningText = "";
             loaded = true;
             UpdateDisplay();

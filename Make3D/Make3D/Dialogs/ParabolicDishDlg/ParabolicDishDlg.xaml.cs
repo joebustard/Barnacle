@@ -26,56 +26,22 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class ParabolicDishDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private string warningText;
         private bool loaded;
-
-        private double radius;
-
-        public double Radius
-        {
-            get
-            {
-                return radius;
-            }
-
-            set
-            {
-                if (radius != value)
-                {
-                    if (value >= 1 && value <= 100)
-                    {
-                        radius = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        private double wallThickness;
-
-        public double WallThickness
-        {
-            get
-            {
-                return wallThickness;
-            }
-
-            set
-            {
-                if (wallThickness != value)
-                {
-                    if (value >= 0.5 && value <= 99.5)
-                    {
-                        wallThickness = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
         private int pitch;
+        private double radius;
+        private double wallThickness;
+        private string warningText;
+
+        public ParabolicDishDlg()
+        {
+            InitializeComponent();
+            ToolName = "ParabolicDish";
+            DataContext = this;
+            pitch = 5;
+            radius = 10;
+            wallThickness = 1;
+            loaded = false;
+        }
 
         public int Pitch
         {
@@ -98,50 +64,44 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public ParabolicDishDlg()
-        {
-            InitializeComponent();
-            ToolName = "ParabolicDish";
-            DataContext = this;
-            pitch = 5;
-            radius = 10;
-            wallThickness = 1;
-            ModelGroup = MyModelGroup;
-            loaded = false;
-        }
-
-        public override bool ShowAxies
+        public double Radius
         {
             get
             {
-                return showAxies;
+                return radius;
             }
 
             set
             {
-                if (showAxies != value)
+                if (radius != value)
                 {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
+                    if (value >= 1 && value <= 100)
+                    {
+                        radius = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
                 }
             }
         }
 
-        public override bool ShowFloor
+        public double WallThickness
         {
             get
             {
-                return showFloor;
+                return wallThickness;
             }
 
             set
             {
-                if (showFloor != value)
+                if (wallThickness != value)
                 {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
+                    if (value >= 0.5 && value <= 99.5)
+                    {
+                        wallThickness = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
                 }
             }
         }
@@ -180,30 +140,32 @@ namespace Barnacle.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
+            Radius = EditorParameters.GetDouble("Radius", 10);
+            WallThickness = EditorParameters.GetDouble("WallThickness", 1);
+            Pitch = EditorParameters.GetInt("Pitch", 5);
+        }
 
-            if (EditorParameters.Get("Radius") != "")
-            {
-                Radius = EditorParameters.GetDouble("Radius");
-            }
-
-            if (EditorParameters.Get("WallThickness") != "")
-            {
-                WallThickness = EditorParameters.GetDouble("WallThickness");
-            }
-
-            if (EditorParameters.Get("Pitch") != "")
-            {
-                Pitch = EditorParameters.GetInt("Pitch");
-            }
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
+            UpdateDisplay();
         }
 
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-
             EditorParameters.Set("Radius", Radius.ToString());
             EditorParameters.Set("WallThickness", WallThickness.ToString());
             EditorParameters.Set("Pitch", Pitch.ToString());
+        }
+
+        private void SetDefaults()
+        {
+            loaded = false;
+            Radius = 10;
+            WallThickness = 1;
+            Pitch = 5;
+            loaded = true;
         }
 
         private void UpdateDisplay()
@@ -211,7 +173,7 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -220,9 +182,8 @@ namespace Barnacle.Dialogs
             WarningText = "";
             MeshColour = System.Windows.Media.Colors.Teal;
             LoadEditorParameters();
-
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
             UpdateDisplay();
         }

@@ -2,6 +2,8 @@
 ===========
 Added
 F12 key to record current camera position, shift F12 to restore it.
+Automatically add seam to object when bending or folding it
+Specify an angle between 1 and 90 for bend and fold operations. (Was previously a fixed angle of 10 degrees)
 
 Fixed
 Bicorn tool was not saving and restoring editor parameters.

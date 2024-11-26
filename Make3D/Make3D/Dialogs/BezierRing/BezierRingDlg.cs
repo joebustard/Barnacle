@@ -64,22 +64,6 @@ Brushes.Green
 
         private double sweepDegrees;
 
-        public double RingRadius
-        {
-            get { return ringRadius; }
-
-            set
-            {
-                if (value != ringRadius)
-                {
-                    ringRadius = value;
-                    NotifyPropertyChanged();
-                    GenerateRing();
-                    Redisplay();
-                }
-            }
-        }
-
         public BezierRingDlg()
         {
             InitializeComponent();
@@ -93,7 +77,6 @@ Brushes.Green
             pointDistance = new List<double>();
             bzlines = new BezierLine[4];
             SetDefaults();
-            ModelGroup = MyModelGroup;
         }
 
         public double BezierDivisions
@@ -107,26 +90,58 @@ Brushes.Green
             {
                 bezierDivisions = value;
                 NotifyPropertyChanged();
-                GenerateRing();
-                Redisplay();
+                UpdateDisplay();
             }
         }
 
         public BezierLine[] BzLines
         {
-            get { return bzlines; }
+            get
+            {
+                return bzlines;
+            }
         }
 
         public List<double> PointAngles
         {
-            get { return pointAngles; }
-            set { pointAngles = value; }
+            get
+            {
+                return pointAngles;
+            }
+            set
+            {
+                pointAngles = value;
+            }
         }
 
         public List<double> PointDistance
         {
-            get { return pointDistance; }
-            set { pointDistance = value; }
+            get
+            {
+                return pointDistance;
+            }
+            set
+            {
+                pointDistance = value;
+            }
+        }
+
+        public double RingRadius
+        {
+            get
+            {
+                return ringRadius;
+            }
+
+            set
+            {
+                if (value != ringRadius)
+                {
+                    ringRadius = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
         }
 
         public int RotDivisions
@@ -140,44 +155,7 @@ Brushes.Green
             {
                 rotDivisions = value;
                 NotifyPropertyChanged();
-                GenerateRing();
-                Redisplay();
-            }
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
+                UpdateDisplay();
             }
         }
 
@@ -192,8 +170,7 @@ Brushes.Green
             {
                 sweepDegrees = value;
                 NotifyPropertyChanged();
-                GenerateRing();
-                Redisplay();
+                UpdateDisplay();
             }
         }
 
@@ -443,7 +420,7 @@ Brushes.Green
             selectedControlPoint = -1;
         }
 
-        private void GenerateRing()
+        private void GenerateShape()
         {
             if (loaded)
             {
@@ -515,7 +492,7 @@ Brushes.Green
                 }
 
                 GeneratePoints();
-                GenerateRing();
+                UpdateDisplay();
                 RedrawBezierCanvas();
             }
         }
@@ -609,7 +586,7 @@ Brushes.Green
                     }
                     break;
             }
-            GenerateRing();
+            UpdateDisplay();
             RedrawBezierCanvas();
         }
 
@@ -684,8 +661,7 @@ Brushes.Green
         private void ResetDefaults(object sender, RoutedEventArgs e)
         {
             SetDefaults();
-            GenerateRing();
-            Redisplay();
+            UpdateDisplay();
             RedrawBezierCanvas();
             NotifyPropertyChanged("BezierDivisions");
             NotifyPropertyChanged("RotDivisions");
@@ -720,24 +696,29 @@ Brushes.Green
             loaded = true;
         }
 
-        private void UserControl_GotFocus(object sender, RoutedEventArgs e)
+        private void UpdateDisplay()
         {
+            if (loaded)
+            {
+                GenerateShape();
+                Viewer.Model = GetModel();
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             loaded = false;
             LoadEditorParameters();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             maxRadius = (PointCanvas.ActualWidth / 2) - padding;
             if (PointCanvas.ActualHeight / 2 < maxRadius)
             {
                 maxRadius = (PointCanvas.ActualHeight / 2) - padding;
             }
             loaded = true;
-            GenerateRing();
+
             RedrawBezierCanvas();
-            Redisplay();
+            UpdateDisplay();
             UpdateCameraPos();
         }
     }

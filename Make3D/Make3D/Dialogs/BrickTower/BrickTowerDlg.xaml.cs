@@ -27,33 +27,27 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class BrickTowerDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private string warningText;
-        private bool loaded;
-
-        private double brickLength;
-
-        public double BrickLength
-        {
-            get
-            {
-                return brickLength;
-            }
-
-            set
-            {
-                if (brickLength != value)
-                {
-                    if (value >= 1 && value <= 20)
-                    {
-                        brickLength = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
+        private const double maxTowerHeight = 500;
+        private const double maxTowerRadius = 200;
+        private const double minTowerHeight = 5;
+        private const double minTowerRadius = 5;
         private double brickHeight;
+        private double brickLength;
+        private double brickWidth;
+        private double gapDepth;
+        private double gapLength;
+        private bool loaded;
+        private double towerHeight;
+        private double towerRadius;
+        private string warningText;
+
+        public BrickTowerDlg()
+        {
+            InitializeComponent();
+            ToolName = "BrickTower";
+            DataContext = this;
+            loaded = false;
+        }
 
         public double BrickHeight
         {
@@ -76,7 +70,26 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private double brickWidth;
+        public double BrickLength
+        {
+            get
+            {
+                return brickLength;
+            }
+
+            set
+            {
+                if (brickLength != value)
+                {
+                    if (value >= 1 && value <= 20)
+                    {
+                        brickLength = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
 
         public double BrickWidth
         {
@@ -99,31 +112,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private double gapLength;
-
-        public double GapLength
-        {
-            get
-            {
-                return gapLength;
-            }
-
-            set
-            {
-                if (gapLength != value)
-                {
-                    if (value >= 0.1 && value <= 10)
-                    {
-                        gapLength = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        private double gapDepth;
-
         public double GapDepth
         {
             get
@@ -145,42 +133,26 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private const double minTowerRadius = 5;
-        private const double maxTowerRadius = 200;
-        private double towerRadius;
-
-        public double TowerRadius
+        public double GapLength
         {
             get
             {
-                return towerRadius;
+                return gapLength;
             }
 
             set
             {
-                if (towerRadius != value)
+                if (gapLength != value)
                 {
-                    if (value >= minTowerRadius && value <= maxTowerRadius)
+                    if (value >= 0.1 && value <= 10)
                     {
-                        towerRadius = value;
+                        gapLength = value;
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
                 }
             }
         }
-
-        public String TowerRadiusToolTip
-        {
-            get
-            {
-                return $"Tower Radius must be in the range {minTowerRadius} to {maxTowerRadius}";
-            }
-        }
-
-        private const double minTowerHeight = 5;
-        private const double maxTowerHeight = 500;
-        private double towerHeight;
 
         public double TowerHeight
         {
@@ -211,49 +183,32 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public BrickTowerDlg()
-        {
-            InitializeComponent();
-
-            ToolName = "BrickTower";
-            DataContext = this;
-            ModelGroup = MyModelGroup;
-            loaded = false;
-        }
-
-        public override bool ShowAxies
+        public double TowerRadius
         {
             get
             {
-                return showAxies;
+                return towerRadius;
             }
 
             set
             {
-                if (showAxies != value)
+                if (towerRadius != value)
                 {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
+                    if (value >= minTowerRadius && value <= maxTowerRadius)
+                    {
+                        towerRadius = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
                 }
             }
         }
 
-        public override bool ShowFloor
+        public String TowerRadiusToolTip
         {
             get
             {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
+                return $"Tower Radius must be in the range {minTowerRadius} to {maxTowerRadius}";
             }
         }
 
@@ -293,26 +248,37 @@ namespace Barnacle.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-
             BrickLength = EditorParameters.GetDouble("BrickLength", 4.5);
-
             BrickHeight = EditorParameters.GetDouble("BrickHeight", 2);
-
             BrickWidth = EditorParameters.GetDouble("BrickWidth", 2);
-
             GapLength = EditorParameters.GetDouble("GapLength", 1);
-
             GapDepth = EditorParameters.GetDouble("GapDepth", 0.25);
-
             TowerRadius = EditorParameters.GetDouble("TowerRadius", 10);
-
             TowerHeight = EditorParameters.GetDouble("TowerHeight", 35);
+        }
+
+        private void Reset()
+        {
+            loaded = false;
+            BrickLength = 4.5;
+            BrickHeight = 2;
+            BrickWidth = 2;
+            GapLength = 1;
+            GapDepth = 0.25;
+            TowerRadius = 10;
+            TowerHeight = 35;
+            loaded = true;
+            UpdateDisplay();
+        }
+
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            Reset();
         }
 
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-
             EditorParameters.Set("BrickLength", BrickLength.ToString());
             EditorParameters.Set("BrickHeight", BrickHeight.ToString());
             EditorParameters.Set("BrickWidth", BrickWidth.ToString());
@@ -327,7 +293,7 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -335,11 +301,9 @@ namespace Barnacle.Dialogs
         {
             WarningText = "";
             LoadEditorParameters();
-
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
-
             UpdateDisplay();
         }
     }

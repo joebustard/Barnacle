@@ -5,19 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Barnacle.Dialogs"
         mc:Ignorable="d"
+         xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
         Title="" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
-            <RowDefinition Height="25" />
+            <RowDefinition Height="30" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="8*" />
             <ColumnDefinition Width="10" />
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10*" />
+            <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
-        <Border Grid.Row ="0" Grid.Column="1" 
+        <Border Grid.Row ="0" Grid.Column="1"
         Style="{StaticResource ControlBorder}">
             <Grid>
 
@@ -34,39 +36,32 @@
                     <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
-                                    <Label VerticalAlignment="Center" Width="100" Content="Radius"/>
-                 <TextBox Margin="8,0,0,0" Text="{Binding Radius}" Width="150" ToolTip="{Binding RadiusToolTip}"/>
+                    <Label VerticalAlignment="Center" Width="100" Content="Radius" />
+                    <TextBox Margin="8,0,0,0" Text="{Binding Radius}" Width="150" ToolTip="{Binding RadiusToolTip}" />
 
                     <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameters to their defaults" Click="ResetDefaults" />
                 </StackPanel>
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
-                                    <Label VerticalAlignment="Center" Width="100" Content="Height"/>
-                 <TextBox Margin="8,0,0,0" Text="{Binding MainHeight}" Width="150" ToolTip="{Binding MainHeightToolTip}"/>
-
+                    <Label VerticalAlignment="Center" Width="100" Content="Height" />
+                    <TextBox Margin="8,0,0,0" Text="{Binding MainHeight}" Width="150" ToolTip="{Binding MainHeightToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="3" Orientation="Horizontal">
-                                    <Label VerticalAlignment="Center" Width="100" Content="Cut Height"/>
-                 <TextBox Margin="8,0,0,0" Text="{Binding CutHeight}" Width="150" ToolTip="{Binding CutHeightToolTip}"/>
-
+                    <Label VerticalAlignment="Center" Width="100" Content="Cut Height" />
+                    <TextBox Margin="8,0,0,0" Text="{Binding CutHeight}" Width="150" ToolTip="{Binding CutHeightToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="4" Orientation="Horizontal">
-                                    <Label VerticalAlignment="Center" Width="100" Content="Cut Style"/>
-                 <TextBox Margin="8,0,0,0" Text="{Binding CutStyle}" Width="150" ToolTip="{Binding CutStyleToolTip}"/>
-
+                    <Label VerticalAlignment="Center" Width="100" Content="Cut Style" />
+                    <TextBox Margin="8,0,0,0" Text="{Binding CutStyle}" Width="150" ToolTip="{Binding CutStyleToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="5" Orientation="Horizontal">
-                                    <Label VerticalAlignment="Center" Width="100" Content="Cut Points" Visibility="{Binding ShowPoints}"/>
-                    <TextBox Margin="8,0,0,0" Text="{Binding CutPoints}" Width="150" ToolTip="{Binding CutPointsToolTip}" Visibility="{Binding ShowPoints}"/>
-
+                    <Label VerticalAlignment="Center" Width="100" Content="Cut Points" Visibility="{Binding ShowPoints}" />
+                    <TextBox Margin="8,0,0,0" Text="{Binding CutPoints}" Width="150" ToolTip="{Binding CutPointsToolTip}" Visibility="{Binding ShowPoints}" />
                 </StackPanel>
                 <StackPanel Grid.Row="6" Orientation="Horizontal">
-                    
                 </StackPanel>
                 <StackPanel Grid.Row="7" Orientation="Horizontal">
-                    
                 </StackPanel>
                 <StackPanel Grid.Row="8" Orientation="Horizontal">
-                    
                 </StackPanel>
                 <StackPanel Grid.Row="9" Orientation="Horizontal">
                     <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
@@ -74,50 +69,7 @@
             </Grid>
         </Border>
         <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}"  Grid.RowSpan="2" />
-        <Border Grid.Row ="0" Grid.Column="3" Style="{StaticResource ControlBorder}">
-            <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
-              MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
-
-                <Viewport3D.Camera>
-                    <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
-                    </PerspectiveCamera>
-                </Viewport3D.Camera>
-
-                <ModelVisual3D>
-                    <ModelVisual3D.Content>
-                        <Model3DGroup>
-                            <AmbientLight Color="#FF808080" />
-                            <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
-                            </DirectionalLight>
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-
-                <ModelVisual3D x:Name = "MyModel">
-                    <ModelVisual3D.Content>
-                        <Model3DGroup x:Name="MyModelGroup">
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-            </Viewport3D>
-        </Border>
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
-        </Grid>
-        <Grid Grid.Column="1" Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <CheckBox VerticalAlignment="Center" Content="Floor" Grid.Column="0" IsChecked="{Binding ShowFloor}" />
-            <CheckBox VerticalAlignment="Center" Content="Axies" Grid.Column="1" IsChecked="{Binding ShowAxies}" />
-            <Button Content="Home" Grid.Column="2" Click="Home_Click" />
-        </Grid>
-
+        <u:ObjectView x:Name="Viewer" Grid.Column="3" Grid.Row="0" />
         <Grid Grid.Column="3" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
@@ -128,4 +80,4 @@
             <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" IsDefault="True" />
         </Grid>
     </Grid>
-</local:BaseModellerDialog> 
+</local:BaseModellerDialog>
