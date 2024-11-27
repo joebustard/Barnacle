@@ -30,30 +30,38 @@ namespace Barnacle.UserControls.SideBevelSelector
     /// </summary>
     public partial class SideBevelSelector : UserControl, INotifyPropertyChanged
     {
-        private bool topBevelled;
-        private bool bottomBevelled;
-        private bool leftBevelled;
-        private bool rightBevelled;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public ImageSource topImage;
         public ImageSource bottomImage;
         public ImageSource leftImage;
         public ImageSource rightImage;
+        public ImageSource topImage;
+        private bool bottomBevelled;
+        private bool leftBevelled;
+        private bool rightBevelled;
+        private bool topBevelled;
 
-        public ImageSource TopImage
+        public SideBevelSelector()
+        {
+            InitializeComponent();
+            topBevelled = false;
+            bottomBevelled = false;
+            leftBevelled = false;
+            rightBevelled = false;
+            DataContext = this;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool BottomBevelled
         {
             get
             {
-                return topImage;
+                return bottomBevelled;
             }
-
             set
             {
-                if (topImage != value)
+                if (value != bottomBevelled)
                 {
-                    topImage = value;
+                    bottomBevelled = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -76,6 +84,22 @@ namespace Barnacle.UserControls.SideBevelSelector
             }
         }
 
+        public bool LeftBevelled
+        {
+            get
+            {
+                return leftBevelled;
+            }
+            set
+            {
+                if (value != leftBevelled)
+                {
+                    leftBevelled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public ImageSource LeftImage
         {
             get
@@ -88,6 +112,22 @@ namespace Barnacle.UserControls.SideBevelSelector
                 if (leftImage != value)
                 {
                     leftImage = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool RightBevelled
+        {
+            get
+            {
+                return rightBevelled;
+            }
+            set
+            {
+                if (value != rightBevelled)
+                {
+                    rightBevelled = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -112,7 +152,10 @@ namespace Barnacle.UserControls.SideBevelSelector
 
         public bool TopBevelled
         {
-            get { return topBevelled; }
+            get
+            {
+                return topBevelled;
+            }
             set
             {
                 if (value != topBevelled)
@@ -123,40 +166,18 @@ namespace Barnacle.UserControls.SideBevelSelector
             }
         }
 
-        public bool BottomBevelled
+        public ImageSource TopImage
         {
-            get { return bottomBevelled; }
-            set
+            get
             {
-                if (value != bottomBevelled)
-                {
-                    bottomBevelled = value;
-                    NotifyPropertyChanged();
-                }
+                return topImage;
             }
-        }
 
-        public bool LeftBevelled
-        {
-            get { return leftBevelled; }
             set
             {
-                if (value != leftBevelled)
+                if (topImage != value)
                 {
-                    leftBevelled = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public bool RightBevelled
-        {
-            get { return rightBevelled; }
-            set
-            {
-                if (value != rightBevelled)
-                {
-                    rightBevelled = value;
+                    topImage = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -170,19 +191,36 @@ namespace Barnacle.UserControls.SideBevelSelector
             }
         }
 
-        public SideBevelSelector()
+        internal void SetAll(bool leftBevel, bool topBevel, bool rightBevel, bool bottomBevel)
         {
-            InitializeComponent();
-            topBevelled = false;
-            bottomBevelled = false;
-            leftBevelled = false;
-            rightBevelled = false;
-            DataContext = this;
+            leftBevelled = leftBevel;
+            rightBevelled = rightBevel;
+            topBevelled = topBevel;
+            bottomBevelled = bottomBevel;
+            UpdateShapes();
+        }
+
+        private void BottomClick(object sender, RoutedEventArgs e)
+        {
+            BottomBevelled = !BottomBevelled;
+            UpdateShapes();
         }
 
         private Uri ImageUri(string p)
         {
             return new Uri(@"pack://application:,,,/Images/Buttons/" + p);
+        }
+
+        private void LeftClick(object sender, RoutedEventArgs e)
+        {
+            LeftBevelled = !LeftBevelled;
+            UpdateShapes();
+        }
+
+        private void RightClick(object sender, RoutedEventArgs e)
+        {
+            RightBevelled = !RightBevelled;
+            UpdateShapes();
         }
 
         private void TopClick(object sender, RoutedEventArgs e)
@@ -236,24 +274,6 @@ namespace Barnacle.UserControls.SideBevelSelector
                 BitmapImage icon = new BitmapImage(ImageUri("RightNotBevelled.png"));
                 RightImage = icon;
             }
-        }
-
-        private void BottomClick(object sender, RoutedEventArgs e)
-        {
-            BottomBevelled = !BottomBevelled;
-            UpdateShapes();
-        }
-
-        private void LeftClick(object sender, RoutedEventArgs e)
-        {
-            LeftBevelled = !LeftBevelled;
-            UpdateShapes();
-        }
-
-        private void RightClick(object sender, RoutedEventArgs e)
-        {
-            RightBevelled = !RightBevelled;
-            UpdateShapes();
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)

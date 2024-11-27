@@ -37,6 +37,7 @@ namespace Barnacle.Dialogs
     public partial class ProfileFuselageDlg : BaseModellerDialog, INotifyPropertyChanged
     {
         public List<LetterMarker> markers;
+        private bool autoFit;
         private bool backBody;
         private bool dirty;
         private Int32Collection faces;
@@ -51,24 +52,6 @@ namespace Barnacle.Dialogs
         private string topViewFilename;
         private Point3DCollection vertices;
         private bool wholeBody;
-        private bool autoFit;
-
-        public bool AutoFit
-        {
-            get { return autoFit; }
-
-            set
-            {
-                if (autoFit != value)
-                {
-                    autoFit = value;
-                    NotifyPropertyChanged();
-                    GenerateSkin();
-                    Redisplay();
-                }
-            }
-        }
-
         private double zoomLevel;
 
         public ProfileFuselageDlg()
@@ -86,7 +69,25 @@ namespace Barnacle.Dialogs
             filePath = "";
             noteWindow = new NoteWindow();
             numberOfDivisions = 80;
-            ModelGroup = MyModelGroup;
+        }
+
+        public bool AutoFit
+        {
+            get
+            {
+                return autoFit;
+            }
+
+            set
+            {
+                if (autoFit != value)
+                {
+                    autoFit = value;
+                    NotifyPropertyChanged();
+                    GenerateSkin();
+                    Redisplay();
+                }
+            }
         }
 
         public bool BackBody
@@ -444,6 +445,39 @@ namespace Barnacle.Dialogs
             RibManager.CopyARib(name);
         }
 
+        private void CopyPathsToViews()
+        {
+            CopyPathToSideView();
+            CopyPathToFrontView();
+        }
+
+        private void CopyPathToFrontView()
+        {
+            double tlx = 0;
+            double tly = 0;
+            double brx = 0;
+            double bry = 0;
+            Bitmap bmp = null;
+            //get the flexipath from  the top and render the path onto an image
+            // TopViewManager.RenderFlexipath(ref bmp, out tlx, out tly, out brx, out bry);
+            TopView.WorkingImage = bmp;
+            // TopView.SetupImage( tlx, tly, brx, bry);
+            TopView.UpdateDisplay();
+        }
+
+        private void CopyPathToSideView()
+        {
+            double tlx = 0;
+            double tly = 0;
+            double brx = 0;
+            double bry = 0;
+            //get the flexipath from  the side and render the path onto an image
+            Bitmap bmp = null;
+            // SideViewManager.RenderFlexipath(ref bmp, out tlx, out tly, out brx, out bry);
+            // SideView.WorkingImage = bmp; SideView.SetupImage(tlx, tly, brx, bry);
+            SideView.UpdateDisplay();
+        }
+
         private void CreateLetter(string v1, System.Windows.Point v2, RibAndPlanEditControl rib)
         {
             LetterMarker mk = new LetterMarker(v1, v2);
@@ -694,6 +728,26 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void LoadOneRib(int nextY, XmlElement el, string nme, int pos)
+        {
+            XmlElement imagepcon = (XmlElement)(el.SelectSingleNode("ImagePath"));
+            RibAndPlanEditControl rc = new RibAndPlanEditControl();
+            rc.Read(el);
+            rc.Header = nme;
+            rc.Width = 600;
+            rc.Height = 600;
+            rc.FetchImage();
+            if (rc.IsValid)
+            {
+                rc.TurnOffGrid();
+                rc.SetImageSource();
+                rc.OnForceReload = RibManager.OnForceRibReload;
+                CreateLetter(nme, new System.Windows.Point(pos, nextY), rc);
+                RibManager.Ribs.Add(rc);
+                rc.GenerateProfilePoints();
+            }
+        }
+
         private bool LoadRib(XmlElement el, string pth, string nme, System.Windows.Point position, double viewScale, string edgePath, double scx, double scy)
         {
             bool res = true;
@@ -725,6 +779,12 @@ namespace Barnacle.Dialogs
             }
 
             return res;
+        }
+
+        private void OnPositionTabSelected(object sender, RoutedEventArgs e)
+        {
+            CopyPathsToViews();
+            UpdateDisplay();
         }
 
         private void OnRibInserted(string name, RibAndPlanEditControl rc, RibAndPlanEditControl after)
@@ -830,23 +890,16 @@ namespace Barnacle.Dialogs
             this.Cursor = Cursors.Arrow;
         }
 
-        private void LoadOneRib(int nextY, XmlElement el, string nme, int pos)
+        private void ResetMarkers_Click(object sender, RoutedEventArgs e)
         {
-            XmlElement imagepcon = (XmlElement)(el.SelectSingleNode("ImagePath"));
-            RibAndPlanEditControl rc = new RibAndPlanEditControl();
-            rc.Read(el);
-            rc.Header = nme;
-            rc.Width = 600;
-            rc.Height = 600;
-            rc.FetchImage();
-            if (rc.IsValid)
+            if (markers != null && markers.Count > 1)
             {
-                rc.TurnOffGrid();
-                rc.SetImageSource();
-                rc.OnForceReload = RibManager.OnForceRibReload;
-                CreateLetter(nme, new System.Windows.Point(pos, nextY), rc);
-                RibManager.Ribs.Add(rc);
-                rc.GenerateProfilePoints();
+                double markerDist = ((TopView.RightLimit - TopView.LeftLimit - 4) / (markers.Count - 1));
+                for (int i = 0; i < markers.Count; i++)
+                {
+                    markers[i].Position = new System.Windows.Point((int)(TopView.LeftLimit + (i * markerDist)) + 2, markers[i].Position.Y);
+                }
+                UpdateDisplay();
             }
         }
 
@@ -950,6 +1003,10 @@ namespace Barnacle.Dialogs
             UpdateCameraPos();
         }
 
+        private void TopViewManager_Loaded(object sender, RoutedEventArgs e)
+        {
+        }
+
         private void TriangulatePerimiter(List<PointF> points, double xo, double yo, double z, bool invert)
         {
             TriangulationPolygon ply = new TriangulationPolygon();
@@ -984,7 +1041,7 @@ namespace Barnacle.Dialogs
             {
                 GenerateSkin();
             }
-            Redisplay();
+            Viewer.Model = GetModel();
             NotifyPropertyChanged("CameraPos");
         }
 
@@ -1037,9 +1094,9 @@ namespace Barnacle.Dialogs
             TopViewManager.CommandText = "Load Top";
             UpdateCameraPos();
             LoadEditorParameters();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
 
-            Redisplay();
+            UpdateDisplay();
             NotifyPropertyChanged("WholeBody");
             NotifyPropertyChanged("FrontBody");
             NotifyPropertyChanged("BackBody");
@@ -1083,6 +1140,16 @@ namespace Barnacle.Dialogs
             doc.Save(f);
         }
 
+        private void ZoomFit_Click(object sender, RoutedEventArgs e)
+        {
+            double imageLength = (TopView.RightLimit - TopView.LeftLimit) + 10;
+            double imagescale = TopView.ActualWidth / imageLength;
+
+            zoomLevel = imagescale;
+            TopView.SetScale(zoomLevel);
+            SideView.SetScale(zoomLevel);
+        }
+
         private void ZoomIn_Click(object sender, RoutedEventArgs e)
         {
             zoomLevel *= 1.1;
@@ -1097,73 +1164,11 @@ namespace Barnacle.Dialogs
             SideView.SetScale(zoomLevel);
         }
 
-        private void ZoomFit_Click(object sender, RoutedEventArgs e)
-        {
-            double imageLength = (TopView.RightLimit - TopView.LeftLimit) + 10;
-            double imagescale = TopView.ActualWidth / imageLength;
-
-            zoomLevel = imagescale;
-            TopView.SetScale(zoomLevel);
-            SideView.SetScale(zoomLevel);
-        }
-
         private void ZoomReset_Click(object sender, RoutedEventArgs e)
         {
             zoomLevel = 1;
             TopView.SetScale(zoomLevel);
             SideView.SetScale(zoomLevel);
-        }
-
-        private void OnPositionTabSelected(object sender, RoutedEventArgs e)
-        {
-            CopyPathsToViews();
-            UpdateDisplay();
-        }
-
-        private void CopyPathsToViews()
-        {
-            CopyPathToSideView();
-            CopyPathToFrontView();
-        }
-
-        private void CopyPathToFrontView()
-        {
-            double tlx = 0;
-            double tly = 0;
-            double brx = 0;
-            double bry = 0;
-            Bitmap bmp = null;
-            //get the flexipath from  the top and render the path onto an image
-            // TopViewManager.RenderFlexipath(ref bmp, out tlx, out tly, out brx, out bry);
-            TopView.WorkingImage = bmp;
-            // TopView.SetupImage( tlx, tly, brx, bry);
-            TopView.UpdateDisplay();
-        }
-
-        private void CopyPathToSideView()
-        {
-            double tlx = 0;
-            double tly = 0;
-            double brx = 0;
-            double bry = 0;
-            //get the flexipath from  the side and render the path onto an image
-            Bitmap bmp = null;
-            // SideViewManager.RenderFlexipath(ref bmp, out tlx, out tly, out brx, out bry);
-            // SideView.WorkingImage = bmp; SideView.SetupImage(tlx, tly, brx, bry);
-            SideView.UpdateDisplay();
-        }
-
-        private void ResetMarkers_Click(object sender, RoutedEventArgs e)
-        {
-            if (markers != null && markers.Count > 1)
-            {
-                double markerDist = ((TopView.RightLimit - TopView.LeftLimit - 4) / (markers.Count - 1));
-                for (int i = 0; i < markers.Count; i++)
-                {
-                    markers[i].Position = new System.Windows.Point((int)(TopView.LeftLimit + (i * markerDist)) + 2, markers[i].Position.Y);
-                }
-                UpdateDisplay();
-            }
         }
     }
 }

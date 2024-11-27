@@ -72,7 +72,12 @@ namespace Barnacle.Models
         }
 
         public Point3D CameraPos
-        { get { return cameraPos; } }
+        {
+            get
+            {
+                return cameraPos;
+            }
+        }
 
         public double Distance
         {
@@ -222,14 +227,13 @@ namespace Barnacle.Models
             }
         }
 
-        internal void Read(string dataPath)
+        internal void Read(string fileName)
         {
-            string fileName = dataPath + "\\camerapos.txt";
             if (File.Exists(fileName))
             {
                 try
                 {
-                    StreamReader sw = new StreamReader(dataPath + "\\camerapos.txt");
+                    StreamReader sw = new StreamReader(fileName);
                     polarPos.Phi = Convert.ToDouble(sw.ReadLine());
                     polarPos.Theta = Convert.ToDouble(sw.ReadLine());
                     polarPos.Rho = Convert.ToDouble(sw.ReadLine());
@@ -241,6 +245,10 @@ namespace Barnacle.Models
                     Logger.Log("Exception: " + e.Message);
                 }
             }
+            else
+            {
+                HomeFront();
+            }
         }
 
         internal void RotateDegrees(double dt, double dp)
@@ -250,11 +258,11 @@ namespace Barnacle.Models
             ConvertPolarTo3D();
         }
 
-        internal void Save(string dataPath)
+        internal void Save(string fileName)
         {
             try
             {
-                StreamWriter sw = new StreamWriter(dataPath + "\\camerapos.txt");
+                StreamWriter sw = new StreamWriter(fileName);
                 sw.WriteLine($"{polarPos.Phi}");
                 sw.WriteLine($"{polarPos.Theta}");
                 sw.WriteLine($"{polarPos.Rho}");

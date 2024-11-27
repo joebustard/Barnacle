@@ -19,7 +19,6 @@ using MakerLib;
 using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {
@@ -28,94 +27,35 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class PillDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private string warningText;
-        private bool loaded;
-        private double trayThickness;
-
-        public double TrayThickness
-        {
-            get { return trayThickness; }
-
-            set
-            {
-                if (trayThickness != value)
-                {
-                    trayThickness = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
-            }
-        }
-
-        private const double minflatLength = 1;
-        private const double maxflatLength = 200;
-        private double flatLength;
-
-        public double FlatLength
-        {
-            get
-            {
-                return flatLength;
-            }
-
-            set
-            {
-                if (flatLength != value)
-                {
-                    if (value >= minflatLength && value <= maxflatLength)
-                    {
-                        flatLength = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public String FlatLengthToolTip
-        {
-            get
-            {
-                return $"Flat Length must be in the range {minflatLength} to {maxflatLength}";
-            }
-        }
-
-        private const double minflatHeight = 1;
-        private const double maxflatHeight = 200;
-        private double flatHeight;
-
-        public double FlatHeight
-        {
-            get
-            {
-                return flatHeight;
-            }
-
-            set
-            {
-                if (flatHeight != value)
-                {
-                    if (value >= minflatHeight && value <= maxflatHeight)
-                    {
-                        flatHeight = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public String FlatHeightToolTip
-        {
-            get
-            {
-                return $"Flat Height must be in the range {minflatHeight} to {maxflatHeight}";
-            }
-        }
-
-        private const double minedge = 1;
         private const double maxedge = 100;
+        private const double maxflatHeight = 200;
+        private const double maxflatLength = 200;
+        private const double maxpillWidth = 200;
+        private const double minedge = 1;
+        private const double minflatHeight = 1;
+        private const double minflatLength = 1;
+        private const double minpillWidth = 2;
+        private const double minTrayThickness = 0.1;
         private double edge;
+        private double flatHeight;
+        private double flatLength;
+        private bool halfSelected;
+        private bool loaded;
+        private double pillWidth;
+        private bool plainSelected;
+        private int shape;
+        private Visibility showTray;
+        private bool traySelected;
+        private double trayThickness;
+        private string warningText;
+
+        public PillDlg()
+        {
+            InitializeComponent();
+            ToolName = "Pill";
+            DataContext = this;
+            loaded = false;
+        }
 
         public double Edge
         {
@@ -146,9 +86,86 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private const double minpillWidth = 2;
-        private const double maxpillWidth = 200;
-        private double pillWidth;
+        public double FlatHeight
+        {
+            get
+            {
+                return flatHeight;
+            }
+
+            set
+            {
+                if (flatHeight != value)
+                {
+                    if (value >= minflatHeight && value <= maxflatHeight)
+                    {
+                        flatHeight = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public String FlatHeightToolTip
+        {
+            get
+            {
+                return $"Flat Height must be in the range {minflatHeight} to {maxflatHeight}";
+            }
+        }
+
+        public double FlatLength
+        {
+            get
+            {
+                return flatLength;
+            }
+
+            set
+            {
+                if (flatLength != value)
+                {
+                    if (value >= minflatLength && value <= maxflatLength)
+                    {
+                        flatLength = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public String FlatLengthToolTip
+        {
+            get
+            {
+                return $"Flat Length must be in the range {minflatLength} to {maxflatLength}";
+            }
+        }
+
+        public bool HalfSelected
+        {
+            get
+            {
+                return halfSelected;
+            }
+
+            set
+            {
+                if (halfSelected != value)
+                {
+                    halfSelected = value;
+                    NotifyPropertyChanged();
+                    if (halfSelected)
+                    {
+                        shape = 1;
+                        ShowTray = Visibility.Hidden;
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
 
         public double PillWidth
         {
@@ -179,58 +196,93 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private const double minTrayThickness = 0.1;
+        public bool PlainSelected
+        {
+            get
+            {
+                return plainSelected;
+            }
+
+            set
+            {
+                if (plainSelected != value)
+                {
+                    plainSelected = value;
+                    NotifyPropertyChanged();
+                    if (plainSelected)
+                    {
+                        shape = 0;
+                        ShowTray = Visibility.Hidden;
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public Visibility ShowTray
+        {
+            get
+            {
+                return showTray;
+            }
+
+            set
+            {
+                if (showTray != value)
+                {
+                    showTray = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool TraySelected
+        {
+            get
+            {
+                return traySelected;
+            }
+
+            set
+            {
+                if (traySelected != value)
+                {
+                    traySelected = value;
+
+                    NotifyPropertyChanged();
+                    if (traySelected)
+                    {
+                        shape = 2;
+                        ShowTray = Visibility.Visible;
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public double TrayThickness
+        {
+            get
+            {
+                return trayThickness;
+            }
+
+            set
+            {
+                if (trayThickness != value)
+                {
+                    trayThickness = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
 
         public String TrayThicknessToolTip
         {
             get
             {
                 return $"Tray thickness must be in the range {minTrayThickness} to half Flat Length";
-            }
-        }
-
-        public PillDlg()
-        {
-            InitializeComponent();
-            ToolName = "Pill";
-            DataContext = this;
-            ModelGroup = MyModelGroup;
-            loaded = false;
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
             }
         }
 
@@ -258,91 +310,6 @@ namespace Barnacle.Dialogs
             Close();
         }
 
-        private int shape;
-
-        private bool plainSelected;
-
-        public bool PlainSelected
-        {
-            get { return plainSelected; }
-
-            set
-            {
-                if (plainSelected != value)
-                {
-                    plainSelected = value;
-                    NotifyPropertyChanged();
-                    if (plainSelected)
-                    {
-                        shape = 0;
-                        ShowTray = Visibility.Hidden;
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        private bool halfSelected;
-
-        public bool HalfSelected
-        {
-            get { return halfSelected; }
-
-            set
-            {
-                if (halfSelected != value)
-                {
-                    halfSelected = value;
-                    NotifyPropertyChanged();
-                    if (halfSelected)
-                    {
-                        shape = 1;
-                        ShowTray = Visibility.Hidden;
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        private Visibility showTray;
-
-        public Visibility ShowTray
-        {
-            get { return showTray; }
-
-            set
-            {
-                if (showTray != value)
-                {
-                    showTray = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private bool traySelected;
-
-        public bool TraySelected
-        {
-            get { return traySelected; }
-
-            set
-            {
-                if (traySelected != value)
-                {
-                    traySelected = value;
-
-                    NotifyPropertyChanged();
-                    if (traySelected)
-                    {
-                        shape = 2;
-                        ShowTray = Visibility.Visible;
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
         private void GenerateShape()
         {
             ClearShape();
@@ -354,18 +321,20 @@ namespace Barnacle.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-
             FlatLength = EditorParameters.GetDouble("FlatLength", 20);
-
             FlatHeight = EditorParameters.GetDouble("FlatHeight", 20);
-
             Edge = EditorParameters.GetDouble("Edge", 5);
-
             PillWidth = EditorParameters.GetDouble("PillWidth", 10);
             PlainSelected = EditorParameters.GetBoolean("PlainSelected", true);
             HalfSelected = EditorParameters.GetBoolean("HalfSelected", false);
             TraySelected = EditorParameters.GetBoolean("TraySelected", false);
             TrayThickness = EditorParameters.GetDouble("TrayThickness", 1);
+        }
+
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
+            UpdateDisplay();
         }
 
         private void SaveEditorParmeters()
@@ -382,12 +351,26 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("TrayThickness", TrayThickness.ToString());
         }
 
+        private void SetDefaults()
+        {
+            loaded = false;
+            FlatLength = 20;
+            FlatHeight = 20;
+            Edge = 5;
+            PillWidth = 10;
+            PlainSelected = true;
+            HalfSelected = false;
+            TraySelected = false;
+            TrayThickness = 1;
+            loaded = true;
+        }
+
         private void UpdateDisplay()
         {
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -397,7 +380,7 @@ namespace Barnacle.Dialogs
             LoadEditorParameters();
 
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
 
             UpdateDisplay();

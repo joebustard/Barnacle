@@ -4,6 +4,7 @@ Added
 F12 key to record current camera position, shift F12 to restore it.
 Automatically add seam to object when bending or folding it
 Specify an angle between 1 and 90 for bend and fold operations. (Was previously a fixed angle of 10 degrees)
+Reset parameter button on some toll dialogs that where missing.
 
 Fixed
 Bicorn tool was not saving and restoring editor parameters.
@@ -12,6 +13,7 @@ Plankwall tool was not setting the origin to the center of the object.
 Changed
 Explicitly set size of main 3dviewport when mainwindow  size changes.
 Explicitly set near clip plane distance for the camera
+Refactored 3d viewport on tool dialogs to use a common control
 
 v1.0.7
 ===========

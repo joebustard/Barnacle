@@ -31,6 +31,7 @@ namespace Barnacle.UserControls.ObjectViewer
     /// </summary>
     public partial class ObjectView : UserControl, INotifyPropertyChanged
     {
+        private const string cameraRecordFile = "viewcamerapos.txt";
         private Axies axies;
 
         private Visibility busyVisible = Visibility.Hidden;
@@ -248,6 +249,15 @@ namespace Barnacle.UserControls.ObjectViewer
             LeftCamera();
         }
 
+        public void LoadCamera()
+        {
+            string dataPath = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Barnacle");
+            dataPath += "\\" + cameraRecordFile;
+            polarCamera.Read(dataPath);
+            UpdateCameraPos();
+            NotifyPropertyChanged("CameraPos");
+        }
+
         public void NotBusy()
         {
             BusyVisible = Visibility.Hidden;
@@ -307,6 +317,13 @@ namespace Barnacle.UserControls.ObjectViewer
             LookDirection = new Vector3D(lookDirection.X, lookDirection.Y, lookDirection.Z);
             NotifyPropertyChanged("LookDirection");
             NotifyPropertyChanged("CameraPosition");
+        }
+
+        internal void SaveCamera()
+        {
+            string dataPath = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Barnacle");
+            dataPath += "\\" + cameraRecordFile;
+            polarCamera.Save(dataPath);
         }
 
         private void BackCamera()
@@ -375,6 +392,20 @@ namespace Barnacle.UserControls.ObjectViewer
                     {
                         handled = true;
                         RotateCamera(0.0, 0.5);
+                    }
+                    break;
+
+                case Key.F12:
+                    {
+                        handled = true;
+                        if (shift)
+                        {
+                            LoadCamera();
+                        }
+                        else
+                        {
+                            SaveCamera();
+                        }
                     }
                     break;
             }

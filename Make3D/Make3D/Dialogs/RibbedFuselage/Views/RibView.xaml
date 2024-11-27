@@ -1,12 +1,15 @@
-﻿<UserControl x:Class="Barnacle.Dialogs.RibbedFuselage.Views.RibView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:Barnacle.Dialogs.RibbedFuselage.Views"
-             xmlns:usercontrols="clr-namespace:Barnacle.UserControls"
-             mc:Ignorable="d"
-             d:DesignHeight="700" d:DesignWidth="600" Loaded="UserControl_Loaded">
+﻿<UserControl
+    x:Class="Barnacle.Dialogs.RibbedFuselage.Views.RibView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.Dialogs.RibbedFuselage.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:usercontrols="clr-namespace:Barnacle.UserControls"
+    d:DesignHeight="700"
+    d:DesignWidth="600"
+    Loaded="UserControl_Loaded"
+    mc:Ignorable="d">
     <Border Style="{StaticResource ControlBorder}">
         <Grid>
 
@@ -15,31 +18,55 @@
 
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0"
-                      Margin="0,0,0,0"
-                      VerticalAlignment="Stretch">
+            <Grid
+                Grid.Row="0"
+                Margin="0,0,0,0"
+                VerticalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
-                <StackPanel Orientation="Horizontal" Grid.Column="0">
-                    <Label FontSize="14" VerticalAlignment="Center" Content="Rib :" Margin="4,0,0,0" />
-                    <Label Content="{Binding Name}"
-                           FontSize="14"
-                           VerticalAlignment="Center"
-                           x:Name="HeaderLabel" Margin="8,0,0,0" />
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Label
+                        Margin="4,0,0,0"
+                        VerticalAlignment="Center"
+                        Content="Rib :"
+                        FontSize="14" />
+                    <Label
+                        x:Name="HeaderLabel"
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center"
+                        Content="{Binding Name}"
+                        FontSize="14" />
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Grid.Column="1">
-                    <Label FontSize="14" VerticalAlignment="Center" Content="Image :" />
-                    <Label Content="{Binding DisplayFileName}"
-                           FontSize="14"
-                           VerticalAlignment="Center"
-                           x:Name="FNameLabel" Margin="8,0,0,0" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Label
+                        VerticalAlignment="Center"
+                        Content="Image :"
+                        FontSize="14" />
+                    <Label
+                        x:Name="FNameLabel"
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center"
+                        Content="{Binding DisplayFileName}"
+                        FontSize="14" />
                 </StackPanel>
-                <Label Grid.Column="2" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Red" Background="Yellow" Content="No Path" Visibility="{Binding NoPathVisibility}" />
+                <Label
+                    Grid.Column="2"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="Yellow"
+                    Content="No Path"
+                    FontSize="16"
+                    Foreground="Red"
+                    Visibility="{Binding NoPathVisibility}" />
             </Grid>
-            <usercontrols:FlexiPathEditorControl x:Name="FlexiControl" Grid.Row="2" AbsolutePaths="True" ShowGrid="Hidden" />
+            <usercontrols:FlexiPathEditorControl
+                x:Name="FlexiControl"
+                Grid.Row="2"
+                AbsolutePaths="True"
+                ShowGrid="Hidden" />
         </Grid>
     </Border>
 </UserControl>

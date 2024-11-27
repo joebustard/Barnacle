@@ -29,6 +29,7 @@ using System.Windows;
 using System.Windows.Forms;
 using MessageBox = System.Windows.MessageBox;
 using Barnacle.Dialogs.RibbedFuselage.Views;
+using System.Windows.Threading;
 
 namespace Barnacle.Dialogs
 {
@@ -39,6 +40,7 @@ namespace Barnacle.Dialogs
     {
         private bool autoFit;
         private bool backBody;
+        private DispatcherTimer despatcherTimer;
         private bool dirty;
         private string filePath;
         private bool frontBody;
@@ -64,7 +66,6 @@ namespace Barnacle.Dialogs
             SidePathEditor.OnFlexiImageChanged = SideImageChanged;
             SidePathEditor.OnFlexiPathTextChanged = SidePathChanged;
 
-            ModelGroup = MyModelGroup;
             ToolName = "ProfileFuselage";
             RibCommand = new RelayCommand(OnRibComand);
 
@@ -80,11 +81,17 @@ namespace Barnacle.Dialogs
             wholeBody = true;
             NumberOfDivisions = 100;
             DataContext = this;
+            despatcherTimer = new DispatcherTimer();
+            despatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
+            despatcherTimer.Tick += DespatcherTimer_Tick;
         }
 
         public bool AutoFit
         {
-            get { return autoFit; }
+            get
+            {
+                return autoFit;
+            }
 
             set
             {
@@ -97,7 +104,10 @@ namespace Barnacle.Dialogs
 
         public bool BackBody
         {
-            get { return backBody; }
+            get
+            {
+                return backBody;
+            }
 
             set
             {
@@ -105,6 +115,8 @@ namespace Barnacle.Dialogs
                 dirty = true;
                 if (backBody)
                 {
+                    wholeBody = false;
+                    frontBody = false;
                     UpdateModel();
                 }
             }
@@ -112,7 +124,10 @@ namespace Barnacle.Dialogs
 
         public bool FrontBody
         {
-            get { return frontBody; }
+            get
+            {
+                return frontBody;
+            }
 
             set
             {
@@ -120,16 +135,24 @@ namespace Barnacle.Dialogs
                 dirty = true;
                 if (frontBody)
                 {
+                    backBody = false;
+                    wholeBody = false;
                     UpdateModel();
                 }
             }
         }
 
-        public bool ModelIsVisible { get; set; }
+        public bool ModelIsVisible
+        {
+            get; set;
+        }
 
         public int NumberOfDivisions
         {
-            get { return numberOfDivisions; }
+            get
+            {
+                return numberOfDivisions;
+            }
 
             set
             {
@@ -142,16 +165,25 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public RelayCommand RibCommand { get; set; }
+        public RelayCommand RibCommand
+        {
+            get; set;
+        }
 
         public ObservableCollection<RibImageDetailsModel> Ribs
         {
-            get { return fuselageData.Ribs; }
+            get
+            {
+                return fuselageData.Ribs;
+            }
         }
 
         public int SelectedRibIndex
         {
-            get { return selectedRibIndex; }
+            get
+            {
+                return selectedRibIndex;
+            }
 
             set
             {
@@ -166,7 +198,10 @@ namespace Barnacle.Dialogs
 
         public String SideImage
         {
-            get { return sideImage; }
+            get
+            {
+                return sideImage;
+            }
 
             set
             {
@@ -182,7 +217,10 @@ namespace Barnacle.Dialogs
 
         public string SidePath
         {
-            get { return sidePath; }
+            get
+            {
+                return sidePath;
+            }
 
             set
             {
@@ -204,7 +242,10 @@ namespace Barnacle.Dialogs
 
         public String TopImage
         {
-            get { return topImage; }
+            get
+            {
+                return topImage;
+            }
 
             set
             {
@@ -220,7 +261,10 @@ namespace Barnacle.Dialogs
 
         public string TopPath
         {
-            get { return topPath; }
+            get
+            {
+                return topPath;
+            }
 
             set
             {
@@ -240,7 +284,10 @@ namespace Barnacle.Dialogs
 
         public bool WholeBody
         {
-            get { return wholeBody; }
+            get
+            {
+                return wholeBody;
+            }
 
             set
             {
@@ -248,16 +295,24 @@ namespace Barnacle.Dialogs
                 dirty = true;
                 if (wholeBody)
                 {
+                    backBody = false;
+                    frontBody = false;
                     UpdateModel();
                 }
             }
         }
 
-        internal double HorizontalResolution { get; set; }
+        internal double HorizontalResolution
+        {
+            get; set;
+        }
 
         internal RibImageDetailsModel SelectedRib
         {
-            get { return selectedRib; }
+            get
+            {
+                return selectedRib;
+            }
 
             set
             {
@@ -269,7 +324,10 @@ namespace Barnacle.Dialogs
             }
         }
 
-        internal double VerticalResolution { get; set; }
+        internal double VerticalResolution
+        {
+            get; set;
+        }
 
         public void GenerateModel()
         {
@@ -550,10 +608,16 @@ namespace Barnacle.Dialogs
             ribXs.Add(dp.X);
         }
 
+        private void DespatcherTimer_Tick(object sender, EventArgs e)
+        {
+            despatcherTimer.Stop();
+            Viewer.LoadCamera();
+        }
+
         private void Dialog_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             LoadEditorParameters();
             loaded = true;
 
@@ -856,6 +920,11 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void PositionTab_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var l = e.RemovedItems;
+        }
+
         private void PreviousRib()
         {
             if (selectedRibIndex > 0)
@@ -963,6 +1032,15 @@ namespace Barnacle.Dialogs
 
         private void TabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
+            var l = e.RemovedItems;
+            if (l != null && l.Count == 1)
+            {
+                System.Windows.Controls.TabItem oldTc = l[0] as System.Windows.Controls.TabItem;
+                if (oldTc != null && oldTc.Tag != null && oldTc.Tag.ToString() == "P")
+                {
+                    Viewer.SaveCamera();
+                }
+            }
             System.Windows.Controls.TabControl tc = sender as System.Windows.Controls.TabControl;
             if (tc != null)
             {
@@ -970,12 +1048,21 @@ namespace Barnacle.Dialogs
                 {
                     ModelIsVisible = true;
                     UpdateModel();
+                    despatcherTimer.Start();
                 }
                 else
                 {
                     ModelIsVisible = false;
                 }
             }
+        }
+
+        private void TabItem_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+        }
+
+        private void TabItem_Loaded(object sender, RoutedEventArgs e)
+        {
         }
 
         private void TopImageChanged(string imagePath)
@@ -1038,7 +1125,7 @@ namespace Barnacle.Dialogs
             if (ModelIsVisible && loaded)
             {
                 GenerateModel();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 

@@ -44,14 +44,6 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "PlankWall";
             DataContext = this;
-            ModelGroup = MyModelGroup;
-            loaded = false;
-            WallHeight = 25;
-            WallLength = 50;
-            WallWidth = 2;
-            PlankWidth = 5;
-            Gap = 1;
-            GapDepth = 1;
             BevelSelector.PropertyChanged += BevelSelector_PropertyChanged;
         }
 
@@ -114,42 +106,6 @@ namespace Barnacle.Dialogs
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
-                }
-            }
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
                 }
             }
         }
@@ -292,46 +248,27 @@ namespace Barnacle.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-
-            if (EditorParameters.Get("WallLength") != "")
-            {
-                WallLength = EditorParameters.GetDouble("WallLength");
-            }
-
-            if (EditorParameters.Get("WallHeight") != "")
-            {
-                WallHeight = EditorParameters.GetDouble("WallHeight");
-            }
-
-            if (EditorParameters.Get("WallWidth") != "")
-            {
-                WallWidth = EditorParameters.GetDouble("WallWidth");
-            }
-
-            if (EditorParameters.Get("PlankWidth") != "")
-            {
-                PlankWidth = EditorParameters.GetDouble("PlankWidth");
-            }
-
-            if (EditorParameters.Get("Gap") != "")
-            {
-                Gap = EditorParameters.GetDouble("Gap");
-            }
-
-            if (EditorParameters.Get("GapDepth") != "")
-            {
-                GapDepth = EditorParameters.GetDouble("GapDepth");
-            }
+            WallLength = EditorParameters.GetDouble("WallLength", 50);
+            WallHeight = EditorParameters.GetDouble("WallHeight", 25);
+            WallWidth = EditorParameters.GetDouble("WallWidth", 2);
+            PlankWidth = EditorParameters.GetDouble("PlankWidth", 5);
+            Gap = EditorParameters.GetDouble("Gap", 1);
+            GapDepth = EditorParameters.GetDouble("GapDepth", 1);
             topBevel = EditorParameters.GetBoolean("TopBevel", false);
             bottomBevel = EditorParameters.GetBoolean("BottomBevel", false);
             leftBevel = EditorParameters.GetBoolean("LeftBevel", false);
             rightBevel = EditorParameters.GetBoolean("RightBevel", false);
         }
 
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
+            UpdateDisplay();
+        }
+
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-
             EditorParameters.Set("WallLength", WallLength.ToString());
             EditorParameters.Set("WallHeight", WallHeight.ToString());
             EditorParameters.Set("WallWidth", WallWidth.ToString());
@@ -344,12 +281,34 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("RightBevel", rightBevel.ToString());
         }
 
+        private void SetDefaults()
+        {
+            loaded = false;
+            WallLength = 50;
+            WallHeight = 25;
+            WallWidth = 2;
+            PlankWidth = 5;
+            Gap = 1;
+            GapDepth = 1;
+            topBevel = false;
+            bottomBevel = false;
+            leftBevel = false;
+            rightBevel = false;
+            UpdateBevelControl();
+            loaded = true;
+        }
+
+        private void UpdateBevelControl()
+        {
+            BevelSelector.SetAll(leftBevel, topBevel, rightBevel, bottomBevel);
+        }
+
         private void UpdateDisplay()
         {
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -357,16 +316,10 @@ namespace Barnacle.Dialogs
         {
             WarningText = "";
             LoadEditorParameters();
-
-            BevelSelector.TopBevelled = topBevel;
-            BevelSelector.BottomBevelled = bottomBevel;
-            BevelSelector.RightBevelled = rightBevel;
-            BevelSelector.LeftBevelled = leftBevel;
-
+            UpdateBevelControl();
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
-
             UpdateDisplay();
         }
     }

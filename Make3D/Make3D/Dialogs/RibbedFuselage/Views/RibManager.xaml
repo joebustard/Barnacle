@@ -1,0 +1,111 @@
+<UserControl
+             mc:Ignorable="d"
+             x:Class="Barnacle.Dialogs.RibManager"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Barnacle.Dialogs"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid Background="Azure"
+              Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+            </Grid>
+            <Label FontSize="14"
+                   Grid.Row="1"
+                   Style="{StaticResource InverseLabel}">
+                Ribs
+            </Label>
+            <Button Click="AddRib_Click"
+                    Content="Append"
+                    Grid.Row="2"
+                    IsEnabled="{Binding ControlsEnabled}"
+                    ToolTip="Add a new rib at the end"
+                    x:Name="AddRib" />
+
+            <Button Click="CopyRib_Click"
+                    Content="Copy"
+                    Grid.Row="3"
+                    IsEnabled="{Binding ControlsEnabled}"
+                    ToolTip="Copy the selected rib and insert a copy immediatey after it"
+                    x:Name="CopyRib" />
+
+            <Button Click="DeleteRib_Click"
+                    Content="Delete"
+                    Grid.Row="4"
+                    IsEnabled="{Binding ControlsEnabled}"
+                    ToolTip="Delete the selected rib"
+                    x:Name="DeleteRib" />
+            <Button Click="RenameRibs_Click"
+                    Content="Rename"
+                    Grid.Row="5"
+                    IsEnabled="{Binding ControlsEnabled}"
+                    ToolTip="Rename all the ribs starting at A. (Does not alter the file names)"
+                    x:Name="RenameRibsButton" />
+
+            <Label FontSize="14"
+                   Grid.Row="7"
+                   Style="{StaticResource InverseLabel}">
+                Rib Files
+            </Label>
+            <Button Click="LoadRibs_Click"
+                    Content="Load"
+                    Grid.Row="8"
+                    IsEnabled="{Binding ControlsEnabled}"
+                    ToolTip="Load a ribs definition file"
+                    x:Name="LoadRibs" />
+
+            <Button Click="SaveRibs_Click"
+                    Content="Save"
+                    Grid.Row="9"
+                    IsEnabled="{Binding ControlsEnabled}"
+                    ToolTip="Save a ribs definition file"
+                    x:Name="SaveRibs" />
+        </Grid>
+        <Border Grid.Column="1"
+                Style="{StaticResource ControlBorder}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="60" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Height="60" Content="&lt;" Click="PreviousRib_CLicked" />
+                <ListView Grid.Column="1" ItemsSource="{Binding Ribs}"
+                      SelectedItem="{Binding SelectedRib}" SelectedIndex="{Binding SelectedRibIndex}" x:Name="RibList"  ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal">
+                            </StackPanel>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                </ListView>
+                <Button Grid.Column="2" Height="60" Content="&gt;" Click="NextRib_Clicked" />
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

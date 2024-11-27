@@ -131,6 +131,11 @@
     <Compile Include="Dialogs\ConstructionStrip\ConstructionStripDlg.xaml.cs" />
     <Compile Include="Dialogs\CurvedFunnel\CurvedFunnelDlg.xaml.cs" />
     <Compile Include="Dialogs\CutHPlane\CutHorizontalPlaneDlg.xaml.cs" />
+    <Compile Include="Dialogs\RibbedFuselage\Models\Dimension.cs" />
+    <Compile Include="Dialogs\RibbedFuselage\Models\ImageEdge.cs" />
+    <Compile Include="Dialogs\RibbedFuselage\Models\LetterMarker.cs" />
+    <Compile Include="Dialogs\RibbedFuselage\Models\RibAndPlanEditControl.xaml.cs" />
+    <Compile Include="Dialogs\RibbedFuselage\Views\RibManager.xaml.cs" />
     <Compile Include="Models\ObjectSplitterAndSeamer\EdgeProcessor.cs" />
     <Compile Include="Models\ObjectSplitterAndSeamer\EdgeRecord.cs" />
     <Compile Include="Dialogs\DecimatorSettings.xaml.cs">
@@ -220,22 +225,6 @@
       <DependentUpon>PGramDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\PlankWall\PlankWallDlg.xaml.cs" />
-    <Compile Include="Dialogs\ProfileFuselage\Dimension.cs" />
-    <Compile Include="Dialogs\ProfileFuselage\ImageEdge.cs" />
-    <Compile Include="Dialogs\ProfileFuselage\LetterMarker.cs" />
-    <Compile Include="Dialogs\ProfileFuselage\NoteWindow.xaml.cs">
-      <DependentUpon>NoteWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\ProfileFuselage\ProfileFuselageDlg.xaml.cs">
-      <DependentUpon>ProfileFuselageDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\ProfileFuselage\RibManager.xaml.cs" />
-    <Compile Include="Dialogs\ProfileFuselage\RibAndPlanEditControl.xaml.cs">
-      <DependentUpon>RibAndPlanEditControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\ProfileFuselage\PlanView.xaml.cs">
-      <DependentUpon>PlanView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Dialogs\Propeller\Propeller.xaml.cs">
       <DependentUpon>Propeller.xaml</DependentUpon>
     </Compile>
@@ -584,6 +573,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Dialogs\RibbedFuselage\Models\RibAndPlanEditControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Dialogs\RibbedFuselage\RibbedFuselageDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -595,6 +588,10 @@
     <Page Include="Dialogs\RibbedFuselage\Views\ImageMarker3d.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\RibbedFuselage\Views\RibManager.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\RibbedFuselage\Views\RibView.xaml">
       <SubType>Designer</SubType>
@@ -691,26 +688,6 @@
     <Page Include="Dialogs\PlankWall\PlankWallDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Dialogs\ProfileFuselage\NoteWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dialogs\ProfileFuselage\ProfileFuselageDlg.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dialogs\ProfileFuselage\RibManager.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Dialogs\ProfileFuselage\RibAndPlanEditControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dialogs\ProfileFuselage\PlanView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\Propeller\Propeller.xaml">
       <SubType>Designer</SubType>

@@ -39,9 +39,7 @@ namespace Barnacle.Dialogs
         private List<String> airfoilNames;
         private string airFoilPath;
         private double bladeAngle;
-
         private double bladeLength;
-
         private double bladeMid;
         private double bladeRoot;
         private double bladeTip;
@@ -56,7 +54,6 @@ namespace Barnacle.Dialogs
         private string rootGroup;
         private double rootOffset;
         private string selectedAirfoil;
-
         private double spokeRadius;
 
         public Propeller()
@@ -64,27 +61,12 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "Propeller";
             DataContext = this;
-            NumberOfBlades = 2;
-            BladeLength = 60;
-            RootOffset = 8;
-            MidOffset = 8;
-            BladeRoot = 8;
-            BladeMid = 10;
-            BladeTip = 6;
-            BladeAngle = 10;
-            HubRadius = 5;
-            HubHeight = 5;
-            HubOffset = 0;
-            SpokeRadius = 3;
-            FlatHub = true;
-            DomedHub = false;
             airFoilPath = AppDomain.CurrentDomain.BaseDirectory + "data\\Airfoils.xml";
             airFoilDoc = new XmlDocument();
             airFoilDoc.XmlResolver = null;
             airfoilNames = new List<string>();
             airfoilGroups = new List<string>();
             loaded = false;
-            ModelGroup = MyModelGroup;
         }
 
         public List<string> AirfoilGroups
@@ -130,13 +112,21 @@ namespace Barnacle.Dialogs
 
             set
             {
-                if (bladeAngle != value)
+                if (bladeAngle != value && value > 0 && value < 90)
                 {
                     bladeAngle = value;
 
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
+            }
+        }
+
+        public string BladeAngleToolTip
+        {
+            get
+            {
+                return "Blade Angle in the range 1 to 89";
             }
         }
 
@@ -149,12 +139,20 @@ namespace Barnacle.Dialogs
 
             set
             {
-                if (bladeLength != value)
+                if (bladeLength != value && value >= 10 && value <= 100)
                 {
                     bladeLength = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
+            }
+        }
+
+        public string BladeLengthToolTip
+        {
+            get
+            {
+                return "Blade Length in the range 10 to 100";
             }
         }
 
@@ -176,6 +174,14 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public string BladeMidToolTip
+        {
+            get
+            {
+                return "Blade Mid in the range 5 to 20";
+            }
+        }
+
         public double BladeRoot
         {
             get
@@ -185,12 +191,20 @@ namespace Barnacle.Dialogs
 
             set
             {
-                if (bladeRoot != value)
+                if (bladeRoot != value && value >= 5 && value <= 20)
                 {
                     bladeRoot = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
+            }
+        }
+
+        public string BladeRootToolTip
+        {
+            get
+            {
+                return "Blade Root in the range 5 to 20";
             }
         }
 
@@ -203,12 +217,20 @@ namespace Barnacle.Dialogs
 
             set
             {
-                if (bladeTip != value)
+                if (bladeTip != value && value >= 5 && value <= 20)
                 {
                     bladeTip = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
+            }
+        }
+
+        public string BladeTipToolTip
+        {
+            get
+            {
+                return "Blade Tip in the range 5 to 20";
             }
         }
 
@@ -257,12 +279,20 @@ namespace Barnacle.Dialogs
 
             set
             {
-                if (hubHeight != value)
+                if (hubHeight != value && value >= 0 && value <= 100)
                 {
                     hubHeight = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
+            }
+        }
+
+        public string HubHeightToolTip
+        {
+            get
+            {
+                return "Hub Height in the range 0 to 100";
             }
         }
 
@@ -275,9 +305,20 @@ namespace Barnacle.Dialogs
 
             set
             {
-                hubOffset = value;
-                NotifyPropertyChanged();
-                UpdateDisplay();
+                if (value != hubOffset && value >= -10 && value <= 10)
+                {
+                    hubOffset = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public string HubOffsetToolTip
+        {
+            get
+            {
+                return "Hub Offset in the range -10 to 10";
             }
         }
 
@@ -290,12 +331,20 @@ namespace Barnacle.Dialogs
 
             set
             {
-                if (hubRadius != value)
+                if (hubRadius != value && value >= 0 && value <= 100)
                 {
                     hubRadius = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
+            }
+        }
+
+        public string HubRadiusToolTip
+        {
+            get
+            {
+                return "Hub Radius in the range 0 to 100";
             }
         }
 
@@ -308,9 +357,20 @@ namespace Barnacle.Dialogs
 
             set
             {
-                midOffset = value;
-                NotifyPropertyChanged();
-                UpdateDisplay();
+                if (midOffset != value && value >= 5 && value <= 20)
+                {
+                    midOffset = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public string MidOffsetToolTip
+        {
+            get
+            {
+                return "Mid Offset in the range 5 to 20";
             }
         }
 
@@ -325,13 +385,21 @@ namespace Barnacle.Dialogs
             {
                 if (numberOfBlades != value)
                 {
-                    if (value >= 2)
+                    if (value >= 2 && value <= 8)
                     {
                         numberOfBlades = value;
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
                 }
+            }
+        }
+
+        public string NumberOfBladesToolTip
+        {
+            get
+            {
+                return "Number Of Blades in the range 2 to 8";
             }
         }
 
@@ -369,12 +437,20 @@ namespace Barnacle.Dialogs
 
             set
             {
-                if (rootOffset != value)
+                if (rootOffset != value && value >= 0 && value <= 100)
                 {
                     rootOffset = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
+            }
+        }
+
+        public string RootOffsetToolTip
+        {
+            get
+            {
+                return "Root Offset in the range 0 to 100";
             }
         }
 
@@ -396,42 +472,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
         public double SpokeRadius
         {
             get
@@ -441,9 +481,20 @@ namespace Barnacle.Dialogs
 
             set
             {
-                spokeRadius = value;
-                NotifyPropertyChanged();
-                UpdateDisplay();
+                if (spokeRadius != value && value >= 1 && value <= 20)
+                {
+                    spokeRadius = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public string SpokeRadiusTooltip
+        {
+            get
+            {
+                return "Spoke Radius in the range 1 to 20";
             }
         }
 
@@ -852,24 +903,28 @@ namespace Barnacle.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-            if (EditorParameters.Get("BladeLength") != "")
-            {
-                BladeLength = Convert.ToDouble(EditorParameters.Get("BladeLength"));
-                BladeAngle = Convert.ToDouble(EditorParameters.Get("BladeAngle"));
-                BladeRoot = Convert.ToDouble(EditorParameters.Get("BladeRoot"));
-                BladeMid = Convert.ToDouble(EditorParameters.Get("BladeMid"));
-                BladeTip = Convert.ToDouble(EditorParameters.Get("BladeTip"));
-                DomedHub = Convert.ToBoolean(EditorParameters.Get("DomedHub"));
-                FlatHub = Convert.ToBoolean(EditorParameters.Get("FlatHub"));
-                HubHeight = Convert.ToDouble(EditorParameters.Get("HubHeight"));
-                HubRadius = Convert.ToDouble(EditorParameters.Get("HubRadius"));
-                HubOffset = Convert.ToDouble(EditorParameters.Get("HubOffset"));
-                MidOffset = Convert.ToDouble(EditorParameters.Get("MidOffset"));
-                NumberOfBlades = Convert.ToInt32(EditorParameters.Get("NumberOfBlades"));
-                RootGroup = EditorParameters.Get("RootGroup");
-                RootOffset = Convert.ToDouble(EditorParameters.Get("RootOffset"));
-                SelectedAirfoil = EditorParameters.Get("SelectedAirfoil");
-            }
+            BladeLength = EditorParameters.GetDouble("BladeLength", 60);
+            BladeAngle = EditorParameters.GetDouble("BladeAngle", 10);
+            BladeRoot = EditorParameters.GetDouble("BladeRoot", 8);
+            BladeMid = EditorParameters.GetDouble("BladeMid", 10);
+            BladeTip = EditorParameters.GetDouble("BladeTip", 6);
+            DomedHub = EditorParameters.GetBoolean("DomedHub", false);
+            FlatHub = EditorParameters.GetBoolean("FlatHub", true);
+            SpokeRadius = EditorParameters.GetDouble("SpokeRadius", 3);
+            HubHeight = EditorParameters.GetDouble("HubHeight", 5);
+            HubRadius = EditorParameters.GetDouble("HubRadius", 5);
+            HubOffset = EditorParameters.GetDouble("HubOffset", 0);
+            MidOffset = EditorParameters.GetDouble("MidOffset", 8);
+            NumberOfBlades = EditorParameters.GetInt("NumberOfBlades", 2);
+            RootOffset = EditorParameters.GetDouble("RootOffset", 8);
+            RootGroup = EditorParameters.Get("RootGroup", "Misc");
+            SelectedAirfoil = EditorParameters.Get("SelectedAirfoil", "(DICKE 12.28%)");
+        }
+
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
+            UpdateDisplay();
         }
 
         private Point3D RotatePoint(Point3D p, double theta)
@@ -915,9 +970,31 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("MidOffset", midOffset.ToString());
             EditorParameters.Set("HubOffset", hubOffset.ToString());
             EditorParameters.Set("NumberOfBlades", numberOfBlades.ToString());
+            EditorParameters.Set("SpokeRadius", SpokeRadius.ToString());
             EditorParameters.Set("RootGroup", rootGroup);
             EditorParameters.Set("RootOffset", rootOffset.ToString());
             EditorParameters.Set("SelectedAirfoil", selectedAirfoil);
+        }
+
+        private void SetDefaults()
+        {
+            loaded = false;
+            NumberOfBlades = 2;
+            BladeLength = 60;
+            RootOffset = 8;
+            MidOffset = 8;
+            BladeRoot = 8;
+            BladeMid = 10;
+            BladeTip = 6;
+            BladeAngle = 10;
+            HubRadius = 5;
+            HubHeight = 5;
+            HubOffset = 0;
+            SpokeRadius = 3;
+            FlatHub = true;
+            DomedHub = false;
+            SelectedAirfoil = airfoilNames[0];
+            loaded = true;
         }
 
         private void SetProfiles(string grpName, List<string> names)
@@ -974,24 +1051,20 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             LoadAirFoils();
-
             RootGroup = airfoilGroups[0];
-
             SelectedAirfoil = airfoilNames[0];
-
             LoadEditorParameters();
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
-            GenerateShape();
-            Redisplay();
+            Viewer.Clear();
             loaded = true;
+            UpdateDisplay();
         }
     }
 }

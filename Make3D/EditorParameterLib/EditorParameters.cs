@@ -53,9 +53,9 @@ namespace Barnacle.EditorParameterLib
             get; set;
         }
 
-        public string Get(string key)
+        public string Get(string key, string def = "")
         {
-            string res = "";
+            string res = def;
             foreach (EditorParameter p in Parameters)
             {
                 if (p.Name.ToLower() == key.ToLower())

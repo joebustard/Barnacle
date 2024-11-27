@@ -26,12 +26,13 @@
             HorizontalAlignment="Center"
             Content="{Binding HeaderText}" />
 
-        <Border x:Name="ImageBorder"
+        <Border
+            x:Name="ImageBorder"
             Grid.Row="1"
             Padding="4,4,4,4"
             BorderBrush="DarkBlue"
             BorderThickness="2">
-            <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible"                   >
+            <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
                 <Canvas
                     x:Name="mainCanvas"
                     Width="1200"

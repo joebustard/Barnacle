@@ -25,7 +25,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Media.Media3D;
 
@@ -41,15 +40,21 @@ namespace Barnacle.Dialogs
         private const byte leftMask = 0x01;
         private const byte rightMask = 0x02;
         private const byte topMask = 0x04;
+        private double baseWidth;
+        private bool boxShape;
+        private bool clippedSingle;
+        private bool clippedTile;
         private List<System.Windows.Point> displayPoints;
+        private bool fittedSingle;
+        private bool fittedTile;
         private bool hollowShape;
+        private double hTextureResolution;
         private bool largeTexture;
-
         private bool loaded;
-
         private OctTree octTree;
         private Point PathCentroid;
         private double plateWidth;
+        private int selectedShape;
         private string selectedTexture;
         private Visibility showTextures;
         private Visibility showWidth;
@@ -58,21 +63,14 @@ namespace Barnacle.Dialogs
         private double textureDepth;
         private bool texturedShape;
         private SortedList<string, string> textureFiles;
-
         private TextureManager textureManager;
-
         private bool tileTexture;
+        private double vTextureResolution;
         private double wallWidth;
         private string warningText;
         private System.Drawing.Bitmap workingImage;
-        private bool clippedSingle;
-        private bool clippedTile;
         private double xExtent;
-        private bool fittedSingle;
-        private bool fittedTile;
         private double yExtent;
-        private double vTextureResolution;
-        private double hTextureResolution;
 
         public Platelet()
         {
@@ -96,10 +94,8 @@ namespace Barnacle.Dialogs
             tileTexture = true;
             showWidth = Visibility.Hidden;
             showTextures = Visibility.Hidden;
-            ModelGroup = MyModelGroup;
             loaded = false;
             textureFiles = new SortedList<string, string>();
-
             selectedTexture = "";
             textureManager = TextureManager.Instance();
             textureManager.LoadTextureNames();
@@ -114,19 +110,44 @@ namespace Barnacle.Dialogs
             Mixed
         }
 
-        public bool HollowShape
+        public double BaseWidth
         {
             get
             {
-                return hollowShape;
+                return baseWidth;
             }
 
             set
             {
-                if (hollowShape != value)
+                if (baseWidth != value)
                 {
-                    hollowShape = value;
-                    if (hollowShape == true)
+                    if (value > 0 && value <= 500)
+                    {
+                        baseWidth = value;
+                        if (baseWidth > plateWidth)
+                        {
+                            baseWidth = plateWidth;
+                        }
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public bool BoxShape
+        {
+            get
+            {
+                return boxShape;
+            }
+
+            set
+            {
+                if (boxShape != value)
+                {
+                    boxShape = value;
+                    if (boxShape == true)
                     {
                         ShowWidth = Visibility.Visible;
                         ShowTextures = Visibility.Hidden;
@@ -142,21 +163,119 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private bool boxShape;
-
-        public bool BoxShape
+        public bool ClippedSingle
         {
             get
             {
-                return boxShape;
+                return clippedSingle;
             }
 
             set
             {
-                if (boxShape != value)
+                if (clippedSingle != value)
                 {
-                    boxShape = value;
-                    if (boxShape == true)
+                    clippedSingle = value;
+                    NotifyPropertyChanged();
+                    if (clippedSingle)
+                    {
+                        if (textureManager != null)
+                        {
+                            textureManager.Mode = TextureManager.MapMode.ClippedSingle;
+                        }
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public bool ClippedTile
+        {
+            get
+            {
+                return clippedTile;
+            }
+
+            set
+            {
+                if (clippedTile != value)
+                {
+                    clippedTile = value;
+                    NotifyPropertyChanged();
+                    if (clippedTile)
+                    {
+                        if (textureManager != null)
+                        {
+                            textureManager.Mode = TextureManager.MapMode.ClippedTile;
+                        }
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public bool FittedSingle
+        {
+            get
+            {
+                return fittedSingle;
+            }
+
+            set
+            {
+                if (fittedSingle != value)
+                {
+                    fittedSingle = value;
+                    NotifyPropertyChanged();
+                    if (fittedSingle)
+                    {
+                        if (textureManager != null)
+                        {
+                            textureManager.Mode = TextureManager.MapMode.FittedSingle;
+                        }
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public bool FittedTile
+        {
+            get
+            {
+                return fittedTile;
+            }
+
+            set
+            {
+                if (fittedTile != value)
+                {
+                    fittedTile = value;
+                    NotifyPropertyChanged();
+                    if (fittedTile)
+                    {
+                        if (textureManager != null)
+                        {
+                            textureManager.Mode = TextureManager.MapMode.FittedTile;
+                        }
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public bool HollowShape
+        {
+            get
+            {
+                return hollowShape;
+            }
+
+            set
+            {
+                if (hollowShape != value)
+                {
+                    hollowShape = value;
+                    if (hollowShape == true)
                     {
                         ShowWidth = Visibility.Visible;
                         ShowTextures = Visibility.Hidden;
@@ -192,7 +311,10 @@ namespace Barnacle.Dialogs
 
         public double PlateWidth
         {
-            get { return plateWidth; }
+            get
+            {
+                return plateWidth;
+            }
 
             set
             {
@@ -208,33 +330,30 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private double baseWidth;
-
-        public double BaseWidth
+        public int SelectedShape
         {
-            get { return baseWidth; }
+            get
+            {
+                return selectedShape;
+            }
 
             set
             {
-                if (baseWidth != value)
+                if (selectedShape != value)
                 {
-                    if (value > 0 && value <= 500)
-                    {
-                        baseWidth = value;
-                        if (baseWidth > plateWidth)
-                        {
-                            baseWidth = plateWidth;
-                        }
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
+                    selectedShape = value;
+                    ShapeChanged();
+                    NotifyPropertyChanged();
                 }
             }
         }
 
         public string SelectedTexture
         {
-            get { return selectedTexture; }
+            get
+            {
+                return selectedTexture;
+            }
 
             set
             {
@@ -411,88 +530,12 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private int selectedShape;
-
-        public int SelectedShape
-        {
-            get { return selectedShape; }
-
-            set
-            {
-                if (selectedShape != value)
-                {
-                    selectedShape = value;
-                    ShapeChanged();
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private void SetShapeTab()
-        {
-            if (SolidShape)
-            {
-                SelectedShape = 0;
-            }
-            if (HollowShape)
-            {
-                SelectedShape = 1;
-            }
-            if (TexturedShape)
-            {
-                SelectedShape = 2;
-            }
-            if (BoxShape)
-            {
-                SelectedShape = 3;
-            }
-        }
-
-        private void ShapeChanged()
-        {
-            switch (selectedShape)
-            {
-                case 0:
-                    {
-                        HollowShape = false;
-                        TexturedShape = false;
-                        BoxShape = false;
-                        SolidShape = true;
-                    }
-                    break;
-
-                case 1:
-                    {
-                        SolidShape = false;
-                        TexturedShape = false;
-                        BoxShape = false;
-                        HollowShape = true;
-                    }
-                    break;
-
-                case 2:
-                    {
-                        SolidShape = false;
-                        HollowShape = false;
-                        BoxShape = false;
-                        TexturedShape = true;
-                    }
-                    break;
-
-                case 3:
-                    {
-                        SolidShape = false;
-                        HollowShape = false;
-                        TexturedShape = false;
-                        BoxShape = true;
-                    }
-                    break;
-            }
-        }
-
         public List<String> TextureItems
         {
-            get { return textureManager.TextureNames; }
+            get
+            {
+                return textureManager.TextureNames;
+            }
         }
 
         public IEnumerable<String> TextureNames
@@ -523,7 +566,10 @@ namespace Barnacle.Dialogs
 
         public double WallWidth
         {
-            get { return wallWidth; }
+            get
+            {
+                return wallWidth;
+            }
 
             set
             {
@@ -707,6 +753,18 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void BrowseTextures_Click(object sender, RoutedEventArgs e)
+        {
+            string folder = textureManager.GetTextureFolderName();
+            if (Directory.Exists(folder))
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo("explorer.exe");
+                startInfo.Arguments = folder;
+                startInfo.WindowStyle = ProcessWindowStyle.Normal;
+                Process.Start(startInfo);
+            }
+        }
+
         private void CalculateExtents(List<Point> tmp, out double lx, out double rx, out double ty, out double by)
         {
             lx = double.MaxValue;
@@ -772,7 +830,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void CreateReversedSideFace(List<System.Windows.Point> pnts, int i, bool autoclose = true)
+        private void CreateInverseSideFace(List<System.Windows.Point> pnts, int i, bool autoclose = true)
         {
             int v = i + 1;
 
@@ -790,8 +848,8 @@ namespace Barnacle.Dialogs
             }
 
             int c0 = AddVerticeOctTree(pnts[i].X, pnts[i].Y, 0.0);
-            int c1 = AddVerticeOctTree(pnts[i].X, pnts[i].Y, -plateWidth);
-            int c2 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, -plateWidth);
+            int c1 = AddVerticeOctTree(pnts[i].X, pnts[i].Y, plateWidth);
+            int c2 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, plateWidth);
             int c3 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, 0.0);
             Faces.Add(c0);
             Faces.Add(c1);
@@ -832,6 +890,36 @@ namespace Barnacle.Dialogs
             Faces.Add(c3);
         }
 
+        private void CreateReversedSideFace(List<System.Windows.Point> pnts, int i, bool autoclose = true)
+        {
+            int v = i + 1;
+
+            if (v == pnts.Count)
+            {
+                if (autoclose)
+                {
+                    v = 0;
+                }
+                else
+                {
+                    // dont process the final point if caller doesn't want it
+                    return;
+                }
+            }
+
+            int c0 = AddVerticeOctTree(pnts[i].X, pnts[i].Y, 0.0);
+            int c1 = AddVerticeOctTree(pnts[i].X, pnts[i].Y, -plateWidth);
+            int c2 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, -plateWidth);
+            int c3 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, 0.0);
+            Faces.Add(c0);
+            Faces.Add(c1);
+            Faces.Add(c2);
+
+            Faces.Add(c0);
+            Faces.Add(c2);
+            Faces.Add(c3);
+        }
+
         private void CreateSideFace(List<System.Windows.Point> pnts, int i, bool autoclose = true)
         {
             int v = i + 1;
@@ -862,36 +950,6 @@ namespace Barnacle.Dialogs
             Faces.Add(c2);
         }
 
-        private void CreateInverseSideFace(List<System.Windows.Point> pnts, int i, bool autoclose = true)
-        {
-            int v = i + 1;
-
-            if (v == pnts.Count)
-            {
-                if (autoclose)
-                {
-                    v = 0;
-                }
-                else
-                {
-                    // dont process the final point if caller doesn't want it
-                    return;
-                }
-            }
-
-            int c0 = AddVerticeOctTree(pnts[i].X, pnts[i].Y, 0.0);
-            int c1 = AddVerticeOctTree(pnts[i].X, pnts[i].Y, plateWidth);
-            int c2 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, plateWidth);
-            int c3 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, 0.0);
-            Faces.Add(c0);
-            Faces.Add(c1);
-            Faces.Add(c2);
-
-            Faces.Add(c0);
-            Faces.Add(c2);
-            Faces.Add(c3);
-        }
-
         private void CreateTheBack(List<Point> tmp)
         {
             // triangulate the basic polygon
@@ -916,6 +974,35 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private int FindClosestHole(List<Point> outLine, List<List<Point>> allHoles, out int op, out int hp)
+        {
+            op = -1;
+            hp = -1;
+            int closestHole = -1;
+            double closestDist = double.MaxValue;
+            for (int edgeIndex = 0; edgeIndex < outLine.Count; edgeIndex++)
+            {
+                Point edgePoint = outLine[edgeIndex];
+                for (int holeIndex = 0; holeIndex < allHoles.Count; holeIndex++)
+                {
+                    for (int j = 0; j < allHoles[holeIndex].Count; j++)
+                    {
+                        double dx = allHoles[holeIndex][j].X - edgePoint.X;
+                        double dy = allHoles[holeIndex][j].Y - edgePoint.Y;
+                        double dist = Math.Sqrt((dx * dx) + (dy * dy));
+                        if (dist < closestDist)
+                        {
+                            closestDist = dist;
+                            closestHole = holeIndex;
+                            op = edgeIndex;
+                            hp = j;
+                        }
+                    }
+                }
+            }
+            return closestHole;
+        }
+
         private int FindVertexAtZero(List<Point> boundary, int sm)
         {
             Point testPoint = new Point(Vertices[sm].X, Vertices[sm].Y);
@@ -927,138 +1014,6 @@ namespace Barnacle.Dialogs
             else
             {
                 return -1;
-            }
-        }
-
-        private void GenerateHollow()
-        {
-            List<System.Windows.Point> points = PathEditor.GetOutsidePoints(); ;
-            List<System.Drawing.PointF> outerPolygon = new List<System.Drawing.PointF>();
-            List<System.Drawing.PointF> innerPolygon = new List<System.Drawing.PointF>();
-            ClearShape();
-            List<System.Windows.Point> tmp = new List<System.Windows.Point>();
-            double top = 0;
-            double lx = double.MaxValue;
-            double rx = double.MinValue;
-            double ty = double.MinValue;
-            double by = double.MaxValue;
-            if (points != null)
-            {
-                for (int i = 0; i < points.Count; i++)
-                {
-                    if (points[i].X < lx)
-                    {
-                        lx = points[i].X;
-                    }
-                    if (points[i].X > rx)
-                    {
-                        rx = points[i].X;
-                    }
-                    if (points[i].Y > ty)
-                    {
-                        ty = points[i].Y;
-                    }
-                    if (points[i].Y < by)
-                    {
-                        by = points[i].Y;
-                    }
-                }
-
-                // user may have chosen a wallwidth that means the inside walls overlap DOnt allow that.
-                double actualWallWidth = wallWidth;
-                double d = ((rx - lx) / 2) - 0.1;
-                if (d < actualWallWidth)
-                {
-                    actualWallWidth = d;
-                }
-                d = ((ty - by) / 2) - 0.1;
-                if (d <= actualWallWidth)
-                {
-                    actualWallWidth = d;
-                }
-
-                top = ty;
-                for (int i = 0; i < points.Count; i++)
-                {
-                    // flipping coordinates so have to reverse polygon too
-                    tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
-                }
-                // Point[] clik = OrderAntiClockwise(tmp.ToArray());
-                for (int i = 0; i < tmp.Count - 1; i++)
-                {
-                    outerPolygon.Add(new System.Drawing.PointF((float)tmp[i].X, (float)tmp[i].Y));
-                }
-                outerPolygon = LineUtils.RemoveCoplanarSegments(outerPolygon);
-
-                for (int i = 0; i < outerPolygon.Count; i++)
-                {
-                    innerPolygon.Add(new System.Drawing.PointF((float)outerPolygon[i].X, (float)outerPolygon[i].Y));
-                }
-                innerPolygon = LineUtils.GetEnlargedPolygon(innerPolygon,/* - */(float)actualWallWidth);
-
-                tmp.Clear();
-                for (int i = outerPolygon.Count - 1; i >= 0; i--)
-                {
-                    tmp.Add(new System.Windows.Point(outerPolygon[i].X, outerPolygon[i].Y));
-                }
-
-                CalculateExtents(tmp, out lx, out rx, out ty, out by);
-
-                OctTree octTree = CreateOctree(new Point3D(-lx, -by, -1.5 * (plateWidth + textureDepth)),
-          new Point3D(+rx, +ty, 1.5 * (plateWidth + textureDepth)));                // generate side triangles so original points are already in list
-                                                                                    // Point[] clk =
-                                                                                    // OrderClockwise(tmp.ToArray());
-                                                                                    // tmp = clk.ToList();
-                for (int i = 0; i < tmp.Count; i++)
-                {
-                    CreateInvertedSideFace(tmp, i);
-                }
-
-                tmp.Clear();
-                for (int i = 0; i < innerPolygon.Count; i++)
-                {
-                    tmp.Add(new System.Windows.Point(innerPolygon[i].X, innerPolygon[i].Y));
-                }
-                // generate side triangles so original points are already in list clk =
-                // OrderAntiClockwise(tmp.ToArray()); tmp = clk.ToList();
-                for (int i = 0; i < tmp.Count; i++)
-                {
-                    CreateInvertedSideFace(tmp, i);
-                }
-
-                for (int i = 0; i < outerPolygon.Count; i++)
-                {
-                    int j = i + 1;
-                    if (j == outerPolygon.Count)
-                    {
-                        j = 0;
-                    }
-                    int c0 = AddVerticeOctTree(outerPolygon[i].X, outerPolygon[i].Y, 0.0);
-                    int c1 = AddVerticeOctTree(innerPolygon[i].X, innerPolygon[i].Y, 0.0);
-                    int c2 = AddVerticeOctTree(innerPolygon[j].X, innerPolygon[j].Y, 0.0);
-                    int c3 = AddVerticeOctTree(outerPolygon[j].X, outerPolygon[j].Y, 0.0);
-                    Faces.Add(c0);
-                    Faces.Add(c1);
-                    Faces.Add(c2);
-
-                    Faces.Add(c0);
-                    Faces.Add(c2);
-                    Faces.Add(c3);
-
-                    c0 = AddVerticeOctTree(outerPolygon[i].X, outerPolygon[i].Y, plateWidth);
-                    c1 = AddVerticeOctTree(innerPolygon[i].X, innerPolygon[i].Y, plateWidth);
-                    c2 = AddVerticeOctTree(innerPolygon[j].X, innerPolygon[j].Y, plateWidth);
-                    c3 = AddVerticeOctTree(outerPolygon[j].X, outerPolygon[j].Y, plateWidth);
-                    Faces.Add(c0);
-                    Faces.Add(c2);
-                    Faces.Add(c1);
-
-                    Faces.Add(c0);
-                    Faces.Add(c3);
-                    Faces.Add(c2);
-                }
-
-                CentreVertices();
             }
         }
 
@@ -1223,6 +1178,138 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void GenerateHollow()
+        {
+            List<System.Windows.Point> points = PathEditor.GetOutsidePoints(); ;
+            List<System.Drawing.PointF> outerPolygon = new List<System.Drawing.PointF>();
+            List<System.Drawing.PointF> innerPolygon = new List<System.Drawing.PointF>();
+            ClearShape();
+            List<System.Windows.Point> tmp = new List<System.Windows.Point>();
+            double top = 0;
+            double lx = double.MaxValue;
+            double rx = double.MinValue;
+            double ty = double.MinValue;
+            double by = double.MaxValue;
+            if (points != null)
+            {
+                for (int i = 0; i < points.Count; i++)
+                {
+                    if (points[i].X < lx)
+                    {
+                        lx = points[i].X;
+                    }
+                    if (points[i].X > rx)
+                    {
+                        rx = points[i].X;
+                    }
+                    if (points[i].Y > ty)
+                    {
+                        ty = points[i].Y;
+                    }
+                    if (points[i].Y < by)
+                    {
+                        by = points[i].Y;
+                    }
+                }
+
+                // user may have chosen a wallwidth that means the inside walls overlap DOnt allow that.
+                double actualWallWidth = wallWidth;
+                double d = ((rx - lx) / 2) - 0.1;
+                if (d < actualWallWidth)
+                {
+                    actualWallWidth = d;
+                }
+                d = ((ty - by) / 2) - 0.1;
+                if (d <= actualWallWidth)
+                {
+                    actualWallWidth = d;
+                }
+
+                top = ty;
+                for (int i = 0; i < points.Count; i++)
+                {
+                    // flipping coordinates so have to reverse polygon too
+                    tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
+                }
+                // Point[] clik = OrderAntiClockwise(tmp.ToArray());
+                for (int i = 0; i < tmp.Count - 1; i++)
+                {
+                    outerPolygon.Add(new System.Drawing.PointF((float)tmp[i].X, (float)tmp[i].Y));
+                }
+                outerPolygon = LineUtils.RemoveCoplanarSegments(outerPolygon);
+
+                for (int i = 0; i < outerPolygon.Count; i++)
+                {
+                    innerPolygon.Add(new System.Drawing.PointF((float)outerPolygon[i].X, (float)outerPolygon[i].Y));
+                }
+                innerPolygon = LineUtils.GetEnlargedPolygon(innerPolygon,/* - */(float)actualWallWidth);
+
+                tmp.Clear();
+                for (int i = outerPolygon.Count - 1; i >= 0; i--)
+                {
+                    tmp.Add(new System.Windows.Point(outerPolygon[i].X, outerPolygon[i].Y));
+                }
+
+                CalculateExtents(tmp, out lx, out rx, out ty, out by);
+
+                OctTree octTree = CreateOctree(new Point3D(-lx, -by, -1.5 * (plateWidth + textureDepth)),
+          new Point3D(+rx, +ty, 1.5 * (plateWidth + textureDepth)));                // generate side triangles so original points are already in list
+                                                                                    // Point[] clk =
+                                                                                    // OrderClockwise(tmp.ToArray());
+                                                                                    // tmp = clk.ToList();
+                for (int i = 0; i < tmp.Count; i++)
+                {
+                    CreateInvertedSideFace(tmp, i);
+                }
+
+                tmp.Clear();
+                for (int i = 0; i < innerPolygon.Count; i++)
+                {
+                    tmp.Add(new System.Windows.Point(innerPolygon[i].X, innerPolygon[i].Y));
+                }
+                // generate side triangles so original points are already in list clk =
+                // OrderAntiClockwise(tmp.ToArray()); tmp = clk.ToList();
+                for (int i = 0; i < tmp.Count; i++)
+                {
+                    CreateInvertedSideFace(tmp, i);
+                }
+
+                for (int i = 0; i < outerPolygon.Count; i++)
+                {
+                    int j = i + 1;
+                    if (j == outerPolygon.Count)
+                    {
+                        j = 0;
+                    }
+                    int c0 = AddVerticeOctTree(outerPolygon[i].X, outerPolygon[i].Y, 0.0);
+                    int c1 = AddVerticeOctTree(innerPolygon[i].X, innerPolygon[i].Y, 0.0);
+                    int c2 = AddVerticeOctTree(innerPolygon[j].X, innerPolygon[j].Y, 0.0);
+                    int c3 = AddVerticeOctTree(outerPolygon[j].X, outerPolygon[j].Y, 0.0);
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c3);
+
+                    c0 = AddVerticeOctTree(outerPolygon[i].X, outerPolygon[i].Y, plateWidth);
+                    c1 = AddVerticeOctTree(innerPolygon[i].X, innerPolygon[i].Y, plateWidth);
+                    c2 = AddVerticeOctTree(innerPolygon[j].X, innerPolygon[j].Y, plateWidth);
+                    c3 = AddVerticeOctTree(outerPolygon[j].X, outerPolygon[j].Y, plateWidth);
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+
+                    Faces.Add(c0);
+                    Faces.Add(c3);
+                    Faces.Add(c2);
+                }
+
+                CentreVertices();
+            }
+        }
+
         private void GenerateShape()
         {
             if (loaded)
@@ -1243,18 +1330,6 @@ namespace Barnacle.Dialogs
                 {
                     GenerateBox();
                 }
-            }
-        }
-
-        private void GenerateSolid()
-        {
-            if (PathEditor.HasHoles())
-            {
-                GenerateSoldWithHoles();
-            }
-            else
-            {
-                GenerateSoldWithOutHoles();
             }
         }
 
@@ -1383,71 +1458,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private List<Point> JoinHoleToOutline(List<Point> outLineTmp, List<Point> points, int outerPointIndex, int holePointIndex)
-        {
-            List<Point> combined = new List<Point>();
-            for (int si = 0; si <= outerPointIndex; si++)
-            {
-                combined.Add(outLineTmp[si]);
-            }
-
-            for (int hi = holePointIndex; hi < points.Count; hi++)
-            {
-                combined.Add(points[hi]);
-            }
-            for (int hi = 0; hi <= holePointIndex; hi++)
-            {
-                combined.Add(points[hi]);
-            }
-            for (int si = outerPointIndex; si < outLineTmp.Count; si++)
-            {
-                combined.Add(outLineTmp[si]);
-            }
-            return combined;
-        }
-
-        private void ReverseDirection(List<List<Point>> allHoles)
-        {
-            for (int i = 0; i < allHoles.Count; i++)
-            {
-                List<Point> tmp = new List<Point>();
-                foreach (Point p in allHoles[i])
-                {
-                    tmp.Insert(0, p);
-                }
-                allHoles[i] = tmp;
-            }
-        }
-
-        private int FindClosestHole(List<Point> outLine, List<List<Point>> allHoles, out int op, out int hp)
-        {
-            op = -1;
-            hp = -1;
-            int closestHole = -1;
-            double closestDist = double.MaxValue;
-            for (int edgeIndex = 0; edgeIndex < outLine.Count; edgeIndex++)
-            {
-                Point edgePoint = outLine[edgeIndex];
-                for (int holeIndex = 0; holeIndex < allHoles.Count; holeIndex++)
-                {
-                    for (int j = 0; j < allHoles[holeIndex].Count; j++)
-                    {
-                        double dx = allHoles[holeIndex][j].X - edgePoint.X;
-                        double dy = allHoles[holeIndex][j].Y - edgePoint.Y;
-                        double dist = Math.Sqrt((dx * dx) + (dy * dy));
-                        if (dist < closestDist)
-                        {
-                            closestDist = dist;
-                            closestHole = holeIndex;
-                            op = edgeIndex;
-                            hp = j;
-                        }
-                    }
-                }
-            }
-            return closestHole;
-        }
-
         private void GenerateSoldWithOutHoles()
         {
             ClearShape();
@@ -1506,6 +1516,18 @@ namespace Barnacle.Dialogs
                     Faces.Add(c2);
                 }
                 CentreVertices();
+            }
+        }
+
+        private void GenerateSolid()
+        {
+            if (PathEditor.HasHoles())
+            {
+                GenerateSoldWithHoles();
+            }
+            else
+            {
+                GenerateSoldWithOutHoles();
             }
         }
 
@@ -1652,92 +1674,27 @@ namespace Barnacle.Dialogs
             return result;
         }
 
-        public bool ClippedSingle
+        private List<Point> JoinHoleToOutline(List<Point> outLineTmp, List<Point> points, int outerPointIndex, int holePointIndex)
         {
-            get { return clippedSingle; }
-
-            set
+            List<Point> combined = new List<Point>();
+            for (int si = 0; si <= outerPointIndex; si++)
             {
-                if (clippedSingle != value)
-                {
-                    clippedSingle = value;
-                    NotifyPropertyChanged();
-                    if (clippedSingle)
-                    {
-                        if (textureManager != null)
-                        {
-                            textureManager.Mode = TextureManager.MapMode.ClippedSingle;
-                        }
-                        UpdateDisplay();
-                    }
-                }
+                combined.Add(outLineTmp[si]);
             }
-        }
 
-        public bool FittedSingle
-        {
-            get { return fittedSingle; }
-
-            set
+            for (int hi = holePointIndex; hi < points.Count; hi++)
             {
-                if (fittedSingle != value)
-                {
-                    fittedSingle = value;
-                    NotifyPropertyChanged();
-                    if (fittedSingle)
-                    {
-                        if (textureManager != null)
-                        {
-                            textureManager.Mode = TextureManager.MapMode.FittedSingle;
-                        }
-                        UpdateDisplay();
-                    }
-                }
+                combined.Add(points[hi]);
             }
-        }
-
-        public bool FittedTile
-        {
-            get { return fittedTile; }
-
-            set
+            for (int hi = 0; hi <= holePointIndex; hi++)
             {
-                if (fittedTile != value)
-                {
-                    fittedTile = value;
-                    NotifyPropertyChanged();
-                    if (fittedTile)
-                    {
-                        if (textureManager != null)
-                        {
-                            textureManager.Mode = TextureManager.MapMode.FittedTile;
-                        }
-                        UpdateDisplay();
-                    }
-                }
+                combined.Add(points[hi]);
             }
-        }
-
-        public bool ClippedTile
-        {
-            get { return clippedTile; }
-
-            set
+            for (int si = outerPointIndex; si < outLineTmp.Count; si++)
             {
-                if (clippedTile != value)
-                {
-                    clippedTile = value;
-                    NotifyPropertyChanged();
-                    if (clippedTile)
-                    {
-                        if (textureManager != null)
-                        {
-                            textureManager.Mode = TextureManager.MapMode.ClippedTile;
-                        }
-                        UpdateDisplay();
-                    }
-                }
+                combined.Add(outLineTmp[si]);
             }
+            return combined;
         }
 
         private void LoadEditorParameters()
@@ -1780,8 +1737,7 @@ namespace Barnacle.Dialogs
             displayPoints = pnts;
             if (PathEditor.PathClosed || pnts.Count == 0)
             {
-                GenerateShape();
-                Redisplay();
+                UpdateDisplay();
             }
         }
 
@@ -1983,12 +1939,6 @@ namespace Barnacle.Dialogs
             else
             {
                 z = ((double)cell.Width * textureDepth) / 255.0;
-                /*
-                if (mask > 15)
-                {
-                    z = textureDepth;
-                }
-                */
 
                 ply = new TriangulationPolygon();
                 List<System.Drawing.PointF> pfr = new List<System.Drawing.PointF>();
@@ -2020,6 +1970,19 @@ namespace Barnacle.Dialogs
             return res;
         }
 
+        private void ReverseDirection(List<List<Point>> allHoles)
+        {
+            for (int i = 0; i < allHoles.Count; i++)
+            {
+                List<Point> tmp = new List<Point>();
+                foreach (Point p in allHoles[i])
+                {
+                    tmp.Insert(0, p);
+                }
+                allHoles[i] = tmp;
+            }
+        }
+
         private void SaveEditorParmeters()
         {
             EditorParameters.Set("ImagePath", PathEditor.ImagePath);
@@ -2045,6 +2008,68 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("ClippedSingle", ClippedSingle.ToString());
             EditorParameters.Set("FittedSingle", FittedSingle.ToString());
             EditorParameters.Set("BaseWidth", BaseWidth.ToString());
+        }
+
+        private void SetShapeTab()
+        {
+            if (SolidShape)
+            {
+                SelectedShape = 0;
+            }
+            if (HollowShape)
+            {
+                SelectedShape = 1;
+            }
+            if (TexturedShape)
+            {
+                SelectedShape = 2;
+            }
+            if (BoxShape)
+            {
+                SelectedShape = 3;
+            }
+        }
+
+        private void ShapeChanged()
+        {
+            switch (selectedShape)
+            {
+                case 0:
+                    {
+                        HollowShape = false;
+                        TexturedShape = false;
+                        BoxShape = false;
+                        SolidShape = true;
+                    }
+                    break;
+
+                case 1:
+                    {
+                        SolidShape = false;
+                        TexturedShape = false;
+                        BoxShape = false;
+                        HollowShape = true;
+                    }
+                    break;
+
+                case 2:
+                    {
+                        SolidShape = false;
+                        HollowShape = false;
+                        BoxShape = false;
+                        TexturedShape = true;
+                    }
+                    break;
+
+                case 3:
+                    {
+                        SolidShape = false;
+                        HollowShape = false;
+                        TexturedShape = false;
+                        BoxShape = true;
+                    }
+                    break;
+            }
         }
 
         private List<System.Drawing.PointF> ShrinkPolygon(List<System.Drawing.PointF> ply, double offset)
@@ -2085,8 +2110,11 @@ namespace Barnacle.Dialogs
 
         private void UpdateDisplay()
         {
-            GenerateShape();
-            Redisplay();
+            if (loaded)
+            {
+                GenerateShape();
+                Viewer.Model = GetModel();
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -2098,22 +2126,9 @@ namespace Barnacle.Dialogs
             PathEditor.OpenEndedPath = false;
             SetShapeTab();
             loaded = true;
-            GenerateShape();
             UpdateCameraPos();
             warningText = "";
-            Redisplay();
-        }
-
-        private void BrowseTextures_Click(object sender, RoutedEventArgs e)
-        {
-            string folder = textureManager.GetTextureFolderName();
-            if (Directory.Exists(folder))
-            {
-                ProcessStartInfo startInfo = new ProcessStartInfo("explorer.exe");
-                startInfo.Arguments = folder;
-                startInfo.WindowStyle = ProcessWindowStyle.Normal;
-                Process.Start(startInfo);
-            }
+            UpdateDisplay();
         }
     }
 

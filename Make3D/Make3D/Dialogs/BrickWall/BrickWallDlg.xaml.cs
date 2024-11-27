@@ -313,11 +313,13 @@ namespace Barnacle.Dialogs
             bottomBevel = false;
             leftBevel = false;
             rightBevel = false;
-            BevelSelector.TopBevelled = topBevel;
-            BevelSelector.BottomBevelled = bottomBevel;
-            BevelSelector.RightBevelled = rightBevel;
+            UpdateBevelControl();
             loaded = true;
-            BevelSelector.LeftBevelled = leftBevel;
+        }
+
+        private void UpdateBevelControl()
+        {
+            BevelSelector.SetAll(leftBevel, topBevel, rightBevel, bottomBevel);
         }
 
         private void UpdateDisplay()
@@ -334,10 +336,7 @@ namespace Barnacle.Dialogs
             WarningText = "";
             LoadEditorParameters();
             Viewer.Clear();
-            BevelSelector.TopBevelled = topBevel;
-            BevelSelector.BottomBevelled = bottomBevel;
-            BevelSelector.RightBevelled = rightBevel;
-            BevelSelector.LeftBevelled = leftBevel;
+            UpdateBevelControl();
             loaded = true;
             UpdateDisplay();
         }

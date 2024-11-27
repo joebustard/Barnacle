@@ -5,16 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Barnacle.Dialogs"
         xmlns:ctrls="clr-namespace:Barnacle.UserControls"
-
+         xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
         xmlns:Views="clr-namespace:Barnacle.Dialogs.RibbedFuselage.Views"
         xmlns:Models="clr-namespace:Barnacle.Dialogs.RibbedFuselage.Models"
         mc:Ignorable="d"
-        Title="Ribbed Fuselage" Height="450" Width="800" Loaded="Dialog_Loaded">
+        Title="Ribbed Fuselage" Height="550" Width="1000" Loaded="Dialog_Loaded">
 
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
-            <RowDefinition Height="25" />
+            <RowDefinition Height="30" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
@@ -180,7 +180,7 @@
                     </Border>
                 </Grid>
             </TabItem>
-            <TabItem Header="Positioning">
+            <TabItem Header="Positioning" Tag="P" IsVisibleChanged="TabItem_IsVisibleChanged">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition MinWidth="150"
@@ -192,73 +192,9 @@
                         <RowDefinition Height="1.25*" />
                         <RowDefinition Height="2*" />
                     </Grid.RowDefinitions>
-                    <UniformGrid Columns="2"
-                                 Grid.Column="0"
-                                 Grid.Row="0">
-                        <!--
-                        <Button Click="Front_Click"
-                                Content="Front"
-                                x:Name="FrontButton" Margin="2,2,2,2" />
 
-                        <Button Click="Back_Click"
-                                Content="Back"
-                                x:Name="BackButton" Margin="2,2,2,2" />
+                    <u:ObjectView x:Name="Viewer" Grid.RowSpan="2" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" />
 
-                        <Button Click="Left_Click"
-                                Content="Left"
-                                x:Name="LeftButton" Margin="2,2,2,2" />
-
-                        <Button Click="Right_Click"
-                                Content="Right"
-                                x:Name="RightButton" Margin="2,2,2,2" />
-
-                        <Button Click="Top_Click"
-                                Content="Top"
-                                x:Name="TopButton" Margin="2,2,2,2" />
-
-                        <Button Click="Bottom_Click"
-                                Content="Bottom"
-                                x:Name="BottomButton" Margin="2,2,2,2" />
-                        -->
-                    </UniformGrid>
-
-                    <Border Background="AliceBlue"
-                            BorderBrush="Blue"
-                            BorderThickness="4"
-                            Grid.Column="1"
-                            Grid.Row="0"
-                            Grid.RowSpan="2"
-                            MouseMove="Viewport_MouseMove">
-                        <Viewport3D Name="viewport3D1"
-                                    MouseDown="Viewport_MouseDown"
-                                    MouseMove="Viewport_MouseMove"
-                                    MouseWheel="Viewport_MouseWheel">
-                            <Viewport3D.Camera>
-                                <PerspectiveCamera FieldOfView="{Binding FieldOfView}"
-                                                   LookDirection="{Binding LookDirection}"
-                                                   Position="{Binding CameraPosition}"
-                                                   x:Name="camMain">
-                                </PerspectiveCamera>
-                            </Viewport3D.Camera>
-                            <ModelVisual3D>
-                                <ModelVisual3D.Content>
-                                    <Model3DGroup>
-                                        <AmbientLight Color="#FF808080" />
-                                        <DirectionalLight Color="White"
-                                                          Direction="-1,-1,-1"
-                                                          x:Name="dirLightMain">
-                                        </DirectionalLight>
-                                    </Model3DGroup>
-                                </ModelVisual3D.Content>
-                            </ModelVisual3D>
-                            <ModelVisual3D x:Name="MyModel">
-                                <ModelVisual3D.Content>
-                                    <Model3DGroup x:Name="MyModelGroup">
-                                    </Model3DGroup>
-                                </ModelVisual3D.Content>
-                            </ModelVisual3D>
-                        </Viewport3D>
-                    </Border>
                     <Grid Grid.Column="0"
                           Grid.Row="1">
                         <Grid.RowDefinitions>
@@ -308,28 +244,13 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <Grid Grid.ColumnSpan="2"
+        <Grid Grid.ColumnSpan="3"
               Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="200" />
             </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <CheckBox Content="Floor"
-                          Grid.Column="0"
-                          IsChecked="{Binding ShowFloor}" />
-                <CheckBox Content="Axies"
-                          Grid.Column="1"
-                          IsChecked="{Binding ShowAxies}" />
-                <Button Click="Home_Click"
-                        Content="Home" Width="80" Margin="0,2,0,2"
-                        Grid.Column="2" />
-            </Grid>
+
             <Grid Grid.Column="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />

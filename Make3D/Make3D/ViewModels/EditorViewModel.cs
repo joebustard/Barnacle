@@ -52,6 +52,7 @@ namespace Barnacle.ViewModels
 {
     internal class EditorViewModel : BaseViewModel, INotifyPropertyChanged
     {
+        private const string cameraRecordFile = "camerapos.txt";
         private static CancellationTokenSource csgCancelation;
 
         // some of the primitives need to be rotated when they are first created so they match the
@@ -217,8 +218,14 @@ namespace Barnacle.ViewModels
         /// </summary>
         public Point3D CameraPos
         {
-            get { return camera.CameraPos; }
-            set { NotifyPropertyChanged(); }
+            get
+            {
+                return camera.CameraPos;
+            }
+            set
+            {
+                NotifyPropertyChanged();
+            }
         }
 
         /// <summary>
@@ -264,35 +271,65 @@ namespace Barnacle.ViewModels
         /// <summary>
         /// Canvas to draw things like text labels on
         /// </summary>
-        public Canvas Overlay { get; internal set; }
+        public Canvas Overlay
+        {
+            get; internal set;
+        }
 
         public bool ShowAxies
         {
-            get { return showAxies; }
-            set { showAxies = value; }
+            get
+            {
+                return showAxies;
+            }
+            set
+            {
+                showAxies = value;
+            }
         }
 
         public bool ShowBuildPlates
         {
-            get { return showBuildPlate; }
-            set { showBuildPlate = value; }
+            get
+            {
+                return showBuildPlate;
+            }
+            set
+            {
+                showBuildPlate = value;
+            }
         }
 
         public bool ShowFloor
         {
-            get { return showFloor; }
-            set { showFloor = value; }
+            get
+            {
+                return showFloor;
+            }
+            set
+            {
+                showFloor = value;
+            }
         }
 
         public bool ShowFloorMarker
         {
-            get { return showFloorMarker; }
-            set { showFloorMarker = value; }
+            get
+            {
+                return showFloorMarker;
+            }
+            set
+            {
+                showFloorMarker = value;
+            }
         }
 
         public double ViewPortHeight
         {
-            get { return viewPortHeight; }
+            get
+            {
+                return viewPortHeight;
+            }
             set
             {
                 if (value != viewPortHeight)
@@ -305,7 +342,10 @@ namespace Barnacle.ViewModels
 
         public double ViewPortWidth
         {
-            get { return viewPortWidth; }
+            get
+            {
+                return viewPortWidth;
+            }
             set
             {
                 if (value != viewPortWidth)
@@ -2621,6 +2661,7 @@ namespace Barnacle.ViewModels
         private void LoadCamera()
         {
             string dataPath = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Barnacle");
+            dataPath += "\\" + cameraRecordFile;
             camera.Read(dataPath);
             LookToCenter();
             ReportCameraPosition();
@@ -4770,6 +4811,7 @@ namespace Barnacle.ViewModels
         private void SaveCamera()
         {
             string dataPath = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Barnacle");
+            dataPath += "\\" + cameraRecordFile;
             camera.Save(dataPath);
         }
 

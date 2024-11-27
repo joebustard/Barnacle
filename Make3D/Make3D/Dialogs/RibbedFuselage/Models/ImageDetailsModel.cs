@@ -30,15 +30,14 @@ namespace Barnacle.RibbedFuselage
 {
     public class ImageDetailsModel : INotifyPropertyChanged
     {
-        public bool Dirty { get; set; }
+        private string displayFileName;
+        private string flexiPathText;
 
-        public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
+        private string imageFilePath;
+
+        private string name;
+
+        private Visibility noPathVisibility;
 
         public ImageDetailsModel()
         {
@@ -48,50 +47,40 @@ namespace Barnacle.RibbedFuselage
             DisplayFileName = "None";
         }
 
-        private string imageFilePath;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        /// <summary>
-        /// The path to the image
-        /// </summary>
-        public String ImageFilePath
+        public bool Dirty
         {
-            get { return imageFilePath; }
+            get; set;
+        }
+
+        public String DisplayFileName
+        {
+            get
+            {
+                return displayFileName;
+            }
 
             set
             {
-                if (value != imageFilePath)
+                if (value != displayFileName)
                 {
-                    imageFilePath = value;
+                    displayFileName = value;
                     NotifyPropertyChanged();
                     Dirty = true;
                 }
             }
         }
 
-        private Visibility noPathVisibility;
-
-        public Visibility NoPathVisibility
-        {
-            get { return noPathVisibility; }
-
-            set
-            {
-                if (noPathVisibility != value)
-                {
-                    noPathVisibility = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private string flexiPathText;
-
         /// <summary>
         /// The text that defines the flexipath imposed over the image
         /// </summary>
         public String FlexiPathText
         {
-            get { return flexiPathText; }
+            get
+            {
+                return flexiPathText;
+            }
 
             set
             {
@@ -112,14 +101,36 @@ namespace Barnacle.RibbedFuselage
             }
         }
 
-        private string name;
+        /// <summary>
+        /// The path to the image
+        /// </summary>
+        public String ImageFilePath
+        {
+            get
+            {
+                return imageFilePath;
+            }
+
+            set
+            {
+                if (value != imageFilePath)
+                {
+                    imageFilePath = value;
+                    NotifyPropertyChanged();
+                    Dirty = true;
+                }
+            }
+        }
 
         /// <summary>
         /// The name to be displayed.
         /// </summary>
         public String Name
         {
-            get { return name; }
+            get
+            {
+                return name;
+            }
 
             set
             {
@@ -132,45 +143,51 @@ namespace Barnacle.RibbedFuselage
             }
         }
 
-        private string displayFileName;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public String DisplayFileName
+        public Visibility NoPathVisibility
         {
             get
             {
-                return displayFileName;
+                return noPathVisibility;
             }
 
             set
             {
-                if (value != displayFileName)
+                if (noPathVisibility != value)
                 {
-                    displayFileName = value;
+                    noPathVisibility = value;
                     NotifyPropertyChanged();
-                    Dirty = true;
                 }
             }
         }
 
         public virtual void Load(XmlElement ele)
         {
-            if (ele.HasAttribute("Name"))
+            if (ele != null)
             {
-                Name = ele.GetAttribute("Name");
+                if (ele.HasAttribute("Name"))
+                {
+                    Name = ele.GetAttribute("Name");
+                }
+                if (ele.HasAttribute("ImageFilePath"))
+                {
+                    ImageFilePath = ele.GetAttribute("ImageFilePath");
+                }
+                if (!String.IsNullOrEmpty(ImageFilePath))
+                {
+                    DisplayFileName = System.IO.Path.GetFileName(ImageFilePath);
+                }
+                if (ele.HasAttribute("FlexiPathText"))
+                {
+                    FlexiPathText = ele.GetAttribute("FlexiPathText");
+                }
             }
-            if (ele.HasAttribute("ImageFilePath"))
+        }
+
+        public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            if (PropertyChanged != null)
             {
-                ImageFilePath = ele.GetAttribute("ImageFilePath");
-            }
-            if (!String.IsNullOrEmpty(ImageFilePath))
-            {
-                DisplayFileName = System.IO.Path.GetFileName(ImageFilePath);
-            }
-            if (ele.HasAttribute("FlexiPathText"))
-            {
-                FlexiPathText = ele.GetAttribute("FlexiPathText");
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 
