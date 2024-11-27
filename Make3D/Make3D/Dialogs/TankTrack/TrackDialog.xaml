@@ -8,7 +8,7 @@
                           xmlns:local="clr-namespace:Barnacle.Dialogs"
                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                          Width="800"
+                          Width="1000"
                           Height="800">
     <Grid>
         <Grid.RowDefinitions>
@@ -20,7 +20,7 @@
             <ColumnDefinition Width="300" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-    <!--
+        <!--
             <StackPanel Orientation="Horizontal" Grid.Row="7"  Margin="10,0,0,0">
                 <Label Width="80" VerticalAlignment="Center">Spud Size</Label>
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding SpudSize}" MinWidth="50"></TextBox>
@@ -197,7 +197,7 @@
                         Orientation="Horizontal">
                 <Label VerticalAlignment="Center"
                        Width="80">
-                Type
+                    Type
                 </Label>
                 <ComboBox HorizontalAlignment="Stretch"
                           ItemsSource="{Binding TrackTypes}"
@@ -211,7 +211,7 @@
                         Orientation="Horizontal">
                 <Label VerticalAlignment="Center"
                        Width="80">
-                No. Of Links
+                    No. Of Links
                 </Label>
                 <TextBox HorizontalAlignment="Stretch"
                          MinWidth="50"
@@ -221,7 +221,7 @@
                 <CheckBox IsChecked="{Binding ShowLinkMarkers}"
                           Margin="4,0"
                           VerticalAlignment="Center">
-                Link Markers
+                    Link Markers
                 </CheckBox>
             </StackPanel>
             <StackPanel Grid.Row="5"
@@ -229,7 +229,7 @@
                         Orientation="Horizontal">
                 <Label VerticalAlignment="Center"
                        Width="80">
-                Width
+                    Width
                 </Label>
                 <TextBox HorizontalAlignment="Stretch"
                          MinWidth="50"
@@ -239,7 +239,7 @@
                 <CheckBox IsChecked="{Binding ShowOutline}"
                           Margin="4,0"
                           VerticalAlignment="Center">
-                Outline
+                    Outline
                 </CheckBox>
             </StackPanel>
             <StackPanel Grid.Row="6"
@@ -247,7 +247,7 @@
                         Orientation="Horizontal">
                 <Label VerticalAlignment="Center"
                        Width="80">
-                Thickness
+                    Thickness
                 </Label>
                 <TextBox HorizontalAlignment="Stretch"
                          MinWidth="50"

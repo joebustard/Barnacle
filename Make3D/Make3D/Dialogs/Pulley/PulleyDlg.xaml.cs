@@ -30,6 +30,7 @@ namespace Barnacle.Dialogs
         private double extraRimRadius;
         private double extraRimThickness;
         private double grooveDepth;
+        private bool loaded;
         private double mainRadius;
         private double mainThickness;
         private string warningText;
@@ -39,7 +40,6 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "Pulley";
             DataContext = this;
-            ModelGroup = MyModelGroup;
         }
 
         public double AxleBoreRadius
@@ -168,42 +168,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
         public string WarningText
         {
             get
@@ -271,6 +235,12 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
+            UpdateDisplay();
+        }
+
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
@@ -283,27 +253,39 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("AxleBoreRadius", AxleBoreRadius.ToString());
         }
 
-        private void UpdateDisplay()
+        private void SetDefaults()
         {
-            GenerateShape();
-            Redisplay();
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
+            loaded = false;
             MainRadius = 10;
             MainThickness = 4;
             ExtraRimRadius = 2;
             ExtraRimThickness = 1;
             AxleBoreRadius = 2;
             GrooveDepth = 2;
+            loaded = true;
+        }
 
-            LoadEditorParameters();
-            GenerateShape();
+        private void UpdateDisplay()
+        {
+            if (loaded)
+            {
+                GenerateShape();
+                Viewer.Model = GetModel();
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            loaded = false;
+
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             warningText = "";
-            Redisplay();
+            SetDefaults();
+            loaded = false;
+            LoadEditorParameters();
+            loaded = true;
+            UpdateDisplay();
         }
     }
 }

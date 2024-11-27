@@ -9,12 +9,12 @@
                           xmlns:local="clr-namespace:Barnacle.Dialogs"
                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                          Width="800"
+                          Width="1000"
                           Height="450">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
-            <RowDefinition Height="25" />
+            <RowDefinition Height="30" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
@@ -260,10 +260,10 @@
                 </Grid.ColumnDefinitions>
                 <CheckBox Content="Floor"
                           Grid.Column="0"
-                          IsChecked="{Binding ShowFloor}" VerticalAlignment="Center"/>
+                          IsChecked="{Binding ShowFloor}" VerticalAlignment="Center" />
                 <CheckBox Content="Axies"
                           Grid.Column="1"
-                          IsChecked="{Binding ShowAxies}" VerticalAlignment="Center"/>
+                          IsChecked="{Binding ShowAxies}" VerticalAlignment="Center" />
                 <Button Click="Home_Click"
                         Content="Home" Width="80" Margin="0,2,0,2"
                         Grid.Column="2" />

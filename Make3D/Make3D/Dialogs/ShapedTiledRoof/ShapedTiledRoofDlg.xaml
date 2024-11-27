@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Barnacle.Dialogs"
                            xmlns:ctrls="clr-namespace:Barnacle.UserControls"
         mc:Ignorable="d"
-        Title="Shaped Tiled Roof" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
+        Title="Shaped Tiled Roof" Height="450" Width="1000" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -25,7 +25,7 @@
             <ctrls:FlexiPathEditorControl x:Name="PathEditor" />
         </Border>
 
-         <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
+        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
         <Border Grid.Row ="0" Grid.Column="3" Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.RowDefinitions>

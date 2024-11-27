@@ -6,7 +6,7 @@
         xmlns:ctrls="clr-namespace:Barnacle.UserControls"
         xmlns:local="clr-namespace:Barnacle.Dialogs"
         mc:Ignorable="d"
-        Title="" Height="800" Width="800" Loaded="Window_Loaded"
+        Title="" Height="800" Width="1000" Loaded="Window_Loaded"
         SizeChanged="BaseModellerDialog_SizeChanged"
 WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
     <Grid VerticalAlignment="Stretch">

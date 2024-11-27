@@ -1,18 +1,19 @@
-<UserControl Background="{StaticResource WindowBackBrush }"
-             d:DesignHeight="450"
-             d:DesignWidth="400"
-             Loaded="UserControl_Loaded"
-             mc:Ignorable="d"
-             SizeChanged="PointCanvas_SizeChanged"
-             x:Class="Barnacle.Dialogs.ShapeBase"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:Barnacle.Dialogs"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <!--
+<UserControl
+    x:Class="Barnacle.Dialogs.ShapeBase"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="400"
+    Background="{StaticResource WindowBackBrush}"
+    Loaded="UserControl_Loaded"
+    SizeChanged="PointCanvas_SizeChanged"
+    mc:Ignorable="d">
+    <!--
             <TextBox x:Name="NumberOfPointsBox" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" TextChanged="NumberOfPointsBox_TextChanged" />
-            -->
+    -->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
@@ -23,15 +24,14 @@
             <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
-        <Label FontSize="14"
-               Grid.Column="0"
-               Grid.ColumnSpan="3"
-               Grid.Row="0"
-               Style="{StaticResource InverseLabel}"
-               x:Name="HeaderLabel">
-        </Label>
-        <Grid Grid.Column="1"
-              Grid.Row="1">
+        <Label
+            x:Name="HeaderLabel"
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            FontSize="14"
+            Style="{StaticResource InverseLabel}" />
+        <Grid Grid.Row="1" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
@@ -44,22 +44,24 @@
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
-            <Label Grid.Column="0"
-                   Grid.Row="0"
-                   VerticalAlignment="Center">
-             No. Of Points
+            <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                VerticalAlignment="Center">
+                No. Of Points
             </Label>
-            <local:NUDBox Grid.Column="1"
-                          Grid.Row="0"
-                          VerticalAlignment="Center"
-                          x:Name="NumberOfPointsBox" />
-            <Label Grid.Column="0"
-                   Grid.Row="1"
-                   VerticalAlignment="Center">
-                    Rotation
+            <local:NUDBox
+                x:Name="NumberOfPointsBox"
+                Grid.Row="0"
+                Grid.Column="1"
+                VerticalAlignment="Center" />
+            <Label
+                Grid.Row="1"
+                Grid.Column="0"
+                VerticalAlignment="Center">
+                Rotation
             </Label>
-            <Grid Grid.Column="1"
-                  Grid.Row="1">
+            <Grid Grid.Row="1" Grid.Column="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
@@ -70,63 +72,75 @@
                     <RowDefinition Height="4*" />
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
-                <Button Click="RotateMinus_Click"
-                        Content="-"
-                        Grid.Column="0"
-                        Grid.Row="1" ToolTip="Rotate -1 degree" />
+                <Button
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Click="RotateMinus_Click"
+                    Content="-"
+                    ToolTip="Rotate -1 degree" />
 
-                <Button Click="RotateZero_Click"
-                        Content="."
-                        Grid.Column="1"
-                        Grid.Row="1" FontSize="20" ToolTip="Zero the rotation" />
+                <Button
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Click="RotateZero_Click"
+                    Content="."
+                    FontSize="20"
+                    ToolTip="Zero the rotation" />
 
-                <Button Click="RotatePlus_Click_1"
-                        Content="+"
-                        Grid.Column="2"
-                        Grid.Row="1" ToolTip="Rotate +1 degree" />
+                <Button
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Click="RotatePlus_Click_1"
+                    Content="+"
+                    ToolTip="Rotate +1 degree" />
             </Grid>
-            <Label Grid.Column="0"
-                   Grid.Row="2"
-                   VerticalAlignment="Center">
+            <Label
+                Grid.Row="2"
+                Grid.Column="0"
+                VerticalAlignment="Center">
                 Snap Points
             </Label>
-            <CheckBox Checked="CheckBox_Checked"
-                      Grid.Column="1"
-                      Grid.Row="2"
-                      IsChecked="true"
-                      Unchecked="CheckBox_Unchecked"
-                      VerticalAlignment="Center" />
-            <Label Grid.Column="0"
-                   Grid.Row="3"
-                   VerticalAlignment="Center">
+            <CheckBox
+                Grid.Row="2"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Checked="CheckBox_Checked"
+                IsChecked="true"
+                Unchecked="CheckBox_Unchecked" />
+            <Label
+                Grid.Row="3"
+                Grid.Column="0"
+                VerticalAlignment="Center">
                 Link Points
             </Label>
-            <CheckBox Checked="LinkBox_Checked"
-                      Grid.Column="1"
-                      Grid.Row="3"
-                      IsChecked="false"
-                      Unchecked="LinkBox_Unchecked"
-                      VerticalAlignment="Center" />
-            <Label Grid.Column="0"
-                   Grid.Row="4">
-
-Distance            </Label>
-            <Label Grid.Column="1"
-                   Grid.Row="4"
-                   x:Name="DistanceLabel" />
+            <CheckBox
+                Grid.Row="3"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Checked="LinkBox_Checked"
+                IsChecked="false"
+                Unchecked="LinkBox_Unchecked" />
+            <Label Grid.Row="4" Grid.Column="0">
+                Distance
+            </Label>
+            <Label
+                x:Name="DistanceLabel"
+                Grid.Row="4"
+                Grid.Column="1" />
         </Grid>
-        <Canvas Background="AntiqueWhite"
-                Grid.Column="2"
-                Grid.Row="1"
-                HorizontalAlignment="Stretch"
-                MaxHeight="600"
-                MaxWidth="600"
-                MouseDown="PointCanvas_MouseDown"
-                MouseLeave="PointCanvas_MouseLeave"
-                MouseMove="PointCanvas_MouseMove"
-                MouseUp="PointCanvas_MouseUp"
-                SizeChanged="PointCanvas_SizeChanged"
-                VerticalAlignment="Stretch"
-                x:Name="PointCanvas" />
+        <Canvas
+            x:Name="PointCanvas"
+            Grid.Row="1"
+            Grid.Column="2"
+            MaxWidth="600"
+            MaxHeight="600"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="AntiqueWhite"
+            MouseDown="PointCanvas_MouseDown"
+            MouseLeave="PointCanvas_MouseLeave"
+            MouseMove="PointCanvas_MouseMove"
+            MouseUp="PointCanvas_MouseUp"
+            SizeChanged="PointCanvas_SizeChanged" />
     </Grid>
 </UserControl>
