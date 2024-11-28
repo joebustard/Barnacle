@@ -28,139 +28,42 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class RoundGrilleDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private string warningText;
-        private bool loaded;
-
-        private const double mingrilleRadius = 1;
-        private const double maxgrilleRadius = 200;
-        private double grilleRadius;
-
-        public double GrilleRadius
-        {
-            get
-            {
-                return grilleRadius;
-            }
-
-            set
-            {
-                if (grilleRadius != value)
-                {
-                    if (value >= mingrilleRadius && value <= maxgrilleRadius)
-                    {
-                        grilleRadius = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public String grilleRadiusToolTip
-        {
-            get
-            {
-                return $"Grille Length must be in the range {mingrilleRadius} to {maxgrilleRadius}";
-            }
-        }
-
-        /*
-        private const double mingrillHeight = 5;
-        private const double maxgrillHeight = 200;
-        private double grillHeight;
-
-        public double GrillHeight
-        {
-            get
-            {
-                return grillHeight;
-            }
-            set
-            {
-                if (grillHeight != value)
-                {
-                    if (value >= mingrillHeight && value <= maxgrillHeight)
-                    {
-                        grillHeight = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public String GrilleHeightToolTip
-        {
-            get
-            {
-                return $"Grille Height must be in the range {mingrillHeight} to {maxgrillHeight}";
-            }
-        }
-        */
-        private const double mingrillWidth = 1;
-        private const double maxgrillWidth = 200;
-        private double grillWidth;
-
-        public double GrillWidth
-        {
-            get
-            {
-                return grillWidth;
-            }
-
-            set
-            {
-                if (grillWidth != value)
-                {
-                    if (value >= mingrillWidth && value <= maxgrillWidth)
-                    {
-                        grillWidth = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public String GrillWidthToolTip
-        {
-            get
-            {
-                return $"Grille Width must be in the range {mingrillWidth} to {maxgrillWidth}";
-            }
-        }
-
-        private bool makeEdge;
-
-        public bool MakeEdge
-        {
-            get
-            {
-                return makeEdge;
-            }
-
-            set
-            {
-                if (makeEdge != value)
-                {
-                    makeEdge = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
-            }
-        }
-
-        public String MakeEdgeToolTip
-        {
-            get
-            {
-                return $"If selected the outer frame is created.";
-            }
-        }
-
-        private const double minedgeThickness = 1;
+        private const byte horizontalWontFit = 0x02;
         private const double maxedgeThickness = 200;
+        private const double maxgrilleRadius = 200;
+        private const double maxgrillWidth = 200;
+        private const double maxhorizontalBars = 100;
+        private const double maxhorizontalBarThickness = 100;
+        private const double maxverticalBars = 100;
+        private const double maxverticalBarThickness = 100;
+        private const double minedgeThickness = 1;
+        private const double mingrilleRadius = 1;
+        private const double mingrillWidth = 1;
+        private const double minhorizontalBars = 0;
+        private const double minhorizontalBarThickness = 1;
+        private const double minverticalBars = 0;
+        private const double minverticalBarThickness = 1;
+        private const byte neitherWillFit = 0x03;
+        private const byte verticalWontFit = 0x01;
         private double edgeThickness;
+        private double grilleRadius;
+        private double grillWidth;
+        private double horizontalBars;
+        private double horizontalBarThickness;
+        private bool loaded;
+        private bool makeEdge;
+        private double verticalBars;
+        private double verticalBarThickness;
+        private byte warningMask;
+        private string warningText;
+
+        public RoundGrilleDlg()
+        {
+            InitializeComponent();
+            ToolName = "RoundGrille";
+            DataContext = this;
+            loaded = false;
+        }
 
         public double EdgeThickness
         {
@@ -191,127 +94,63 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private const double minverticalBars = 0;
-        private const double maxverticalBars = 100;
-        private double verticalBars;
-
-        public double VerticalBars
+        public double GrilleRadius
         {
             get
             {
-                return verticalBars;
+                return grilleRadius;
             }
 
             set
             {
-                if (verticalBars != value)
+                if (grilleRadius != value)
                 {
-                    if (value >= minverticalBars && value <= maxverticalBars)
+                    if (value >= mingrilleRadius && value <= maxgrilleRadius)
                     {
-                        if (verticalBarThickness * value < SpaceAvailable() - value)
-                        {
-                            verticalBars = value;
-                            NotifyPropertyChanged();
-                            UpdateDisplay();
-                            warningMask = (byte)(warningMask & 0xFE);
-                        }
-                        else
-                        {
-                            warningMask = (byte)(warningMask | verticalWontFit);
-                        }
-                        SetWarning();
+                        grilleRadius = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
                     }
                 }
             }
         }
 
-        public String VerticalBarsToolTip
+        public String grilleRadiusToolTip
         {
             get
             {
-                return $"Vertical Bars must be in the range {minverticalBars} to {maxverticalBars}";
+                return $"Grille Length must be in the range {mingrilleRadius} to {maxgrilleRadius}";
             }
         }
 
-        private const double minverticalBarThickness = 1;
-        private const double maxverticalBarThickness = 100;
-        private double verticalBarThickness;
-        private byte warningMask;
-        private const byte verticalWontFit = 0x01;
-        private const byte horizontalWontFit = 0x02;
-        private const byte neitherWillFit = 0x03;
-
-        public double VerticalBarThickness
+        public double GrillWidth
         {
             get
             {
-                return verticalBarThickness;
+                return grillWidth;
             }
 
             set
             {
-                if (verticalBarThickness != value)
+                if (grillWidth != value)
                 {
-                    if (value >= minverticalBarThickness && value <= maxverticalBarThickness)
+                    if (value >= mingrillWidth && value <= maxgrillWidth)
                     {
-                        if (verticalBars * value < SpaceAvailable() - value)
-                        {
-                            verticalBarThickness = value;
-                            NotifyPropertyChanged();
-                            UpdateDisplay();
-                            warningMask = (byte)(warningMask & 0xFE);
-                        }
-                        else
-                        {
-                            warningMask = (byte)(warningMask | verticalWontFit);
-                        }
-                        SetWarning();
+                        grillWidth = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
                     }
                 }
             }
         }
 
-        private void SetWarning()
-        {
-            switch (warningMask)
-            {
-                case verticalWontFit:
-                    {
-                        WarningText = "The vertical bars won't fit in the frame";
-                    }
-                    break;
-
-                case horizontalWontFit:
-                    {
-                        WarningText = "The horizontal bars won't fit in the frame";
-                    }
-                    break;
-
-                case neitherWillFit:
-                    {
-                        WarningText = "Neither the horizontal or vertical bars will fit in the frame";
-                    }
-                    break;
-
-                default:
-                    {
-                        WarningText = "";
-                    }
-                    break;
-            }
-        }
-
-        public String VerticalBarThicknessToolTip
+        public String GrillWidthToolTip
         {
             get
             {
-                return $"Vertical Bar Thickness must be in the range {minverticalBarThickness} to {maxverticalBarThickness}";
+                return $"Grille Width must be in the range {mingrillWidth} to {maxgrillWidth}";
             }
         }
-
-        private const double minhorizontalBars = 0;
-        private const double maxhorizontalBars = 100;
-        private double horizontalBars;
 
         public double HorizontalBars
         {
@@ -351,10 +190,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private const double minhorizontalBarThickness = 1;
-        private const double maxhorizontalBarThickness = 100;
-        private double horizontalBarThickness;
-
         public double HorizontalBarThickness
         {
             get
@@ -393,48 +228,105 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public RoundGrilleDlg()
-        {
-            InitializeComponent();
-            ToolName = "RoundGrille";
-            DataContext = this;
-            ModelGroup = MyModelGroup;
-            loaded = false;
-        }
-
-        public override bool ShowAxies
+        public bool MakeEdge
         {
             get
             {
-                return showAxies;
+                return makeEdge;
             }
 
             set
             {
-                if (showAxies != value)
+                if (makeEdge != value)
                 {
-                    showAxies = value;
+                    makeEdge = value;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    UpdateDisplay();
                 }
             }
         }
 
-        public override bool ShowFloor
+        public String MakeEdgeToolTip
         {
             get
             {
-                return showFloor;
+                return $"If selected the outer frame is created.";
+            }
+        }
+
+        public double VerticalBars
+        {
+            get
+            {
+                return verticalBars;
             }
 
             set
             {
-                if (showFloor != value)
+                if (verticalBars != value)
                 {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
+                    if (value >= minverticalBars && value <= maxverticalBars)
+                    {
+                        if (verticalBarThickness * value < SpaceAvailable() - value)
+                        {
+                            verticalBars = value;
+                            NotifyPropertyChanged();
+                            UpdateDisplay();
+                            warningMask = (byte)(warningMask & 0xFE);
+                        }
+                        else
+                        {
+                            warningMask = (byte)(warningMask | verticalWontFit);
+                        }
+                        SetWarning();
+                    }
                 }
+            }
+        }
+
+        public String VerticalBarsToolTip
+        {
+            get
+            {
+                return $"Vertical Bars must be in the range {minverticalBars} to {maxverticalBars}";
+            }
+        }
+
+        public double VerticalBarThickness
+        {
+            get
+            {
+                return verticalBarThickness;
+            }
+
+            set
+            {
+                if (verticalBarThickness != value)
+                {
+                    if (value >= minverticalBarThickness && value <= maxverticalBarThickness)
+                    {
+                        if (verticalBars * value < SpaceAvailable() - value)
+                        {
+                            verticalBarThickness = value;
+                            NotifyPropertyChanged();
+                            UpdateDisplay();
+                            warningMask = (byte)(warningMask & 0xFE);
+                        }
+                        else
+                        {
+                            warningMask = (byte)(warningMask | verticalWontFit);
+                        }
+                        SetWarning();
+                    }
+                }
+            }
+        }
+
+        public String VerticalBarThicknessToolTip
+        {
+            get
+            {
+                return $"Vertical Bar Thickness must be in the range {minverticalBarThickness} to {maxverticalBarThickness}";
             }
         }
 
@@ -481,6 +373,19 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void LoadEditorParameters()
+        {
+            // load back the tool specific parameters
+            GrilleRadius = EditorParameters.GetDouble("GrilleRadius", 30);
+            GrillWidth = EditorParameters.GetDouble("GrillWidth", 5);
+            MakeEdge = EditorParameters.GetBoolean("MakeEdge", true);
+            EdgeThickness = EditorParameters.GetDouble("EdgeThickness", 1);
+            VerticalBars = EditorParameters.GetDouble("VerticalBars", 3);
+            VerticalBarThickness = EditorParameters.GetDouble("VerticalBarThickness", 2);
+            HorizontalBars = EditorParameters.GetDouble("HorizontalBars", 3);
+            HorizontalBarThickness = EditorParameters.GetDouble("HorizontalBarThickness", 2);
+        }
+
         private bool ParametersValid()
         {
             bool result = true;
@@ -497,6 +402,69 @@ namespace Barnacle.Dialogs
             return result;
         }
 
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
+            UpdateDisplay();
+        }
+
+        private void SaveEditorParmeters()
+        {
+            // save the parameters for the tool
+            EditorParameters.Set("GrilleRadius", GrilleRadius.ToString());
+            EditorParameters.Set("GrillWidth", GrillWidth.ToString());
+            EditorParameters.Set("MakeEdge", MakeEdge.ToString());
+            EditorParameters.Set("EdgeThickness", EdgeThickness.ToString());
+            EditorParameters.Set("VerticalBars", VerticalBars.ToString());
+            EditorParameters.Set("VerticalBarThickness", VerticalBarThickness.ToString());
+            EditorParameters.Set("HorizontalBars", HorizontalBars.ToString());
+            EditorParameters.Set("HorizontalBarThickness", HorizontalBarThickness.ToString());
+        }
+
+        private void SetDefaults()
+        {
+            loaded = false;
+            grilleRadius = 30;
+            GrillWidth = 5;
+            MakeEdge = true;
+            EdgeThickness = 1;
+            VerticalBars = 3;
+            VerticalBarThickness = 2;
+            HorizontalBars = 3;
+            HorizontalBarThickness = 2;
+            loaded = true;
+        }
+
+        private void SetWarning()
+        {
+            switch (warningMask)
+            {
+                case verticalWontFit:
+                    {
+                        WarningText = "The vertical bars won't fit in the frame";
+                    }
+                    break;
+
+                case horizontalWontFit:
+                    {
+                        WarningText = "The horizontal bars won't fit in the frame";
+                    }
+                    break;
+
+                case neitherWillFit:
+                    {
+                        WarningText = "Neither the horizontal or vertical bars will fit in the frame";
+                    }
+                    break;
+
+                default:
+                    {
+                        WarningText = "";
+                    }
+                    break;
+            }
+        }
+
         private double SpaceAvailable()
         {
             double spaceAvailable = 0;
@@ -511,49 +479,12 @@ namespace Barnacle.Dialogs
             return spaceAvailable;
         }
 
-        private void LoadEditorParameters()
-        {
-            // load back the tool specific parameters
-
-            GrilleRadius = EditorParameters.GetDouble("GrilleRadius", 30);
-
-            // GrillHeight = EditorParameters.GetDouble("GrillHeight", 40);
-            GrillWidth = EditorParameters.GetDouble("GrillWidth", 5);
-
-            MakeEdge = EditorParameters.GetBoolean("MakeEdge", true);
-
-            EdgeThickness = EditorParameters.GetDouble("EdgeThickness", 1);
-
-            VerticalBars = EditorParameters.GetDouble("VerticalBars", 3);
-
-            VerticalBarThickness = EditorParameters.GetDouble("VerticalBarThickness", 2);
-
-            HorizontalBars = EditorParameters.GetDouble("HorizontalBars", 3);
-
-            HorizontalBarThickness = EditorParameters.GetDouble("HorizontalBarThickness", 2);
-        }
-
-        private void SaveEditorParmeters()
-        {
-            // save the parameters for the tool
-
-            EditorParameters.Set("GrilleRadius", GrilleRadius.ToString());
-            // EditorParameters.Set("GrillHeight", GrillHeight.ToString());
-            EditorParameters.Set("GrillWidth", GrillWidth.ToString());
-            EditorParameters.Set("MakeEdge", MakeEdge.ToString());
-            EditorParameters.Set("EdgeThickness", EdgeThickness.ToString());
-            EditorParameters.Set("VerticalBars", VerticalBars.ToString());
-            EditorParameters.Set("VerticalBarThickness", VerticalBarThickness.ToString());
-            EditorParameters.Set("HorizontalBars", HorizontalBars.ToString());
-            EditorParameters.Set("HorizontalBarThickness", HorizontalBarThickness.ToString());
-        }
-
         private void UpdateDisplay()
         {
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -563,31 +494,8 @@ namespace Barnacle.Dialogs
             LoadEditorParameters();
 
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
-
-            UpdateDisplay();
-        }
-
-        private void SetDefaults()
-        {
-            loaded = false;
-            grilleRadius = 30;
-            // GrillHeight = 40;
-            GrillWidth = 5;
-            MakeEdge = true;
-            EdgeThickness = 1;
-            VerticalBars = 3;
-            VerticalBarThickness = 2;
-            HorizontalBars = 3;
-            HorizontalBarThickness = 2;
-
-            loaded = true;
-        }
-
-        private void ResetDefaults(object sender, RoutedEventArgs e)
-        {
-            SetDefaults();
             UpdateDisplay();
         }
     }
