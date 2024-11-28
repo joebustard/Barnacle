@@ -32,6 +32,7 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class ShapedWingDlg : BaseModellerDialog, INotifyPropertyChanged
     {
+        private readonly string defaultWingShape = "M 0,0 RL 10.000,10.000 RL 100.000,10.000 RQ 10.000,10.000 0.000,20.000 RL -100.000,20.000 RL -10.000,20.000";
         private XmlDocument airFoilDoc;
         private List<String> airfoilGroups;
         private string airFoilPath;
@@ -43,17 +44,15 @@ namespace Barnacle.Dialogs
         private List<String> rootairfoilNames;
         private string rootGroup;
         private string selectedRootAirfoil;
-        private string warningText;
-        private List<Point> selectedWingProfilePoints;
         private double selectedWingProfileLength;
-        private readonly string defaultWingShape = "M 0,0 RL 10.000,10.000 RL 100.000,10.000 RQ 10.000,10.000 0.000,20.000 RL -100.000,20.000 RL -10.000,20.000";
+        private List<Point> selectedWingProfilePoints;
+        private string warningText;
 
         public ShapedWingDlg()
         {
             InitializeComponent();
             ToolName = "ShapedWing";
             DataContext = this;
-            ModelGroup = MyModelGroup;
             loaded = false;
             numDivisions = 80;
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
@@ -114,7 +113,10 @@ namespace Barnacle.Dialogs
 
         public int NumDivisions
         {
-            get { return numDivisions; }
+            get
+            {
+                return numDivisions;
+            }
 
             set
             {
@@ -194,42 +196,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
         public string WarningText
         {
             get
@@ -252,6 +218,11 @@ namespace Barnacle.Dialogs
             SaveEditorParmeters();
             DialogResult = true;
             Close();
+        }
+
+        private void BaseModellerDialog_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ProfileDisplayer.Refresh();
         }
 
         private void GenerateWing()
@@ -371,32 +342,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void TriangulatePerimiter(List<System.Drawing.PointF> points, double xo, bool invert)
-        {
-            TriangulationPolygon ply = new TriangulationPolygon();
-
-            ply.Points = points.ToArray();
-            List<Triangle> tris = ply.Triangulate();
-            foreach (Triangle t in tris)
-            {
-                int c0 = AddVertice(Vertices, xo, t.Points[0].X, t.Points[0].Y);
-                int c1 = AddVertice(Vertices, xo, t.Points[1].X, t.Points[1].Y);
-                int c2 = AddVertice(Vertices, xo, t.Points[2].X, t.Points[2].Y);
-                if (invert)
-                {
-                    Faces.Add(c0);
-                    Faces.Add(c2);
-                    Faces.Add(c1);
-                }
-                else
-                {
-                    Faces.Add(c0);
-                    Faces.Add(c1);
-                    Faces.Add(c2);
-                }
-            }
-        }
-
         private Point GetProfileAt(List<Point> profile, double length, double t)
         {
             Point res = new Point(0, 0);
@@ -492,6 +437,21 @@ namespace Barnacle.Dialogs
             return res;
         }
 
+        private void LoadAirFoils()
+        {
+            if (File.Exists(airFoilPath))
+            {
+                airFoilDoc.Load(airFoilPath);
+                XmlNode root = airFoilDoc.SelectSingleNode("Airfoils");
+                XmlNodeList grps = root.SelectNodes("grp");
+                foreach (XmlNode gn in grps)
+                {
+                    airfoilGroups.Add((gn as XmlElement).GetAttribute("Name"));
+                }
+                NotifyPropertyChanged("AirfoilGroups");
+            }
+        }
+
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
@@ -551,28 +511,39 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void TriangulatePerimiter(List<System.Drawing.PointF> points, double xo, bool invert)
+        {
+            TriangulationPolygon ply = new TriangulationPolygon();
+
+            ply.Points = points.ToArray();
+            List<Triangle> tris = ply.Triangulate();
+            foreach (Triangle t in tris)
+            {
+                int c0 = AddVertice(Vertices, xo, t.Points[0].X, t.Points[0].Y);
+                int c1 = AddVertice(Vertices, xo, t.Points[1].X, t.Points[1].Y);
+                int c2 = AddVertice(Vertices, xo, t.Points[2].X, t.Points[2].Y);
+                if (invert)
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+                }
+                else
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+                }
+            }
+        }
+
         private void UpdateDisplay()
         {
             if (loaded)
             {
                 GenerateWing();
-                Redisplay();
+                Viewer.Model = GetModel();
                 ProfileDisplayer.Refresh();
-            }
-        }
-
-        private void LoadAirFoils()
-        {
-            if (File.Exists(airFoilPath))
-            {
-                airFoilDoc.Load(airFoilPath);
-                XmlNode root = airFoilDoc.SelectSingleNode("Airfoils");
-                XmlNodeList grps = root.SelectNodes("grp");
-                foreach (XmlNode gn in grps)
-                {
-                    airfoilGroups.Add((gn as XmlElement).GetAttribute("Name"));
-                }
-                NotifyPropertyChanged("AirfoilGroups");
             }
         }
 
@@ -588,16 +559,11 @@ namespace Barnacle.Dialogs
             LoadEditorParameters();
 
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             PathEditor.DefaultImagePath = DefaultImagePath;
             loaded = true;
 
             UpdateDisplay();
-        }
-
-        private void BaseModellerDialog_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            ProfileDisplayer.Refresh();
         }
     }
 }

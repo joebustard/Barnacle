@@ -1,14 +1,20 @@
-<local:BaseModellerDialog x:Class="Barnacle.Dialogs.ShapedWingDlg"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:ctrls="clr-namespace:Barnacle.UserControls"
-        xmlns:local="clr-namespace:Barnacle.Dialogs"
-        mc:Ignorable="d"
-        Title="" Height="800" Width="1000" Loaded="Window_Loaded"
-        SizeChanged="BaseModellerDialog_SizeChanged"
-WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
+<local:BaseModellerDialog
+    x:Class="Barnacle.Dialogs.ShapedWingDlg"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ctrls="clr-namespace:Barnacle.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
+    Title=""
+    Width="1000"
+    Height="800"
+    Background="{StaticResource WindowBackBrush}"
+    Loaded="Window_Loaded"
+    SizeChanged="BaseModellerDialog_SizeChanged"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="150" />
@@ -20,10 +26,12 @@ WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush 
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
-        <Border Grid.Column="1"
-                Grid.Row="0"
-                Style="{StaticResource ControlBorder}">
+        <Border
+            Grid.Row="0"
+            Grid.Column="1"
+            Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30" />
@@ -34,124 +42,101 @@ WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush 
                     <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal">
-                    <Label Margin="4,0,0,0"
-                       VerticalAlignment="Center"
-                       Width="80">
+                    <Label
+                        Width="80"
+                        Margin="4,0,0,0"
+                        VerticalAlignment="Center">
                         Aerofoil Profile
                     </Label>
-                    <ComboBox ItemsSource="{Binding AirfoilGroups}"
-                          Margin="0,0,10,0"
-                          SelectedItem="{Binding RootGroup}"
-                          VerticalAlignment="Center"
-                          Width="100" />
-                    <ComboBox ItemsSource="{Binding RootAirfoilNames}"
-                          Margin="0,0,10,0"
-                          SelectedItem="{Binding SelectedRootAirfoil}"
-                          VerticalAlignment="Center"
-                          Width="100" />
+                    <ComboBox
+                        Width="100"
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Center"
+                        ItemsSource="{Binding AirfoilGroups}"
+                        SelectedItem="{Binding RootGroup}" />
+                    <ComboBox
+                        Width="100"
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Center"
+                        ItemsSource="{Binding RootAirfoilNames}"
+                        SelectedItem="{Binding SelectedRootAirfoil}" />
                 </StackPanel>
-                <StackPanel Grid.Row="1"
-                        Orientation="Horizontal">
-                    <Label Margin="4,0,0,0"
-                       VerticalAlignment="Center"
-                       Width="80">
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Label
+                        Width="80"
+                        Margin="4,0,0,0"
+                        VerticalAlignment="Center">
                         Dihedral
                     </Label>
-                    <TextBox Text="{Binding DihedralAngle}"
-                         VerticalAlignment="Center"
-                         Width="30" />
+                    <TextBox
+                        Width="30"
+                        VerticalAlignment="Center"
+                        Text="{Binding DihedralAngle}" />
                 </StackPanel>
-                <ctrls:AeroProfileDisplayer x:Name="ProfileDisplayer" Grid.Row="2" Grid.RowSpan="2" MaxHeight="120" />
+                <ctrls:AeroProfileDisplayer
+                    x:Name="ProfileDisplayer"
+                    Grid.Row="2"
+                    Grid.RowSpan="2"
+                    MaxHeight="120" />
             </Grid>
         </Border>
-        <Border Grid.Column="1"
-                Grid.Row="1"
-                Style="{StaticResource ControlBorder}">
 
-            <ctrls:FlexiPathEditorControl x:Name="PathEditor" FixedEndPath="True" />
-        </Border>
-        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" Grid.RowSpan="2" />
-        <Border Grid.Row ="0" Grid.Column="3"  Grid.RowSpan="2" Style="{StaticResource ControlBorder}">
+        <ctrls:FlexiPathEditorControl
+            x:Name="PathEditor"
+            Grid.Row="1"
+            Grid.Column="1"
+            FixedEndPath="True" />
+
+        <GridSplitter
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Grid.Column="2"
+            Style="{StaticResource GridSplitterStyle}" />
+        <Border
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Grid.Column="3"
+            Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="34" />
                 </Grid.RowDefinitions>
-                <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove" Grid.Row="0"
-              MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
+                <u:ObjectView
+                    x:Name="Viewer"
+                    Grid.Row="0"
+                    Grid.Column="0" />
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
 
-                    <Viewport3D.Camera>
-                        <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
-                        </PerspectiveCamera>
-                    </Viewport3D.Camera>
-
-                    <ModelVisual3D>
-                        <ModelVisual3D.Content>
-                            <Model3DGroup>
-                                <AmbientLight Color="#FF808080" />
-                                <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
-                                </DirectionalLight>
-                            </Model3DGroup>
-                        </ModelVisual3D.Content>
-                    </ModelVisual3D>
-
-                    <ModelVisual3D x:Name = "MyModel">
-                        <ModelVisual3D.Content>
-                            <Model3DGroup x:Name="MyModelGroup">
-                            </Model3DGroup>
-                        </ModelVisual3D.Content>
-                    </ModelVisual3D>
-                </Viewport3D>
-                <StackPanel Orientation="Horizontal" Grid.Row="1">
-                    <!--
-                    <Label VerticalAlignment="Center">
-                        Divisions
-                    </Label>
-                    <TextBox Text="{Binding NumDivisions, UpdateSourceTrigger=PropertyChanged}"
-                                 VerticalContentAlignment="Center"
-                                 Width="100" Margin="4,0,0,0" />
-                    -->
-                    <Label Grid.Column="0" VerticalAlignment="Center">
-                        Divisions
-                    </Label>
-                    <Slider AutoToolTipPlacement="TopLeft"
-                    AutoToolTipPrecision="0"
-                            MinWidth="300"
-                    Maximum="360"
-                    Minimum="3"
-                    Value="{Binding NumDivisions}"
-                    VerticalAlignment="Center"
-                    x:Name="HDivSlide" />
-                    <TextBox Text="{Binding WarningText}" VerticalContentAlignment="Center"
-                                 Margin="4,0,0,0" Foreground="Red" FontSize="18" />
+                    <Label Grid.Column="0" VerticalAlignment="Center" Content="Divisions" Margin="4,0,0,0" />
+                    <TextBox Width="100" Margin="8,2,0,2" Text="{Binding NumDivisions}" />
+                    <TextBox
+                        Margin="4,0,0,0"
+                        VerticalContentAlignment="Center"
+                        FontSize="18"
+                        Foreground="Red"
+                        Text="{Binding WarningText}" />
                 </StackPanel>
             </Grid>
         </Border>
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
-        </Grid>
-        <Grid Grid.Column="1" Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <CheckBox VerticalAlignment="Center" Content="Floor" Grid.Column="0" IsChecked="{Binding ShowFloor}" />
-            <CheckBox VerticalAlignment="Center" Content="Axies" Grid.Column="1" IsChecked="{Binding ShowAxies}" />
-            <Button Content="Home" Width="80" Margin="0,2,0,2" Grid.Column="2" Click="Home_Click" />
-        </Grid>
 
-        <Grid Grid.Column="3" Grid.Row="2">
+        <Grid Grid.Row="2" Grid.Column="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
-            <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" IsDefault="True" />
+            <Button
+                Grid.Column="1"
+                Margin="2,2,2,2"
+                Click="Cancel_Click"
+                Content="Cancel" />
+            <Button
+                Grid.Column="2"
+                Margin="2,2,2,2"
+                Click="Ok_Click"
+                Content="Ok"
+                IsDefault="True" />
         </Grid>
     </Grid>
 </local:BaseModellerDialog>

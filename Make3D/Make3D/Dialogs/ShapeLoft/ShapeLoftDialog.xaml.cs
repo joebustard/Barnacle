@@ -49,53 +49,6 @@ namespace Barnacle.Dialogs
             sizeZ = 20;
             DataContext = this;
             EditorParameters.ToolName = "TwoShape";
-            ModelGroup = MyModelGroup;
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redraw();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redraw();
-                }
-            }
-        }
-
-        private void Down_Clicked(object sender, RoutedEventArgs e)
-        {
-            BottomShape.Setup(TopShape.NumberOfPoints, TopShape.RotationDegrees, TopShape.PointAngles, TopShape.PointDistances);
-        }
-
-        private void Up_Clicked(object sender, RoutedEventArgs e)
-        {
-            TopShape.Setup(BottomShape.NumberOfPoints, BottomShape.RotationDegrees, BottomShape.PointAngles, BottomShape.PointDistances);
         }
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
@@ -115,58 +68,9 @@ namespace Barnacle.Dialogs
             Close();
         }
 
-        private List<double> GetDoubles(int v, string s)
+        private void Down_Clicked(object sender, RoutedEventArgs e)
         {
-            List<double> res = new List<double>();
-            string[] words = s.Split(',');
-            for (int i = 0; i < v && i < words.GetLength(0); i++)
-            {
-                double d = Convert.ToDouble(words[i]);
-                res.Add(d);
-            }
-            return res;
-        }
-
-        private List<Point> oldBottomPoints;
-        private List<Point> oldTopPoints;
-
-        private void OnBottomPointsChanged(List<Point> pnts)
-        {
-            bottomPoints = pnts;
-            Redraw();
-            /*
-            if (oldBottomPoints == null)
-            {
-                bottomPoints = pnts;
-                oldBottomPoints = new List<Point>();
-                foreach (Point p in pnts)
-                {
-                    oldBottomPoints.Add(new Point(p.X, p.Y));
-                }
-                Redraw();
-            }
-            else
-            {
-                bool same = true;
-                foreach (Point p in pnts)
-                {
-                    if (!FindPoint(p, oldBottomPoints))
-                    {
-                        same = false;
-                        break;
-                    }
-                }
-                if (!same)
-                {
-                    oldBottomPoints = new List<Point>();
-                    foreach (Point p in pnts)
-                    {
-                        oldBottomPoints.Add(new Point(p.X, p.Y));
-                    }
-                    Redraw();
-                }
-            }
-            */
+            BottomShape.Setup(TopShape.NumberOfPoints, TopShape.RotationDegrees, TopShape.PointAngles, TopShape.PointDistances);
         }
 
         private bool FindPoint(Point p, List<Point> pnts)
@@ -179,54 +83,6 @@ namespace Barnacle.Dialogs
                 }
             }
             return false;
-        }
-
-        private void OnTopPointsChanged(List<Point> pnts)
-        {
-            topPoints = pnts;
-            Redraw();
-            /*
-            if (oldTopPoints == null)
-            {
-                topPoints = pnts;
-                oldTopPoints = new List<Point>();
-                foreach (Point p in pnts)
-                {
-                    oldTopPoints.Add(new Point(p.X, p.Y));
-                }
-                Redraw();
-            }
-            else
-            {
-                bool same = true;
-                foreach (Point p in pnts)
-                {
-                    if (!FindPoint(p, oldTopPoints))
-                    {
-                        same = false;
-                        break;
-                    }
-                }
-                if (!same)
-                {
-                    oldTopPoints = new List<Point>();
-                    foreach (Point p in pnts)
-                    {
-                        oldTopPoints.Add(new Point(p.X, p.Y));
-                    }
-                    Redraw();
-                }
-            }
-            */
-        }
-
-        private void Redraw()
-        {
-            if (topPoints != null && bottomPoints != null)
-            {
-                GenerateShape();
-                Redisplay();
-            }
         }
 
         private void GenerateShape()
@@ -257,9 +113,6 @@ namespace Barnacle.Dialogs
                 if (res > 0)
                 {
                     t = res / dBottom;
-                }
-                if (t < 0 || t > 1)
-                {
                 }
 
                 double px = st.X + (t * (nd.X - st.X));
@@ -340,6 +193,39 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private List<double> GetDoubles(int v, string s)
+        {
+            List<double> res = new List<double>();
+            string[] words = s.Split(',');
+            for (int i = 0; i < v && i < words.GetLength(0); i++)
+            {
+                double d = Convert.ToDouble(words[i]);
+                res.Add(d);
+            }
+            return res;
+        }
+
+        private void OnBottomPointsChanged(List<Point> pnts)
+        {
+            bottomPoints = pnts;
+            Redraw();
+        }
+
+        private void OnTopPointsChanged(List<Point> pnts)
+        {
+            topPoints = pnts;
+            Redraw();
+        }
+
+        private void Redraw()
+        {
+            if (topPoints != null && bottomPoints != null)
+            {
+                GenerateShape();
+                Viewer.Model = GetModel();
+            }
+        }
+
         private void SizeX_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             try
@@ -374,6 +260,11 @@ namespace Barnacle.Dialogs
             catch (Exception)
             {
             }
+        }
+
+        private void Up_Clicked(object sender, RoutedEventArgs e)
+        {
+            TopShape.Setup(BottomShape.NumberOfPoints, BottomShape.RotationDegrees, BottomShape.PointAngles, BottomShape.PointDistances);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -416,7 +307,7 @@ namespace Barnacle.Dialogs
             }
             Camera.Distance = 30;
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             SizeX.Text = sizeX.ToString();
             SizeY.Text = sizeY.ToString();
             SizeZ.Text = sizeZ.ToString();

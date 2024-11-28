@@ -28,54 +28,23 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class SpringDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private string warningText;
-        private bool loaded;
-
+        private double coilGap;
+        private double facesPerTurn;
         private double innerRadius;
-
-        public double InnerRadius
-        {
-            get
-            {
-                return innerRadius;
-            }
-            set
-            {
-                if (innerRadius != value)
-                {
-                    if (value >= 0 && value <= 100)
-                    {
-                        innerRadius = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
+        private bool loaded;
+        private double turns;
+        private string warningText;
+        private double wireFacets;
 
         private double wireRadius;
 
-        public double WireRadius
+        public SpringDlg()
         {
-            get
-            {
-                return wireRadius;
-            }
-            set
-            {
-                if (wireRadius != value)
-                {
-                    if (value >= 0.1 && value <= 100)
-                    {
-                        wireRadius = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
+            InitializeComponent();
+            ToolName = "Spring";
+            DataContext = this;
+            loaded = false;
         }
-
-        private double coilGap;
 
         public double CoilGap
         {
@@ -97,7 +66,45 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private double turns;
+        public double FacesPerTurn
+        {
+            get
+            {
+                return facesPerTurn;
+            }
+            set
+            {
+                if (facesPerTurn != value)
+                {
+                    if (value >= 10 && value <= 360)
+                    {
+                        facesPerTurn = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public double InnerRadius
+        {
+            get
+            {
+                return innerRadius;
+            }
+            set
+            {
+                if (innerRadius != value)
+                {
+                    if (value >= 0 && value <= 100)
+                    {
+                        innerRadius = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
 
         public double Turns
         {
@@ -119,29 +126,21 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private double facesPerTurn;
-
-        public double FacesPerTurn
+        public string WarningText
         {
             get
             {
-                return facesPerTurn;
+                return warningText;
             }
             set
             {
-                if (facesPerTurn != value)
+                if (warningText != value)
                 {
-                    if (value >= 10 && value <= 360)
-                    {
-                        facesPerTurn = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
+                    warningText = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
-
-        private double wireFacets;
 
         public double WireFacets
         {
@@ -163,61 +162,22 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public SpringDlg()
-        {
-            InitializeComponent();
-            ToolName = "Spring";
-            DataContext = this;
-            ModelGroup = MyModelGroup;
-            loaded = false;
-        }
-
-        public override bool ShowAxies
+        public double WireRadius
         {
             get
             {
-                return showAxies;
+                return wireRadius;
             }
             set
             {
-                if (showAxies != value)
+                if (wireRadius != value)
                 {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public string WarningText
-        {
-            get
-            {
-                return warningText;
-            }
-            set
-            {
-                if (warningText != value)
-                {
-                    warningText = value;
-                    NotifyPropertyChanged();
+                    if (value >= 0.1 && value <= 100)
+                    {
+                        wireRadius = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
                 }
             }
         }
@@ -239,18 +199,20 @@ namespace Barnacle.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-
             InnerRadius = EditorParameters.GetDouble("InnerRadius", 5);
-
             WireRadius = EditorParameters.GetDouble("WireRadius", 2);
-
             CoilGap = EditorParameters.GetDouble("CoilGap", 4);
-
             Turns = EditorParameters.GetDouble("Turns", 5);
-
             FacesPerTurn = EditorParameters.GetDouble("FacesPerTurn", 20);
-
             WireFacets = EditorParameters.GetDouble("WireFacets", 20);
+        }
+
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            loaded = false;
+            SetDefaults();
+            loaded = true;
+            UpdateDisplay();
         }
 
         private void SaveEditorParmeters()
@@ -265,12 +227,22 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("WireFacets", WireFacets.ToString());
         }
 
+        private void SetDefaults()
+        {
+            InnerRadius = 5;
+            WireRadius = 2;
+            CoilGap = 4;
+            Turns = 5;
+            FacesPerTurn = 20;
+            WireFacets = 20;
+        }
+
         private void UpdateDisplay()
         {
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -280,7 +252,7 @@ namespace Barnacle.Dialogs
             LoadEditorParameters();
 
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
 
             UpdateDisplay();
