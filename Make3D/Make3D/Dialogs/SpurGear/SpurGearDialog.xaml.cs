@@ -48,7 +48,6 @@ namespace Barnacle.Dialogs
             // stops us trying to make a 3d model whie we are still just initialising
             updateDisplayWhenChanged = false;
             points = new List<System.Windows.Point>();
-            ModelGroup = MyModelGroup;
         }
 
         public int NumberOfTeeth
@@ -209,13 +208,7 @@ namespace Barnacle.Dialogs
         {
             if (EditorParameters.Get("Radius") == "")
             {
-                Thickness = 2;
-                Radius = 10;
-                NumberOfTeeth = 15;
-                TeethBaseHeight = 2;
-                TeethBaseWidth = 2;
-                TeethTopHeight = 1;
-                TeethTopWidth = 1;
+                SetDefaults();
             }
             else
             {
@@ -397,13 +390,32 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            updateDisplayWhenChanged = false;
+            SetDefaults();
+            updateDisplayWhenChanged = true;
+            UpdateDisplay();
+        }
+
+        private void SetDefaults()
+        {
+            Thickness = 2;
+            Radius = 10;
+            NumberOfTeeth = 15;
+            TeethBaseHeight = 2;
+            TeethBaseWidth = 2;
+            TeethTopHeight = 1;
+            TeethTopWidth = 1;
+        }
+
         private void UpdateDisplay()
         {
             if (updateDisplayWhenChanged)
             {
                 GenerateShape();
             }
-            Redisplay();
+            Viewer.Model = GetModel();
         }
     }
 }
