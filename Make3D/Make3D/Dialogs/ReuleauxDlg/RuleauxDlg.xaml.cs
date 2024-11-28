@@ -37,7 +37,6 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "Reuleaux";
             DataContext = this;
-            ModelGroup = MyModelGroup;
             loaded = false;
             numberOfSides = 3;
             radius = 10;
@@ -87,42 +86,6 @@ namespace Barnacle.Dialogs
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
-                }
-            }
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
                 }
             }
         }
@@ -183,7 +146,6 @@ namespace Barnacle.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-
             if (EditorParameters.Get("NumberOfSides") != "")
             {
                 NumberOfSides = EditorParameters.GetInt("NumberOfSides");
@@ -200,13 +162,27 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
+            UpdateDisplay();
+        }
+
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-
             EditorParameters.Set("NumberOfSides", NumberOfSides.ToString());
             EditorParameters.Set("Radius", Radius.ToString());
             EditorParameters.Set("Thickness", Thickness.ToString());
+        }
+
+        private void SetDefaults()
+        {
+            loaded = false;
+            NumberOfSides = 3;
+            Radius = 10;
+            Thickness = 5;
+            loaded = true;
         }
 
         private void UpdateDisplay()
@@ -214,7 +190,7 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -222,9 +198,8 @@ namespace Barnacle.Dialogs
         {
             WarningText = "";
             LoadEditorParameters();
-
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
             UpdateDisplay();
         }

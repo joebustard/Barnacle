@@ -35,18 +35,17 @@ namespace Barnacle.Dialogs
         private double hubHeight;
         private bool loaded;
         private double lowerRimDiameter;
+        private RailWheelMaker maker;
         private double rimHeight;
         private double rimThickness;
         private double upperRimDiameter;
         private string warningText;
-        private RailWheelMaker maker;
 
         public RailWheelDlg()
         {
             InitializeComponent();
             ToolName = "RailWheel";
             DataContext = this;
-            ModelGroup = MyModelGroup;
             maker = new RailWheelMaker();
         }
 
@@ -69,16 +68,6 @@ namespace Barnacle.Dialogs
                     }
                 }
             }
-        }
-
-        private bool CheckRange(double v, [CallerMemberName] String propertyName = "")
-        {
-            bool res = false;
-            if (maker != null)
-            {
-                res = maker.CheckLimits(propertyName, v);
-            }
-            return res;
         }
 
         public double FlangeDiameter
@@ -167,7 +156,10 @@ namespace Barnacle.Dialogs
 
         public double LowerRimDiameter
         {
-            get { return lowerRimDiameter; }
+            get
+            {
+                return lowerRimDiameter;
+            }
             set
             {
                 if (value != lowerRimDiameter)
@@ -184,7 +176,10 @@ namespace Barnacle.Dialogs
 
         public double RimHeight
         {
-            get { return rimHeight; }
+            get
+            {
+                return rimHeight;
+            }
             set
             {
                 if (value != rimHeight)
@@ -220,45 +215,12 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
         public double UpperRimDiameter
         {
-            get { return upperRimDiameter; }
+            get
+            {
+                return upperRimDiameter;
+            }
             set
             {
                 if (value != upperRimDiameter)
@@ -295,6 +257,16 @@ namespace Barnacle.Dialogs
             SaveEditorParmeters();
             DialogResult = true;
             Close();
+        }
+
+        private bool CheckRange(double v, [CallerMemberName] String propertyName = "")
+        {
+            bool res = false;
+            if (maker != null)
+            {
+                res = maker.CheckLimits(propertyName, v);
+            }
+            return res;
         }
 
         private void GenerateShape()
@@ -367,7 +339,7 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -376,7 +348,7 @@ namespace Barnacle.Dialogs
             loaded = false;
             LoadEditorParameters();
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             warningText = "";
             loaded = true;
             UpdateDisplay();

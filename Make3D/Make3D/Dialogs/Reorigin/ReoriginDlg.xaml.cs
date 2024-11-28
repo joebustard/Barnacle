@@ -42,7 +42,7 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "Reorigin";
             DataContext = this;
-            ModelGroup = MyModelGroup;
+
             centroidPressed = false;
         }
 
@@ -53,42 +53,6 @@ namespace Barnacle.Dialogs
             Up,
             Down, Forward,
             Back
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
         }
 
         internal void SetObject(Object3D ob)
@@ -121,7 +85,6 @@ namespace Barnacle.Dialogs
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
-            SaveEditorParmeters();
             if (centroidPressed)
             {
                 original.Position = new Point3D(0, 0, 0);
@@ -133,11 +96,6 @@ namespace Barnacle.Dialogs
             List<P3D> pn = new List<P3D>();
             for (int i = 0; i < localOb.RelativeObjectVertices.Count; i++)
             {
-                /*
-                pn.Add(new Point3D(localOb.RelativeObjectVertices[i].X + dx,
-                    localOb.RelativeObjectVertices[i].Y + dy,
-                    localOb.RelativeObjectVertices[i].Z + dz));
-*/
                 pn.Add(new P3D(localOb.RelativeObjectVertices[i].X + dx,
                     localOb.RelativeObjectVertices[i].Y + dy,
                     localOb.RelativeObjectVertices[i].Z + dz));
@@ -152,33 +110,10 @@ namespace Barnacle.Dialogs
 
         protected override void Redisplay()
         {
-            if (MyModelGroup != null)
+            if (localOb != null)
             {
-                MyModelGroup.Children.Clear();
-
-                if (floor != null && ShowFloor)
-                {
-                    MyModelGroup.Children.Add(floor.FloorMesh);
-                    foreach (GeometryModel3D m in grid.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-
-                if (axies != null && ShowAxies)
-                {
-                    foreach (GeometryModel3D m in axies.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-
-                if (localOb != null)
-                {
-                    localOb.Remesh();
-                    GeometryModel3D gm = GetModel(localOb);
-                    MyModelGroup.Children.Add(gm);
-                }
+                localOb.Remesh();
+                Viewer.Model = GetModel(localOb);
             }
         }
 
@@ -196,97 +131,95 @@ namespace Barnacle.Dialogs
 
         private void Grid_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            ModifierKeys mk = e.KeyboardDevice.Modifiers;
-
-            bool shift = mk.HasFlag(ModifierKeys.Shift);
-            bool ctrl = mk.HasFlag(ModifierKeys.Control);
-            switch (e.Key)
+            if (!e.Handled)
             {
-                case Key.Left:
-                    {
-                        if (shift)
-                        {
-                            Nudge(-0.1, 0, 0);
-                        }
-                        else
-                        {
-                            Nudge(-1, 0, 0);
-                        }
-                    }
-                    break;
+                ModifierKeys mk = e.KeyboardDevice.Modifiers;
 
-                case Key.Right:
-                    {
-                        if (shift)
+                bool shift = mk.HasFlag(ModifierKeys.Shift);
+                bool ctrl = mk.HasFlag(ModifierKeys.Control);
+                switch (e.Key)
+                {
+                    case Key.Left:
                         {
-                            Nudge(0.1, 0, 0);
+                            if (shift)
+                            {
+                                Nudge(-0.1, 0, 0);
+                            }
+                            else
+                            {
+                                Nudge(-1, 0, 0);
+                            }
                         }
-                        else
-                        {
-                            Nudge(1, 0, 0);
-                        }
-                    }
-                    break;
+                        break;
 
-                case Key.Up:
-                    {
-                        if (ctrl)
+                    case Key.Right:
                         {
                             if (shift)
                             {
-                                Nudge(0, 0, 0.1);
+                                Nudge(0.1, 0, 0);
                             }
                             else
                             {
-                                Nudge(0, 0, 1);
+                                Nudge(1, 0, 0);
                             }
                         }
-                        else
-                        {
-                            if (shift)
-                            {
-                                Nudge(0, 0.1, 0);
-                            }
-                            else
-                            {
-                                Nudge(0, 1, 0);
-                            }
-                        }
-                    }
-                    break;
+                        break;
 
-                case Key.Down:
-                    {
-                        if (ctrl)
+                    case Key.Up:
                         {
-                            if (shift)
+                            if (ctrl)
                             {
-                                Nudge(0, 0, -0.1);
+                                if (shift)
+                                {
+                                    Nudge(0, 0, 0.1);
+                                }
+                                else
+                                {
+                                    Nudge(0, 0, 1);
+                                }
                             }
                             else
                             {
-                                Nudge(0, 0, -1);
+                                if (shift)
+                                {
+                                    Nudge(0, 0.1, 0);
+                                }
+                                else
+                                {
+                                    Nudge(0, 1, 0);
+                                }
                             }
                         }
-                        else
+                        break;
+
+                    case Key.Down:
                         {
-                            if (shift)
+                            if (ctrl)
                             {
-                                Nudge(0, -0.1, 0);
+                                if (shift)
+                                {
+                                    Nudge(0, 0, -0.1);
+                                }
+                                else
+                                {
+                                    Nudge(0, 0, -1);
+                                }
                             }
                             else
                             {
-                                Nudge(0, -1, 0);
+                                if (shift)
+                                {
+                                    Nudge(0, -0.1, 0);
+                                }
+                                else
+                                {
+                                    Nudge(0, -1, 0);
+                                }
                             }
                         }
-                    }
-                    break;
+                        break;
+                }
             }
-        }
-
-        private void LoadEditorParameters()
-        {
-            // load back the tool specific parameters
         }
 
         private void Nudge(double deltaX, double deltaY, double deltaZ)
@@ -327,18 +260,11 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void SaveEditorParmeters()
-        {
-            // save the parameters for the tool
-        }
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadEditorParameters();
             GenerateShape();
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
-
+            Viewer.Clear();
             Redisplay();
         }
     }

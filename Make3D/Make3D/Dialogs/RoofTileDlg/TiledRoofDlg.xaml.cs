@@ -43,6 +43,7 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class TiledRoofDlg : BaseModellerDialog, INotifyPropertyChanged
     {
+        private bool chamfer;
         private bool loaded;
         private double tileGap;
         private double tileHeight;
@@ -59,8 +60,27 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "TiledRoof";
             DataContext = this;
-            ModelGroup = MyModelGroup;
+
             loaded = false;
+        }
+
+        public bool Chamfer
+        {
+            get
+            {
+                return chamfer;
+            }
+
+            set
+            {
+                if (chamfer != value)
+                {
+                    chamfer = value;
+                    NotifyPropertyChanged();
+
+                    UpdateDisplay();
+                }
+            }
         }
 
         public override bool ShowAxies
@@ -99,27 +119,12 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private bool chamfer;
-
-        public bool Chamfer
-        {
-            get { return chamfer; }
-
-            set
-            {
-                if (chamfer != value)
-                {
-                    chamfer = value;
-                    NotifyPropertyChanged();
-
-                    UpdateDisplay();
-                }
-            }
-        }
-
         public double TileGap
         {
-            get { return tileGap; }
+            get
+            {
+                return tileGap;
+            }
 
             set
             {
@@ -179,7 +184,10 @@ namespace Barnacle.Dialogs
 
         public double TileOverlap
         {
-            get { return tileOverlap; }
+            get
+            {
+                return tileOverlap;
+            }
 
             set
             {
@@ -322,57 +330,55 @@ namespace Barnacle.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-
             if (EditorParameters.Get("Length") != "")
             {
                 WallLength = EditorParameters.GetDouble("Length");
             }
-
             if (EditorParameters.Get("WallHeight") != "")
             {
                 WallHeight = EditorParameters.GetDouble("WallHeight");
             }
-
             if (EditorParameters.Get("Width") != "")
             {
                 WallWidth = EditorParameters.GetDouble("Width");
             }
-
             if (EditorParameters.Get("TileLength") != "")
             {
                 TileLength = EditorParameters.GetDouble("TileLength");
             }
-
             if (EditorParameters.Get("TileHeight") != "")
             {
                 TileHeight = EditorParameters.GetDouble("TileHeight");
             }
-
             if (EditorParameters.Get("TileWidth") != "")
             {
                 TileWidth = EditorParameters.GetDouble("TileWidth");
             }
-
             if (EditorParameters.Get("TileGap") != "")
             {
                 TileGap = EditorParameters.GetDouble("TileGap");
             }
-
             if (EditorParameters.Get("TileOverlap") != "")
             {
                 TileOverlap = EditorParameters.GetDouble("TileOverlap");
             }
-
             if (EditorParameters.Get("Chamfer") != "")
             {
                 Chamfer = EditorParameters.GetBoolean("Chamfer");
             }
         }
 
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            loaded = false;
+            SetDefaults();
+            loaded = true;
+            UpdateDisplay();
+        }
+
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-
             EditorParameters.Set("WallLength", WallLength.ToString());
             EditorParameters.Set("WallHeight", WallHeight.ToString());
             EditorParameters.Set("WallWidth", WallWidth.ToString());
@@ -384,16 +390,7 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("Chamfer", Chamfer.ToString());
         }
 
-        private void UpdateDisplay()
-        {
-            if (loaded)
-            {
-                GenerateShape();
-                Redisplay();
-            }
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private void SetDefaults()
         {
             WarningText = "";
             WallHeight = 75;
@@ -404,12 +401,24 @@ namespace Barnacle.Dialogs
             TileWidth = 1;
             TileGap = 1;
             TileOverlap = 0.1;
+        }
+
+        private void UpdateDisplay()
+        {
+            if (loaded)
+            {
+                GenerateShape();
+                Viewer.Model = GetModel();
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
             LoadEditorParameters();
-
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
-
             UpdateDisplay();
         }
     }

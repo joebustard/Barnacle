@@ -4,6 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Barnacle.Dialogs"
+     xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
+
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Rail Wheel"
     Width="1000"
@@ -15,13 +17,14 @@
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
-            <RowDefinition Height="25" />
+            <RowDefinition Height="30" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="8*" />
             <ColumnDefinition Width="10" />
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10*" />
+            <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
         <Border
             Grid.Row="0"
@@ -147,68 +150,9 @@
             Grid.Row="0"
             Grid.Column="2"
             Style="{StaticResource GridSplitterStyle}" />
-        <Border
-            Grid.Row="0"
-            Grid.Column="3"
-            Style="{StaticResource ControlBorder}">
-            <Viewport3D
-                Name="viewport3D1"
-                MouseDown="Viewport_MouseDown"
-                MouseMove="Viewport_MouseMove"
-                MouseWheel="Viewport_MouseWheel">
-                <Viewport3D.Camera>
-                    <PerspectiveCamera
-                        x:Name="camMain"
-                        LookDirection="{Binding LookDirection}"
-                        Position="{Binding CameraPosition}" />
-                </Viewport3D.Camera>
-                <ModelVisual3D>
-                    <ModelVisual3D.Content>
-                        <Model3DGroup>
-                            <AmbientLight Color="#FF808080" />
-                            <DirectionalLight
-                                x:Name="dirLightMain"
-                                Direction="-1,-1,-1"
-                                Color="White" />
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-                <ModelVisual3D x:Name="MyModel">
-                    <ModelVisual3D.Content>
-                        <Model3DGroup x:Name="MyModelGroup" />
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-            </Viewport3D>
-        </Border>
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
-        </Grid>
-        <Grid Grid.Row="1" Grid.Column="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <CheckBox
-                Grid.Column="0"
-                VerticalAlignment="Center"
-                Content="Floor"
-                IsChecked="{Binding ShowFloor}" />
-            <CheckBox
-                Grid.Column="1"
-                VerticalAlignment="Center"
-                Content="Axies"
-                IsChecked="{Binding ShowAxies}" />
-            <Button
-                Grid.Column="2"
-                Width="80"
-                Margin="0,2,0,2"
-                Click="Home_Click"
-                Content="Home" />
-        </Grid>
+
+        <u:ObjectView x:Name="Viewer" Grid.Column="3" Grid.Row="0" />
+
         <Grid Grid.Row="1" Grid.Column="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />

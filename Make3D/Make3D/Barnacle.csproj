@@ -111,9 +111,6 @@
     <Compile Include="Dialogs\BiCorn\BicornDlg.xaml.cs">
       <DependentUpon>BicornDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\Blank\Blank.xaml.cs">
-      <DependentUpon>Blank.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Dialogs\Box\BoxDlg.xaml.cs" />
     <Compile Include="Dialogs\BrickTower\BrickTowerDlg.xaml.cs" />
     <Compile Include="Dialogs\BrickWall\BrickWallDlg.xaml.cs" />
@@ -490,10 +487,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\BiCorn\BicornDlg.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dialogs\Blank\Blank.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

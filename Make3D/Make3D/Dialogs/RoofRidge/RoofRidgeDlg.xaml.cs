@@ -44,7 +44,9 @@ namespace Barnacle.Dialogs
         private const int minshape = 0;
         private double armAngle;
         private double armLength;
+        private double armThickness;
         private double crownRadius;
+        private Visibility crownVisibility;
         private ImageSource currentImage;
         private double flatCrestWidth;
 
@@ -56,15 +58,14 @@ namespace Barnacle.Dialogs
         private bool loaded;
         private int mode;
         private double ridgeLength;
+        private Visibility ridgeVisibility;
         private string warningText;
-        private double armThickness;
 
         public RoofRidgeDlg()
         {
             InitializeComponent();
             ToolName = "RoofRidge";
             DataContext = this;
-            ModelGroup = MyModelGroup;
             loaded = false;
             mode = 0;
         }
@@ -98,14 +99,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public String ArmThicknessToolTip
-        {
-            get
-            {
-                return $"Arm Thickness must be in the range {minarmThickness} to {maxarmThickness}";
-            }
-        }
-
         public double ArmLength
         {
             get
@@ -124,6 +117,14 @@ namespace Barnacle.Dialogs
                         UpdateDisplay();
                     }
                 }
+            }
+        }
+
+        public String ArmLengthToolTip
+        {
+            get
+            {
+                return $"Arm Length must be in the range {minarmLength} to {maxarmLength}";
             }
         }
 
@@ -148,43 +149,11 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public String ArmLengthToolTip
+        public String ArmThicknessToolTip
         {
             get
             {
-                return $"Arm Length must be in the range {minarmLength} to {maxarmLength}";
-            }
-        }
-
-        private Visibility crownVisibility;
-
-        public Visibility CrownVisibility
-        {
-            get { return crownVisibility; }
-
-            set
-            {
-                if (crownVisibility != value)
-                {
-                    crownVisibility = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private Visibility ridgeVisibility;
-
-        public Visibility RidgeVisibility
-        {
-            get { return ridgeVisibility; }
-
-            set
-            {
-                if (ridgeVisibility != value)
-                {
-                    ridgeVisibility = value;
-                    NotifyPropertyChanged();
-                }
+                return $"Arm Thickness must be in the range {minarmThickness} to {maxarmThickness}";
             }
         }
 
@@ -214,6 +183,23 @@ namespace Barnacle.Dialogs
             get
             {
                 return $"Crown Radius must be in the range {mincrownRadius} to {maxcrownRadius}";
+            }
+        }
+
+        public Visibility CrownVisibility
+        {
+            get
+            {
+                return crownVisibility;
+            }
+
+            set
+            {
+                if (crownVisibility != value)
+                {
+                    crownVisibility = value;
+                    NotifyPropertyChanged();
+                }
             }
         }
 
@@ -292,47 +278,28 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public Visibility RidgeVisibility
+        {
+            get
+            {
+                return ridgeVisibility;
+            }
+
+            set
+            {
+                if (ridgeVisibility != value)
+                {
+                    ridgeVisibility = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public String ShapeToolTip
         {
             get
             {
                 return $"Click the image to change the basic ridge shape";
-            }
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
             }
         }
 
@@ -372,33 +339,6 @@ namespace Barnacle.Dialogs
             UpdateDisplay();
         }
 
-        private void SetShapeControls()
-        {
-            switch (mode)
-            {
-                case 0:
-                    {
-                        CrownVisibility = Visibility.Hidden;
-                        RidgeVisibility = Visibility.Hidden;
-                    }
-                    break;
-
-                case 01:
-                    {
-                        CrownVisibility = Visibility.Hidden;
-                        RidgeVisibility = Visibility.Visible;
-                    }
-                    break;
-
-                case 2:
-                    {
-                        CrownVisibility = Visibility.Visible;
-                        RidgeVisibility = Visibility.Hidden;
-                    }
-                    break;
-            }
-        }
-
         private void GenerateShape()
         {
             ClearShape();
@@ -427,6 +367,14 @@ namespace Barnacle.Dialogs
             mode = EditorParameters.GetInt("Mode", 0);
         }
 
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
+            SetShapeImage(mode);
+            SetShapeControls();
+            UpdateDisplay();
+        }
+
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
@@ -437,6 +385,47 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("CrownRadius", CrownRadius.ToString());
             EditorParameters.Set("FlatCrestWidth", FlatCrestWidth.ToString());
             EditorParameters.Set("Mode", mode.ToString());
+        }
+
+        private void SetDefaults()
+        {
+            loaded = false;
+            ArmLength = 5;
+            ArmAngle = 90;
+            ArmThickness = 1;
+            RidgeLength = 100;
+            CrownRadius = 2;
+            FlatCrestWidth = 1;
+
+            mode = 0;
+            loaded = true;
+        }
+
+        private void SetShapeControls()
+        {
+            switch (mode)
+            {
+                case 0:
+                    {
+                        CrownVisibility = Visibility.Hidden;
+                        RidgeVisibility = Visibility.Hidden;
+                    }
+                    break;
+
+                case 1:
+                    {
+                        CrownVisibility = Visibility.Hidden;
+                        RidgeVisibility = Visibility.Visible;
+                    }
+                    break;
+
+                case 2:
+                    {
+                        CrownVisibility = Visibility.Visible;
+                        RidgeVisibility = Visibility.Hidden;
+                    }
+                    break;
+            }
         }
 
         private void SetShapeImage(int mode)
@@ -454,7 +443,7 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -464,7 +453,7 @@ namespace Barnacle.Dialogs
             LoadEditorParameters();
 
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             SetShapeImage(mode);
             SetShapeControls();
             loaded = true;
