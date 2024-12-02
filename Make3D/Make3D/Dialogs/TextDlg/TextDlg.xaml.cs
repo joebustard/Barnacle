@@ -37,8 +37,11 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
+using System.Windows.Threading;
 
 namespace Barnacle.Dialogs
 {
@@ -47,12 +50,16 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class TextDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private ObservableCollection<FontFamily> _systemFonts = new ObservableCollection<FontFamily>();
         private string dataPath;
         private bool fontBold;
         private bool fontItalic;
+        private bool isCentreAligned;
+        private bool isLeftAligned;
+        private bool isRightAligned;
         private bool loaded;
+        private DispatcherTimer regenTimer;
         private String selectedFont;
+        private ObservableCollection<FontFamily> systemFonts = new ObservableCollection<FontFamily>();
         private string text;
         private double textLength;
         private double thickness;
@@ -64,9 +71,12 @@ namespace Barnacle.Dialogs
             loaded = false;
             ToolName = "Text";
             DataContext = this;
-            ModelGroup = MyModelGroup;
             text = "A";
             dataPath = "f1M0,0";
+            Properties.Settings.Default.Reload();
+            regenTimer = new DispatcherTimer();
+            regenTimer.Interval = new TimeSpan(0, 0, Properties.Settings.Default.RegenerationDelay);
+            regenTimer.Tick += RegenTimer_Tick;
         }
 
         public bool FontBold
@@ -98,6 +108,57 @@ namespace Barnacle.Dialogs
                 if (fontItalic != value)
                 {
                     fontItalic = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public bool IsCentreAligned
+        {
+            get
+            {
+                return isCentreAligned;
+            }
+            set
+            {
+                if (value != isCentreAligned)
+                {
+                    isCentreAligned = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public bool IsLeftAligned
+        {
+            get
+            {
+                return isLeftAligned;
+            }
+            set
+            {
+                if (value != isLeftAligned)
+                {
+                    isLeftAligned = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public bool IsRightAligned
+        {
+            get
+            {
+                return isRightAligned;
+            }
+            set
+            {
+                if (value != isRightAligned)
+                {
+                    isRightAligned = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
@@ -137,43 +198,12 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
         public ObservableCollection<FontFamily> SystemFonts
         {
-            get { return _systemFonts; }
+            get
+            {
+                return systemFonts;
+            }
         }
 
         public string Text
@@ -262,12 +292,12 @@ namespace Barnacle.Dialogs
 
         public void LoadSystemFonts()
         {
-            _systemFonts.Clear();
+            systemFonts.Clear();
 
             var fonts = Fonts.SystemFontFamilies.OrderBy(f => f.ToString());
 
             foreach (var f in fonts)
-                _systemFonts.Add(f);
+                systemFonts.Add(f);
 
             NotifyPropertyChanged("SystemFonts");
         }
@@ -279,21 +309,54 @@ namespace Barnacle.Dialogs
             Close();
         }
 
-        // private double textLength = 150;
+        private AsyncGeneratorResult GenerateAsync(bool final, int alignment)
+        {
+            Point3DCollection v1 = new Point3DCollection();
+            Int32Collection i1 = new Int32Collection();
 
-        private void GenerateShape(bool final = false)
+            TextMaker mk = new TextMaker(text, selectedFont, textLength, thickness, final, fontBold, fontItalic, alignment);
+            string PathCode = mk.Generate(v1, i1);
+            AsyncGeneratorResult res = new AsyncGeneratorResult();
+            // extract the vertices and indices to thread safe arrays
+            // while still in the async function
+            res.points = new Point3D[v1.Count];
+            for (int i = 0; i < v1.Count; i++)
+            {
+                res.points[i] = new Point3D(v1[i].X, v1[i].Y, v1[i].Z);
+            }
+            res.indices = new int[i1.Count];
+            for (int i = 0; i < i1.Count; i++)
+            {
+                res.indices[i] = i1[i];
+            }
+            v1.Clear();
+            i1.Clear();
+            return (res);
+        }
+
+        private async void GenerateShape(bool final = false)
         {
             ClearShape();
             if (text != null && text != "")
             {
-                ClearShape();
-
+                int alignment = 0;
+                if (isCentreAligned)
+                {
+                    alignment = 1;
+                }
+                if (isRightAligned)
+                {
+                    alignment = 2;
+                }
+                Viewer.Busy();
+                EditingEnabled = false;
+                AsyncGeneratorResult result;
+                result = await Task.Run(() => GenerateAsync(final, alignment));
+                GetVerticesFromAsyncResult(result);
                 CentreVertices();
-                TextMaker mk = new TextMaker(text, selectedFont, textLength, thickness, final, fontBold, fontItalic);
-                string PathCode = mk.Generate(Vertices, Faces);
-                //   PathData = PathCode;
+                Viewer.NotBusy();
+                EditingEnabled = true;
             }
-            CentreVertices();
         }
 
         private void LoadEditorParameters()
@@ -306,7 +369,42 @@ namespace Barnacle.Dialogs
                 Thickness = EditorParameters.GetDouble("Thickness", 5);
                 FontBold = EditorParameters.GetBoolean("Bold");
                 FontItalic = EditorParameters.GetBoolean("Italic");
+                IsLeftAligned = EditorParameters.GetBoolean("IsLeftAligned", true);
+                IsRightAligned = EditorParameters.GetBoolean("IsRightAligned", false);
+                IsCentreAligned = EditorParameters.GetBoolean("IsCentreAligned", false);
             }
+        }
+
+        private void Regenerate()
+        {
+            // building shapes is time consuming,dont do until all
+            // the default parameters are set
+            if (loaded)
+            {
+                if (SettingsValid())
+                {
+                    GenerateShape();
+                }
+                else
+                {
+                    ClearShape();
+                }
+                Viewer.Model = GetModel();
+            }
+        }
+
+        private void RegenTimer_Tick(object sender, EventArgs e)
+        {
+            regenTimer.Stop();
+            Regenerate();
+        }
+
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            loaded = false;
+            SetDefaults();
+            loaded = true;
+            UpdateDisplay();
         }
 
         private void SaveEditorParmeters()
@@ -317,6 +415,20 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("Thickness", thickness.ToString());
             EditorParameters.Set("Bold", fontBold.ToString());
             EditorParameters.Set("Italic", fontItalic.ToString());
+            EditorParameters.Set("IsLeftAligned", IsLeftAligned.ToString());
+            EditorParameters.Set("IsRightAligned", IsRightAligned.ToString());
+            EditorParameters.Set("IsCentreAligned", IsCentreAligned.ToString());
+        }
+
+        private void SetDefaults()
+        {
+            SelectedFont = "Segoe UI";
+            TextLength = 100.0;
+            FontBold = false;
+            FontItalic = false;
+            Text = "Text";
+            Thickness = 10;
+            IsLeftAligned = true;
         }
 
         private bool SettingsValid()
@@ -343,37 +455,20 @@ namespace Barnacle.Dialogs
 
         private void UpdateDisplay()
         {
-            // building shapes is time consuming,dont do until all
-            // the default parameters are set
-            if (loaded)
-            {
-                if (SettingsValid())
-                {
-                    GenerateShape();
-                }
-                else
-                {
-                    ClearShape();
-                }
-                Redisplay();
-            }
+            regenTimer.Stop();
+            regenTimer.Start();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             LoadSystemFonts();
-            SelectedFont = "Segoe UI";
-            TextLength = 100.0;
-            FontBold = false;
-            FontItalic = false;
-            Text = "Text";
-            Thickness = 10;
+            SetDefaults();
             LoadEditorParameters();
             loaded = true;
             warningText = "";
 
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             NotifyPropertyChanged("SelectedFont");
             for (int i = 0; i < SystemFonts.Count; i++)
             {

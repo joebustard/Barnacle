@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Barnacle.Dialogs"
-     xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
     Title="Roof Ridge"
     Width="1000"
     Height="550"
@@ -51,7 +51,11 @@
                         Margin="8,0,0,0"
                         Text="{Binding ArmLength}"
                         ToolTip="{Binding ArmLengthToolTip}" />
-                    <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameters to their defaults" Click="ResetDefaults" />
+                    <Button
+                        Margin="8,0,0,0"
+                        Click="ResetDefaults"
+                        Content="Reset"
+                        ToolTip="Restore parameters to their defaults" />
                 </StackPanel>
                 <StackPanel Grid.Row="4" Orientation="Horizontal">
                     <Label
@@ -140,7 +144,10 @@
             Grid.Column="2"
             Style="{StaticResource GridSplitterStyle}" />
 
-        <u:ObjectView x:Name="Viewer" Grid.Column="3" Grid.Row="0" />
+        <u:ObjectView
+            x:Name="Viewer"
+            Grid.Row="0"
+            Grid.Column="3" />
 
         <Grid Grid.Row="1" Grid.Column="3">
             <Grid.ColumnDefinitions>

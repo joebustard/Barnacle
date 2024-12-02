@@ -39,7 +39,6 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "Squirkle";
             DataContext = this;
-            ModelGroup = MyModelGroup;
             squirkleheight = 10;
             length = 10;
         }
@@ -64,40 +63,6 @@ namespace Barnacle.Dialogs
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
-                }
-            }
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
                 }
             }
         }
@@ -220,8 +185,7 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-            // double h = squirkleheight / 4.0;
-            //  double l = length / 4.0;
+
             double h = 0.25;
             double l = 0.25;
             string yseg = h.ToString();
@@ -298,17 +262,29 @@ namespace Barnacle.Dialogs
             pathtext += "RV -" + xseg + " ";
 
             GenerateFromPath(pathtext);
-            Redisplay();
+            Viewer.Model = GetModel();
         }
 
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
+            SquirkleHeight = EditorParameters.GetDouble("SquirkleHeight", 10);
+            Length = EditorParameters.GetDouble("Length", 10);
+            BottomLeftCornerShape.Mode = EditorParameters.GetInt("BottomLeftCornerShape", 0);
+            TopLeftCornerShape.Mode = EditorParameters.GetInt("TopLeftCornerShape", 0);
+            BottomRightCornerShape.Mode = EditorParameters.GetInt("BottomRightCornerShape", 0);
+            TopRightCornerShape.Mode = EditorParameters.GetInt("TopRightCornerShape", 0);
         }
 
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
+            EditorParameters.Set("SquirkleHeight", squirkleheight.ToString());
+            EditorParameters.Set("Length", length.ToString());
+            EditorParameters.Set("BottomLeftCornerShape", BottomLeftCornerShape.Mode.ToString());
+            EditorParameters.Set("TopLeftCornerShape", TopLeftCornerShape.Mode.ToString());
+            EditorParameters.Set("BottomRightCornerShape", BottomRightCornerShape.Mode.ToString());
+            EditorParameters.Set("TopRightCornerShape", TopRightCornerShape.Mode.ToString());
         }
 
         private void TLMode(int mode)
@@ -324,7 +300,7 @@ namespace Barnacle.Dialogs
         private void UpdateDisplay()
         {
             GenerateShape();
-            Redisplay();
+            Viewer.Model = GetModel();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -344,10 +320,9 @@ namespace Barnacle.Dialogs
             LoadEditorParameters();
             GenerateShape();
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             warningText = "";
-            GenerateShape();
-            Redisplay();
+            UpdateDisplay();
         }
     }
 }

@@ -4,12 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Barnacle.Dialogs"
-    xmlns:v="clr-namespace:Barnacle.UserControls.ObjectViewer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:u="clr-namespace:Barnacle.UserControls"
+    xmlns:v="clr-namespace:Barnacle.UserControls.ObjectViewer"
     Title="Image Plaque"
     Width="1000"
-    Height="450"
+    Height="550"
     Background="{StaticResource WindowBackBrush}"
     Loaded="Window_Loaded"
     WindowStartupLocation="CenterOwner"
@@ -105,7 +105,10 @@
             Grid.Row="0"
             Grid.Column="2"
             Style="{StaticResource GridSplitterStyle}" />
-        <v:ObjectView x:Name="Viewer" Grid.Column="3" Grid.Row="0" />
+        <v:ObjectView
+            x:Name="Viewer"
+            Grid.Row="0"
+            Grid.Column="3" />
         <Grid Grid.Row="1" Grid.Column="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />

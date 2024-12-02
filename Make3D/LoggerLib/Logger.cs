@@ -4,21 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using FileUtils;
 
 namespace LoggerLib
 {
     public class Logger
     {
-        private static bool started = false;
         private static string logFile = "";
+        private static bool started = false;
 
         public static void Log(string s)
         {
             System.Diagnostics.Debug.Write(s);
             if (!started)
             {
-                String logPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + System.IO.Path.DirectorySeparatorChar
-                                + "Barnacle" + System.IO.Path.DirectorySeparatorChar;
+                String logPath = PathManager.ApplicationDataFolder() + System.IO.Path.DirectorySeparatorChar;
                 logFile = logPath + "BarnacleLog.txt";
                 File.WriteAllText(logFile, s);
                 started = true;
@@ -27,12 +27,6 @@ namespace LoggerLib
             {
                 File.AppendAllText(logFile, s);
             }
-        }
-
-        public static void LogLine(string s)
-        {
-            Log(s);
-            Log(System.Environment.NewLine);
         }
 
         public static void LogDateTime(string s)
@@ -53,6 +47,12 @@ namespace LoggerLib
             LogLine("source line number: " + sourceLineNumber);
 
             LogLine(ex.Message);
+        }
+
+        public static void LogLine(string s)
+        {
+            Log(s);
+            Log(System.Environment.NewLine);
         }
     }
 }

@@ -48,7 +48,7 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "CutHorizontalPlane";
             DataContext = this;
-
+            ModelGroup = MyModelGroup;
             loaded = false;
             planeLevel = 5;
             planeSelected = false;

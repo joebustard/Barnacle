@@ -1,16 +1,18 @@
-<local:BaseModellerDialog Background="{StaticResource WindowBackBrush }"
-                          Loaded="Window_Loaded"
-                          mc:Ignorable="d"
-                          Title="Text"
-                          WindowStartupLocation="CenterOwner"
-                          x:Class="Barnacle.Dialogs.TextDlg"
-                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                          xmlns:local="clr-namespace:Barnacle.Dialogs"
-                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                          Width="1000"
-                          Height="450">
+<local:BaseModellerDialog
+    x:Class="Barnacle.Dialogs.TextDlg"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.Dialogs"
+     xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Text"
+    Width="1000"
+    Height="550"
+    Background="{StaticResource WindowBackBrush}"
+    Loaded="Window_Loaded"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -19,159 +21,127 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="1"
-              Grid.Row="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="50" />
-            </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1"
-                        Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
-                       Width="100">
-                    Text
-                </Label>
-                <TextBox Margin="8,2,0,0"
-                         Text="{Binding Text}"
-                         Width="200" />
-            </StackPanel>
-            <StackPanel Grid.Row="2"
-                        Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
-                       Width="100">
-                    Font
-                </Label>
-                <ComboBox ItemsSource="{Binding SystemFonts}"
-                          Margin="8,2,0,0"
-                          SelectedItem="{Binding SelectedFont}"
-                          Width="200" x:Name="FontCombo" />
-            </StackPanel>
-            <StackPanel Grid.Row="3"
-                        Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
-                       Width="100">
-                    Text Length
-                </Label>
-                <TextBox Margin="8,2,0,0"
-                         Text="{Binding TextLength}"
-                         Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="4"
-                        Orientation="Horizontal">
-                <CheckBox Content="Bold"
-                          IsChecked="{Binding FontBold}"
-                          Margin="108,2,0,0"
-                          VerticalAlignment="Center" />
-                <CheckBox Content="Italic"
-                          IsChecked="{Binding FontItalic}"
-                          Margin="8,2,0,0"
-                          VerticalAlignment="Center" />
-            </StackPanel>
-            <StackPanel Grid.Row="5"
-                        Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
-                       Width="100">
-                    Thickness
-                </Label>
-                <TextBox Margin="8,2,0,0"
-                         Text="{Binding Thickness}"
-                         Width="50" />
-            </StackPanel>
-            <StackPanel Grid.Row="6"
-                        Orientation="Horizontal">
-                <Label Content="{Binding WarningText}"
-                       FontSize="18"
-                       Foreground="{StaticResource WarningColour}"
-                       VerticalAlignment="Center" />
-            </StackPanel>
-            <Path Data="{Binding PathData}"
-                  Fill="Black"
-                  Grid.Row="10"
-                  Stroke="Black" />
-        </Grid>
-        <Border Grid.Column="2"
-                Grid.Row="0"
-                Style="{StaticResource ControlBorder}">
-            <Viewport3D Name="viewport3D1"
-                        MouseDown="Viewport_MouseDown"
-                        MouseMove="Viewport_MouseMove"
-                        MouseWheel="Viewport_MouseWheel">
-                <Viewport3D.Camera>
-                    <PerspectiveCamera LookDirection="{Binding LookDirection}"
-                                       Position="{Binding CameraPosition}"
-                                       x:Name="camMain">
-                    </PerspectiveCamera>
-                </Viewport3D.Camera>
-                <ModelVisual3D>
-                    <ModelVisual3D.Content>
-                        <Model3DGroup>
-                            <AmbientLight Color="#FF808080" />
-                            <DirectionalLight Color="White"
-                                              Direction="-1,-1,-1"
-                                              x:Name="dirLightMain">
-                            </DirectionalLight>
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-                <ModelVisual3D x:Name="MyModel">
-                    <ModelVisual3D.Content>
-                        <Model3DGroup x:Name="MyModelGroup">
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-            </Viewport3D>
+        <Border
+            Grid.Row="0"
+            Grid.Column="1"
+            Style="{StaticResource ControlBorder}" IsEnabled="{Binding EditingEnabled}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="50" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="1" Grid.RowSpan="3" Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center" Content="Text">
+                    </Label>
+                    <TextBox
+                    Width="200"
+                    Margin="8,2,0,4"
+                    Text="{Binding Text}" AcceptsReturn="True" VerticalContentAlignment="Top" />
+                    <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameters to their defaults" Click="ResetDefaults" MaxHeight="30" />
+                </StackPanel>
+                <StackPanel Grid.Row="4" Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center" Content="Font">
+                    </Label>
+                    <ComboBox
+                    x:Name="FontCombo"
+                    Width="200"
+                    Margin="8,2,0,0"
+                    ItemsSource="{Binding SystemFonts}"
+                    SelectedItem="{Binding SelectedFont}" />
+                </StackPanel>
+                <StackPanel Grid.Row="7" Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center" Content="Text Length">
+                    </Label>
+                    <TextBox
+                    Width="50"
+                    Margin="8,2,0,0"
+                    Text="{Binding TextLength}" />
+                </StackPanel>
+                <StackPanel Grid.Row="5" Orientation="Horizontal">
+                    <Label Content="Style" Width="100" VerticalAlignment="Center" />
+                    <CheckBox
+                    Margin="8,2,0,0"
+                    VerticalAlignment="Center"
+                    Content="Bold"
+                    IsChecked="{Binding FontBold}" />
+                    <CheckBox
+                    Margin="8,2,0,0"
+                    VerticalAlignment="Center"
+                    Content="Italic"
+                    IsChecked="{Binding FontItalic}" />
+                </StackPanel>
+                <StackPanel Grid.Row="6" Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center" Content="Alignment">
+                    </Label>
+                    <RadioButton Content="Left" GroupName="AlignmentGroup" IsChecked="{Binding IsLeftAligned}" VerticalAlignment="Center" Margin="8,0,0,0" />
+                    <RadioButton Content="Centre" GroupName="AlignmentGroup" IsChecked="{Binding IsCentreAligned}" VerticalAlignment="Center" Margin="8,0,0,0" />
+                    <RadioButton Content="Right" GroupName="AlignmentGroup" IsChecked="{Binding IsRightAligned}" VerticalAlignment="Center" Margin="8,0,0,0" />
+                </StackPanel>
+                <StackPanel Grid.Row="8" Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center" Content="Thickness">
+                    </Label>
+                    <TextBox
+                    Width="50"
+                    Margin="8,2,0,0"
+                    Text="{Binding Thickness}" />
+                </StackPanel>
+                <StackPanel Grid.Row="9" Orientation="Horizontal">
+                    <Label
+                    VerticalAlignment="Center"
+                    Content="{Binding WarningText}"
+                    FontSize="18"
+                    Foreground="{StaticResource WarningColour}" />
+                </StackPanel>
+                <Path
+                Grid.Row="10"
+                Data="{Binding PathData}"
+                Fill="Black"
+                Stroke="Black" />
+            </Grid>
         </Border>
+
+        <GridSplitter
+            Grid.Row="0"
+            Grid.Column="2"
+            Style="{StaticResource GridSplitterStyle}" />
+        <u:ObjectView x:Name="Viewer" Grid.Column="3" Grid.Row="0" />
+
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
         </Grid>
-        <Grid Grid.Column="1"
-              Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <CheckBox Content="Floor"
-                      Grid.Column="0"
-                      IsChecked="{Binding ShowFloor}"
-                      VerticalAlignment="Center" />
-            <CheckBox Content="Axies"
-                      Grid.Column="1"
-                      IsChecked="{Binding ShowAxies}"
-                      VerticalAlignment="Center" />
-            <Button Click="Home_Click"
-                    Content="Home" Width="80" Margin="0,2,0,2"
-                    Grid.Column="2" />
-        </Grid>
-        <Grid Grid.Column="2"
-              Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="80" />
-                <ColumnDefinition Width="80" />
-            </Grid.ColumnDefinitions>
-            <Button Click="Cancel_Click"
-                    Content="Cancel"
-                    Grid.Column="1"
-                    Margin="2,2,2,2" />
 
-            <Button Click="Ok_Click"
-                    Content="Ok"
-                    Grid.Column="2"
-                    Margin="2,2,2,2" />
+        <Grid Grid.Row="1" Grid.Column="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="80" />
+            </Grid.ColumnDefinitions>
+            <Button
+                Grid.Column="1"
+                Margin="2,2,2,2"
+                Click="Cancel_Click"
+                Content="Cancel" />
+
+            <Button
+                Grid.Column="2"
+                Margin="2,2,2,2"
+                Click="Ok_Click"
+                Content="Ok" />
         </Grid>
     </Grid>
 </local:BaseModellerDialog>

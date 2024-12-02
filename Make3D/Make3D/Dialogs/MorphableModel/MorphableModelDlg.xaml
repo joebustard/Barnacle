@@ -1,12 +1,18 @@
-<local:BaseModellerDialog x:Class="Barnacle.Dialogs.MorphableModelDlg"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Barnacle.Dialogs"
-         xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
-        mc:Ignorable="d"
-        Title="Morphable Shapes" Height="500" Width="1000" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
+<local:BaseModellerDialog
+    x:Class="Barnacle.Dialogs.MorphableModelDlg"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
+    Title="Morphable Shapes"
+    Width="1000"
+    Height="500"
+    Background="{StaticResource WindowBackBrush}"
+    Loaded="Window_Loaded"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -19,69 +25,147 @@
             <ColumnDefinition Width="10*" />
             <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
-        <Border Grid.Row ="0" Grid.Column="1" Style="{StaticResource ControlBorder}">
+        <Border
+            Grid.Row="0"
+            Grid.Column="1"
+            Style="{StaticResource ControlBorder}">
             <Grid>
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-            </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1" Orientation="Horizontal" Height="25">
-                <Label VerticalAlignment="Center" Width="100">Length</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding ModelLength}" Width="150" ToolTip="{Binding ModelLengthToolTip}" />
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                </Grid.RowDefinitions>
+                <StackPanel
+                    Grid.Row="1"
+                    Height="25"
+                    Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">Length</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding ModelLength}"
+                        ToolTip="{Binding ModelLengthToolTip}" />
 
-                <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameters to their defaults" Click="ResetDefaults" />
-            </StackPanel>
-            <StackPanel Grid.Row="2" Orientation="Horizontal" Height="25">
-                <Label VerticalAlignment="Center" Width="100">Height</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding ModelHeight}" Width="150" ToolTip="{Binding ModelHeightToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="3" Orientation="Horizontal" Height="25">
-                <Label VerticalAlignment="Center" Width="100">Width</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding ModelWidth}" Width="150" ToolTip="{Binding ModelWidthToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="8" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Warp Factor</Label>
-                <!--            <TextBox Margin="8,0,0,0" Text="{Binding WarpFactor}" Width="150" ToolTip="{Binding WarpFactorToolTip}" /> -->
-                <Slider  x:Name="WarpSlider"  Margin="8,0,0,0"  Width="150" Value="{Binding WarpFactor}" ToolTipService.ToolTip="{Binding Path=WarpFactor}" Minimum="0" Maximum="1" SmallChange="0.01" LargeChange="0.1" />
-            </StackPanel>
-            <StackPanel Grid.Row="5" Orientation="Horizontal" Height="25">
-                <Label VerticalAlignment="Center" Width="100">Shape 1</Label>
-                <ComboBox Margin="8,0,0,0" SelectedItem="{Binding Shape1}" ItemsSource="{Binding Shape1Items}" Width="150" ToolTip="{Binding Shape1ToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="6" Orientation="Horizontal" Height="25">
-                <Label VerticalAlignment="Center" Width="100">Shape 2</Label>
-                <ComboBox Margin="8,0,0,0" SelectedItem="{Binding Shape2}" ItemsSource="{Binding Shape2Items}" Width="150" ToolTip="{Binding Shape2ToolTip}" />
-            </StackPanel>
-            <StackPanel Grid.Row="9" Orientation="Horizontal">
-                <TextBox Margin="108,0,0,-0.333" IsReadOnly="true" Text="{Binding FactorText}" Width="150" HorizontalContentAlignment="Center" Height="27" VerticalAlignment="Bottom" />
-            </StackPanel>
-            <StackPanel Grid.Row="8" Orientation="Horizontal">
-            </StackPanel>
-            <StackPanel Grid.Row="9" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
-            </StackPanel>
-        </Grid>
+                    <Button
+                        Margin="8,0,0,0"
+                        Click="ResetDefaults"
+                        Content="Reset"
+                        ToolTip="Restore parameters to their defaults" />
+                </StackPanel>
+                <StackPanel
+                    Grid.Row="2"
+                    Height="25"
+                    Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">Height</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding ModelHeight}"
+                        ToolTip="{Binding ModelHeightToolTip}" />
+                </StackPanel>
+                <StackPanel
+                    Grid.Row="3"
+                    Height="25"
+                    Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">Width</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding ModelWidth}"
+                        ToolTip="{Binding ModelWidthToolTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="8" Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">Warp Factor</Label>
+                    <!--            <TextBox Margin="8,0,0,0" Text="{Binding WarpFactor}" Width="150" ToolTip="{Binding WarpFactorToolTip}" /> -->
+                    <Slider
+                        x:Name="WarpSlider"
+                        Width="150"
+                        Margin="8,0,0,0"
+                        LargeChange="0.1"
+                        Maximum="1"
+                        Minimum="0"
+                        SmallChange="0.01"
+                        ToolTipService.ToolTip="{Binding Path=WarpFactor}"
+                        Value="{Binding WarpFactor}" />
+                </StackPanel>
+                <StackPanel
+                    Grid.Row="5"
+                    Height="25"
+                    Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">Shape 1</Label>
+                    <ComboBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        ItemsSource="{Binding Shape1Items}"
+                        SelectedItem="{Binding Shape1}"
+                        ToolTip="{Binding Shape1ToolTip}" />
+                </StackPanel>
+                <StackPanel
+                    Grid.Row="6"
+                    Height="25"
+                    Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">Shape 2</Label>
+                    <ComboBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        ItemsSource="{Binding Shape2Items}"
+                        SelectedItem="{Binding Shape2}"
+                        ToolTip="{Binding Shape2ToolTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="9" Orientation="Horizontal">
+                    <TextBox
+                        Width="150"
+                        Height="27"
+                        Margin="108,0,0,-0.333"
+                        VerticalAlignment="Bottom"
+                        HorizontalContentAlignment="Center"
+                        IsReadOnly="true"
+                        Text="{Binding FactorText}" />
+                </StackPanel>
+                <StackPanel Grid.Row="8" Orientation="Horizontal" />
+                <StackPanel Grid.Row="9" Orientation="Horizontal">
+                    <Label
+                        VerticalAlignment="Center"
+                        Content="{Binding WarningText}"
+                        FontSize="18"
+                        Foreground="{StaticResource WarningColour}" />
+                </StackPanel>
+            </Grid>
         </Border>
-        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
+        <GridSplitter
+            Grid.Row="0"
+            Grid.Column="2"
+            Style="{StaticResource GridSplitterStyle}" />
 
-        <u:ObjectView x:Name="Viewer" Grid.Column="3" Grid.Row="0" />
-        <Grid Grid.Column="3" Grid.Row="1">
+        <u:ObjectView
+            x:Name="Viewer"
+            Grid.Row="0"
+            Grid.Column="3" />
+        <Grid Grid.Row="1" Grid.Column="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
-            <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" IsDefault="True" />
+            <Button
+                Grid.Column="1"
+                Margin="2,2,2,2"
+                Click="Cancel_Click"
+                Content="Cancel" />
+            <Button
+                Grid.Column="2"
+                Margin="2,2,2,2"
+                Click="Ok_Click"
+                Content="Ok"
+                IsDefault="True" />
         </Grid>
     </Grid>
 </local:BaseModellerDialog>

@@ -1,16 +1,18 @@
-<local:BaseModellerDialog Background="{StaticResource WindowBackBrush }"
-                          Loaded="Window_Loaded"
-                          mc:Ignorable="d"
-                          Title="Thread"
-                          WindowStartupLocation="CenterOwner"
-                          x:Class="Barnacle.Dialogs.ThreadDlg"
-                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                          xmlns:local="clr-namespace:Barnacle.Dialogs"
-                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                          Width="1000"
-                          Height="450">
+<local:BaseModellerDialog
+    x:Class="Barnacle.Dialogs.ThreadDlg"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
+    Title="Thread"
+    Width="1000"
+    Height="550"
+    Background="{StaticResource WindowBackBrush}"
+    Loaded="Window_Loaded"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -22,9 +24,10 @@
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Border Grid.Column="1"
-                Grid.Row="0"
-                Style="{StaticResource ControlBorder}">
+        <Border
+            Grid.Row="0"
+            Grid.Column="1"
+            Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="25" />
@@ -38,172 +41,119 @@
                     <RowDefinition Height="25" />
                     <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="1"
-                        Orientation="Horizontal">
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
                     <Label Width="100">
                         Major Radius
                     </Label>
-                    <Slider Maximum="100"
+                    <Slider
+                        Width="200"
+                        Maximum="100"
                         Minimum="1"
-                        Value="{Binding MajorRadius}"
-                        Width="200" />
-                    <TextBox Text="{Binding MajorRadius}"
-                         Width="50" />
+                        Value="{Binding MajorRadius}" />
+                    <TextBox Width="50" Text="{Binding MajorRadius}" />
                 </StackPanel>
-                <StackPanel Grid.Row="2"
-                        Orientation="Horizontal">
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
                     <Label Width="100">
                         Minor Radius
                     </Label>
-                    <Slider Maximum="100"
+                    <Slider
+                        Width="200"
+                        Maximum="100"
                         Minimum="1"
-                        Value="{Binding MinorRadius}"
-                        Width="200" />
-                    <TextBox Text="{Binding MinorRadius}"
-                         Width="50" />
+                        Value="{Binding MinorRadius}" />
+                    <TextBox Width="50" Text="{Binding MinorRadius}" />
                 </StackPanel>
-                <StackPanel Grid.Row="3"
-                        Orientation="Horizontal">
+                <StackPanel Grid.Row="3" Orientation="Horizontal">
                     <Label Width="100">
                         Root
                     </Label>
-                    <Slider Maximum="10"
+                    <Slider
+                        Width="200"
+                        Maximum="10"
                         Minimum="0.01"
-                        Value="{Binding Root}"
-                        Width="200" />
-                    <TextBox Text="{Binding Root}"
-                         Width="50" />
+                        Value="{Binding Root}" />
+                    <TextBox Width="50" Text="{Binding Root}" />
                 </StackPanel>
-                <StackPanel Grid.Row="4"
-                        Orientation="Horizontal">
+                <StackPanel Grid.Row="4" Orientation="Horizontal">
                     <Label Width="100">
                         Crest
                     </Label>
-                    <Slider Maximum="10"
+                    <Slider
+                        Width="200"
+                        Maximum="10"
                         Minimum="0.01"
-                        Value="{Binding Crest}"
-                        Width="200" />
-                    <TextBox Text="{Binding Crest}"
-                         Width="50" />
+                        Value="{Binding Crest}" />
+                    <TextBox Width="50" Text="{Binding Crest}" />
                 </StackPanel>
-                <StackPanel Grid.Row="5"
-                        Orientation="Horizontal">
+                <StackPanel Grid.Row="5" Orientation="Horizontal">
                     <Label Width="100">
                         Pitch
                     </Label>
-                    <Slider Maximum="10"
+                    <Slider
+                        Width="200"
+                        Maximum="10"
                         Minimum="0.01"
-                        Value="{Binding Pitch}"
-                        Width="200" />
-                    <TextBox Text="{Binding Pitch}"
-                         Width="50" />
+                        Value="{Binding Pitch}" />
+                    <TextBox Width="50" Text="{Binding Pitch}" />
                 </StackPanel>
-                <StackPanel Grid.Row="6"
-                        Orientation="Horizontal">
+                <StackPanel Grid.Row="6" Orientation="Horizontal">
                     <Label Width="100">
                         Helix Angle
                     </Label>
-                    <Slider Maximum="25"
+                    <Slider
+                        Width="200"
+                        Maximum="25"
                         Minimum="5"
-                        Value="{Binding Angle}"
-                        Width="200" />
-                    <TextBox Text="{Binding Angle}"
-                         Width="50" />
+                        Value="{Binding Angle}" />
+                    <TextBox Width="50" Text="{Binding Angle}" />
                 </StackPanel>
-                <StackPanel Grid.Row="7"
-                        Orientation="Horizontal">
+                <StackPanel Grid.Row="7" Orientation="Horizontal">
                     <Label Width="100">
                         Length
                     </Label>
-                    <Slider Maximum="200"
+                    <Slider
+                        Width="200"
+                        Maximum="200"
                         Minimum="5"
-                        Value="{Binding Length}"
-                        Width="200" />
-                    <TextBox Text="{Binding Length}"
-                         Width="50" />
+                        Value="{Binding Length}" />
+                    <TextBox Width="50" Text="{Binding Length}" />
                 </StackPanel>
-                <StackPanel Grid.Row="9"
-                        Orientation="Horizontal">
-                    <Label Content="{Binding WarningText}"
-                       FontSize="18"
-                       Foreground="{StaticResource WarningColour}"
-                       VerticalAlignment="Center" />
+                <StackPanel Grid.Row="9" Orientation="Horizontal">
+                    <Label
+                        VerticalAlignment="Center"
+                        Content="{Binding WarningText}"
+                        FontSize="18"
+                        Foreground="{StaticResource WarningColour}" />
                 </StackPanel>
             </Grid>
         </Border>
 
-        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
-        <Border Grid.Column="3"
-                Grid.Row="0"
-                Style="{StaticResource ControlBorder}">
-            <Viewport3D Name="viewport3D1"
-                        MouseDown="Viewport_MouseDown"
-                        MouseMove="Viewport_MouseMove"
-                        MouseWheel="Viewport_MouseWheel">
-                <Viewport3D.Camera>
-                    <PerspectiveCamera LookDirection="{Binding LookDirection}"
-                                       Position="{Binding CameraPosition}"
-                                       x:Name="camMain">
-                    </PerspectiveCamera>
-                </Viewport3D.Camera>
-                <ModelVisual3D>
-                    <ModelVisual3D.Content>
-                        <Model3DGroup>
-                            <AmbientLight Color="#FF808080" />
-                            <DirectionalLight Color="White"
-                                              Direction="-1,-1,-1"
-                                              x:Name="dirLightMain">
-                            </DirectionalLight>
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-                <ModelVisual3D x:Name="MyModel">
-                    <ModelVisual3D.Content>
-                        <Model3DGroup x:Name="MyModelGroup">
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-            </Viewport3D>
-        </Border>
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
-        </Grid>
-        <Grid Grid.Column="1"
-              Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <CheckBox Content="Floor"
-                      Grid.Column="0"
-                      IsChecked="{Binding ShowFloor}" />
-            <CheckBox Content="Axies"
-                      Grid.Column="1"
-                      IsChecked="{Binding ShowAxies}" />
-            <Button Click="Home_Click"
-                    Content="Home" Width="80" Margin="0,2,0,2"
-                    Grid.Column="2" />
-        </Grid>
-        <Grid Grid.Column="3"
-              Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="80" />
-                <ColumnDefinition Width="80" />
-            </Grid.ColumnDefinitions>
-            <Button Click="Cancel_Click"
-                    Content="Cancel"
-                    Grid.Column="1"
-                    Margin="2,2,2,2" />
+        <GridSplitter
+            Grid.Row="0"
+            Grid.Column="2"
+            Style="{StaticResource GridSplitterStyle}" />
 
-            <Button Click="Ok_Click"
-                    Content="Ok"
-                    Grid.Column="2"
-                    Margin="2,2,2,2" />
+        <u:ObjectView
+            x:Name="Viewer"
+            Grid.Row="0"
+            Grid.Column="3" />
+        <Grid Grid.Row="1" Grid.Column="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="80" />
+            </Grid.ColumnDefinitions>
+            <Button
+                Grid.Column="1"
+                Margin="2,2,2,2"
+                Click="Cancel_Click"
+                Content="Cancel" />
+
+            <Button
+                Grid.Column="2"
+                Margin="2,2,2,2"
+                Click="Ok_Click"
+                Content="Ok" />
         </Grid>
     </Grid>
 </local:BaseModellerDialog>

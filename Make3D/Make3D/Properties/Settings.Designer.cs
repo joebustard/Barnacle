@@ -268,5 +268,17 @@ namespace Barnacle.Properties {
                 this["ShowFloorMM"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int RegenerationDelay {
+            get {
+                return ((int)(this["RegenerationDelay"]));
+            }
+            set {
+                this["RegenerationDelay"] = value;
+            }
+        }
     }
 }

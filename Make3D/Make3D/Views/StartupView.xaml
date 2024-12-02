@@ -1,14 +1,15 @@
-<!-- button and brder are on the same row but only one is viaiblw at a time -->
-<UserControl d:DesignHeight="450"
-             d:DesignWidth="800"
-             mc:Ignorable="d"
-             x:Class="Barnacle.Views.StartupView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
-             xmlns:Views="clr-namespace:Barnacle.Views"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<!--  button and brder are on the same row but only one is viaiblw at a time  -->
+<UserControl
+    x:Class="Barnacle.Views.StartupView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
+    xmlns:Views="clr-namespace:Barnacle.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="550"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
     <UserControl.DataContext>
         <ViewModels:StartupViewModel />
     </UserControl.DataContext>
@@ -31,131 +32,137 @@
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        <Label Content="{Binding AppIdentity}"
-               FontSize="25"
-               Grid.Column="0"
-               Grid.ColumnSpan="2"
-               Grid.Row="0"
-               HorizontalAlignment="Center"
-               HorizontalContentAlignment="Center"
-               VerticalAlignment="Center"
-               VerticalContentAlignment="Stretch" />
+        <Label
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Stretch"
+            Content="{Binding AppIdentity}"
+            FontSize="25" />
 
-        <Button Command="{Binding NewProjectCommand}"
-                Visibility="{Binding NewProjectVisible}"
-                Content="New Project"
-                Grid.Column="2"
-                Grid.Row="2">
+        <Button
+            Grid.Row="2"
+            Grid.Column="2"
+            Command="{Binding NewProjectCommand}"
+            Content="New Project"
+            Visibility="{Binding NewProjectVisible}">
             <Button.Style>
-                <Style TargetType="Button" BasedOn="{StaticResource LargeButton}">
+                <Style BasedOn="{StaticResource LargeButton}" TargetType="Button">
 
                     <Style.Triggers>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter Property="Margin" Value="4,4,4,4" />
                             <Setter Property="FontSize" Value="20" />
                         </Trigger>
-                       
                     </Style.Triggers>
                 </Style>
             </Button.Style>
         </Button>
 
-        <Button Command="{Binding BrowseProjectCommand}"
-                Content="Browse"
-                Grid.Column="2"
-                Grid.Row="4"
-               
-                Visibility="{Binding BrowseProjectVisible}" >
+        <Button
+            Grid.Row="4"
+            Grid.Column="2"
+            Command="{Binding BrowseProjectCommand}"
+            Content="Browse"
+            Visibility="{Binding BrowseProjectVisible}">
             <Button.Style>
-                <Style TargetType="Button" BasedOn="{StaticResource LargeButton}">
+                <Style BasedOn="{StaticResource LargeButton}" TargetType="Button">
 
                     <Style.Triggers>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter Property="Margin" Value="4,4,4,4" />
                             <Setter Property="FontSize" Value="20" />
                         </Trigger>
-
                     </Style.Triggers>
                 </Style>
             </Button.Style>
         </Button>
 
-        <Button Command="{Binding OpenProjectCommand}"
-                Content="Open Project"
-                Grid.Column="1"
-                Grid.Row="6"
-            
-                Visibility="{Binding OpenVisible}">
+        <Button
+            Grid.Row="6"
+            Grid.Column="1"
+            Command="{Binding OpenProjectCommand}"
+            Content="Open Project"
+            Visibility="{Binding OpenVisible}">
             <Button.Style>
-                <Style TargetType="Button" BasedOn="{StaticResource LargeButton}">
+                <Style BasedOn="{StaticResource LargeButton}" TargetType="Button">
 
                     <Style.Triggers>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter Property="Margin" Value="4,4,4,4" />
                             <Setter Property="FontSize" Value="20" />
                         </Trigger>
-
                     </Style.Triggers>
                 </Style>
             </Button.Style>
         </Button>
-        <Border Background="White"
-                BorderThickness="4"
-                Grid.Column="1"
-                Grid.Row="6"
-                Style="{StaticResource ControlBorder}"
-                Visibility="{Binding LoadingVisible}">
-            <Label Content="Loading"
-                   FontSize="18"
-                   HorizontalAlignment="Center"
-                   HorizontalContentAlignment="Center"
-                   VerticalAlignment="Center"
-                   VerticalContentAlignment="Stretch" />
+        <Border
+            Grid.Row="6"
+            Grid.Column="1"
+            Background="White"
+            BorderThickness="4"
+            Style="{StaticResource ControlBorder}"
+            Visibility="{Binding LoadingVisible}">
+            <Label
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Stretch"
+                Content="Loading"
+                FontSize="18" />
         </Border>
-        <Border Background="White"
-                BorderThickness="4"
-                Grid.Column="1"
-                Grid.Row="1"
-                Style="{StaticResource ControlBorder}">
-            <Label FontSize="18"
-                   HorizontalAlignment="Center"
-                   HorizontalContentAlignment="Center"
-                   VerticalContentAlignment="Center"
-                   Height="34">
+        <Border
+            Grid.Row="1"
+            Grid.Column="1"
+            Background="White"
+            BorderThickness="4"
+            Style="{StaticResource ControlBorder}">
+            <Label
+                Height="34"
+                HorizontalAlignment="Center"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                FontSize="18">
                 Recent Projects
             </Label>
         </Border>
-        <Border Background="White"
-                Grid.Column="1"
-                Grid.Row="2"
-                Grid.RowSpan="4"
-                Style="{StaticResource ControlBorder}">
-            <ListView ItemsSource="{Binding RecentProjects}"
-                      MouseDoubleClick="ListView_MouseDoubleClick"
-                      SelectedItem="{Binding SelectedProject}">
+        <Border
+            Grid.Row="2"
+            Grid.RowSpan="4"
+            Grid.Column="1"
+            Background="White"
+            Style="{StaticResource ControlBorder}">
+            <ListView
+                ItemsSource="{Binding RecentProjects}"
+                MouseDoubleClick="ListView_MouseDoubleClick"
+                SelectedItem="{Binding SelectedProject}">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel ItemWidth="160"
-                                   MaxWidth="500" />
+                        <WrapPanel MaxWidth="500" ItemWidth="160" />
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Border BorderBrush="BlanchedAlmond"
-                                BorderThickness="4,4,4,4"
-                                ToolTip="{Binding Path}">
-                            <StackPanel Orientation="Vertical"
-                                        ToolTip="{Binding Path}">
-                                <Image Source="/Barnacle;component/Images/Buttons/ExistingProject.png"
-                                       ToolTip="{Binding Path}"
-                                       Width="48"
-                                       Height="48" />
+                        <Border
+                            BorderBrush="BlanchedAlmond"
+                            BorderThickness="4,4,4,4"
+                            ToolTip="{Binding Path}">
+                            <StackPanel Orientation="Vertical" ToolTip="{Binding Path}">
+                                <Image
+                                    Width="48"
+                                    Height="48"
+                                    Source="/Barnacle;component/Images/Buttons/ExistingProject.png"
+                                    ToolTip="{Binding Path}" />
 
-                                <Label Content="{Binding Title}"
-                                       FontSize="16"
-                                       HorizontalContentAlignment="Center"
-                                       ToolTip="{Binding Path}"
-                                       Width="160" />
+                                <Label
+                                    Width="160"
+                                    HorizontalContentAlignment="Center"
+                                    Content="{Binding Title}"
+                                    FontSize="16"
+                                    ToolTip="{Binding Path}" />
                             </StackPanel>
                         </Border>
                     </DataTemplate>

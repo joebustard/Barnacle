@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Barnacle"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="450"
+    d:DesignHeight="550"
     d:DesignWidth="800"
     Loaded="ScriptView_Loaded"
     mc:Ignorable="d">
@@ -27,16 +27,17 @@
                         <RowDefinition Height="126" />
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0">
-                        <Border Style="{StaticResource ControlBorder}"  MaxHeight="500">
-                            <RichTextBox MaxHeight="500"
-                        x:Name="ScriptBox"
-                        HorizontalAlignment="Stretch"
-                        Block.LineHeight="2"
-                        FontSize="32"
-                        IsEnabled="{Binding EnableRun}"
-                        PreviewKeyDown="ScriptBox_PreviewKeyDown"
-                        TextChanged="ScriptBox_TextChanged"
-                        VerticalScrollBarVisibility="Visible">
+                        <Border MaxHeight="500" Style="{StaticResource ControlBorder}">
+                            <RichTextBox
+                                x:Name="ScriptBox"
+                                MaxHeight="500"
+                                HorizontalAlignment="Stretch"
+                                Block.LineHeight="2"
+                                FontSize="32"
+                                IsEnabled="{Binding EnableRun}"
+                                PreviewKeyDown="ScriptBox_PreviewKeyDown"
+                                TextChanged="ScriptBox_TextChanged"
+                                VerticalScrollBarVisibility="Visible">
                                 <RichTextBox.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Command="ApplicationCommands.Cut" Header="Cut" />
@@ -44,22 +45,22 @@
                                         <MenuItem Command="ApplicationCommands.Paste" Header="Paste" />
                                         <Separator />
                                         <MenuItem
-                                    Command="{Binding ScriptCommand}"
-                                    CommandParameter="InsSolidFunc"
-                                    Header="Insert Solid Func" />
+                                            Command="{Binding ScriptCommand}"
+                                            CommandParameter="InsSolidFunc"
+                                            Header="Insert Solid Func" />
                                         <MenuItem
-                                    Command="{Binding ScriptCommand}"
-                                    CommandParameter="BlankProcedure"
-                                    Header="Insert Blank Procedure" />
+                                            Command="{Binding ScriptCommand}"
+                                            CommandParameter="BlankProcedure"
+                                            Header="Insert Blank Procedure" />
                                         <MenuItem
-                                    Command="{Binding ScriptCommand}"
-                                    CommandParameter="Procedure"
-                                    Header="Insert Procedure With Parameters" />
+                                            Command="{Binding ScriptCommand}"
+                                            CommandParameter="Procedure"
+                                            Header="Insert Procedure With Parameters" />
 
                                         <MenuItem
-                                    Command="{Binding ScriptCommand}"
-                                    CommandParameter="FuncHead"
-                                    Header="Insert Func Header" />
+                                            Command="{Binding ScriptCommand}"
+                                            CommandParameter="FuncHead"
+                                            Header="Insert Func Header" />
                                     </ContextMenu>
                                 </RichTextBox.ContextMenu>
                             </RichTextBox>
@@ -76,67 +77,74 @@
                             <RowDefinition Height="25" />
                         </Grid.RowDefinitions>
                         <UniformGrid
-                        Grid.Row="0"
-                        Columns="6"
-                        Rows="1" Width="700" Grid.ColumnSpan="2" Margin="47,0,47.4,74.8" Grid.RowSpan="2">
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            Grid.ColumnSpan="2"
+                            Width="700"
+                            Margin="47,0,47.4,74.8"
+                            Columns="6"
+                            Rows="1">
 
                             <Button
-                            Margin="2,2,2,2"
-                            Click="CheckClicked"
-                            Content="Check"
-                            IsEnabled="{Binding EnableRun}"
-                            ToolTip="Check the script for syntax errors but don't run it" />
+                                Margin="2,2,2,2"
+                                Click="CheckClicked"
+                                Content="Check"
+                                IsEnabled="{Binding EnableRun}"
+                                ToolTip="Check the script for syntax errors but don't run it" />
 
                             <Button
-                            Margin="2,2,2,2"
-                            Click="RunClicked"
-                            Content="Run"
-                            IsEnabled="{Binding EnableRun}"
-                            ToolTip="Run the script" />
+                                Margin="2,2,2,2"
+                                Click="RunClicked"
+                                Content="Run"
+                                IsEnabled="{Binding EnableRun}"
+                                ToolTip="Run the script" />
 
                             <Button
-                            Margin="2,2,2,2"
-                            Command="{Binding ScriptCommand}"
-                            CommandParameter="Clear"
-                            Content="Clear"
-                            IsEnabled="{Binding EnableRun}"
-                            ToolTip="Clear results log" />
+                                Margin="2,2,2,2"
+                                Command="{Binding ScriptCommand}"
+                                CommandParameter="Clear"
+                                Content="Clear"
+                                IsEnabled="{Binding EnableRun}"
+                                ToolTip="Clear results log" />
 
                             <Button
-                            x:Name="SaveBut"
-                            Command="{Binding ScriptCommand}"
-                            CommandParameter="Save"
-                            Content="Save"
-                            IsEnabled="{Binding EnableRun}" />
+                                x:Name="SaveBut"
+                                Command="{Binding ScriptCommand}"
+                                CommandParameter="Save"
+                                Content="Save"
+                                IsEnabled="{Binding EnableRun}" />
 
                             <Button
-                            x:Name="CloseBut"
-                            Command="{Binding ScriptCommand}"
-                            CommandParameter="Close"
-                            Content="Close"
-                            IsEnabled="{Binding EnableRun}" />
+                                x:Name="CloseBut"
+                                Command="{Binding ScriptCommand}"
+                                CommandParameter="Close"
+                                Content="Close"
+                                IsEnabled="{Binding EnableRun}" />
 
                             <StackPanel Width="150" Orientation="Horizontal">
                                 <TextBox
-                                x:Name="SearchBox"
-                                Width="100"
-                                Margin="2,2,0,2"
-                                Text="{Binding SearchText}" />
+                                    x:Name="SearchBox"
+                                    Width="100"
+                                    Margin="2,2,0,2"
+                                    Text="{Binding SearchText}" />
                                 <Button
-                                x:Name="SearchBut"
-                                Command="{Binding FindCommand}"
-                                Content="Find"
-                                IsEnabled="{Binding EnableRun}" />
+                                    x:Name="SearchBut"
+                                    Command="{Binding FindCommand}"
+                                    Content="Find"
+                                    IsEnabled="{Binding EnableRun}" />
                             </StackPanel>
                         </UniformGrid>
                         <TextBox
-                        x:Name="ResultsBox"
-                        Grid.Row="1"
-                        Background="Black"
-                        FontSize="18"
-                        Foreground="AntiqueWhite"
-                        PreviewKeyDown="ScriptBox_PreviewKeyDown"
-                        Text="{Binding ResultsText}" Grid.ColumnSpan="2" Margin="0,0.4,-0.6,24.4" Grid.RowSpan="2" />
+                            x:Name="ResultsBox"
+                            Grid.Row="1"
+                            Grid.RowSpan="2"
+                            Grid.ColumnSpan="2"
+                            Margin="0,0.4,-0.6,24.4"
+                            Background="Black"
+                            FontSize="18"
+                            Foreground="AntiqueWhite"
+                            PreviewKeyDown="ScriptBox_PreviewKeyDown"
+                            Text="{Binding ResultsText}" />
                     </Grid>
                 </Grid>
             </TabItem>

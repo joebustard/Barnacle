@@ -40,57 +40,41 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class ClaySculptDlg : BaseModellerDialog, INotifyPropertyChanged
     {
+        private const int cellsPerSector = 16;
         private const double maxtoolsSize = 10;
         private const double maxtoolStrength = 10;
         private const double mintoolsSize = 1;
         private const double mintoolStrength = 1;
         private GeometryModel3D clayModel;
         private bool claySelected;
-        private bool symetric;
+        private SculptingTool currentTool;
+        private double cx;
+        private double cy;
+        private double cz;
         private bool loaded;
+        private List<GeometryModel3D> markers;
         private int maxX;
         private int maxY;
         private int maxZ;
         private int numbersectors;
-        private SectorModel[,,] sectorModels;
-        private Isdf sdf;
-        private Isdf tool;
-        private bool toolInverse;
-        private string toolShape;
-        private ObservableCollection<String> toolShapeItems;
-        private double toolsSize;
-        private double toolStrength;
+        private int op;
 
         //private PlanktonMesh pmesh;
         private Mesh pmesh;
 
-        private List<GeometryModel3D> markers;
-        private List<GeometryModel3D> wireframes;
-
-        public bool Symetric
-        {
-            get { return symetric; }
-
-            set
-            {
-                if (symetric = value)
-                {
-                    symetric = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public string SymetricToolTip
-        {
-            get
-            {
-                return "When a change is made to one side of the model, apply it to the other side automaticaly";
-            }
-        }
-
+        private Isdf sdf;
+        private SectorModel[,,] sectorModels;
+        private double strength;
+        private bool symetric;
+        private Isdf tool;
+        private bool toolInverse;
+        private ToolSelectionContent toolSelectionContent;
+        private string toolShape;
+        private ObservableCollection<String> toolShapeItems;
+        private double toolsSize;
+        private double toolStrength;
         private string warningText;
-        private const int cellsPerSector = 16;
+        private List<GeometryModel3D> wireframes;
 
         public ClaySculptDlg()
         {
@@ -98,7 +82,7 @@ namespace Barnacle.Dialogs
             ToolName = "ClaySculpt";
             DataContext = this;
             meshColour = Colors.Brown;
-            ModelGroup = MyModelGroup;
+
             loaded = false;
             // pmesh = new PlanktonMesh();
             pmesh = new Mesh();
@@ -141,39 +125,28 @@ namespace Barnacle.Dialogs
             ToolShape = ToolShapeItems[0];
         }
 
-        public override bool ShowAxies
+        public bool Symetric
         {
             get
             {
-                return showAxies;
+                return symetric;
             }
 
             set
             {
-                if (showAxies != value)
+                if (symetric = value)
                 {
-                    showAxies = value;
+                    symetric = value;
                     NotifyPropertyChanged();
-                    Redisplay();
                 }
             }
         }
 
-        public override bool ShowFloor
+        public string SymetricToolTip
         {
             get
             {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
+                return "When a change is made to one side of the model, apply it to the other side automaticaly";
             }
         }
 
@@ -210,7 +183,10 @@ namespace Barnacle.Dialogs
 
         public string ToolShape
         {
-            get { return toolShape; }
+            get
+            {
+                return toolShape;
+            }
 
             set
             {
@@ -224,28 +200,12 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void SetOpcode()
-        {
-            if (toolShape == "Inflate")
-            {
-                if (toolInverse)
-                {
-                    op = 1;
-                }
-                else
-                {
-                    op = 0;
-                }
-            }
-            else if (toolShape == "Smooth")
-            {
-                op = 2;
-            }
-        }
-
         public ObservableCollection<String> ToolShapeItems
         {
-            get { return toolShapeItems; }
+            get
+            {
+                return toolShapeItems;
+            }
 
             set
             {
@@ -260,7 +220,10 @@ namespace Barnacle.Dialogs
 
         public String toolShapeToolTip
         {
-            get { return "ToolShape Text"; }
+            get
+            {
+                return "ToolShape Text";
+            }
         }
 
         public double ToolsSize
@@ -400,28 +363,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        // private void CreateMarker(PlanktonVertex p, Color cl)
-        private void CreateMarker(Vertex p, Color cl)
-        {
-            MeshGeometry3D mesh = MeshUtils.MakeBorder(p.X, p.Y, p.Z, 2);
-            GeometryModel3D gm = new GeometryModel3D();
-            gm.Geometry = mesh;
-
-            DiffuseMaterial mt = new DiffuseMaterial();
-            mt.Color = meshColour;
-            mt.Brush = new SolidColorBrush(cl);
-            gm.Material = mt;
-            DiffuseMaterial mtb = new DiffuseMaterial();
-            mtb.Color = cl;
-            mtb.Brush = new SolidColorBrush(cl);
-            gm.BackMaterial = mtb;
-
-            markers.Add(gm);
-        }
-
-        private ToolSelectionContent toolSelectionContent;
-        private SculptingTool currentTool;
-
         protected override void Viewport_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
         {
             Viewport3D vp = sender as Viewport3D;
@@ -462,79 +403,6 @@ namespace Barnacle.Dialogs
                 {
                     oldMousePos = e.GetPosition(vp);
                 }
-            }
-        }
-
-        private void ToolProcess()
-        {
-            /*
-            List<int> oppositeEdges = new List<int>();
-            List<int> allEdges = new List<int>();
-            foreach (int i in toolSelectionContent.SelectedVertices)
-            {
-                List<int> edges = toolSelectionContent.GetListOfEdgesFromPoint(i);
-
-                foreach (int v in edges)
-                {
-                    allEdges.Add(v);
-
-                    CreateWireframeForEdge(v, Colors.Blue);
-                    PlanktonHalfedge he = pmesh.Halfedges[v];
-                    int next = he.NextHalfedge;
-                    PlanktonHalfedge nexthe = pmesh.Halfedges[next];
-                    if (!allEdges.Contains(next) && !oppositeEdges.Contains(next) && !oppositeEdges.Contains(nexthe.Twin) )
-                    {
-                        oppositeEdges.Add(next);
-                    }
-                }
-            }
-            foreach (int v in oppositeEdges)
-            {
-                CreateWireframeForEdge(v, Colors.Pink);
-            }
-            */
-            currentTool.ApplyTool(toolSelectionContent, lastHitPoint);
-        }
-
-        private void CreateWireframeForEdge(int v, Color cl)
-        {
-            //PlanktonHalfedge he = pmesh.Halfedges[v];
-            HalfEdge he = pmesh.HalfEdges[v];
-            int s = he.StartVertex;
-            he = pmesh.HalfEdges[he.Next];
-            int e = he.StartVertex;
-            // PlanktonVertex ve = pmesh.Vertices[s];
-            Vertex ve = pmesh.Vertices[s];
-            Point3D position1 = new Point3D(ve.X, ve.Y, ve.Z);
-
-            ve = pmesh.Vertices[e];
-            Point3D position2 = new Point3D(ve.X, ve.Y, ve.Z);
-            WireFrameSegment wf = new WireFrameSegment(position1, position2, 1, cl);
-            wireframes.Add(wf.Model);
-        }
-
-        private void SelectFaceVertices(int v0, int v1, int v2, Point3D lastHitPoint, double radius)
-        {
-            toolSelectionContent.InitialVertexSelection(v0);
-            toolSelectionContent.InitialVertexSelection(v1);
-            toolSelectionContent.InitialVertexSelection(v2);
-            toolSelectionContent.SelectedInRange(lastHitPoint, radius);
-            foreach (int v in toolSelectionContent.SelectedVertices)
-            {
-                CreateMarker(pmesh.Vertices[v], Colors.Red);
-            }
-        }
-
-        private void ClearToolSelection()
-        {
-            if (toolSelectionContent != null)
-
-            {
-                toolSelectionContent.Clear();
-            }
-            else
-            {
-                toolSelectionContent = new ToolSelectionContent(pmesh);
             }
         }
 
@@ -608,6 +476,55 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void ClearToolSelection()
+        {
+            if (toolSelectionContent != null)
+
+            {
+                toolSelectionContent.Clear();
+            }
+            else
+            {
+                toolSelectionContent = new ToolSelectionContent(pmesh);
+            }
+        }
+
+        // private void CreateMarker(PlanktonVertex p, Color cl)
+        private void CreateMarker(Vertex p, Color cl)
+        {
+            MeshGeometry3D mesh = MeshUtils.MakeBorder(p.X, p.Y, p.Z, 2);
+            GeometryModel3D gm = new GeometryModel3D();
+            gm.Geometry = mesh;
+
+            DiffuseMaterial mt = new DiffuseMaterial();
+            mt.Color = meshColour;
+            mt.Brush = new SolidColorBrush(cl);
+            gm.Material = mt;
+            DiffuseMaterial mtb = new DiffuseMaterial();
+            mtb.Color = cl;
+            mtb.Brush = new SolidColorBrush(cl);
+            gm.BackMaterial = mtb;
+
+            markers.Add(gm);
+        }
+
+        private void CreateWireframeForEdge(int v, Color cl)
+        {
+            //PlanktonHalfedge he = pmesh.Halfedges[v];
+            HalfEdge he = pmesh.HalfEdges[v];
+            int s = he.StartVertex;
+            he = pmesh.HalfEdges[he.Next];
+            int e = he.StartVertex;
+            // PlanktonVertex ve = pmesh.Vertices[s];
+            Vertex ve = pmesh.Vertices[s];
+            Point3D position1 = new Point3D(ve.X, ve.Y, ve.Z);
+
+            ve = pmesh.Vertices[e];
+            Point3D position2 = new Point3D(ve.X, ve.Y, ve.Z);
+            WireFrameSegment wf = new WireFrameSegment(position1, position2, 1, cl);
+            wireframes.Add(wf.Model);
+        }
+
         private void DirtySector(int v1, int v2, int v3, bool neighbours = true)
         {
             if (v1 >= 0 && v1 < maxX && v2 >= 0 && v2 < maxY && v3 >= 0 && v3 < maxZ)
@@ -635,10 +552,6 @@ namespace Barnacle.Dialogs
                 bool skipp = true;
             }
         }
-
-        private double cx;
-        private double cy;
-        private double cz;
 
         private void GenerateShape()
         {
@@ -680,6 +593,18 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("ToolInverse", ToolInverse.ToString());
         }
 
+        private void SelectFaceVertices(int v0, int v1, int v2, Point3D lastHitPoint, double radius)
+        {
+            toolSelectionContent.InitialVertexSelection(v0);
+            toolSelectionContent.InitialVertexSelection(v1);
+            toolSelectionContent.InitialVertexSelection(v2);
+            toolSelectionContent.SelectedInRange(lastHitPoint, radius);
+            foreach (int v in toolSelectionContent.SelectedVertices)
+            {
+                CreateMarker(pmesh.Vertices[v], Colors.Red);
+            }
+        }
+
         private void SetDefaults()
         {
             loaded = false;
@@ -691,17 +616,64 @@ namespace Barnacle.Dialogs
             loaded = true;
         }
 
+        private void SetOpcode()
+        {
+            if (toolShape == "Inflate")
+            {
+                if (toolInverse)
+                {
+                    op = 1;
+                }
+                else
+                {
+                    op = 0;
+                }
+            }
+            else if (toolShape == "Smooth")
+            {
+                op = 2;
+            }
+        }
+
+        private void ToolProcess()
+        {
+            /*
+            List<int> oppositeEdges = new List<int>();
+            List<int> allEdges = new List<int>();
+            foreach (int i in toolSelectionContent.SelectedVertices)
+            {
+                List<int> edges = toolSelectionContent.GetListOfEdgesFromPoint(i);
+
+                foreach (int v in edges)
+                {
+                    allEdges.Add(v);
+
+                    CreateWireframeForEdge(v, Colors.Blue);
+                    PlanktonHalfedge he = pmesh.Halfedges[v];
+                    int next = he.NextHalfedge;
+                    PlanktonHalfedge nexthe = pmesh.Halfedges[next];
+                    if (!allEdges.Contains(next) && !oppositeEdges.Contains(next) && !oppositeEdges.Contains(nexthe.Twin) )
+                    {
+                        oppositeEdges.Add(next);
+                    }
+                }
+            }
+            foreach (int v in oppositeEdges)
+            {
+                CreateWireframeForEdge(v, Colors.Pink);
+            }
+            */
+            currentTool.ApplyTool(toolSelectionContent, lastHitPoint);
+        }
+
         private void UpdateDisplay()
         {
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
-
-        private int op;
-        private double strength;
 
         private void Viewport_MouseUp(object sender, System.Windows.Input.MouseEventArgs e)
         {
@@ -722,7 +694,7 @@ namespace Barnacle.Dialogs
             LoadEditorParameters();
             meshColour = Colors.Chocolate;
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             ToolShape = ToolShapeItems[0];
             Point3DCollection cubeVertices = new Point3DCollection();
             Int32Collection cubeFaces = new Int32Collection();

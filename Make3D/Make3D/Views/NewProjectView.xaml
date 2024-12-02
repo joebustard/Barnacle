@@ -1,19 +1,18 @@
 <UserControl
-             d:DesignHeight="450"
-             d:DesignWidth="800"
-             mc:Ignorable="d"
-             x:Class="Barnacle.Views.NewProjectView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:Barnacle.Views"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:Class="Barnacle.Views.NewProjectView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
     <UserControl.DataContext>
         <ViewModels:NewProjectViewModel />
     </UserControl.DataContext>
-    <Grid
->
+    <Grid>
         <Grid.Background>
             <ImageBrush ImageSource="/Barnacle;component/Images/Barnicle.png" />
         </Grid.Background>
@@ -36,13 +35,14 @@
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
 
-        <Border Background="White"
-                BorderThickness="4"
-                 Grid.Column="1"
-                 Grid.ColumnSpan="4"
-               Grid.Row="1"
-               Grid.RowSpan="1"
-                Style="{StaticResource ControlBorder}">
+        <Border
+            Grid.Row="1"
+            Grid.RowSpan="1"
+            Grid.Column="1"
+            Grid.ColumnSpan="4"
+            Background="White"
+            BorderThickness="4"
+            Style="{StaticResource ControlBorder}">
 
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -50,95 +50,104 @@
                     <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
 
-                <Label FontSize="18"
-               Grid.Column="0"
-               HorizontalAlignment="Left"
-               VerticalAlignment="Center">
+                <Label
+                    Grid.Column="0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    FontSize="18">
                     Project Name
                 </Label>
 
-                <TextBox FontSize="18"
-                 Grid.Column="1"
-                 HorizontalAlignment="Stretch"
-                 Text="{Binding ProjectName, UpdateSourceTrigger=PropertyChanged}"
-                 VerticalAlignment="Center" />
+                <TextBox
+                    Grid.Column="1"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Text="{Binding ProjectName, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
         </Border>
 
-        <Border Background="White"
-                BorderThickness="4"
-                Grid.Column="1"
-                Grid.Row="3"
-                Grid.RowSpan="1"
-                Grid.ColumnSpan="4"
-                Style="{StaticResource ControlBorder}">
+        <Border
+            Grid.Row="3"
+            Grid.RowSpan="1"
+            Grid.Column="1"
+            Grid.ColumnSpan="4"
+            Background="White"
+            BorderThickness="4"
+            Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-                <Label FontSize="18"
-               Grid.Column="0"
-
-               VerticalAlignment="Center">
+                <Label
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    FontSize="18">
                     Template
                 </Label>
 
-                <ComboBox Grid.Column="1"
-                  Grid.ColumnSpan="1"
-                  ItemsSource="{Binding TemplateNames}"
-                  SelectedItem="{Binding SelectedTemplate}"
-                  x:Name="TemplateBox" />
+                <ComboBox
+                    x:Name="TemplateBox"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="1"
+                    ItemsSource="{Binding TemplateNames}"
+                    SelectedItem="{Binding SelectedTemplate}" />
             </Grid>
         </Border>
 
-    <Border Background="White"
-                BorderThickness="4"
-                Grid.Column="1"
-               Grid.ColumnSpan="4"
-               Grid.Row="5"
-               Grid.RowSpan="2"
-                Style="{StaticResource ControlBorder}">
+        <Border
+            Grid.Row="5"
+            Grid.RowSpan="2"
+            Grid.Column="1"
+            Grid.ColumnSpan="4"
+            Background="White"
+            BorderThickness="4"
+            Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-            <Label FontSize="18"
-              VerticalAlignment="Center"
-               HorizontalAlignment="Center" Grid.Row="0">
-                Description
-            </Label>
+                <Label
+                    Grid.Row="0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="18">
+                    Description
+                </Label>
 
-            <TextBox AcceptsReturn="True"
-                 Grid.Row="1"
-                 HorizontalAlignment="Stretch"
-                 IsReadOnly="True"
-                 FontSize="18"
-                 Text="{Binding SelectedDescription}"
-                 VerticalScrollBarVisibility="Visible"
-                 x:Name="DescriptionBox" TextChanged="DescriptionBox_TextChanged">
-            </TextBox>
+                <TextBox
+                    x:Name="DescriptionBox"
+                    Grid.Row="1"
+                    HorizontalAlignment="Stretch"
+                    AcceptsReturn="True"
+                    FontSize="18"
+                    IsReadOnly="True"
+                    Text="{Binding SelectedDescription}"
+                    TextChanged="DescriptionBox_TextChanged"
+                    VerticalScrollBarVisibility="Visible" />
             </Grid>
         </Border>
 
-        <Grid Grid.Column="1"
-              Grid.ColumnSpan="4"
-              Grid.Row="7">
-             <Grid.ColumnDefinitions>
+        <Grid
+            Grid.Row="7"
+            Grid.Column="1"
+            Grid.ColumnSpan="4">
+            <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
-            <Button Command="{Binding BackCommand}"
-                    Content="Back"
-                    Grid.Column="1"
-                     >
+            <Button
+                Grid.Column="1"
+                Command="{Binding BackCommand}"
+                Content="Back">
                 <Button.Style>
-                    <Style TargetType="Button" BasedOn="{StaticResource LargeButton}">
+                    <Style BasedOn="{StaticResource LargeButton}" TargetType="Button">
 
                         <Style.Triggers>
                             <Trigger Property="IsPressed" Value="True">
@@ -151,15 +160,16 @@
                 </Button.Style>
             </Button>
 
-            <Button Command="{Binding CreateCommand}"
-                    Content="Create"
-                    Grid.Column="3"
-                    HorizontalAlignment="Right"
-                    IsEnabled="{Binding OKEnabled}"
-                    IsDefault="True" >
-                
+            <Button
+                Grid.Column="3"
+                HorizontalAlignment="Right"
+                Command="{Binding CreateCommand}"
+                Content="Create"
+                IsDefault="True"
+                IsEnabled="{Binding OKEnabled}">
+
                 <Button.Style>
-                    <Style TargetType="Button" BasedOn="{StaticResource LargeButton}">
+                    <Style BasedOn="{StaticResource LargeButton}" TargetType="Button">
 
                         <Style.Triggers>
                             <Trigger Property="IsPressed" Value="True">

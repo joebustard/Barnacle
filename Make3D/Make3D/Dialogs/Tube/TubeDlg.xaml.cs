@@ -28,6 +28,7 @@ namespace Barnacle.Dialogs
     public partial class TubeDlg : BaseModellerDialog, INotifyPropertyChanged
     {
         private double innerRadius;
+        private bool loaded;
         private double lowerBevel;
         private double sweepDegrees;
         private double thickness;
@@ -45,7 +46,6 @@ namespace Barnacle.Dialogs
             LowerBevel = 0;
             SweepDegrees = 360;
             DataContext = this;
-            ModelGroup = MyModelGroup;
         }
 
         public double InnerRadius
@@ -59,8 +59,7 @@ namespace Barnacle.Dialogs
                 if (innerRadius != value)
                 {
                     innerRadius = value;
-                    GenerateRing();
-                    Redisplay();
+                    UpdateDisplay();
                     NotifyPropertyChanged();
                 }
             }
@@ -77,43 +76,8 @@ namespace Barnacle.Dialogs
                 if (lowerBevel != value)
                 {
                     lowerBevel = value;
-                    GenerateRing();
-                    Redisplay();
+                    UpdateDisplay();
                     NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
                 }
             }
         }
@@ -128,8 +92,7 @@ namespace Barnacle.Dialogs
             {
                 sweepDegrees = value;
                 NotifyPropertyChanged();
-                GenerateRing();
-                Redisplay();
+                UpdateDisplay();
             }
         }
 
@@ -144,8 +107,7 @@ namespace Barnacle.Dialogs
                 if (tubeHeight != value)
                 {
                     tubeHeight = value;
-                    GenerateRing();
-                    Redisplay();
+                    UpdateDisplay();
                     NotifyPropertyChanged();
                 }
             }
@@ -162,8 +124,7 @@ namespace Barnacle.Dialogs
                 if (thickness != value)
                 {
                     thickness = value;
-                    GenerateRing();
-                    Redisplay();
+                    UpdateDisplay();
                     NotifyPropertyChanged();
                 }
             }
@@ -180,8 +141,7 @@ namespace Barnacle.Dialogs
                 if (upperBevel != value)
                 {
                     upperBevel = value;
-                    GenerateRing();
-                    Redisplay();
+                    UpdateDisplay();
                     NotifyPropertyChanged();
                 }
             }
@@ -212,8 +172,16 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("SweepDegrees", sweepDegrees.ToString());
         }
 
+        private void UpdateDisplay()
+        {
+            Viewer.Clear();
+            GenerateRing();
+            Viewer.Model = GetModel();
+        }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            loaded = false;
             string s = EditorParameters.Get("InnerRadius");
             if (s != "")
             {
@@ -224,10 +192,9 @@ namespace Barnacle.Dialogs
                 LowerBevel = EditorParameters.GetDouble("LowerBevel");
                 SweepDegrees = EditorParameters.GetDouble("SweepDegrees");
             }
+            loaded = true;
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
-            GenerateRing();
-            Redisplay();
+            UpdateDisplay();
         }
     }
 }

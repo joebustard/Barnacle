@@ -8,7 +8,7 @@
     xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
     Title="Parallelogram"
     Width="1000"
-    Height="450"
+    Height="550"
     Background="{StaticResource WindowBackBrush}"
     Loaded="Window_Loaded"
     WindowStartupLocation="CenterOwner"

@@ -38,6 +38,7 @@ namespace Barnacle.Dialogs
         private double dihedralAngle;
         private double dihedralLimit = 20;
         private double dipPercent;
+        private bool loaded;
         private int numStruts;
         private List<String> rootairfoilNames;
         private string rootGroup;
@@ -61,7 +62,7 @@ namespace Barnacle.Dialogs
         private List<String> tipShapeNames;
         private bool topModelChecked;
         private bool wholeModelChecked;
-        private bool loaded;
+
         public CanvasWingDlg()
         {
             InitializeComponent();
@@ -74,9 +75,8 @@ namespace Barnacle.Dialogs
             airFoilDoc.XmlResolver = null;
             rootairfoilNames = new List<string>();
             airfoilGroups = new List<string>();
-            ModelGroup = MyModelGroup;
+
             loaded = false;
-            
         }
 
         public List<string> AirfoilGroups
@@ -313,40 +313,6 @@ namespace Barnacle.Dialogs
                 {
                     shapeNames = value;
                     NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
                 }
             }
         }
@@ -1102,6 +1068,30 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            ResetParameters();
+        }
+
+        private void ResetParameters()
+        {
+            RootLength = 30;
+            TipLength = 10;
+            Span = 70;
+            SweepAngle = 0;
+            DihedralAngle = 0;
+
+            NumStruts = 8;
+            DipPercent = 25;
+            SelectedShape = shapeNames[0];
+            SelectedTipShape = tipShapeNames[0];
+            RootGroup = airfoilGroups[0];
+            TipGroup = airfoilGroups[0];
+            SelectedRootAirfoil = rootairfoilNames[0];
+            SelectedTipAirfoil = tipairfoilNames[0];
+            WholeModelChecked = true;
+        }
+
         private void SaveEditorParmeters()
         {
             EditorParameters.Set("Shape", selectedShape);
@@ -1224,7 +1214,7 @@ namespace Barnacle.Dialogs
             {
                 EnableControlsForShape();
                 GenerateWing();
-                Redisplay();
+                Viewer.Model = GetModel();
                 RootDisplay.Refresh();
             }
         }
@@ -1236,35 +1226,11 @@ namespace Barnacle.Dialogs
             ResetParameters();
             LoadEditorParameters();
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             EnableControlsForShape();
             loaded = true;
             GenerateWing();
-            Redisplay();
-        }
-
-        private void ResetButton_Click(object sender, RoutedEventArgs e)
-        {
-            ResetParameters();
-        }
-
-        private void ResetParameters()
-        {
-            RootLength = 30;
-            TipLength = 10;
-            Span = 70;
-            SweepAngle = 0;
-            DihedralAngle = 0;
-
-            NumStruts = 8;
-            DipPercent = 25;
-            SelectedShape = shapeNames[0];
-            SelectedTipShape = tipShapeNames[0];
-            RootGroup = airfoilGroups[0];
-            TipGroup = airfoilGroups[0];
-            SelectedRootAirfoil = rootairfoilNames[0];
-            SelectedTipAirfoil = tipairfoilNames[0];
-            WholeModelChecked = true;
+            Viewer.Model = GetModel();
         }
     }
 }

@@ -16,6 +16,8 @@
 // *************************************************************************
 
 using Barnacle.Models;
+using Barnacle.Object3DLib;
+using FileUtils;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -34,6 +36,7 @@ namespace Barnacle.UserControls.ObjectViewer
         private const string cameraRecordFile = "viewcamerapos.txt";
         private Axies axies;
 
+        private Bounds3D bounds;
         private Visibility busyVisible = Visibility.Hidden;
         private Point3D cameraPosition;
 
@@ -166,6 +169,7 @@ namespace Barnacle.UserControls.ObjectViewer
                 if (value != model)
                 {
                     model = value;
+
                     Redisplay();
                 }
             }
@@ -224,6 +228,14 @@ namespace Barnacle.UserControls.ObjectViewer
             }
         }
 
+        public FrameworkElement Visual
+        {
+            get
+            {
+                return viewport3D1;
+            }
+        }
+
         public void Back_Click(object sender, RoutedEventArgs e)
         {
             BackCamera();
@@ -251,8 +263,7 @@ namespace Barnacle.UserControls.ObjectViewer
 
         public void LoadCamera()
         {
-            string dataPath = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Barnacle");
-            dataPath += "\\" + cameraRecordFile;
+            string dataPath = PathManager.CommonAppDataFolder() + "\\" + cameraRecordFile;
             polarCamera.Read(dataPath);
             UpdateCameraPos();
             NotifyPropertyChanged("CameraPos");
@@ -321,16 +332,33 @@ namespace Barnacle.UserControls.ObjectViewer
 
         internal void SaveCamera()
         {
-            string dataPath = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Barnacle");
-            dataPath += "\\" + cameraRecordFile;
+            string dataPath = PathManager.CommonAppDataFolder() + "\\" + cameraRecordFile;
             polarCamera.Save(dataPath);
         }
 
         private void BackCamera()
         {
+            GetBounds(model);
             polarCamera.HomeBack();
+            SetDistanceToFit();
             UpdateCameraPos();
-            NotifyPropertyChanged("CameraPos");
+        }
+
+        private void GetBounds(GeometryModel3D model)
+        {
+            bounds = new Bounds3D();
+
+            if (model != null)
+            {
+                MeshGeometry3D mesh = model.Geometry as MeshGeometry3D;
+                if (mesh != null)
+                {
+                    foreach (Point3D p in mesh.Positions)
+                    {
+                        bounds.Adjust(p);
+                    }
+                }
+            }
         }
 
         private bool HandleKeyDown(Key key, bool shift, bool ctrl, bool alt)
@@ -415,13 +443,17 @@ namespace Barnacle.UserControls.ObjectViewer
 
         private void HomeCamera()
         {
+            GetBounds(model);
             Camera.HomeFront();
+            SetDistanceToFit();
             UpdateCameraPos();
         }
 
         private void LeftCamera()
         {
+            GetBounds(model);
             polarCamera.HomeLeft();
+            SetDistanceToFit(true);
             UpdateCameraPos();
         }
 
@@ -436,7 +468,9 @@ namespace Barnacle.UserControls.ObjectViewer
 
         private void RightCamera()
         {
+            GetBounds(model);
             polarCamera.HomeRight();
+            SetDistanceToFit(true);
             UpdateCameraPos();
         }
 
@@ -446,10 +480,27 @@ namespace Barnacle.UserControls.ObjectViewer
             UpdateCameraPos();
         }
 
+        private void SetDistanceToFit(bool sideView = false)
+        {
+            double l = bounds.Width;
+            double h = bounds.Height;
+            double d = bounds.Depth;
+
+            if (sideView)
+            {
+                polarCamera.DistanceToFit(l, h, 30);
+            }
+            else
+            {
+                polarCamera.DistanceToFit(l, h, 30);
+            }
+        }
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             HomeCamera();
             BusyVisible = Visibility.Hidden;
+            Redisplay();
         }
 
         private void UserControl_PreviewKeyDown(object sender, KeyEventArgs e)

@@ -16,9 +16,14 @@
 **************************************************************************/
 
 using MakerLib;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
+using System.Windows.Threading;
 
 namespace Barnacle.Dialogs
 {
@@ -30,6 +35,7 @@ namespace Barnacle.Dialogs
         private List<Point> displayPoints;
         private bool loaded;
         private double mortarGap;
+        private DispatcherTimer regenTimer;
         private double roofWidth;
         private double tileDepth;
         private double tileHeight;
@@ -42,6 +48,7 @@ namespace Barnacle.Dialogs
             ToolName = "ShapedTiledRoof";
             DataContext = this;
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
+            PathEditor.OnFlexiUserActive += UserPerformedAction;
             PathEditor.AbsolutePaths = true;
             PathEditor.DefaultImagePath = DefaultImagePath;
             PathEditor.ToolName = ToolName;
@@ -52,6 +59,11 @@ namespace Barnacle.Dialogs
             tileDepth = 0.5;
             mortarGap = 0.25;
             roofWidth = 2;
+
+            Properties.Settings.Default.Reload();
+            regenTimer = new DispatcherTimer();
+            regenTimer.Interval = new TimeSpan(0, 0, Properties.Settings.Default.RegenerationDelay);
+            regenTimer.Tick += RegenTimer_Tick;
         }
 
         public double MortarGap
@@ -183,21 +195,64 @@ namespace Barnacle.Dialogs
             Close();
         }
 
-        private void GenerateShape()
+        private void DeferRegen()
+        {
+            if (regenTimer.IsEnabled)
+            {
+                regenTimer.Stop();
+                regenTimer.Start();
+            }
+        }
+
+        private AsyncGeneratorResult GenerateAsync()
+        {
+            Point3DCollection v1 = new Point3DCollection();
+            Int32Collection i1 = new Int32Collection();
+            string path = PathEditor.GetPath();
+
+            ShapedTiledRoofMaker maker = new ShapedTiledRoofMaker(path, tileLength,
+                tileHeight,
+                tileDepth,
+                mortarGap,
+                roofWidth);
+
+            maker.Generate(v1, i1);
+
+            AsyncGeneratorResult res = new AsyncGeneratorResult();
+            // extract the vertices and indices to thread safe arrays
+            // while still in the async function
+            res.points = new Point3D[v1.Count];
+            for (int i = 0; i < v1.Count; i++)
+            {
+                res.points[i] = new Point3D(v1[i].X, v1[i].Y, v1[i].Z);
+            }
+            res.indices = new int[i1.Count];
+            for (int i = 0; i < i1.Count; i++)
+            {
+                res.indices[i] = i1[i];
+            }
+            v1.Clear();
+            i1.Clear();
+            return (res);
+        }
+
+        private async void GenerateShape()
         {
             ClearShape();
             if (displayPoints != null)
             {
-                string path = PathEditor.GetPath();
-                ShapedTiledRoofMaker maker = new ShapedTiledRoofMaker(path, tileLength,
-                    tileHeight,
-                    tileDepth,
-                    mortarGap,
-                    roofWidth);
-
-                maker.Generate(Vertices, Faces);
+                ClearShape();
+                Viewer.Busy();
+                PathEditor.Busy();
+                EditingEnabled = false;
+                AsyncGeneratorResult result;
+                result = await Task.Run(() => GenerateAsync());
+                GetVerticesFromAsyncResult(result);
+                CentreVertices();
+                Viewer.NotBusy();
+                PathEditor.NotBusy();
+                EditingEnabled = true;
             }
-            CentreVertices();
         }
 
         private void LoadEditorParameters()
@@ -221,9 +276,23 @@ namespace Barnacle.Dialogs
             displayPoints = pnts;
             if (PathEditor.PathClosed)
             {
-                GenerateShape();
-                Redisplay();
+                UpdateDisplay();
             }
+        }
+
+        private void Regenerate()
+        {
+            if (loaded && PathEditor.PathClosed)
+            {
+                GenerateShape();
+            }
+            Viewer.Model = GetModel();
+        }
+
+        private void RegenTimer_Tick(object sender, EventArgs e)
+        {
+            regenTimer.Stop();
+            Regenerate();
         }
 
         private void SaveEditorParmeters()
@@ -240,11 +309,13 @@ namespace Barnacle.Dialogs
 
         private void UpdateDisplay()
         {
-            if (loaded)
-            {
-                GenerateShape();
-                Viewer.Model = GetModel();
-            }
+            regenTimer.Stop();
+            regenTimer.Start();
+        }
+
+        private void UserPerformedAction()
+        {
+            DeferRegen();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -257,7 +328,7 @@ namespace Barnacle.Dialogs
             PathEditor.DefaultImagePath = DefaultImagePath;
             loaded = true;
 
-            UpdateDisplay();
+            //UpdateDisplay();
         }
     }
 }

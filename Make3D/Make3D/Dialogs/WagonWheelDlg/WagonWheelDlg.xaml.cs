@@ -42,7 +42,6 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "WagonWheel";
             DataContext = this;
-            ModelGroup = MyModelGroup;
             loaded = false;
         }
 
@@ -186,40 +185,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
         public double SpokeRadius
         {
             get
@@ -316,10 +281,17 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            loaded = false;
+            SetDefaults();
+            loaded = true;
+            UpdateDisplay();
+        }
+
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-
             EditorParameters.Set("HubRadius", HubRadius.ToString());
             EditorParameters.Set("HubThickness", HubThickness.ToString());
             EditorParameters.Set("RimInnerRadius", RimInnerRadius.ToString());
@@ -330,16 +302,7 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("AxleBore", AxleBore.ToString());
         }
 
-        private void UpdateDisplay()
-        {
-            if (loaded)
-            {
-                GenerateShape();
-                Redisplay();
-            }
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private void SetDefaults()
         {
             HubRadius = 2;
             HubThickness = 3;
@@ -349,9 +312,23 @@ namespace Barnacle.Dialogs
             NumberOfSpokes = 6;
             SpokeRadius = 2;
             AxleBore = 2;
+        }
+
+        private void UpdateDisplay()
+        {
+            if (loaded)
+            {
+                GenerateShape();
+                Viewer.Model = GetModel();
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
             LoadEditorParameters();
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             warningText = "";
             loaded = true;
             UpdateDisplay();

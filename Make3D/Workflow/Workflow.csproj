@@ -88,6 +88,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FileUtils\FileUtils.csproj">
+      <Project>{6ee47c70-2f51-490a-b50c-97fbad59a0e7}</Project>
+      <Name>FileUtils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LoggerLib\LoggerLib.csproj">
       <Project>{5C3B73AF-9055-4E73-BE4A-30B4EE4A3C41}</Project>
       <Name>LoggerLib</Name>

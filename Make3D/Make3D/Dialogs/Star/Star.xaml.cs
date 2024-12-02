@@ -41,7 +41,6 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "Star";
             DataContext = this;
-            ModelGroup = MyModelGroup;
         }
 
         public double CentreRadius
@@ -142,40 +141,6 @@ namespace Barnacle.Dialogs
                     pointLength = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
-                }
-            }
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
                 }
             }
         }
@@ -598,7 +563,7 @@ namespace Barnacle.Dialogs
         private void UpdateDisplay()
         {
             GenerateShape();
-            Redisplay();
+            Viewer.Model = GetModel();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -612,9 +577,9 @@ namespace Barnacle.Dialogs
             LoadEditorParameters();
             GenerateShape();
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
 
-            Redisplay();
+            Viewer.Model = GetModel();
         }
     }
 }

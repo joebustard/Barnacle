@@ -29,6 +29,7 @@ namespace Barnacle.Dialogs
     {
         private double gap;
         private double height;
+        private bool loaded;
         private double radius1;
         private double radius2;
         private List<string> shapes;
@@ -48,7 +49,6 @@ namespace Barnacle.Dialogs
             shapes.Add("Sausage");
             NotifyPropertyChanged("Shapes");
             ShapeStyle = "Flat";
-            ModelGroup = MyModelGroup;
         }
 
         public double Gap
@@ -218,15 +218,17 @@ namespace Barnacle.Dialogs
 
         private void UpdateDisplay()
         {
-            Generate();
-            Redisplay();
+            if (loaded)
+            {
+                Generate();
+                Viewer.Model = GetModel();
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Generate();
-            Redisplay();
             UpdateCameraPos();
+            loaded = false;
             string s = EditorParameters.Get("Shape");
             if (s != "")
             {
@@ -237,6 +239,8 @@ namespace Barnacle.Dialogs
                 ShapeHeight = EditorParameters.GetDouble("Height");
                 ShapeStyle = s;
             }
+            loaded = true;
+            UpdateDisplay();
         }
     }
 }

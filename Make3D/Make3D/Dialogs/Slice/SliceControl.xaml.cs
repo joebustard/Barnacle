@@ -19,6 +19,7 @@ using Barnacle.Models;
 using Barnacle.Models.SDCard;
 using Barnacle.Object3DLib;
 using Barnacle.ViewModels;
+using FileUtils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -48,6 +49,9 @@ namespace Barnacle.Dialogs.Slice
         private List<String> extruders;
         private bool isEditPrinterEnabled;
         private bool isEditProfileEnabled;
+        private bool isNewPrinterEnabled;
+        private bool isNewProfileEnabled;
+
         private string lastLog;
         private string modelPath;
         private BarnaclePrinterManager printerManager;
@@ -66,17 +70,21 @@ namespace Barnacle.Dialogs.Slice
         {
             InitializeComponent();
             timer = new DispatcherTimer(new TimeSpan(0, 0, 20), DispatcherPriority.Normal, TimerTick, Dispatcher.CurrentDispatcher);
-
-            //df.SaveSettings("c:\\tmp\\test.json.def");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Bounds3D AllBounds { get; internal set; }
+        public Bounds3D AllBounds
+        {
+            get; internal set;
+        }
 
         public List<String> BarnaclePrinterNames
         {
-            get { return barnaclePrinterNames; }
+            get
+            {
+                return barnaclePrinterNames;
+            }
 
             set
             {
@@ -87,7 +95,10 @@ namespace Barnacle.Dialogs.Slice
 
         public bool CanClose
         {
-            get { return canClose; }
+            get
+            {
+                return canClose;
+            }
 
             set
             {
@@ -98,7 +109,10 @@ namespace Barnacle.Dialogs.Slice
 
         public bool CanCopyToSD
         {
-            get { return canCopyToSD; }
+            get
+            {
+                return canCopyToSD;
+            }
 
             set
             {
@@ -112,7 +126,10 @@ namespace Barnacle.Dialogs.Slice
 
         public bool CanSeeLog
         {
-            get { return canSeeLog; }
+            get
+            {
+                return canSeeLog;
+            }
 
             set
             {
@@ -123,7 +140,10 @@ namespace Barnacle.Dialogs.Slice
 
         public bool CanSlice
         {
-            get { return canSlice; }
+            get
+            {
+                return canSlice;
+            }
 
             set
             {
@@ -134,13 +154,22 @@ namespace Barnacle.Dialogs.Slice
 
         public Document ExportDocument
         {
-            get { return exportDoc; }
-            set { exportDoc = value; }
+            get
+            {
+                return exportDoc;
+            }
+            set
+            {
+                exportDoc = value;
+            }
         }
 
         public List<String> Extruders
         {
-            get { return extruders; }
+            get
+            {
+                return extruders;
+            }
 
             set
             {
@@ -151,7 +180,10 @@ namespace Barnacle.Dialogs.Slice
 
         public bool IsEditPrinterEnabled
         {
-            get { return isEditPrinterEnabled; }
+            get
+            {
+                return isEditPrinterEnabled;
+            }
 
             set
             {
@@ -165,7 +197,10 @@ namespace Barnacle.Dialogs.Slice
 
         public bool IsEditProfileEnabled
         {
-            get { return isEditProfileEnabled; }
+            get
+            {
+                return isEditProfileEnabled;
+            }
 
             set
             {
@@ -177,14 +212,54 @@ namespace Barnacle.Dialogs.Slice
             }
         }
 
+        public bool IsNewPrinterEnabled
+        {
+            get
+            {
+                return isNewPrinterEnabled;
+            }
+
+            set
+            {
+                if (value != isNewPrinterEnabled)
+                {
+                    isNewPrinterEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsNewProfileEnabled
+        {
+            get
+            {
+                return isNewProfileEnabled;
+            }
+
+            set
+            {
+                if (value != isNewProfileEnabled)
+                {
+                    isNewProfileEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         /// <summary>
         /// Are we doing a single model or all the models in the project?
         /// </summary>
-        public string ModelMode { get; internal set; }
+        public string ModelMode
+        {
+            get; internal set;
+        }
 
         public List<String> Profiles
         {
-            get { return profiles; }
+            get
+            {
+                return profiles;
+            }
 
             set
             {
@@ -195,7 +270,10 @@ namespace Barnacle.Dialogs.Slice
 
         public string ResultsText
         {
-            get { return resultsText; }
+            get
+            {
+                return resultsText;
+            }
 
             set
             {
@@ -209,7 +287,10 @@ namespace Barnacle.Dialogs.Slice
 
         public String SelectedPrinter
         {
-            get { return selectedPrinter; }
+            get
+            {
+                return selectedPrinter;
+            }
 
             set
             {
@@ -237,7 +318,10 @@ namespace Barnacle.Dialogs.Slice
 
         public String SelectedUserProfile
         {
-            get { return selectedUserProfile; }
+            get
+            {
+                return selectedUserProfile;
+            }
 
             set
             {
@@ -257,14 +341,20 @@ namespace Barnacle.Dialogs.Slice
             }
         }
 
-        public String SlicerPath { get; set; }
+        public String SlicerPath
+        {
+            get; set;
+        }
 
         /// <summary>
         /// If processing a single document this is were to find it.
         /// </summary>
         internal string ModelPath
         {
-            get { return modelPath; }
+            get
+            {
+                return modelPath;
+            }
 
             set
             {
@@ -311,8 +401,7 @@ namespace Barnacle.Dialogs.Slice
         {
             Application.Current.Dispatcher.BeginInvoke(
                 DispatcherPriority.Background,
-                new Action(() =>
-                {
+                new Action(() => {
                     ResultsText += s;
                     if (crlf)
                     {
@@ -341,8 +430,7 @@ namespace Barnacle.Dialogs.Slice
         {
             Application.Current.Dispatcher.BeginInvoke(
                 DispatcherPriority.Background,
-                new Action(() =>
-                {
+                new Action(() => {
                     ResultsText = "";
                 }));
         }
@@ -610,7 +698,7 @@ M84 ; Disable stepper motors
                 pi.Arguments = lastLog;
                 // pi.WindowStyle = ProcessWindowStyle.Normal;
                 pi.WindowStyle = ProcessWindowStyle.Normal;
-                pi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle";
+                pi.WorkingDirectory = PathManager.ApplicationDataFolder();
                 Process runner = Process.Start(pi);
             }
         }
@@ -625,6 +713,10 @@ M84 ; Disable stepper motors
             CanClose = false;
             CanSlice = false;
             CanCopyToSD = false;
+            IsNewPrinterEnabled = false;
+            IsEditPrinterEnabled = false;
+            IsEditProfileEnabled = false;
+            IsNewProfileEnabled = false;
             ClearResults();
             String exportPath = BaseViewModel.Project.BaseFolder + "\\export";
             if (!Directory.Exists(exportPath))
@@ -669,9 +761,12 @@ M84 ; Disable stepper motors
             // Make the solution show the newly exported stl & g-code
             NotificationManager.Notify("ExportRefresh", null);
             CanSeeLog = true;
-
             CanClose = true;
             CanSlice = true;
+            IsNewPrinterEnabled = true;
+            IsEditPrinterEnabled = true;
+            IsEditProfileEnabled = true;
+            IsNewProfileEnabled = true;
             // re-enable the sdcopy button if appropriate
             CheckIfSDCopyShouldBeEnabled();
             AppendResults("Slice complete");
@@ -695,7 +790,7 @@ M84 ; Disable stepper motors
             string logPath = Path.GetTempPath() + modelName + "_slicelog.log";
             lastLog = logPath;
 
-            string prf = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PrinterProfiles\\" + selectedUserProfile + ".profile";
+            string prf = PathManager.PrinterProfileFolder() + "\\" + selectedUserProfile + ".profile";
 
             AppendResults(modelName.PadRight(16) + ", ", false);
             string curaPrinterName;
@@ -749,7 +844,7 @@ M84 ; Disable stepper motors
             string logPath = Path.GetTempPath() + modelName + "_slicelog.log";
             lastLog = logPath;
 
-            string prf = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PrinterProfiles\\" + selectedUserProfile + ".profile";
+            string prf = PathManager.PrinterProfileFolder() + "\\" + selectedUserProfile + ".profile";
 
             AppendResults(modelName.PadRight(16) + ", ", false);
             string curaPrinterName;
@@ -806,7 +901,7 @@ M84 ; Disable stepper motors
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = this;
-            UserProfilePathNoSlash = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PrinterProfiles";
+            UserProfilePathNoSlash = PathManager.PrinterProfileFolder();
             UserProfilePath = UserProfilePathNoSlash + "\\";
 
             printerManager = new BarnaclePrinterManager();
@@ -818,6 +913,8 @@ M84 ; Disable stepper motors
                 SelectedUserProfile = Properties.Settings.Default.SlicerProfileName;
             }
 
+            IsNewPrinterEnabled = true;
+            IsNewProfileEnabled = true;
             CanClose = true;
             CanSeeLog = false;
             if (selectedPrinter != "")

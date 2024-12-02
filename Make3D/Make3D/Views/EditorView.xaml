@@ -1,68 +1,77 @@
-<UserControl Background="White"
-             d:DesignHeight="450"
-             d:DesignWidth="800"
-             KeyUp="UserControl_KeyUp"
-             mc:Ignorable="d"
-             MouseDown="Grid_MouseDown"
-             MouseMove="Grid_MouseMove"
-             MouseUp="Grid_MouseUp"
-             MouseWheel="Grid_MouseWheel"
-             x:Class="Barnacle.Views.EditorView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
-             xmlns:Views="clr-namespace:Barnacle.Views"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Loaded="UserControl_Loaded" SizeChanged="UserControl_SizeChanged">
+<UserControl
+    x:Class="Barnacle.Views.EditorView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
+    xmlns:Views="clr-namespace:Barnacle.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Background="White"
+    KeyUp="UserControl_KeyUp"
+    Loaded="UserControl_Loaded"
+    MouseDown="Grid_MouseDown"
+    MouseMove="Grid_MouseMove"
+    MouseUp="Grid_MouseUp"
+    MouseWheel="Grid_MouseWheel"
+    SizeChanged="UserControl_SizeChanged"
+    mc:Ignorable="d">
     <UserControl.DataContext>
         <ViewModels:EditorViewModel />
     </UserControl.DataContext>
-    <Grid KeyDown="UserControl_KeyDown"
-          KeyUp="UserControl_KeyUp"
-          MouseMove="Grid_MouseMove"
-          MouseUp="Grid_MouseUp"
-          MouseWheel="Grid_MouseWheel">
-        <Viewport3D Name="viewport3D1"
-                    KeyDown="UserControl_KeyDown"
-                    KeyUp="UserControl_KeyUp" ClipToBounds="False" Width="{Binding ViewPortWidth}" Height="{Binding ViewPortHeight}">
+    <Grid
+        KeyDown="UserControl_KeyDown"
+        KeyUp="UserControl_KeyUp"
+        MouseMove="Grid_MouseMove"
+        MouseUp="Grid_MouseUp"
+        MouseWheel="Grid_MouseWheel">
+        <Viewport3D
+            Name="viewport3D1"
+            Width="{Binding ViewPortWidth}"
+            Height="{Binding ViewPortHeight}"
+            ClipToBounds="False"
+            KeyDown="UserControl_KeyDown"
+            KeyUp="UserControl_KeyUp">
 
             <Viewport3D.Camera>
-                <PerspectiveCamera LookDirection="{Binding LookDirection}"
-                                   Position="{Binding CameraPos}"
-                                   x:Name="camMain" NearPlaneDistance="25" />
+                <PerspectiveCamera
+                    x:Name="camMain"
+                    LookDirection="{Binding LookDirection}"
+                    NearPlaneDistance="25"
+                    Position="{Binding CameraPos}" />
             </Viewport3D.Camera>
             <ModelVisual3D>
                 <ModelVisual3D.Content>
                     <Model3DGroup>
                         <AmbientLight Color="#FF808080" />
-                        <DirectionalLight Color="White"
-                                          Direction="-1,-1,-1"
-                                          x:Name="dirLightMain">
-                        </DirectionalLight>
-                        <DirectionalLight Color="Yellow"
-                                          Direction="1,1,1"
-                                          x:Name="dirLightMain2">
-                        </DirectionalLight>
+                        <DirectionalLight
+                            x:Name="dirLightMain"
+                            Direction="-1,-1,-1"
+                            Color="White" />
+                        <DirectionalLight
+                            x:Name="dirLightMain2"
+                            Direction="1,1,1"
+                            Color="Yellow" />
                     </Model3DGroup>
                 </ModelVisual3D.Content>
             </ModelVisual3D>
             <ModelVisual3D x:Name="MyModel">
                 <ModelVisual3D.Content>
-                    <Model3DGroup Children="{Binding ModelItems}">
-                    </Model3DGroup>
+                    <Model3DGroup Children="{Binding ModelItems}" />
                 </ModelVisual3D.Content>
                 <ModelVisual3D.Transform>
                     <RotateTransform3D>
                         <RotateTransform3D.Rotation>
-                            <AxisAngleRotation3D Axis="0 0 1"
-                                                 x:Name="rotate" />
+                            <AxisAngleRotation3D x:Name="rotate" Axis="0 0 1" />
                         </RotateTransform3D.Rotation>
                     </RotateTransform3D>
                 </ModelVisual3D.Transform>
             </ModelVisual3D>
         </Viewport3D>
-        <Canvas Name="overlayCanvas"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch" />
+        <Canvas
+            Name="overlayCanvas"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch" />
     </Grid>
 </UserControl>

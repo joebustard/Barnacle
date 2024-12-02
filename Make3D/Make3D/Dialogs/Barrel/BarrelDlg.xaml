@@ -4,11 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Barnacle.Dialogs"
-    xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
     Title=""
     Width="1000"
-    Height="450"
+    Height="550"
     Background="{StaticResource WindowBackBrush}"
     Loaded="Window_Loaded"
     WindowStartupLocation="CenterOwner"
@@ -25,7 +25,10 @@
             <ColumnDefinition Width="10*" />
             <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
-        <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource ControlBorder}">
+        <Border
+            Grid.Row="0"
+            Grid.Column="1"
+            Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="25" />
@@ -42,77 +45,90 @@
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
                     <Label Width="100" VerticalAlignment="Center">Barrel Height</Label>
                     <TextBox
-                    Width="150"
-                    Margin="8,0,0,0"
-                    Text="{Binding BarrelHeight}"
-                    ToolTip="{Binding BarrelHeightToolTip}" />
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding BarrelHeight}"
+                        ToolTip="{Binding BarrelHeightToolTip}" />
 
                     <Button
-                    Margin="8,0,0,0"
-                    Click="ResetDefaults"
-                    Content="Reset"
-                    ToolTip="Restore parameters to their defaults" />
+                        Margin="8,0,0,0"
+                        Click="ResetDefaults"
+                        Content="Reset"
+                        ToolTip="Restore parameters to their defaults" />
                 </StackPanel>
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
                     <Label Width="100" VerticalAlignment="Center">Top Radius</Label>
                     <TextBox
-                    Width="150"
-                    Margin="8,0,0,0"
-                    Text="{Binding TopBottomRadius}"
-                    ToolTip="{Binding TopRadiusToolTip}" />
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding TopBottomRadius}"
+                        ToolTip="{Binding TopRadiusToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="3" Orientation="Horizontal">
                     <Label Width="100" VerticalAlignment="Center">Middle Radius</Label>
                     <TextBox
-                    Width="150"
-                    Margin="8,0,0,0"
-                    Text="{Binding MiddleRadius}"
-                    ToolTip="{Binding MiddleRadiusToolTip}" />
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding MiddleRadius}"
+                        ToolTip="{Binding MiddleRadiusToolTip}" />
                 </StackPanel>
-                <StackPanel Grid.Row="4" Orientation="Horizontal">
-                </StackPanel>
+                <StackPanel Grid.Row="4" Orientation="Horizontal" />
                 <StackPanel Grid.Row="5" Orientation="Horizontal">
                     <Label Width="100" VerticalAlignment="Center">Number Of Staves</Label>
                     <TextBox
-                    Width="150"
-                    Margin="8,0,0,0"
-                    Text="{Binding NumberOfStaves}"
-                    ToolTip="{Binding NumberOfStavesToolTip}" />
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding NumberOfStaves}"
+                        ToolTip="{Binding NumberOfStavesToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="7" Orientation="Horizontal">
                     <CheckBox
-                    Width="100"
-                    VerticalAlignment="Center"
-                    ToolTip="{Binding ShellToolTip}" Content="Shell" IsChecked="{Binding ShellSet}" />
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="Shell"
+                        IsChecked="{Binding ShellSet}"
+                        ToolTip="{Binding ShellToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="8" Orientation="Horizontal">
-                    <Label Width="100" VerticalAlignment="Center" Content=" Shell Thickness" Visibility="{Binding ShellVisibility}" />
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content=" Shell Thickness"
+                        Visibility="{Binding ShellVisibility}" />
                     <TextBox
-                    Width="150"
-                    Margin="8,0,0,0"
-                    Text="{Binding ShellThickness}"
-                    ToolTip="{Binding ShellThicknessToolTip}" Visibility="{Binding ShellVisibility}" />
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding ShellThickness}"
+                        ToolTip="{Binding ShellThicknessToolTip}"
+                        Visibility="{Binding ShellVisibility}" />
                 </StackPanel>
                 <StackPanel Grid.Row="6" Orientation="Horizontal">
                     <Label Width="100" VerticalAlignment="Center">Stave Depth</Label>
                     <TextBox
-                    Width="150"
-                    Margin="8,0,0,0"
-                    Text="{Binding StaveDepth}"
-                    ToolTip="{Binding StaveDepthToolTip}" />
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding StaveDepth}"
+                        ToolTip="{Binding StaveDepthToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="9" Orientation="Horizontal">
                     <Label
-                    VerticalAlignment="Center"
-                    Content="{Binding WarningText}"
-                    FontSize="18"
-                    Foreground="{StaticResource WarningColour}" />
+                        VerticalAlignment="Center"
+                        Content="{Binding WarningText}"
+                        FontSize="18"
+                        Foreground="{StaticResource WarningColour}" />
                 </StackPanel>
             </Grid>
         </Border>
-        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}"  Grid.RowSpan="2" />
+        <GridSplitter
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Grid.Column="2"
+            Style="{StaticResource GridSplitterStyle}" />
 
-        <u:ObjectView x:Name="Viewer" Grid.Column="3" Grid.Row="0" />
+        <u:ObjectView
+            x:Name="Viewer"
+            Grid.Row="0"
+            Grid.Column="3" />
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />

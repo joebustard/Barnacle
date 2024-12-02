@@ -18,6 +18,7 @@
 using Barnacle.Dialogs.BezierSurface;
 using Barnacle.Models;
 using Barnacle.Models.Adorners;
+using FileUtils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -34,14 +35,19 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class BezierSurfaceDlg : BaseModellerDialog, INotifyPropertyChanged
     {
+        private List<String> availableDimensions;
         private ControlPointManager controlPoints;
+        private bool draggingPoints = false;
+        private String editedPresetText;
         private Point lastMousePos;
         private int lastSelectedPointColumn;
         private int lastSelectedPointRow;
+        private List<string> presetNames;
+        private Dictionary<String, Preset> presets;
+        private bool savePresetEnabled;
+        private string selectedDimensions;
         private Surface surface;
         private double surfaceThickness;
-        private String editedPresetText;
-        private Dictionary<String, Preset> presets;
 
         public BezierSurfaceDlg()
         {
@@ -57,7 +63,7 @@ namespace Barnacle.Dialogs
             availableDimensions.Add("19 x 19");
             selectedDimensions = "13 x 13";
             controlPoints = new ControlPointManager();
-            controlPoints.SetDimensions(9, 9);
+            controlPoints.SetDimensions(13, 13);
             surfaceThickness = 1;
             surface = new Surface();
             surface.controlPointManager = controlPoints;
@@ -68,9 +74,29 @@ namespace Barnacle.Dialogs
             LoadPresets();
         }
 
+        public List<String> AvailableDimensions
+        {
+            get
+            {
+                return availableDimensions;
+            }
+
+            set
+            {
+                if (value != availableDimensions)
+                {
+                    availableDimensions = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public String EditedPresetText
         {
-            get { return editedPresetText; }
+            get
+            {
+                return editedPresetText;
+            }
 
             set
             {
@@ -78,15 +104,17 @@ namespace Barnacle.Dialogs
                 {
                     editedPresetText = value;
                     NotifyPropertyChanged();
+                    CheckEnableSavePreset();
                 }
             }
         }
 
-        private List<string> presetNames;
-
         public List<string> PresetNames
         {
-            get { return presetNames; }
+            get
+            {
+                return presetNames;
+            }
 
             set
             {
@@ -98,138 +126,42 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void LoadPresetFile(string dataPath, bool user)
+        public bool SavePresetEnabled
         {
-            if (File.Exists(dataPath))
+            get
             {
-                String[] lines = System.IO.File.ReadAllLines(dataPath);
-                if (lines.GetLength(0) > 0)
+                return savePresetEnabled;
+            }
+
+            set
+            {
+                if (value != savePresetEnabled)
                 {
-                    for (int i = 0; i < lines.GetLength(0); i++)
-                    {
-                        string[] words = lines[i].Split('=');
-                        if (words.GetLength(0) == 3)
-                        {
-                            String pntstr = words[1];
-                            Preset p = new Preset();
-                            p.Name = words[0];
-                            p.Dim = Convert.ToInt32(words[1]);
-                            p.Points = words[2];
-                            presets[words[0]] = p;
-                        }
-                    }
+                    savePresetEnabled = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
 
-        public struct Preset
+        public String SelectedDimensions
         {
-            public String Name { get; set; }
-            public int Dim { get; set; }
-            public String Points { get; set; }
-        }
-
-        public void LoadPresets()
-        {
-            // can have two sets of presets one in the installed data and the other user defined.
-            try
+            get
             {
-                presets.Clear();
-                PresetNames.Clear();
-                string dataPath = "";
-                // some paths will want to show all presets some will only want to show presets of
-                // their own
-
-                dataPath = AppDomain.CurrentDomain.BaseDirectory + "data\\BezierSurfacePresetPaths.txt";
-                LoadPresetFile(dataPath, false);
-
-                dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\" + ToolName + "PresetPaths.txt";
-                LoadPresetFile(dataPath, true);
-
-                foreach (String s in presets.Keys)
-                {
-                    PresetNames.Add(s);
-                }
+                return selectedDimensions;
             }
-            catch
-            {
-            }
-        }
 
-        private void SavePresetClick(object sender, RoutedEventArgs e)
-        {
-            String preset = editedPresetText;
-            if (!String.IsNullOrEmpty(preset))
+            set
             {
-                if (presets.ContainsKey(preset))
+                if (value != selectedDimensions)
                 {
-                    MessageBox.Show("A preset with that name already exists", "Error");
+                    if (ConfirmDiscard())
+                    {
+                        selectedDimensions = value;
+                        ChangeDimensions(selectedDimensions);
+                        UpdateDisplay();
+                        NotifyPropertyChanged();
+                    }
                 }
-                else
-                {
-                    int dim = controlPoints.PatchColumns;
-                    SaveAsPreset(ToolName, preset, dim, controlPoints.ToString());
-                }
-            }
-        }
-
-        private void SaveAsPreset(string toolName, string preset, int dim, string points)
-        {
-            if (!String.IsNullOrEmpty(toolName) && !String.IsNullOrEmpty(preset) && !String.IsNullOrEmpty(points))
-            {
-                string dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\" + ToolName + "PresetPaths.txt";
-                System.IO.File.AppendAllText(dataPath, $"{preset}={dim}={points}\n");
-
-                Preset p = new Preset();
-                p.Name = preset;
-                p.Dim = dim;
-                p.Points = points;
-                presets[preset] = p;
-                PresetNames.Clear();
-                foreach (String s in presets.Keys)
-                {
-                    PresetNames.Add(s);
-                }
-                NotifyPropertyChanged("PresetNames");
-            }
-        }
-
-        private void ChangeDimensions(string s)
-        {
-            switch (s)
-            {
-                case "4 x 4":
-                    {
-                        controlPoints.SetDimensions(4, 4);
-                    }
-                    break;
-
-                case "7 x 7":
-                    {
-                        controlPoints.SetDimensions(7, 7);
-                    }
-                    break;
-
-                case "19 x 19":
-                    {
-                        controlPoints.SetDimensions(19, 19);
-                    }
-                    break;
-
-                case "11 x 11":
-                    {
-                        controlPoints.SetDimensions(11, 11);
-                    }
-                    break;
-
-                case "13 x 13":
-                    {
-                        controlPoints.SetDimensions(13, 13);
-                    }
-                    break;
-
-                default:
-                    break;
             }
         }
 
@@ -288,6 +220,33 @@ namespace Barnacle.Dialogs
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
+            }
+        }
+
+        public void LoadPresets()
+        {
+            // can have two sets of presets one in the installed data and the other user defined.
+            try
+            {
+                presets.Clear();
+                PresetNames.Clear();
+                string dataPath = "";
+                // some paths will want to show all presets some will only want to show presets of
+                // their own
+
+                dataPath = AppDomain.CurrentDomain.BaseDirectory + "data\\BezierSurfacePresetPaths.txt";
+                LoadPresetFile(dataPath, false);
+
+                dataPath = PathManager.UserPresetsPath() + "\\" + ToolName + "PresetPaths.txt";
+                LoadPresetFile(dataPath, true);
+
+                foreach (String s in presets.Keys)
+                {
+                    PresetNames.Add(s);
+                }
+            }
+            catch
+            {
             }
         }
 
@@ -405,11 +364,26 @@ namespace Barnacle.Dialogs
             return handled;
         }
 
-        private bool FloorPoint()
+        protected override GeometryModel3D GetModel()
         {
-            bool res = controlPoints.FloorPoints();
-            GenerateShape();
-            return res;
+            MeshGeometry3D mesh = new MeshGeometry3D();
+            mesh.Positions = Vertices;
+            mesh.TriangleIndices = Faces;
+            mesh.Normals = null;
+            GeometryModel3D gm = new GeometryModel3D();
+            gm.Geometry = mesh;
+
+            Color transparentSurfaceColour = System.Windows.Media.Color.FromArgb(128, 128, 255, 128);
+            DiffuseMaterial mt = new DiffuseMaterial();
+            mt.Color = meshColour;
+            mt.Brush = new SolidColorBrush(transparentSurfaceColour);
+            gm.Material = mt;
+            DiffuseMaterial mtb = new DiffuseMaterial();
+            mtb.Color = meshColour;
+            mtb.Brush = new SolidColorBrush(transparentSurfaceColour);
+            gm.BackMaterial = mtb;
+
+            return gm;
         }
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
@@ -457,26 +431,108 @@ namespace Barnacle.Dialogs
             }
         }
 
-        protected override GeometryModel3D GetModel()
+        private void ApplyPreset_Click(object sender, RoutedEventArgs e)
         {
-            MeshGeometry3D mesh = new MeshGeometry3D();
-            mesh.Positions = Vertices;
-            mesh.TriangleIndices = Faces;
-            mesh.Normals = null;
-            GeometryModel3D gm = new GeometryModel3D();
-            gm.Geometry = mesh;
+            if (editedPresetText != "")
+            {
+                foreach (string s in presets.Keys)
+                {
+                    if (s == editedPresetText)
+                    {
+                        if (ConfirmDiscard())
+                        {
+                            int dim = presets[s].Dim;
+                            controlPoints.SetDimensions(dim, dim);
 
-            Color transparentSurfaceColour = System.Windows.Media.Color.FromArgb(128, 128, 255, 128);
-            DiffuseMaterial mt = new DiffuseMaterial();
-            mt.Color = meshColour;
-            mt.Brush = new SolidColorBrush(transparentSurfaceColour);
-            gm.Material = mt;
-            DiffuseMaterial mtb = new DiffuseMaterial();
-            mtb.Color = meshColour;
-            mtb.Brush = new SolidColorBrush(transparentSurfaceColour);
-            gm.BackMaterial = mtb;
+                            int i = 0;
+                            double x, y, z = 0;
+                            string[] lines = presets[s].Points.Split(' ');
+                            for (int r = 0; r < dim; r++)
+                            {
+                                for (int c = 0; c < dim; c++)
+                                {
+                                    if (i < lines.GetLength(0))
+                                    {
+                                        x = Convert.ToDouble(lines[i]);
+                                        y = Convert.ToDouble(lines[i + 1]);
+                                        z = Convert.ToDouble(lines[i + 2]);
+                                        controlPoints.SetPointPos(r, c, x, y, z);
+                                        i += 3;
+                                    }
+                                }
+                            }
+                            controlPoints.GenerateWireFrames();
+                            UpdateDisplay();
+                            selectedDimensions = dim.ToString() + " x " + dim.ToString();
+                            NotifyPropertyChanged("SelectedDimensions");
+                        }
+                        break;
+                    }
+                }
+            }
+        }
 
-            return gm;
+        private void ChangeDimensions(string s)
+        {
+            switch (s)
+            {
+                case "4 x 4":
+                    {
+                        controlPoints.SetDimensions(4, 4);
+                    }
+                    break;
+
+                case "7 x 7":
+                    {
+                        controlPoints.SetDimensions(7, 7);
+                    }
+                    break;
+
+                case "19 x 19":
+                    {
+                        controlPoints.SetDimensions(19, 19);
+                    }
+                    break;
+
+                case "11 x 11":
+                    {
+                        controlPoints.SetDimensions(11, 11);
+                    }
+                    break;
+
+                case "13 x 13":
+                    {
+                        controlPoints.SetDimensions(13, 13);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        private void CheckEnableSavePreset()
+        {
+            bool enable = false;
+            if (editedPresetText != "")
+            {
+                enable = true;
+                foreach (string s in presets.Keys)
+                {
+                    if (s.ToLower() == editedPresetText.ToLower())
+                    {
+                        enable = false;
+                        break;
+                    }
+                }
+            }
+            SavePresetEnabled = enable;
+        }
+
+        private bool ConfirmDiscard()
+        {
+            MessageBoxResult mbr = MessageBox.Show("This will reset all control points. Any changes will be lost.", "Caution", MessageBoxButton.OKCancel);
+            return (mbr == MessageBoxResult.OK);
         }
 
         private void DwnDiag1_Click(object sender, RoutedEventArgs e)
@@ -517,6 +573,13 @@ namespace Barnacle.Dialogs
             UpdateDisplay();
         }
 
+        private bool FloorPoint()
+        {
+            bool res = controlPoints.FloorPoints();
+            GenerateShape();
+            return res;
+        }
+
         private void GenerateShape()
         {
             ClearShape();
@@ -531,8 +594,6 @@ namespace Barnacle.Dialogs
                 e.Handled = KeyDownHandler(e.Key, Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift), Keyboard.IsKeyDown(Key.LeftCtrl));
             }
         }
-
-        private bool draggingPoints = false;
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -597,22 +658,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private List<String> availableDimensions;
-
-        public List<String> AvailableDimensions
-        {
-            get { return availableDimensions; }
-
-            set
-            {
-                if (value != availableDimensions)
-                {
-                    availableDimensions = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
         private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
@@ -646,6 +691,82 @@ namespace Barnacle.Dialogs
                 }
                 controlPoints.GenerateWireFrames();
             }
+        }
+
+        private void LoadPresetFile(string dataPath, bool user)
+        {
+            if (File.Exists(dataPath))
+            {
+                String[] lines = System.IO.File.ReadAllLines(dataPath);
+                if (lines.GetLength(0) > 0)
+                {
+                    for (int i = 0; i < lines.GetLength(0); i++)
+                    {
+                        string[] words = lines[i].Split('=');
+                        if (words.GetLength(0) == 3)
+                        {
+                            String pntstr = words[1];
+                            Preset p = new Preset();
+                            p.Name = words[0];
+                            p.Dim = Convert.ToInt32(words[1]);
+                            p.Points = words[2];
+                            presets[words[0]] = p;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void MouseMovePoints(Point lastPos, Point newPos, bool ctrlDown)
+        {
+            double dr = Math.Sqrt(Camera.Distance);
+            double deltaX = (newPos.X - lastPos.X) / dr;
+
+            double deltaY;
+            double deltaZ;
+
+            if (!ctrlDown)
+            {
+                deltaY = -(newPos.Y - lastPos.Y) / dr;
+                deltaZ = 0;
+            }
+            else
+            {
+                deltaY = 0;
+                deltaZ = -(newPos.Y - lastPos.Y) / dr;
+            }
+
+            Point3D positionChange = new Point3D(0, 0, 0);
+            PolarCamera.Orientations ori = Camera.HorizontalOrientation;
+            switch (ori)
+            {
+                case PolarCamera.Orientations.Front:
+                    {
+                        positionChange = new Point3D(1 * deltaX, 1 * deltaY, -1 * deltaZ);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Back:
+                    {
+                        positionChange = new Point3D(-1 * deltaX, 1 * deltaY, 1 * deltaZ);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Left:
+                    {
+                        positionChange = new Point3D(1 * deltaZ, 1 * deltaY, 1 * deltaX);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Right:
+                    {
+                        positionChange = new Point3D(-1 * deltaZ, 1 * deltaY, -1 * deltaX);
+                    }
+                    break;
+            }
+
+            controlPoints.MoveSelectedPoints(positionChange);
+            GenerateShape();
         }
 
         private void MoveBox(double deltaX, double deltaY, double deltaZ)
@@ -741,12 +862,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private bool ConfirmDiscard()
-        {
-            MessageBoxResult mbr = MessageBox.Show("This will reset all control points. Any changes will be lost.", "Caution", MessageBoxButton.OKCancel);
-            return (mbr == MessageBoxResult.OK);
-        }
-
         private void ResetControlPointsBow_Click(object sender, RoutedEventArgs e)
         {
             if (ConfirmDiscard())
@@ -766,33 +881,33 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private string selectedDimensions;
-
-        public String SelectedDimensions
-        {
-            get { return selectedDimensions; }
-
-            set
-            {
-                if (value != selectedDimensions)
-                {
-                    if (ConfirmDiscard())
-                    {
-                        selectedDimensions = value;
-                        ChangeDimensions(selectedDimensions);
-                        UpdateDisplay();
-                        NotifyPropertyChanged();
-                    }
-                }
-            }
-        }
-
         private void ResetControlPointsTube_Click(object sender, RoutedEventArgs e)
         {
             if (ConfirmDiscard())
             {
                 controlPoints.ResetControlPointsHalfTube();
                 UpdateDisplay();
+            }
+        }
+
+        private void SaveAsPreset(string toolName, string preset, int dim, string points)
+        {
+            if (!String.IsNullOrEmpty(toolName) && !String.IsNullOrEmpty(preset) && !String.IsNullOrEmpty(points))
+            {
+                string dataPath = PathManager.UserPresetsPath() + "\\" + ToolName + "PresetPaths.txt";
+                System.IO.File.AppendAllText(dataPath, $"{preset}={dim}={points}\n");
+
+                Preset p = new Preset();
+                p.Name = preset;
+                p.Dim = dim;
+                p.Points = points;
+                presets[preset] = p;
+                PresetNames.Clear();
+                foreach (String s in presets.Keys)
+                {
+                    PresetNames.Add(s);
+                }
+                NotifyPropertyChanged("PresetNames");
             }
         }
 
@@ -803,6 +918,47 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("Columns", controlPoints.PatchColumns.ToString());
             EditorParameters.Set("Points", controlPoints.ToString());
             EditorParameters.Set("Thickness", surfaceThickness.ToString());
+        }
+
+        private void SavePresetClick(object sender, RoutedEventArgs e)
+        {
+            String preset = editedPresetText;
+            if (!String.IsNullOrEmpty(preset))
+            {
+                if (presets.ContainsKey(preset))
+                {
+                    MessageBox.Show("A preset with that name already exists", "Error");
+                }
+                else
+                {
+                    int dim = controlPoints.PatchColumns;
+                    SaveAsPreset(ToolName, preset, dim, controlPoints.ToString());
+                }
+            }
+        }
+
+        private void SelectAll_Click(object sender, RoutedEventArgs e)
+        {
+            controlPoints.SelectAll();
+            GenerateShape();
+        }
+
+        private void SelectCol_Click(object sender, RoutedEventArgs e)
+        {
+            controlPoints.SelectColumn();
+            GenerateShape();
+        }
+
+        private void SelectNone_Click(object sender, RoutedEventArgs e)
+        {
+            controlPoints.DeselectAll();
+            GenerateShape();
+        }
+
+        private void SelectRow_Click(object sender, RoutedEventArgs e)
+        {
+            controlPoints.SelectRow();
+            GenerateShape();
         }
 
         private void UpdateDisplay()
@@ -861,80 +1017,22 @@ namespace Barnacle.Dialogs
             Redisplay();
         }
 
-        private void MouseMovePoints(Point lastPos, Point newPos, bool ctrlDown)
+        public struct Preset
         {
-            double dr = Math.Sqrt(Camera.Distance);
-            double deltaX = (newPos.X - lastPos.X) / dr;
-
-            double deltaY;
-            double deltaZ;
-
-            if (!ctrlDown)
+            public int Dim
             {
-                deltaY = -(newPos.Y - lastPos.Y) / dr;
-                deltaZ = 0;
-            }
-            else
-            {
-                deltaY = 0;
-                deltaZ = -(newPos.Y - lastPos.Y) / dr;
+                get; set;
             }
 
-            Point3D positionChange = new Point3D(0, 0, 0);
-            PolarCamera.Orientations ori = Camera.HorizontalOrientation;
-            switch (ori)
+            public String Name
             {
-                case PolarCamera.Orientations.Front:
-                    {
-                        positionChange = new Point3D(1 * deltaX, 1 * deltaY, -1 * deltaZ);
-                    }
-                    break;
-
-                case PolarCamera.Orientations.Back:
-                    {
-                        positionChange = new Point3D(-1 * deltaX, 1 * deltaY, 1 * deltaZ);
-                    }
-                    break;
-
-                case PolarCamera.Orientations.Left:
-                    {
-                        positionChange = new Point3D(1 * deltaZ, 1 * deltaY, 1 * deltaX);
-                    }
-                    break;
-
-                case PolarCamera.Orientations.Right:
-                    {
-                        positionChange = new Point3D(-1 * deltaZ, 1 * deltaY, -1 * deltaX);
-                    }
-                    break;
+                get; set;
             }
 
-            controlPoints.MoveSelectedPoints(positionChange);
-            GenerateShape();
-        }
-
-        private void SelectAll_Click(object sender, RoutedEventArgs e)
-        {
-            controlPoints.SelectAll();
-            GenerateShape();
-        }
-
-        private void SelectNone_Click(object sender, RoutedEventArgs e)
-        {
-            controlPoints.DeselectAll();
-            GenerateShape();
-        }
-
-        private void SelectRow_Click(object sender, RoutedEventArgs e)
-        {
-            controlPoints.SelectRow();
-            GenerateShape();
-        }
-
-        private void SelectCol_Click(object sender, RoutedEventArgs e)
-        {
-            controlPoints.SelectColumn();
-            GenerateShape();
+            public String Points
+            {
+                get; set;
+            }
         }
     }
 }

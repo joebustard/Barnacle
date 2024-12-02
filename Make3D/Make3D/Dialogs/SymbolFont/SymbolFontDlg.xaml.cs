@@ -37,21 +37,24 @@ namespace Barnacle.Dialogs
         private string symbolCode;
         private string symbolFont;
         private double symbolLength;
-        private string warningText;
         private DispatcherTimer timer;
+        private string warningText;
 
         public SymbolDlg()
         {
             InitializeComponent();
             ToolName = "Symbol";
             DataContext = this;
-            ModelGroup = MyModelGroup;
+
             loaded = false;
         }
 
         public Visibility Show3D
         {
-            get { return show3D; }
+            get
+            {
+                return show3D;
+            }
 
             set
             {
@@ -63,27 +66,12 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public override bool ShowAxies
+        public Visibility ShowBusy
         {
             get
             {
-                return showAxies;
+                return showBusy;
             }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public Visibility ShowBusy
-        {
-            get { return showBusy; }
 
             set
             {
@@ -91,24 +79,6 @@ namespace Barnacle.Dialogs
                 {
                     showBusy = value;
                     NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
                 }
             }
         }
@@ -133,7 +103,10 @@ namespace Barnacle.Dialogs
 
         public string SymbolFont
         {
-            get { return symbolFont; }
+            get
+            {
+                return symbolFont;
+            }
 
             set
             {
@@ -146,7 +119,10 @@ namespace Barnacle.Dialogs
 
         public double SymbolLength
         {
-            get { return symbolLength; }
+            get
+            {
+                return symbolLength;
+            }
 
             set
             {
@@ -238,6 +214,14 @@ namespace Barnacle.Dialogs
             loaded = true;
         }
 
+        private void Timer_Tick(object sender, System.EventArgs e)
+        {
+            timer.Stop();
+            GenerateShape();
+            Viewer.Model = GetModel();
+            ShowBusy = Visibility.Hidden;
+        }
+
         private void UpdateDisplay()
         {
             if (loaded)
@@ -255,7 +239,7 @@ namespace Barnacle.Dialogs
             LoadEditorParameters();
 
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
             timer = new DispatcherTimer();
             timer.Interval = new System.TimeSpan(0, 0, 1);
@@ -264,14 +248,6 @@ namespace Barnacle.Dialogs
             SymbolSelection.OnSymbolChanged = OnSymbolChanged;
             ShowBusy = Visibility.Hidden;
             Show3D = Visibility.Visible;
-        }
-
-        private void Timer_Tick(object sender, System.EventArgs e)
-        {
-            timer.Stop();
-            GenerateShape();
-            Redisplay();
-            ShowBusy = Visibility.Hidden;
         }
     }
 }

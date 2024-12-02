@@ -1,17 +1,18 @@
-<local:BaseModellerDialog Background="{StaticResource WindowBackBrush }"
-                          Loaded="Window_Loaded"
-                          mc:Ignorable="d"
-                          Title="Reuleaux"
-                          WindowStartupLocation="CenterOwner"
-                          x:Class="Barnacle.Dialogs.ReuleauxDlg"
-                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                          xmlns:local="clr-namespace:Barnacle.Dialogs"
-                           xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
-                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                          Width="1000"
-                          Height="550">
+<local:BaseModellerDialog
+    x:Class="Barnacle.Dialogs.ReuleauxDlg"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
+    Title="Reuleaux"
+    Width="1000"
+    Height="550"
+    Background="{StaticResource WindowBackBrush}"
+    Loaded="Window_Loaded"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -24,9 +25,10 @@
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
-        <Border Grid.Column="1"
-                Grid.Row="0"
-                Style="{StaticResource ControlBorder}">
+        <Border
+            Grid.Row="0"
+            Grid.Column="1"
+            Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="25" />
@@ -40,78 +42,85 @@
                     <RowDefinition Height="25" />
                     <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="1"
-                        Orientation="Horizontal">
-                    <Label VerticalAlignment="Center"
-                       Width="100" Content="Number Of Sides" />
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="Number Of Sides" />
 
-                    <TextBox Margin="8,0,0,0"
-                         Text="{Binding NumberOfSides}"
-                         Width="150" />
-                    <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameters to their defaults" Click="ResetDefaults" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding NumberOfSides}" />
+                    <Button
+                        Margin="8,0,0,0"
+                        Click="ResetDefaults"
+                        Content="Reset"
+                        ToolTip="Restore parameters to their defaults" />
                 </StackPanel>
-                <StackPanel Grid.Row="2"
-                        Orientation="Horizontal">
-                    <Label VerticalAlignment="Center"
-                       Width="100" Content="Radius" />
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="Radius" />
 
-                    <TextBox Margin="8,0,0,0"
-                         Text="{Binding Radius}"
-                         Width="150" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding Radius}" />
                 </StackPanel>
-                <StackPanel Grid.Row="3"
-                        Orientation="Horizontal">
-                    <Label VerticalAlignment="Center"
-                       Width="100" Content="Height" />
+                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="Height" />
 
-                    <TextBox Margin="8,0,0,0"
-                         Text="{Binding Thickness}"
-                         Width="150" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding Thickness}" />
                 </StackPanel>
-                <StackPanel Grid.Row="4"
-                        Orientation="Horizontal">
-                </StackPanel>
-                <StackPanel Grid.Row="5"
-                        Orientation="Horizontal">
-                </StackPanel>
-                <StackPanel Grid.Row="6"
-                        Orientation="Horizontal">
-                </StackPanel>
-                <StackPanel Grid.Row="7"
-                        Orientation="Horizontal">
-                </StackPanel>
-                <StackPanel Grid.Row="8"
-                        Orientation="Horizontal">
-                </StackPanel>
-                <StackPanel Grid.Row="9"
-                        Orientation="Horizontal">
-                    <Label Content="{Binding WarningText}"
-                       FontSize="18"
-                       Foreground="{StaticResource WarningColour}"
-                       VerticalAlignment="Center" />
+                <StackPanel Grid.Row="4" Orientation="Horizontal" />
+                <StackPanel Grid.Row="5" Orientation="Horizontal" />
+                <StackPanel Grid.Row="6" Orientation="Horizontal" />
+                <StackPanel Grid.Row="7" Orientation="Horizontal" />
+                <StackPanel Grid.Row="8" Orientation="Horizontal" />
+                <StackPanel Grid.Row="9" Orientation="Horizontal">
+                    <Label
+                        VerticalAlignment="Center"
+                        Content="{Binding WarningText}"
+                        FontSize="18"
+                        Foreground="{StaticResource WarningColour}" />
                 </StackPanel>
             </Grid>
         </Border>
-        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
+        <GridSplitter
+            Grid.Row="0"
+            Grid.Column="2"
+            Style="{StaticResource GridSplitterStyle}" />
 
-        <u:ObjectView x:Name="Viewer" Grid.Column="3" Grid.Row="0" />
+        <u:ObjectView
+            x:Name="Viewer"
+            Grid.Row="0"
+            Grid.Column="3" />
 
-        <Grid Grid.Column="3"
-              Grid.Row="1">
+        <Grid Grid.Row="1" Grid.Column="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
-            <Button Click="Cancel_Click"
-                    Content="Cancel"
-                    Grid.Column="1"
-                    Margin="2,2,2,2" />
+            <Button
+                Grid.Column="1"
+                Margin="2,2,2,2"
+                Click="Cancel_Click"
+                Content="Cancel" />
 
-            <Button Click="Ok_Click"
-                    Content="Ok"
-                    Grid.Column="2"
-                    Margin="2,2,2,2" />
+            <Button
+                Grid.Column="2"
+                Margin="2,2,2,2"
+                Click="Ok_Click"
+                Content="Ok" />
         </Grid>
     </Grid>
 </local:BaseModellerDialog>

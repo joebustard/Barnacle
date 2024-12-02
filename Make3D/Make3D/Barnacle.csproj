@@ -188,31 +188,9 @@
     <Compile Include="Dialogs\BezierFuselage\FuselageLoftDialog.xaml.cs">
       <DependentUpon>FuselageLoftDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\Figure\Bone.cs" />
-    <Compile Include="Dialogs\Figure\BoneDisplayRecord.cs" />
-    <Compile Include="Dialogs\Figure\FigureDlg.xaml.cs">
-      <DependentUpon>FigureDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\Figure\FigureModel.cs" />
-    <Compile Include="Dialogs\Figure\JointMarker.cs" />
-    <Compile Include="Dialogs\Figure\ModelAssignmentControl.xaml.cs">
-      <DependentUpon>ModelAssignmentControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\Filet\Filet.xaml.cs">
-      <DependentUpon>Filet.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Dialogs\InfoWindow.xaml.cs">
       <DependentUpon>InfoWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\MeshEditor\Mesh.cs" />
-    <Compile Include="Dialogs\MeshEditor\MeshEditorDlg.xaml.cs">
-      <DependentUpon>MeshEditorDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\MeshEditor\MeshOctNode.cs" />
-    <Compile Include="Dialogs\MeshEditor\MeshOctTree.cs" />
-    <Compile Include="Dialogs\MeshEditor\MeshTriangle.cs" />
-    <Compile Include="Dialogs\MeshEditor\MeshVertex.cs" />
-    <Compile Include="Dialogs\MeshEditor\SculptingTool.cs" />
     <Compile Include="Dialogs\NewProjectDlg.xaml.cs">
       <DependentUpon>NewProjectDlg.xaml</DependentUpon>
     </Compile>
@@ -349,7 +327,6 @@
       <DependentUpon>GridSettingsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\FlexiPathEditorControl\LengthLabel.cs" />
-    <Compile Include="UserControls\FlexiPathEditorControl\PathManager.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\PenSetting.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\PointGrid.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\PolarGrid.cs" />
@@ -642,23 +619,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\Figure\FigureDlg.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dialogs\Figure\ModelAssignmentControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dialogs\Filet\Filet.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Dialogs\InfoWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dialogs\MeshEditor\MeshEditorDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1004,6 +965,10 @@
     <ProjectReference Include="..\EditorParameterLib\EditorParameterLib.csproj">
       <Project>{5BD65286-F34E-45AE-9E8D-2E7A0DFF6D0D}</Project>
       <Name>EditorParameterLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FileUtils\FileUtils.csproj">
+      <Project>{6ee47c70-2f51-490a-b50c-97fbad59a0e7}</Project>
+      <Name>FileUtils</Name>
     </ProjectReference>
     <ProjectReference Include="..\FixLib\FixLib.csproj">
       <Project>{8D134779-2F91-45C5-A145-3EB4BE6644A9}</Project>

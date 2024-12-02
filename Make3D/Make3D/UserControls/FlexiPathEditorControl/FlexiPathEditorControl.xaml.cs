@@ -31,94 +31,36 @@ namespace Barnacle.UserControls
     /// </summary>
     public partial class FlexiPathEditorControl : UserControl
     {
-        public FlexiPathChanged OnFlexiPathChanged { get; set; }
-        public FlexiPathTextChanged OnFlexiPathTextChanged { get; set; }
-        public FlexiImageChanged OnFlexiImageChanged { get; set; }
+        private bool absolutePaths;
+        private bool continuosPointsNotify;
 
-        private string pathText = "";
-
-        private FlexiPathEditorControlViewModel vm;
+        private string defaultImagePath;
 
         private bool fixedEndPath = false;
 
-        public bool FixedEndPath
-        {
-            get { return fixedEndPath; }
-
-            set
-            {
-                if (fixedEndPath != value)
-                {
-                    fixedEndPath = value;
-                }
-            }
-        }
-
-        private Point fixedPathStartPoint;
-
-        public Point FixedPathStartPoint
-        {
-            get { return fixedPathStartPoint; }
-
-            set
-            {
-                if (value != fixedPathStartPoint)
-                {
-                    fixedPathStartPoint = value;
-                }
-            }
-        }
+        private Point fixedPathEndPoint;
 
         private Point fixedPathMidPoint;
 
-        public bool SupportsHoles { get; internal set; }
-        public bool HasPresets { get; internal set; }
-        public bool IncludeCommonPresets { get; internal set; }
-        public bool ShowAppend { get; internal set; }
+        private Point fixedPathStartPoint;
 
-        public Point FixedPathMidPoint
-        {
-            get { return fixedPathMidPoint; }
+        private Point fixedPolarGridCentre;
 
-            set
-            {
-                if (value != fixedPathMidPoint)
-                {
-                    fixedPathMidPoint = value;
-                }
-            }
-        }
+        private string imagePath;
 
-        private Point fixedPathEndPoint;
+        private List<string> initialPaths;
 
-        public Point FixedPathEndPoint
-        {
-            get { return fixedPathEndPoint; }
+        private LengthLabel lengthLabel = null;
 
-            set
-            {
-                if (value != fixedPathEndPoint)
-                {
-                    fixedPathEndPoint = value;
-                }
-            }
-        }
+        private bool openEndedPath;
+
+        private string pathText = "";
+
+        private GridSettings.GridStyle showGrid;
 
         private string toolName;
 
-        public string ToolName
-        {
-            get { return toolName; }
-
-            set
-            {
-                toolName = value;
-                if (vm != null)
-                {
-                    vm.ToolName = toolName;
-                }
-            }
-        }
+        private FlexiPathEditorControlViewModel vm;
 
         public FlexiPathEditorControl()
         {
@@ -135,11 +77,256 @@ namespace Barnacle.UserControls
             IncludeCommonPresets = true;
         }
 
-        public delegate void FlexiPathChanged(List<System.Windows.Point> points);
-
         public delegate void FlexiImageChanged(String imagePath);
 
+        public delegate void FlexiPathChanged(List<System.Windows.Point> points);
+
         public delegate void FlexiPathTextChanged(string pathText);
+
+        public delegate void FlexiUserAction();
+
+        public bool AbsolutePaths
+        {
+            get
+            {
+                return absolutePaths;
+            }
+
+            set
+            {
+                absolutePaths = value;
+            }
+        }
+
+        public string AbsolutePathString
+        {
+            get
+            {
+                pathText = vm?.AbsPathText() ?? "";
+                return pathText;
+            }
+        }
+
+        public bool ContinuousPointsNotify
+        {
+            get
+            {
+                if (vm != null)
+                {
+                    return vm.ContinuousPointsNotify;
+                }
+                else
+                {
+                    return continuosPointsNotify;
+                }
+            }
+
+            set
+            {
+                if (vm != null)
+                {
+                    continuosPointsNotify = value;
+                    vm.ContinuousPointsNotify = value;
+                }
+                else
+                {
+                    continuosPointsNotify = value;
+                }
+            }
+        }
+
+        public string DefaultImagePath
+        {
+            get
+            {
+                return defaultImagePath;
+            }
+
+            set
+            {
+                defaultImagePath = value;
+                if (vm != null)
+                {
+                    vm.DefaultImagePath = DefaultImagePath;
+                }
+            }
+        }
+
+        public bool FixedEndPath
+        {
+            get
+            {
+                return fixedEndPath;
+            }
+
+            set
+            {
+                if (fixedEndPath != value)
+                {
+                    fixedEndPath = value;
+                }
+            }
+        }
+
+        public Point FixedPathEndPoint
+        {
+            get
+            {
+                return fixedPathEndPoint;
+            }
+
+            set
+            {
+                if (value != fixedPathEndPoint)
+                {
+                    fixedPathEndPoint = value;
+                }
+            }
+        }
+
+        public Point FixedPathMidPoint
+        {
+            get
+            {
+                return fixedPathMidPoint;
+            }
+
+            set
+            {
+                if (value != fixedPathMidPoint)
+                {
+                    fixedPathMidPoint = value;
+                }
+            }
+        }
+
+        public Point FixedPathStartPoint
+        {
+            get
+            {
+                return fixedPathStartPoint;
+            }
+
+            set
+            {
+                if (value != fixedPathStartPoint)
+                {
+                    fixedPathStartPoint = value;
+                }
+            }
+        }
+
+        public Point FixedPolarGridCentre
+        {
+            get
+            {
+                return FixedPolarGridCentre;
+            }
+
+            set
+            {
+                if (value != fixedPolarGridCentre)
+                {
+                    fixedPolarGridCentre = value;
+                }
+            }
+        }
+
+        public bool HasPresets
+        {
+            get; internal set;
+        }
+
+        public string ImagePath
+        {
+            get
+            {
+                return vm?.ImagePath ?? imagePath;
+            }
+
+            set
+            {
+                if (imagePath != value)
+                {
+                    imagePath = value;
+                }
+            }
+        }
+
+        public bool IncludeCommonPresets
+        {
+            get; internal set;
+        }
+
+        public object LocalImage
+        {
+            get
+            {
+                return vm?.BackgroundImage ?? null;
+            }
+        }
+
+        public int NumberOfPaths
+        {
+            get
+            {
+                if (vm != null)
+                {
+                    return vm.NumberOfPaths;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
+
+        public FlexiImageChanged OnFlexiImageChanged
+        {
+            get; set;
+        }
+
+        public FlexiPathChanged OnFlexiPathChanged
+        {
+            get; set;
+        }
+
+        public FlexiPathTextChanged OnFlexiPathTextChanged
+        {
+            get; set;
+        }
+
+        public FlexiUserAction OnFlexiUserActive
+        {
+            get; set;
+        }
+
+        public bool OpenEndedPath
+        {
+            get
+            {
+                if (vm != null)
+                {
+                    return vm.OpenEndedPath;
+                }
+                else
+                {
+                    return openEndedPath;
+                }
+            }
+
+            set
+            {
+                if (vm != null)
+                {
+                    vm.OpenEndedPath = value;
+                }
+                else
+                {
+                    openEndedPath = value;
+                }
+            }
+        }
 
         public bool PathClosed
         {
@@ -163,18 +350,11 @@ namespace Barnacle.UserControls
             }
         }
 
-        private string imagePath;
-
-        public string ImagePath
+        public string PathString
         {
-            get { return vm?.ImagePath ?? imagePath; }
-
-            set
+            get
             {
-                if (imagePath != value)
-                {
-                    imagePath = value;
-                }
+                return vm?.PathText ?? "";
             }
         }
 
@@ -191,90 +371,61 @@ namespace Barnacle.UserControls
             }
         }
 
-        public string PathString
+        public DpiScale ScreenDpi
         {
-            get { return vm?.PathText ?? ""; }
+            get; set;
         }
 
-        public string AbsolutePathString
+        public bool ShowAppend
+        {
+            get; internal set;
+        }
+
+        public GridSettings.GridStyle ShowGrid
         {
             get
             {
-                pathText = vm?.AbsPathText() ?? "";
-                return pathText;
+                return showGrid;
             }
-        }
-
-        internal string GetPath()
-        {
-            if (vm == null)
-            {
-                return "";
-            }
-            else
-            {
-                return vm.AbsPathText();
-            }
-        }
-
-        internal void SetPath(string v)
-        {
-            if (pathText != v)
-            {
-                pathText = v;
-                vm?.SetPath(v);
-            }
-        }
-
-        internal void UpdatePath(string v)
-        {
-            pathText = v;
-        }
-
-        private string defaultImagePath;
-
-        public string DefaultImagePath
-        {
-            get { return defaultImagePath; }
 
             set
             {
-                defaultImagePath = value;
+                showGrid = value;
                 if (vm != null)
                 {
-                    vm.DefaultImagePath = DefaultImagePath;
+                    vm.ShowGrid = showGrid;
                 }
             }
         }
 
-        private void DashLine(double x1, double y1, double x2, double y2)
+        public bool SupportsHoles
         {
-            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));
-            Line ln = new Line();
-            ln.Stroke = br;
-            ln.StrokeThickness = 2;
-            ln.StrokeDashArray = new DoubleCollection();
-            ln.StrokeDashArray.Add(0.5);
-            ln.StrokeDashArray.Add(0.5);
-            ln.Fill = br;
-            ln.X1 = x1;
-            ln.Y1 = y1;
-            ln.X2 = x2;
-            ln.Y2 = y2;
-            ln.MouseMove += MainCanvas_MouseMove;
-            ln.MouseUp += MainCanvas_MouseUp;
-            ln.MouseDown += MainCanvas_MouseDown;
-            MainCanvas.Children.Add(ln);
+            get; internal set;
         }
 
-        public List<Point> GetPoints()
+        public string ToolName
         {
-            return vm?.DisplayPoints;
+            get
+            {
+                return toolName;
+            }
+
+            set
+            {
+                toolName = value;
+                if (vm != null)
+                {
+                    vm.ToolName = toolName;
+                }
+            }
         }
 
-        public String GetPathText(int index)
+        public void Busy()
         {
-            return vm?.GetPathText(index);
+            if (vm != null)
+            {
+                vm.IsEditingEnabled = false;
+            }
         }
 
         public List<Point> GetOutsidePoints()
@@ -299,6 +450,209 @@ namespace Barnacle.UserControls
             {
                 return new List<Point>();
             }
+        }
+
+        public String GetPathText(int index)
+        {
+            return vm?.GetPathText(index);
+        }
+
+        public List<Point> GetPoints()
+        {
+            return vm?.DisplayPoints;
+        }
+
+        public void LoadImage(String fileName)
+        {
+            if (!String.IsNullOrEmpty(fileName))
+            {
+                vm?.LoadImage(fileName);
+            }
+            imagePath = fileName;
+            NotifyImageChanged();
+        }
+
+        public double ToMM(double x)
+        {
+            DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
+            double res = (25.4 * x / sc.PixelsPerInchX); // * sc.DpiScaleX;
+            return res;
+        }
+
+        public double ToMMX(double x)
+        {
+            DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
+            double res = (25.4 * x / sc.PixelsPerInchX); // * sc.DpiScaleX;
+            return res;
+        }
+
+        public double ToMMY(double y)
+        {
+            DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
+            double res = (25.4 * y / sc.PixelsPerInchY); // * sc.DpiScaleY; ;
+            return res;
+        }
+
+        public double ToPixelX(double x)
+        {
+            DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
+            double res = sc.PixelsPerInchX * x / 25.4;
+            return res;
+        }
+
+        public double ToPixelY(double y)
+        {
+            DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
+            double res = sc.PixelsPerInchY * y / 25.4;
+            return res;
+        }
+
+        internal Point Centroid()
+        {
+            if (vm != null)
+            {
+                return vm.Centroid();
+            }
+            else
+                return new Point(0, 0);
+        }
+
+        internal List<System.Drawing.PointF> DisplayPointsF()
+        {
+            return vm?.DisplayPointsF();
+        }
+
+        internal void FromString(string s, bool resetMode = true)
+        {
+            pathText = s;
+            vm?.FromString(s, resetMode);
+        }
+
+        internal void FromTextPath(string v)
+        {
+            pathText = v;
+            if (vm != null)
+            {
+                vm.FromString(pathText);
+            }
+        }
+
+        internal DpiScale GetDpi()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal string GetPath()
+        {
+            if (vm == null)
+            {
+                return "";
+            }
+            else
+            {
+                return vm.AbsPathText();
+            }
+        }
+
+        internal bool HasHoles()
+        {
+            if (vm != null)
+            {
+                return vm.NumberOfPaths > 1;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        internal void NotBusy()
+        {
+            if (vm != null)
+            {
+                vm.IsEditingEnabled = true;
+            }
+        }
+
+        internal void SetPath(string v)
+        {
+            if (pathText != v)
+            {
+                pathText = v;
+                vm?.SetPath(v);
+            }
+        }
+
+        internal void SetPath(string s, int i)
+        {
+            if (vm != null)
+            {
+                vm.SetPath(s, i);
+            }
+            else
+            {
+                initialPaths.Add(s);
+            }
+        }
+
+        internal string ToPath(bool v)
+        {
+            if (vm != null)
+            {
+                if (v)
+                {
+                    return vm.AbsPathText();
+                }
+                else
+                {
+                    return vm.PathText;
+                }
+            }
+            return "";
+        }
+
+        internal void TurnOffGrid()
+        {
+            ShowGrid = GridSettings.GridStyle.Hidden;
+        }
+
+        internal void UpdatePath(string v)
+        {
+            pathText = v;
+        }
+
+        private void CheckLengthLabel(MouseEventArgs e, Point position)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                if (vm.Points.Count > 1 && vm.SelectionMode == FlexiPathEditorControlViewModel.SelectionModeType.AppendPoint)
+                {
+                    double d = LastSegLength();
+                    lengthLabel = new LengthLabel();
+                    lengthLabel.Content = d.ToString("F3");
+                    lengthLabel.Position = new Point(position.X, position.Y);
+                }
+            }
+        }
+
+        private void DashLine(double x1, double y1, double x2, double y2)
+        {
+            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));
+            Line ln = new Line();
+            ln.Stroke = br;
+            ln.StrokeThickness = 2;
+            ln.StrokeDashArray = new DoubleCollection();
+            ln.StrokeDashArray.Add(0.5);
+            ln.StrokeDashArray.Add(0.5);
+            ln.Fill = br;
+            ln.X1 = x1;
+            ln.Y1 = y1;
+            ln.X2 = x2;
+            ln.Y2 = y2;
+            ln.MouseMove += MainCanvas_MouseMove;
+            ln.MouseUp += MainCanvas_MouseUp;
+            ln.MouseDown += MainCanvas_MouseDown;
+            MainCanvas.Children.Add(ln);
         }
 
         private void DisplayLines()
@@ -427,25 +781,6 @@ namespace Barnacle.UserControls
             }
         }
 
-        internal DpiScale GetDpi()
-        {
-            throw new NotImplementedException();
-        }
-
-        private bool absolutePaths;
-
-        public bool AbsolutePaths
-        {
-            get { return absolutePaths; }
-
-            set { absolutePaths = value; }
-        }
-
-        public object LocalImage
-        {
-            get { return vm?.BackgroundImage ?? null; }
-        }
-
         private void DoButtonBorder(Border src, Border trg)
         {
             if (src == trg)
@@ -499,15 +834,6 @@ namespace Barnacle.UserControls
             }
         }
 
-        internal void FromTextPath(string v)
-        {
-            pathText = v;
-            if (vm != null)
-            {
-                vm.FromString(pathText);
-            }
-        }
-
         private void EnableSelectionModeBorder(Border src)
         {
             DoButtonBorder(src, PickBorder);
@@ -520,9 +846,23 @@ namespace Barnacle.UserControls
             DoButtonBorder(src, AppendBorder);
         }
 
-        internal List<System.Drawing.PointF> DisplayPointsF()
+        private void FlexiUserActive()
         {
-            return vm?.DisplayPointsF();
+            NotifyUserActive();
+        }
+
+        private double LastSegLength()
+        {
+            double res = 0;
+            if (vm.Points.Count > 1)
+            {
+                FlexiPoint p1 = vm.Points[vm.Points.Count - 2];
+                FlexiPoint p2 = vm.Points[vm.Points.Count - 1];
+                double dx = p1.X - p2.X;
+                double dy = p1.Y - p2.Y;
+                res = Math.Sqrt(dx * dx + dy * dy);
+            }
+            return res;
         }
 
         private void Ln_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -595,6 +935,7 @@ namespace Barnacle.UserControls
                 {
                     e.Handled = true;
                     UpdateDisplay();
+                    NotifyUserActive();
                 }
             }
         }
@@ -611,10 +952,9 @@ namespace Barnacle.UserControls
             {
                 CheckLengthLabel(e, position);
                 UpdateDisplay();
+                NotifyUserActive();
             }
         }
-
-        private LengthLabel lengthLabel = null;
 
         private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
         {
@@ -624,35 +964,8 @@ namespace Barnacle.UserControls
                 CheckLengthLabel(e, position);
 
                 UpdateDisplay();
+                NotifyUserActive();
             }
-        }
-
-        private void CheckLengthLabel(MouseEventArgs e, Point position)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                if (vm.Points.Count > 1 && vm.SelectionMode == FlexiPathEditorControlViewModel.SelectionModeType.AppendPoint)
-                {
-                    double d = LastSegLength();
-                    lengthLabel = new LengthLabel();
-                    lengthLabel.Content = d.ToString("F3");
-                    lengthLabel.Position = new Point(position.X, position.Y);
-                }
-            }
-        }
-
-        private double LastSegLength()
-        {
-            double res = 0;
-            if (vm.Points.Count > 1)
-            {
-                FlexiPoint p1 = vm.Points[vm.Points.Count - 2];
-                FlexiPoint p2 = vm.Points[vm.Points.Count - 1];
-                double dx = p1.X - p2.X;
-                double dy = p1.Y - p2.Y;
-                res = Math.Sqrt(dx * dx + dy * dy);
-            }
-            return res;
         }
 
         private void MainCanvas_MouseUp(object sender, MouseButtonEventArgs e)
@@ -663,13 +976,8 @@ namespace Barnacle.UserControls
                 CheckLengthLabel(e, position);
                 UpdateDisplay();
                 NotifyPathPointsChanged();
+                NotifyUserActive();
             }
-        }
-
-        internal void FromString(string s, bool resetMode = true)
-        {
-            pathText = s;
-            vm?.FromString(s, resetMode);
         }
 
         private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -745,6 +1053,14 @@ namespace Barnacle.UserControls
             return p;
         }
 
+        private void NotifyImageChanged()
+        {
+            if (OnFlexiImageChanged != null && vm != null)
+            {
+                OnFlexiImageChanged(vm.ImagePath);
+            }
+        }
+
         private void NotifyPathPointsChanged()
         {
             if (OnFlexiPathChanged != null)
@@ -765,22 +1081,12 @@ namespace Barnacle.UserControls
             }
         }
 
-        private void NotifyImageChanged()
+        private void NotifyUserActive()
         {
-            if (OnFlexiImageChanged != null && vm != null)
+            if (OnFlexiUserActive != null)
             {
-                OnFlexiImageChanged(vm.ImagePath);
+                OnFlexiUserActive();
             }
-        }
-
-        public void LoadImage(String fileName)
-        {
-            if (!String.IsNullOrEmpty(fileName))
-            {
-                vm?.LoadImage(fileName);
-            }
-            imagePath = fileName;
-            NotifyImageChanged();
         }
 
         private void SetSelectionModeBorderColours()
@@ -847,18 +1153,6 @@ namespace Barnacle.UserControls
             }
         }
 
-        private void ShowPointsStatus()
-        {
-            if (vm.ShowPointsStatus)
-            {
-                ShowPointsBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
-            }
-            else
-            {
-                ShowPointsBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
-            }
-        }
-
         private void ShowGridStatus()
         {
             if (vm.ShowGrid == GridSettings.GridStyle.Rectangular)
@@ -892,39 +1186,16 @@ namespace Barnacle.UserControls
             }
         }
 
-        public double ToMMX(double x)
+        private void ShowPointsStatus()
         {
-            DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
-            double res = (25.4 * x / sc.PixelsPerInchX); // * sc.DpiScaleX;
-            return res;
-        }
-
-        public double ToMM(double x)
-        {
-            DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
-            double res = (25.4 * x / sc.PixelsPerInchX); // * sc.DpiScaleX;
-            return res;
-        }
-
-        public double ToMMY(double y)
-        {
-            DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
-            double res = (25.4 * y / sc.PixelsPerInchY); // * sc.DpiScaleY; ;
-            return res;
-        }
-
-        public double ToPixelX(double x)
-        {
-            DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
-            double res = sc.PixelsPerInchX * x / 25.4;
-            return res;
-        }
-
-        public double ToPixelY(double y)
-        {
-            DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
-            double res = sc.PixelsPerInchY * y / 25.4;
-            return res;
+            if (vm.ShowPointsStatus)
+            {
+                ShowPointsBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
+            }
+            else
+            {
+                ShowPointsBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+            }
         }
 
         private void UpdateDisplay()
@@ -959,134 +1230,6 @@ namespace Barnacle.UserControls
             }
         }
 
-        private bool continuosPointsNotify;
-
-        public bool ContinuousPointsNotify
-        {
-            get
-            {
-                if (vm != null)
-                {
-                    return vm.ContinuousPointsNotify;
-                }
-                else
-                {
-                    return continuosPointsNotify;
-                }
-            }
-
-            set
-            {
-                if (vm != null)
-                {
-                    continuosPointsNotify = value;
-                    vm.ContinuousPointsNotify = value;
-                }
-                else
-                {
-                    continuosPointsNotify = value;
-                }
-            }
-        }
-
-        private bool openEndedPath;
-
-        public bool OpenEndedPath
-        {
-            get
-            {
-                if (vm != null)
-                {
-                    return vm.OpenEndedPath;
-                }
-                else
-                {
-                    return openEndedPath;
-                }
-            }
-
-            set
-            {
-                if (vm != null)
-                {
-                    vm.OpenEndedPath = value;
-                }
-                else
-                {
-                    openEndedPath = value;
-                }
-            }
-        }
-
-        internal string ToPath(bool v)
-        {
-            if (vm != null)
-            {
-                if (v)
-                {
-                    return vm.AbsPathText();
-                }
-                else
-                {
-                    return vm.PathText;
-                }
-            }
-            return "";
-        }
-
-        private GridSettings.GridStyle showGrid;
-
-        public GridSettings.GridStyle ShowGrid
-        {
-            get { return showGrid; }
-
-            set
-            {
-                showGrid = value;
-                if (vm != null)
-                {
-                    vm.ShowGrid = showGrid;
-                }
-            }
-        }
-
-        internal void TurnOffGrid()
-        {
-            ShowGrid = GridSettings.GridStyle.Hidden;
-        }
-
-        private Point fixedPolarGridCentre;
-
-        public Point FixedPolarGridCentre
-        {
-            get { return FixedPolarGridCentre; }
-
-            set
-            {
-                if (value != fixedPolarGridCentre)
-                {
-                    fixedPolarGridCentre = value;
-                }
-            }
-        }
-
-        public int NumberOfPaths
-        {
-            get
-            {
-                if (vm != null)
-                {
-                    return vm.NumberOfPaths;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-        }
-
-        public DpiScale ScreenDpi { get; set; }
-
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             if (DataContext != null)
@@ -1102,6 +1245,7 @@ namespace Barnacle.UserControls
                     vm.FixedEndPath = fixedEndPath;
                     vm.OpenEndedPath = openEndedPath;
                     vm.SupportsHoles = SupportsHoles;
+                    vm.OnFlexiUserActive = FlexiUserActive;
                     if (ShowAppend)
                     {
                         vm.AppendButtonVisible = Visibility.Visible;
@@ -1205,42 +1349,6 @@ namespace Barnacle.UserControls
                         NotifyPathTextChanged();
                     }
                     break;
-            }
-        }
-
-        internal Point Centroid()
-        {
-            if (vm != null)
-            {
-                return vm.Centroid();
-            }
-            else
-                return new Point(0, 0);
-        }
-
-        internal bool HasHoles()
-        {
-            if (vm != null)
-            {
-                return vm.NumberOfPaths > 1;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        private List<string> initialPaths;
-
-        internal void SetPath(string s, int i)
-        {
-            if (vm != null)
-            {
-                vm.SetPath(s, i);
-            }
-            else
-            {
-                initialPaths.Add(s);
             }
         }
     }

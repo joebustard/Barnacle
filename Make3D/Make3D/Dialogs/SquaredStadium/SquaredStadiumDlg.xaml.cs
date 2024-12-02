@@ -42,7 +42,7 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "SquaredStadium";
             DataContext = this;
-            ModelGroup = MyModelGroup;
+
             shapeLength = 5;
             shapeHeight = 10;
             shapeRadius = 5;
@@ -60,7 +60,10 @@ namespace Barnacle.Dialogs
 
         public List<String> OverRuns
         {
-            get { return overRuns; }
+            get
+            {
+                return overRuns;
+            }
         }
 
         public double ShapeHeight
@@ -237,7 +240,7 @@ namespace Barnacle.Dialogs
         private void UpdateDisplay()
         {
             GenerateShape();
-            Redisplay();
+            Viewer.Model = GetModel();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -245,9 +248,9 @@ namespace Barnacle.Dialogs
             LoadEditorParameters();
             GenerateShape();
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             warningText = "";
-            Redisplay();
+            UpdateDisplay();
         }
     }
 }

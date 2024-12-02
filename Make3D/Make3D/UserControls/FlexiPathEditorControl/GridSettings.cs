@@ -15,6 +15,7 @@
 // *                                                                         *
 // *************************************************************************
 
+using FileUtils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,50 +29,50 @@ namespace Barnacle.UserControls
 {
     public class GridSettings
     {
+        private Point centre;
+
+        private double polarGridAngle = 36;
+
+        private double polarGridRadius = 10;
+
+        private double rectangularGridSize = 10;
+
         public GridSettings()
         {
             ShowGrid = GridStyle.Rectangular;
         }
+
         public enum GridStyle
         {
             Hidden,
             Rectangular,
             Polar
         }
-        public GridStyle ShowGrid { get; set; }
-        private double rectangularGridSize = 10;
 
-        public double RectangularGridSize
+        public Point Centre
         {
-            get { return rectangularGridSize; }
+            get
+            {
+                return centre;
+            }
             set
             {
-                if (value != rectangularGridSize)
-                {
-                    rectangularGridSize = value;
-                }
+                centre = value;
             }
         }
 
-        private double polarGridRadius = 10;
+        public Color LineColour { get; set; } = Colors.Black;
 
-        public double PolarGridRadius
-        {
-            get { return polarGridRadius; }
-            set
-            {
-                if (value != polarGridRadius)
-                {
-                    polarGridRadius = value;
-                }
-            }
-        }
+        public double LineOpacity { get; set; } = 0.5;
 
-        private double polarGridAngle = 36;
+        public double LineThickness { get; set; } = 4;
 
         public double PolarGridAngle
         {
-            get { return polarGridAngle; }
+            get
+            {
+                return polarGridAngle;
+            }
             set
             {
                 if (value != polarGridAngle)
@@ -81,46 +82,45 @@ namespace Barnacle.UserControls
             }
         }
 
-        private Point centre;
-
-        public Point Centre
+        public double PolarGridRadius
         {
-            get { return centre; }
-            set { centre = value; }
+            get
+            {
+                return polarGridRadius;
+            }
+            set
+            {
+                if (value != polarGridRadius)
+                {
+                    polarGridRadius = value;
+                }
+            }
         }
 
-        internal void SetPolarCentre(double v1, double v2)
+        public double RectangularGridSize
         {
-            centre = new Point(v1, v2);
+            get
+            {
+                return rectangularGridSize;
+            }
+            set
+            {
+                if (value != rectangularGridSize)
+                {
+                    rectangularGridSize = value;
+                }
+            }
         }
 
-        public Color LineColour { get; set; } = Colors.Black;
-        public double LineOpacity { get; set; } = 0.5;
-        public double LineThickness { get; set; } = 4;
-        public bool Save()
+        public GridStyle ShowGrid
         {
-            string pth = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\GridSettings.xml";
-            bool res = false;
-            XmlDocument doc = new XmlDocument();
-            doc.XmlResolver = null;
-
-            XmlElement root = doc.CreateElement("GridSettings");
-            root.SetAttribute("ShowGrid", ShowGrid.ToString());
-            root.SetAttribute("LineThickness", LineThickness.ToString());
-            root.SetAttribute("LineColour", LineColour.ToString());
-            root.SetAttribute("LineOpacity", LineOpacity.ToString());
-            root.SetAttribute("RectangularGridSize", RectangularGridSize.ToString());
-            root.SetAttribute("PolarGridRadius", PolarGridRadius.ToString());
-            root.SetAttribute("PolarGridAngle", PolarGridAngle.ToString());
-            doc.AppendChild(root);
-            doc.Save(pth);
-
-            return res;
+            get; set;
         }
+
         public bool Load()
         {
             bool res = false;
-            string pth = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\GridSettings.xml";
+            string pth = PathManager.ApplicationDataFolder() + "\\GridSettings.xml";
             if (System.IO.File.Exists(pth))
             {
                 XmlDocument doc = new XmlDocument();
@@ -144,6 +144,7 @@ namespace Barnacle.UserControls
                                 ShowGrid = GridStyle.Rectangular;
                             }
                             break;
+
                         case "Polar":
                             {
                                 ShowGrid = GridStyle.Polar;
@@ -166,17 +167,40 @@ namespace Barnacle.UserControls
                     PolarGridAngle = Convert.ToDouble(s);
 
                     s = root.GetAttribute("LineColour");
-                    LineColour  = (Color)ColorConverter.ConvertFromString(s);
-
+                    LineColour = (Color)ColorConverter.ConvertFromString(s);
                 }
                 catch (Exception ex)
                 {
-
                     MessageBox.Show(ex.Message);
                 }
-
             }
             return res;
+        }
+
+        public bool Save()
+        {
+            string pth = PathManager.ApplicationDataFolder() + "\\GridSettings.xml";
+            bool res = false;
+            XmlDocument doc = new XmlDocument();
+            doc.XmlResolver = null;
+
+            XmlElement root = doc.CreateElement("GridSettings");
+            root.SetAttribute("ShowGrid", ShowGrid.ToString());
+            root.SetAttribute("LineThickness", LineThickness.ToString());
+            root.SetAttribute("LineColour", LineColour.ToString());
+            root.SetAttribute("LineOpacity", LineOpacity.ToString());
+            root.SetAttribute("RectangularGridSize", RectangularGridSize.ToString());
+            root.SetAttribute("PolarGridRadius", PolarGridRadius.ToString());
+            root.SetAttribute("PolarGridAngle", PolarGridAngle.ToString());
+            doc.AppendChild(root);
+            doc.Save(pth);
+
+            return res;
+        }
+
+        internal void SetPolarCentre(double v1, double v2)
+        {
+            centre = new Point(v1, v2);
         }
     }
 }

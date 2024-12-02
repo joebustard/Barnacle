@@ -15,6 +15,7 @@
 // *                                                                         *
 // *************************************************************************
 
+using FileUtils;
 using LoggerLib;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,7 @@ namespace Barnacle.Dialogs.Slice
     public partial class EditProfile : Window, INotifyPropertyChanged
     {
         private CuraDefinitionFile curaDataForPrinter;
+        private string originalName;
         private BarnaclePrinter printer;
         private BarnaclePrinterManager printerManager;
 
@@ -45,14 +47,20 @@ namespace Barnacle.Dialogs.Slice
         public EditProfile()
         {
             InitializeComponent();
-            UserProfilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PrinterProfiles\\";
+            UserProfilePath = PathManager.PrinterProfileFolder() + "\\";
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public bool CreatingNewProfile { get; set; }
-        public string PrinterName { get; internal set; }
-        private string originalName;
+        public bool CreatingNewProfile
+        {
+            get; set;
+        }
+
+        public string PrinterName
+        {
+            get; internal set;
+        }
 
         public string ProfileName
         {
@@ -73,7 +81,10 @@ namespace Barnacle.Dialogs.Slice
 
         public string SelectedSection
         {
-            get { return selectedSection; }
+            get
+            {
+                return selectedSection;
+            }
 
             set
             {
@@ -88,7 +99,10 @@ namespace Barnacle.Dialogs.Slice
 
         public List<String> SettingSections
         {
-            get { return settingSections; }
+            get
+            {
+                return settingSections;
+            }
 
             set
             {
@@ -102,7 +116,10 @@ namespace Barnacle.Dialogs.Slice
 
         public List<SettingDefinition> SettingsToDisplay
         {
-            get { return settingsToDisplay; }
+            get
+            {
+                return settingsToDisplay;
+            }
 
             set
             {

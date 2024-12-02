@@ -9,7 +9,7 @@
     xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
     Title="Dual Profile"
     Width="1000"
-    Height="450"
+    Height="550"
     Background="{StaticResource WindowBackBrush}"
     Loaded="Window_Loaded"
     WindowStartupLocation="CenterOwner"
@@ -41,7 +41,7 @@
             Grid.Row="0"
             Grid.Column="2"
             Style="{StaticResource GridSplitterStyle}" />
-        <Grid Grid.Column="3" Grid.Row="0">
+        <Grid Grid.Row="0" Grid.Column="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="25" />
                 <RowDefinition />
@@ -49,26 +49,26 @@
             </Grid.RowDefinitions>
             <u:ObjectView x:Name="Viewer" Grid.Row="1" />
             <StackPanel
-                    Grid.Row="2"
-                    IsEnabled="{Binding EditingEnabled}"
-                    Orientation="Horizontal">
+                Grid.Row="2"
+                IsEnabled="{Binding EditingEnabled}"
+                Orientation="Horizontal">
                 <RadioButton
-                        VerticalAlignment="Center"
-                        Content="Sdf"
-                        GroupName="MethodGroup"
-                        IsChecked="{Binding SdfMethod}" />
+                    VerticalAlignment="Center"
+                    Content="Sdf"
+                    GroupName="MethodGroup"
+                    IsChecked="{Binding SdfMethod}" />
                 <RadioButton
-                        Margin="8,0,0,0"
-                        VerticalAlignment="Center"
-                        Content="Mid res Sdf"
-                        GroupName="MethodGroup"
-                        IsChecked="{Binding MidResSdfMethod}" />
+                    Margin="8,0,0,0"
+                    VerticalAlignment="Center"
+                    Content="Mid res Sdf"
+                    GroupName="MethodGroup"
+                    IsChecked="{Binding MidResSdfMethod}" />
                 <RadioButton
-                        Margin="8,0,0,0"
-                        VerticalAlignment="Center"
-                        Content="Hi res Sdf"
-                        GroupName="MethodGroup"
-                        IsChecked="{Binding HiResSdfMethod}" />
+                    Margin="8,0,0,0"
+                    VerticalAlignment="Center"
+                    Content="Hi res Sdf"
+                    GroupName="MethodGroup"
+                    IsChecked="{Binding HiResSdfMethod}" />
             </StackPanel>
         </Grid>
 

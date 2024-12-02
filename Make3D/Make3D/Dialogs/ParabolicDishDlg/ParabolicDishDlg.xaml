@@ -1,13 +1,18 @@
-<local:BaseModellerDialog x:Class="Barnacle.Dialogs.ParabolicDishDlg"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Barnacle.Dialogs"
-        mc:Ignorable="d"
-         xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
-
-        Title="Parabolic Dish" Height="450" Width="1000" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
+<local:BaseModellerDialog
+    x:Class="Barnacle.Dialogs.ParabolicDishDlg"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
+    Title="Parabolic Dish"
+    Width="1000"
+    Height="550"
+    Background="{StaticResource WindowBackBrush}"
+    Loaded="Window_Loaded"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -20,7 +25,10 @@
             <ColumnDefinition Width="10*" />
             <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
-        <Border Grid.Row ="0" Grid.Column="1" Style="{StaticResource ControlBorder}">
+        <Border
+            Grid.Row="0"
+            Grid.Column="1"
+            Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="94*" />
@@ -39,42 +47,102 @@
                     <RowDefinition Height="25" />
                     <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.ColumnSpan="2" Margin="0,0.4,0.2,0.2">
-                    <Label VerticalAlignment="Center" Width="100">Radius</Label>
-                    <TextBox Margin="8,2,0,0" Text="{Binding Radius}" Width="50" />
-                    <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameters to their defaults" Click="ResetDefaults" />
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    Margin="0,0.4,0.2,0.2"
+                    Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">Radius</Label>
+                    <TextBox
+                        Width="50"
+                        Margin="8,2,0,0"
+                        Text="{Binding Radius}" />
+                    <Button
+                        Margin="8,0,0,0"
+                        Click="ResetDefaults"
+                        Content="Reset"
+                        ToolTip="Restore parameters to their defaults" />
                 </StackPanel>
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.ColumnSpan="2" Margin="0,25.4,0.2,25.4" Grid.RowSpan="3">
-                    <Label VerticalAlignment="Center" Width="100">Wall Thickness</Label>
-                    <TextBox Margin="8,2,0,0" Text="{Binding WallThickness}" Width="50" />
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.RowSpan="3"
+                    Grid.ColumnSpan="2"
+                    Margin="0,25.4,0.2,25.4"
+                    Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">Wall Thickness</Label>
+                    <TextBox
+                        Width="50"
+                        Margin="8,2,0,0"
+                        Text="{Binding WallThickness}" />
                 </StackPanel>
-                <StackPanel Grid.Row="3" Orientation="Horizontal" Grid.ColumnSpan="2" Margin="0,0.2,0.2,0.4">
-                    <Label VerticalAlignment="Center" Width="100">Pitch</Label>
-                    <TextBox Margin="8,2,0,0" Text="{Binding Pitch}" Width="50" />
+                <StackPanel
+                    Grid.Row="3"
+                    Grid.ColumnSpan="2"
+                    Margin="0,0.2,0.2,0.4"
+                    Orientation="Horizontal">
+                    <Label Width="100" VerticalAlignment="Center">Pitch</Label>
+                    <TextBox
+                        Width="50"
+                        Margin="8,2,0,0"
+                        Text="{Binding Pitch}" />
                 </StackPanel>
-                <StackPanel Grid.Row="3" Orientation="Horizontal" Grid.ColumnSpan="2" Margin="0,25.2,0.2,0" Grid.RowSpan="2">
-                </StackPanel>
-                <StackPanel Grid.Row="5" Orientation="Horizontal" Grid.ColumnSpan="2" Margin="0,0,0.2,25.2" Grid.RowSpan="2">
-                </StackPanel>
-                <StackPanel Grid.Row="6" Orientation="Horizontal" Grid.ColumnSpan="2" Margin="0,0.4,0.2,0.2">
-                </StackPanel>
-                <StackPanel Grid.Row="8" Orientation="Horizontal" Grid.ColumnSpan="2" Margin="0,25.2,0.2,0" Grid.RowSpan="2">
-                    <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
+                <StackPanel
+                    Grid.Row="3"
+                    Grid.RowSpan="2"
+                    Grid.ColumnSpan="2"
+                    Margin="0,25.2,0.2,0"
+                    Orientation="Horizontal" />
+                <StackPanel
+                    Grid.Row="5"
+                    Grid.RowSpan="2"
+                    Grid.ColumnSpan="2"
+                    Margin="0,0,0.2,25.2"
+                    Orientation="Horizontal" />
+                <StackPanel
+                    Grid.Row="6"
+                    Grid.ColumnSpan="2"
+                    Margin="0,0.4,0.2,0.2"
+                    Orientation="Horizontal" />
+                <StackPanel
+                    Grid.Row="8"
+                    Grid.RowSpan="2"
+                    Grid.ColumnSpan="2"
+                    Margin="0,25.2,0.2,0"
+                    Orientation="Horizontal">
+                    <Label
+                        VerticalAlignment="Center"
+                        Content="{Binding WarningText}"
+                        FontSize="18"
+                        Foreground="{StaticResource WarningColour}" />
                 </StackPanel>
             </Grid>
         </Border>
-        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
+        <GridSplitter
+            Grid.Row="0"
+            Grid.Column="2"
+            Style="{StaticResource GridSplitterStyle}" />
 
-        <u:ObjectView x:Name="Viewer" Grid.Column="3" Grid.Row="0" />
+        <u:ObjectView
+            x:Name="Viewer"
+            Grid.Row="0"
+            Grid.Column="3" />
 
-        <Grid Grid.Column="3" Grid.Row="1">
+        <Grid Grid.Row="1" Grid.Column="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
-            <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" />
+            <Button
+                Grid.Column="1"
+                Margin="2,2,2,2"
+                Click="Cancel_Click"
+                Content="Cancel" />
+            <Button
+                Grid.Column="2"
+                Margin="2,2,2,2"
+                Click="Ok_Click"
+                Content="Ok" />
         </Grid>
     </Grid>
 </local:BaseModellerDialog>

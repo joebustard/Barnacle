@@ -72,7 +72,6 @@ namespace Barnacle.Dialogs
             hubStyles = new List<string>();
             rimStyles = new List<string>();
             tyreStyles = new List<string>();
-            ModelGroup = MyModelGroup;
         }
 
         public double AxelBore
@@ -305,40 +304,6 @@ namespace Barnacle.Dialogs
                     selectedTyreStyle = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
-                }
-            }
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
                 }
             }
         }
@@ -783,37 +748,6 @@ namespace Barnacle.Dialogs
             SweepPolarProfileTheta(polarProfile, cx, 0, 360, rotDivisions, false, true, true);
         }
 
-        private void GenerateTyreProfile4(double inner, double outter, double tyreThickness, double curvepoint, double treadwidth)
-        {
-            List<PolarCoordinate> polarProfile = new List<PolarCoordinate>();
-            double depth = outter - inner;
-            double low = 0.5 - treadwidth / 2.0;
-            double high = 0.5 + treadwidth / 2.0;
-            double cx = inner;
-
-            int rotDivisions = 36;
-
-            polarProfile.Add(Polar(cx, 0, tyreThickness));
-
-            for (double theta = 0; theta <= Math.PI / 2; theta += 0.1)
-            {
-                double tx = cx + curvepoint + ((2 * theta) / Math.PI * depth);
-                double tz = (low * Math.Cos(theta) + high) * tyreThickness;
-                polarProfile.Add(Polar(tx, 0, tz));
-            }
-
-            for (double theta = Math.PI / 2; theta > 0; theta -= 0.1)
-            {
-                double tx = cx + curvepoint + ((2 * theta) / Math.PI * depth);
-                double tz = low - (low * Math.Cos(theta)) * tyreThickness;
-                polarProfile.Add(Polar(tx, 0, tz));
-            }
-
-            polarProfile.Add(Polar(cx, 0, 0));
-
-            SweepPolarProfileTheta(polarProfile, cx, 0, 360, rotDivisions, false, true, true);
-        }
-
         private void GenerateTyreProfile2(double inner, double outter, double t)
         {
             List<PolarCoordinate> polarProfile1 = new List<PolarCoordinate>();
@@ -873,6 +807,37 @@ namespace Barnacle.Dialogs
             polarProfile2.Add(Polar(cx, 0, 0));
 
             PartSweep(polarProfile1, polarProfile2, cx, 0, sweep, rotDivisions, true, true, offsetOneHalf);
+        }
+
+        private void GenerateTyreProfile4(double inner, double outter, double tyreThickness, double curvepoint, double treadwidth)
+        {
+            List<PolarCoordinate> polarProfile = new List<PolarCoordinate>();
+            double depth = outter - inner;
+            double low = 0.5 - treadwidth / 2.0;
+            double high = 0.5 + treadwidth / 2.0;
+            double cx = inner;
+
+            int rotDivisions = 36;
+
+            polarProfile.Add(Polar(cx, 0, tyreThickness));
+
+            for (double theta = 0; theta <= Math.PI / 2; theta += 0.1)
+            {
+                double tx = cx + curvepoint + ((2 * theta) / Math.PI * depth);
+                double tz = (low * Math.Cos(theta) + high) * tyreThickness;
+                polarProfile.Add(Polar(tx, 0, tz));
+            }
+
+            for (double theta = Math.PI / 2; theta > 0; theta -= 0.1)
+            {
+                double tx = cx + curvepoint + ((2 * theta) / Math.PI * depth);
+                double tz = low - (low * Math.Cos(theta)) * tyreThickness;
+                polarProfile.Add(Polar(tx, 0, tz));
+            }
+
+            polarProfile.Add(Polar(cx, 0, 0));
+
+            SweepPolarProfileTheta(polarProfile, cx, 0, 360, rotDivisions, false, true, true);
         }
 
         private void GetHubParams(ref double numSpoke, ref double gapToSpkeRatio, ref double hri, ref double hro)
@@ -1205,7 +1170,7 @@ namespace Barnacle.Dialogs
         {
             GenerateShape();
             CentreVertices();
-            Redisplay();
+            Viewer.Model = GetModel();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -1238,9 +1203,9 @@ namespace Barnacle.Dialogs
             LoadEditorParameters();
             GenerateShape();
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
 
-            Redisplay();
+            Viewer.Model = GetModel();
         }
     }
 }

@@ -1,10 +1,10 @@
 <local:BaseModellerDialog
     x:Class="Barnacle.Dialogs.Propeller"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Barnacle.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
     Title="Propeller"
     Width="1000"
@@ -47,51 +47,84 @@
                     <RowDefinition Height="25" />
                     <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="1" Orientation="Horizontal" ToolTip="{Binding NumberOfBladesToolTip}">
+                <StackPanel
+                    Grid.Row="1"
+                    Orientation="Horizontal"
+                    ToolTip="{Binding NumberOfBladesToolTip}">
                     <Label Width="100">
                         No. of Blades
                     </Label>
 
-                    <TextBox Width="50" Text="{Binding NumberOfBlades}" Height="26" Margin="0,0,0,-0.4" VerticalAlignment="Top" />
-                    <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameters to their defaults" Click="ResetDefaults" />
+                    <TextBox
+                        Width="50"
+                        Height="26"
+                        Margin="0,0,0,-0.4"
+                        VerticalAlignment="Top"
+                        Text="{Binding NumberOfBlades}" />
+                    <Button
+                        Margin="8,0,0,0"
+                        Click="ResetDefaults"
+                        Content="Reset"
+                        ToolTip="Restore parameters to their defaults" />
                 </StackPanel>
-                <StackPanel Grid.Row="2" Orientation="Horizontal" ToolTip="{Binding BladeLengthToolTip}">
+                <StackPanel
+                    Grid.Row="2"
+                    Orientation="Horizontal"
+                    ToolTip="{Binding BladeLengthToolTip}">
                     <Label Width="100">
                         Blade Length
                     </Label>
                     <TextBox Width="50" Text="{Binding BladeLength}" />
                 </StackPanel>
-                <StackPanel Grid.Row="3" Orientation="Horizontal" ToolTip="{Binding RootOffsetToolTip}">
+                <StackPanel
+                    Grid.Row="3"
+                    Orientation="Horizontal"
+                    ToolTip="{Binding RootOffsetToolTip}">
                     <Label Width="100" Content="Root Offset" />
                     <TextBox Width="50" Text="{Binding RootOffset}" />
                 </StackPanel>
-                <StackPanel Grid.Row="4" Orientation="Horizontal" ToolTip="{Binding MidOffsetToolTip}">
+                <StackPanel
+                    Grid.Row="4"
+                    Orientation="Horizontal"
+                    ToolTip="{Binding MidOffsetToolTip}">
                     <Label Width="100">
                         Mid Offset
                     </Label>
                     <TextBox Width="50" Text="{Binding MidOffset}" />
                 </StackPanel>
-                <StackPanel Grid.Row="5" Orientation="Horizontal" ToolTip="{Binding BladeRootToolTip}">
+                <StackPanel
+                    Grid.Row="5"
+                    Orientation="Horizontal"
+                    ToolTip="{Binding BladeRootToolTip}">
                     <Label Width="100">
                         Blade Root
                     </Label>
                     <TextBox Width="50" Text="{Binding BladeRoot}" />
                 </StackPanel>
-                <StackPanel Grid.Row="6" Orientation="Horizontal" ToolTip="{Binding BladeMidToolTip}">
+                <StackPanel
+                    Grid.Row="6"
+                    Orientation="Horizontal"
+                    ToolTip="{Binding BladeMidToolTip}">
                     <Label Width="100">
                         Blade Mid
                     </Label>
 
                     <TextBox Width="50" Text="{Binding BladeMid}" />
                 </StackPanel>
-                <StackPanel Grid.Row="7" Orientation="Horizontal" ToolTip="{Binding BladeTipToolTip}">
+                <StackPanel
+                    Grid.Row="7"
+                    Orientation="Horizontal"
+                    ToolTip="{Binding BladeTipToolTip}">
                     <Label Width="100">
                         Blade Tip
                     </Label>
 
                     <TextBox Width="50" Text="{Binding BladeTip}" />
                 </StackPanel>
-                <StackPanel Grid.Row="8" Orientation="Horizontal" ToolTip="{Binding BladeAngleToolTip}">
+                <StackPanel
+                    Grid.Row="8"
+                    Orientation="Horizontal"
+                    ToolTip="{Binding BladeAngleToolTip}">
                     <Label Width="100">
                         Blade Angle
                     </Label>
@@ -134,20 +167,32 @@
                         Domed
                     </RadioButton>
                 </StackPanel>
-                <StackPanel Grid.Row="11" Orientation="Horizontal" ToolTip="{Binding HubRadiusToolTip}">
+                <StackPanel
+                    Grid.Row="11"
+                    Orientation="Horizontal"
+                    ToolTip="{Binding HubRadiusToolTip}">
                     <Label Width="100" Content="Hub Radius" />
                     <TextBox Width="50" Text="{Binding HubRadius}" />
                 </StackPanel>
-                <StackPanel Grid.Row="12" Orientation="Horizontal" ToolTip="{Binding HubHeightToolTip}">
+                <StackPanel
+                    Grid.Row="12"
+                    Orientation="Horizontal"
+                    ToolTip="{Binding HubHeightToolTip}">
                     <Label Width="100" Content="Hub Height" />
                     <TextBox Width="50" Text="{Binding HubHeight}" />
                 </StackPanel>
-                <StackPanel Grid.Row="13" Orientation="Horizontal" ToolTip="{Binding HubOffsetToolTip}">
+                <StackPanel
+                    Grid.Row="13"
+                    Orientation="Horizontal"
+                    ToolTip="{Binding HubOffsetToolTip}">
                     <Label Width="100" Content="Hub Offset" />
 
                     <TextBox Width="50" Text="{Binding HubOffset}" />
                 </StackPanel>
-                <StackPanel Grid.Row="14" Orientation="Horizontal" ToolTip="{Binding SpokeRadiusTooltip}">
+                <StackPanel
+                    Grid.Row="14"
+                    Orientation="Horizontal"
+                    ToolTip="{Binding SpokeRadiusTooltip}">
                     <Label Width="100" Content="Spoke Radius" />
                     <TextBox Width="50" Text="{Binding SpokeRadius}" />
                 </StackPanel>

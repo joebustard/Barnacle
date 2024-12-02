@@ -85,7 +85,7 @@ namespace Barnacle.Dialogs
             TrackWidth = 10;
             SpudSize = 1;
             GuideSize = 1;
-            ModelGroup = MyModelGroup;
+
             moving = false;
             externalLinks = new ExternalLinks();
             bool containsBasic = false;
@@ -764,27 +764,8 @@ namespace Barnacle.Dialogs
 
         private void DisplayShape()
         {
-            if (MyModelGroup != null)
-            {
-                MyModelGroup.Children.Clear();
-                if (floor != null && showFloor)
-                {
-                    MyModelGroup.Children.Add(floor.FloorMesh);
-                    foreach (GeometryModel3D m in grid.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-                if (axies != null && ShowAxies)
-                {
-                    foreach (GeometryModel3D m in axies.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-                GeometryModel3D gm = GetModel();
-                MyModelGroup.Children.Add(gm);
-            }
+            Viewer.Clear();
+            Viewer.Model = GetModel();
         }
 
         private void DisplayTrack2D()
@@ -1393,7 +1374,7 @@ namespace Barnacle.Dialogs
                 // GetRawFlexiPoints();
                 PointGrid.ItemsSource = Points;
                 CollectionViewSource.GetDefaultView(Points).Refresh();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
 
             return found;

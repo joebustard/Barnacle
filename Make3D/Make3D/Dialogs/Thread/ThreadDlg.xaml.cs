@@ -51,7 +51,7 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "Thread";
             DataContext = this;
-            ModelGroup = MyModelGroup;
+
             minorRadius = 12.5;
             majorRadius = 15;
             pitch = 3.5;
@@ -185,40 +185,6 @@ namespace Barnacle.Dialogs
                     root = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
-                }
-            }
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
                 }
             }
         }
@@ -512,7 +478,7 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -522,9 +488,9 @@ namespace Barnacle.Dialogs
             loaded = true;
             GenerateShape();
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
 
-            Redisplay();
+            Viewer.Model = GetModel();
         }
     }
 }

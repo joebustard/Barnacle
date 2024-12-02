@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileUtils;
+using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
 
@@ -7,9 +8,6 @@ namespace ScriptLanguage
     public class Log
     {
         protected List<LogEntry> logEntrys;
-
-        public List<LogEntry> LogEntrys
-        { get { return logEntrys; } }
 
         protected TextBox txtbox;
 
@@ -26,6 +24,14 @@ namespace ScriptLanguage
 
         public delegate void UpdateExternalText(string s);
 
+        public List<LogEntry> LogEntrys
+        {
+            get
+            {
+                return logEntrys;
+            }
+        }
+
         public string LogFileName
         {
             get
@@ -41,7 +47,10 @@ namespace ScriptLanguage
             }
         }
 
-        public UpdateExternalText UpdateText { get; set; }
+        public UpdateExternalText UpdateText
+        {
+            get; set;
+        }
 
         public static Log Instance()
         {
@@ -75,8 +84,7 @@ namespace ScriptLanguage
 
         public void Save()
         {
-            String logPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + System.IO.Path.DirectorySeparatorChar
-                             + "Barnacle" + System.IO.Path.DirectorySeparatorChar;
+            String logPath = PathManager.ApplicationDataFolder() + System.IO.Path.DirectorySeparatorChar;
             try
             {
                 System.IO.StreamWriter fout = new System.IO.StreamWriter(logPath + logFileName, true);

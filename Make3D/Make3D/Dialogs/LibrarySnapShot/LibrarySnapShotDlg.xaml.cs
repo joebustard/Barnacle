@@ -43,92 +43,34 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class LibrarySnapShotDlg : BaseModellerDialog, INotifyPropertyChanged
     {
+        private string[] notAllowed =
+        {
+            "http",
+            "www",
+            ".com",
+            "mail"
+        };
+
+        private Object3D part;
+
+        private string partDescription;
+
+        private string partName;
+
+        private DispatcherTimer snapShotTimer;
+
         public LibrarySnapShotDlg()
         {
             InitializeComponent();
             DataContext = this;
-            ModelGroup = MyModelGroup;
         }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        private string partName;
-
-        public String PartName
-        {
-            get
-            {
-                return partName;
-            }
-
-            set
-            {
-                if (value != partName)
-                {
-                    partName = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private string partDescription;
-
-        public String PartDescription
-        {
-            get
-            {
-                return partDescription;
-            }
-
-            set
-            {
-                if (value != partDescription)
-                {
-                    partDescription = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private Object3D part;
 
         public Object3D Part
         {
-            get { return part; }
+            get
+            {
+                return part;
+            }
 
             set
             {
@@ -154,10 +96,49 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public string PartPath { get; internal set; }
-        public string PartProjectSection { get; internal set; }
+        public String PartDescription
+        {
+            get
+            {
+                return partDescription;
+            }
 
-        private DispatcherTimer snapShotTimer;
+            set
+            {
+                if (value != partDescription)
+                {
+                    partDescription = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String PartName
+        {
+            get
+            {
+                return partName;
+            }
+
+            set
+            {
+                if (value != partName)
+                {
+                    partName = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public string PartPath
+        {
+            get; internal set;
+        }
+
+        public string PartProjectSection
+        {
+            get; internal set;
+        }
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
@@ -177,9 +158,9 @@ namespace Barnacle.Dialogs
             localDoc.Save(PartPath + System.IO.Path.DirectorySeparatorChar + PartName + ".txt");
             BaseViewModel.PartLibraryProject.AddFileToFolder(PartProjectSection, PartName + ".txt", false);
             BaseViewModel.PartLibraryProject.Save();
-            showFloor = false;
-            showAxies = false;
-            Redisplay();
+            Viewer.ShowFloor = false;
+            Viewer.ShowAxies = false;
+            Viewer.Model = GetModel();
             // need to give GUI a chance to repaint.
             TimeSpan interval = new TimeSpan(0, 0, 0, 0, 500);
             snapShotTimer = new DispatcherTimer();
@@ -188,17 +169,16 @@ namespace Barnacle.Dialogs
             snapShotTimer.Start();
         }
 
-        private void SnapShotTImer_Tick(object sender, EventArgs e)
+        private void BaseModellerDialog_Loaded(object sender, RoutedEventArgs e)
         {
-            snapShotTimer.Stop();
-            ImageCapture.ScreenCaptureElement(viewport3D1, PartPath + System.IO.Path.DirectorySeparatorChar + PartName + ".png", true);
-            try
+            Viewer.Model = GetModel();
+            Camera.HomeFront();
+            SetCameraDistance();
+            UpdateCameraPos();
+            if (Part != null)
             {
-                DialogResult = true;
-                Close();
-            }
-            catch
-            {
+                PartName = Part.Name;
+                PartDescription = Part.Description;
             }
         }
 
@@ -220,14 +200,6 @@ namespace Barnacle.Dialogs
             return result;
         }
 
-        private string[] notAllowed =
-        {
-            "http",
-            "www",
-            ".com",
-            "mail"
-        };
-
         private bool NameIsValid()
         {
             bool result = true;
@@ -246,16 +218,17 @@ namespace Barnacle.Dialogs
             return result;
         }
 
-        private void BaseModellerDialog_Loaded(object sender, RoutedEventArgs e)
+        private void SnapShotTImer_Tick(object sender, EventArgs e)
         {
-            Redisplay();
-            Camera.HomeFront();
-            SetCameraDistance();
-            UpdateCameraPos();
-            if (Part != null)
+            snapShotTimer.Stop();
+            ImageCapture.ScreenCaptureElement(Viewer.Visual, PartPath + System.IO.Path.DirectorySeparatorChar + PartName + ".png", true);
+            try
             {
-                PartName = Part.Name;
-                PartDescription = Part.Description;
+                DialogResult = true;
+                Close();
+            }
+            catch
+            {
             }
         }
     }

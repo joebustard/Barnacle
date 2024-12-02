@@ -386,6 +386,15 @@ namespace Barnacle.Dialogs
             return res;
         }
 
+        /// <summary>
+        /// Turn on the twirlywoo and stop any controls being changed
+        /// </summary>
+        public virtual void Busy()
+        {
+            EditingEnabled = false;
+            BusyVisible = Visibility.Visible;
+        }
+
         public void ClearShape()
         {
             spaceTreeRoot = null;
@@ -478,6 +487,15 @@ namespace Barnacle.Dialogs
         public void Log(string s)
         {
             System.Diagnostics.Debug.WriteLine(s);
+        }
+
+        /// <summary>
+        /// Turn off the twirlywoo and allow any controls being changed
+        /// </summary>
+        public virtual void NotBusy()
+        {
+            BusyVisible = Visibility.Hidden;
+            EditingEnabled = true;
         }
 
         public virtual void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
@@ -966,15 +984,6 @@ namespace Barnacle.Dialogs
             return res;
         }
 
-        /// <summary>
-        /// Turn on the twirlywoo and stop any controls being changed
-        /// </summary>
-        protected virtual void Busy()
-        {
-            EditingEnabled = false;
-            BusyVisible = Visibility.Visible;
-        }
-
         protected Point CalcPoint(double theta, double r)
         {
             Point p = new Point();
@@ -1181,15 +1190,6 @@ namespace Barnacle.Dialogs
             Camera.HomeFront();
             // SetCameraDistance();
             UpdateCameraPos();
-        }
-
-        /// <summary>
-        /// Turn off the twirlywoo and allow any controls being changed
-        /// </summary>
-        protected virtual void NotBusy()
-        {
-            BusyVisible = Visibility.Hidden;
-            EditingEnabled = true;
         }
 
         protected virtual void Ok_Click(object sender, RoutedEventArgs e)

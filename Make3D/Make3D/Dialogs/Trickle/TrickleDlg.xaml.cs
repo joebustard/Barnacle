@@ -26,10 +26,20 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class TrickleDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private string warningText;
         private bool loaded;
-
         private double radius;
+        private double side;
+        private double thickness;
+        private string warningText;
+
+        public TrickleDlg()
+        {
+            InitializeComponent();
+            ToolName = "Trickle";
+            DataContext = this;
+
+            loaded = false;
+        }
 
         public double Radius
         {
@@ -51,8 +61,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private double side;
-
         public double Side
         {
             get
@@ -73,8 +81,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private double thickness;
-
         public double Thickness
         {
             get
@@ -91,49 +97,6 @@ namespace Barnacle.Dialogs
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
-                }
-            }
-        }
-
-        public TrickleDlg()
-        {
-            InitializeComponent();
-            ToolName = "Trickle";
-            DataContext = this;
-            ModelGroup = MyModelGroup;
-            loaded = false;
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
                 }
             }
         }
@@ -204,7 +167,7 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -217,7 +180,7 @@ namespace Barnacle.Dialogs
             LoadEditorParameters();
 
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
             UpdateDisplay();
         }

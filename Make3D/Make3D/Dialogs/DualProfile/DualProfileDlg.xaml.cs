@@ -76,12 +76,13 @@ namespace Barnacle.Dialogs
 
             loaded = false;
             shapeDirty = true;
+            Properties.Settings.Default.Reload();
             // It looks odd if the user chances a value but the
             // screen doesn't update until after the part generation completes.
             // So when a parameter changes, start a timer which triggers the generation
             // later.
             timer = new DispatcherTimer();
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+            timer.Interval = new TimeSpan(0, 0, Properties.Settings.Default.RegenerationDelay);
             timer.Tick += Timer_Tick;
         }
 
@@ -214,8 +215,17 @@ namespace Barnacle.Dialogs
             return res;
         }
 
+        /// <summary>
+        /// Turn off the twirlywoo and allow any controls being changed
+        /// </summary>
+        public override void Busy()
+        {
+            Viewer.Busy();
+            EditingEnabled = false;
+        }
+
         public float FindClosestToLine(float x,
-                                       float y,
+                                               float y,
                                        Point p1,
                                        Point p2,
                                        out Point closest)
@@ -258,20 +268,20 @@ namespace Barnacle.Dialogs
             return (float)Math.Sqrt(dx * dx + dy * dy);
         }
 
+        /// <summary>
+        /// Turn off the twirlywoo and allow any controls being changed
+        /// </summary>
+        public override void NotBusy()
+        {
+            Viewer.NotBusy();
+            EditingEnabled = true;
+        }
+
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             SaveEditorParmeters();
             DialogResult = true;
             Close();
-        }
-
-        /// <summary>
-        /// Turn off the twirlywoo and allow any controls being changed
-        /// </summary>
-        private void Busy()
-        {
-            Viewer.Busy();
-            EditingEnabled = false;
         }
 
         private void CalculateExtents(List<Point> tmp, out double lx, out double rx, out double ty, out double by)
@@ -547,15 +557,6 @@ namespace Barnacle.Dialogs
             MidResSdfMethod = EditorParameters.GetBoolean("MidResSdfMethod", false);
         }
 
-        /// <summary>
-        /// Turn off the twirlywoo and allow any controls being changed
-        /// </summary>
-        private void NotBusy()
-        {
-            Viewer.NotBusy();
-            EditingEnabled = true;
-        }
-
         private void SaveEditorParmeters()
         {
             EditorParameters.Set("TopShape", TopPathControl.GetPath());
@@ -567,6 +568,7 @@ namespace Barnacle.Dialogs
 
         private void StartUpdateTimer()
         {
+            timer.Stop();
             timer.Start();
         }
 

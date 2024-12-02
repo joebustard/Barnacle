@@ -1,11 +1,16 @@
-﻿<Window x:Class="Barnacle.Dialogs.Slice.SliceControl"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Barnacle.Dialogs.Slice"
-        mc:Ignorable="d"
-        Title="Slice Control" Height="450" Width="750" Loaded="Window_Loaded" Background="{StaticResource WindowBackBrush }">
+﻿<Window
+    x:Class="Barnacle.Dialogs.Slice.SliceControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.Dialogs.Slice"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Slice Control"
+    Width="750"
+    Height="450"
+    Background="{StaticResource WindowBackBrush}"
+    Loaded="Window_Loaded"
+    mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="10" />
@@ -28,27 +33,137 @@
             <ColumnDefinition Width="10*" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Label Grid.Column="1" Grid.Row="1" Content="Printer" Margin="2,2,2,10" VerticalAlignment="Center" />
-        <ComboBox Grid.Column="2" Grid.Row="1" Margin="2,2,2,4" FontSize="14"  ItemsSource="{Binding BarnaclePrinterNames}" SelectedItem="{Binding SelectedPrinter}" />
-        <Button Grid.Column="3" Grid.Row="1" Margin="2,2,2,4" Content="Edit" IsEnabled="{Binding IsEditPrinterEnabled}" Click="EditPrinterClicked" ToolTip="Edit the properties of the selected printer" />
-        <Button Grid.Column="4" Grid.Row="1" Margin="2,2,2,4" Content="New" Click="NewPrinterClicked" ToolTip="Create a new Barnacle printer definition from the existing Cura definitions." />
+        <Label
+            Grid.Row="1"
+            Grid.Column="1"
+            Margin="2,2,2,10"
+            VerticalAlignment="Center"
+            Content="Printer" />
+        <ComboBox
+            Grid.Row="1"
+            Grid.Column="2"
+            Margin="2,2,2,4"
+            FontSize="14"
+            ItemsSource="{Binding BarnaclePrinterNames}"
+            SelectedItem="{Binding SelectedPrinter}"
+            IsEnabled="{Binding IsNewPrinterEnabled}" />
+        <Button
+            Grid.Row="1"
+            Grid.Column="3"
+            Margin="2,2,2,4"
+            Click="EditPrinterClicked"
+            Content="Edit"
+            IsEnabled="{Binding IsEditPrinterEnabled}"
+            ToolTip="Edit the properties of the selected printer" />
+        <Button
+            Grid.Row="1"
+            Grid.Column="4"
+            Margin="2,2,2,4"
+            Click="NewPrinterClicked"
+            Content="New"
+            ToolTip="Create a new Barnacle printer definition from the existing Cura definitions."
+            IsEnabled="{Binding IsNewPrinterEnabled}" />
 
-        <Label Grid.Column="1" Grid.Row="2" Margin="2,2,2,4" Content="Profile Overrides" VerticalAlignment="Center" />
-        <ComboBox Grid.Column="2" Grid.Row="2" Margin="2,2,2,4" ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedUserProfile}" Style="{StaticResource LargeCombo}" />
-        <Button Grid.Column="3" Grid.Row="2" Margin="2,2,2,4" Content="Edit" Click="EditProfileClicked" IsEnabled="{Binding IsEditProfileEnabled}" ToolTip="Change the values of the profile settings" />
-        <Button Grid.Column="4" Grid.Row="2" Margin="2,2,2,4" Content="New" Click="NewProfileClicked" ToolTip="Create a new Profile definition" />
+        <Label
+            Grid.Row="2"
+            Grid.Column="1"
+            Margin="2,2,2,4"
+            VerticalAlignment="Center"
+            Content="Profile Overrides" />
+        <ComboBox
+            Grid.Row="2"
+            Grid.Column="2"
+            Margin="2,2,2,4"
+            ItemsSource="{Binding Profiles}"
+            SelectedItem="{Binding SelectedUserProfile}"
+            Style="{StaticResource LargeCombo}"
+            IsEnabled="{Binding IsNewProfileEnabled}" />
+        <Button
+            Grid.Row="2"
+            Grid.Column="3"
+            Margin="2,2,2,4"
+            Click="EditProfileClicked"
+            Content="Edit"
+            IsEnabled="{Binding IsEditProfileEnabled}"
+            ToolTip="Change the values of the profile settings" />
+        <Button
+            Grid.Row="2"
+            Grid.Column="4"
+            Margin="2,2,2,4"
+            Click="NewProfileClicked"
+            Content="New"
+            ToolTip="Create a new Profile definition"
+            IsEnabled="{Binding IsNewProfileEnabled}" />
 
-        <Button Grid.Column="5" Grid.Row="2" Margin="2,2,2,4" Content="Copy" Click="CopyProfileClicked" ToolTip="Copy the current Profile" IsEnabled="{Binding IsEditProfileEnabled}" />
+        <Button
+            Grid.Row="2"
+            Grid.Column="5"
+            Margin="2,2,2,4"
+            Click="CopyProfileClicked"
+            Content="Copy"
+            IsEnabled="{Binding IsEditProfileEnabled}"
+            ToolTip="Copy the current Profile" />
 
-        <Button Grid.Column="6" Grid.Row="2" Margin="2,2,2,4" Content="Del" Click="DelProfileClicked" ToolTip="Delete Current Profile" IsEnabled="{Binding IsEditProfileEnabled}" />
-        <Label Grid.Column="1" Grid.Row="4" Margin="2,2,2,10" Content="Status" VerticalAlignment="Center" />
-        <TextBox x:Name="ResultsBox" Grid.Column="2" Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="4" IsReadOnly="True" AcceptsReturn="True" Text="{Binding ResultsText}" VerticalContentAlignment="Top" FontFamily="Courier New" FontSize="16" FontWeight="Bold"></TextBox>
+        <Button
+            Grid.Row="2"
+            Grid.Column="6"
+            Margin="2,2,2,4"
+            Click="DelProfileClicked"
+            Content="Del"
+            IsEnabled="{Binding IsEditProfileEnabled}"
+            ToolTip="Delete Current Profile" />
+        <Label
+            Grid.Row="4"
+            Grid.Column="1"
+            Margin="2,2,2,10"
+            VerticalAlignment="Center"
+            Content="Status" />
+        <TextBox
+            x:Name="ResultsBox"
+            Grid.Row="4"
+            Grid.RowSpan="2"
+            Grid.Column="2"
+            Grid.ColumnSpan="4"
+            VerticalContentAlignment="Top"
+            AcceptsReturn="True"
+            FontFamily="Courier New"
+            FontSize="16"
+            FontWeight="Bold"
+            IsReadOnly="True"
+            Text="{Binding ResultsText}" />
 
-        <Button Grid.Column="1" Grid.Row="6" IsEnabled="{Binding CanSeeLog}" Content="Log" Margin="2,4,0,0" Click="SeeLogClicked" ToolTip="View the log produced by the slicer" />
-        <Button Grid.Column="4" Grid.Row="6" IsEnabled="{Binding CanSlice}" Content="Slice" Margin="2,4,0,0" Click="SliceClicked" ToolTip="Run the slice." />
+        <Button
+            Grid.Row="6"
+            Grid.Column="1"
+            Margin="2,4,0,0"
+            Click="SeeLogClicked"
+            Content="Log"
+            IsEnabled="{Binding CanSeeLog}"
+            ToolTip="View the log produced by the slicer" />
+        <Button
+            Grid.Row="6"
+            Grid.Column="4"
+            Margin="2,4,0,0"
+            Click="SliceClicked"
+            Content="Slice"
+            IsEnabled="{Binding CanSlice}"
+            ToolTip="Run the slice." />
 
-        <Button Grid.Column="5" Grid.Row="6" IsEnabled="{Binding CanCopyToSD}" Content="SD Card" Margin="2,4,0,0" Click="SDClicked" ToolTip="If an SD card with a label matching the name given in the project settings tab is detected then copy all the printer files to it." />
+        <Button
+            Grid.Row="6"
+            Grid.Column="5"
+            Margin="2,4,0,0"
+            Click="SDClicked"
+            Content="SD Card"
+            IsEnabled="{Binding CanCopyToSD}"
+            ToolTip="If an SD card with a label matching the name given in the project settings tab is detected then copy all the printer files to it." />
 
-        <Button Grid.Column="6" Grid.Row="6" IsEnabled="{Binding CanClose}" Content="Close" Margin="2,4,0,0" Click="CloseClicked" />
+        <Button
+            Grid.Row="6"
+            Grid.Column="6"
+            Margin="2,4,0,0"
+            Click="CloseClicked"
+            Content="Close"
+            IsEnabled="{Binding CanClose}" />
     </Grid>
 </Window>

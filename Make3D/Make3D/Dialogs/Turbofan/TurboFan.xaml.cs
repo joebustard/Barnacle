@@ -29,7 +29,7 @@ namespace Barnacle.Dialogs
     public partial class TurboFan : BaseModellerDialog, INotifyPropertyChanged
     {
         private bool anticlockwise;
-        private int bladeLength;
+        private double bladeLength;
         private double bladeOverlap;
         private double bladePitch;
         private double bladeThickness;
@@ -38,6 +38,7 @@ namespace Barnacle.Dialogs
         private double diskOffset;
         private double diskThickness;
         private double hubRadius;
+        private bool loaded;
         private int numberOfBlades;
 
         private bool supportDisk;
@@ -47,16 +48,7 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "TurboFan";
             DataContext = this;
-            numberOfBlades = 8;
-            bladeLength = 20;
-            bladePitch = 45;
-            bladeThickness = 1;
-            hubRadius = 10;
-            diskThickness = 10;
-            diskOffset = 0.5;
-            clockwise = true;
-            anticlockwise = false;
-            ModelGroup = MyModelGroup;
+            loaded = false;
         }
 
         public bool Anticlockwise
@@ -72,12 +64,12 @@ namespace Barnacle.Dialogs
                     anticlockwise = value;
                     clockwise = !anticlockwise;
                     NotifyPropertyChanged();
-                    Regenerate();
+                    UpdateDisplay();
                 }
             }
         }
 
-        public int BladeLength
+        public double BladeLength
         {
             get
             {
@@ -89,7 +81,7 @@ namespace Barnacle.Dialogs
                 {
                     bladeLength = value;
                     NotifyPropertyChanged();
-                    Regenerate();
+                    UpdateDisplay();
                 }
             }
         }
@@ -106,7 +98,7 @@ namespace Barnacle.Dialogs
                 {
                     bladeOverlap = value;
                     NotifyPropertyChanged();
-                    Regenerate();
+                    UpdateDisplay();
                 }
             }
         }
@@ -123,7 +115,7 @@ namespace Barnacle.Dialogs
                 {
                     bladePitch = value;
                     NotifyPropertyChanged();
-                    Regenerate();
+                    UpdateDisplay();
                 }
             }
         }
@@ -140,7 +132,7 @@ namespace Barnacle.Dialogs
                 {
                     bladeThickness = value;
                     NotifyPropertyChanged();
-                    Regenerate();
+                    UpdateDisplay();
                 }
             }
         }
@@ -158,7 +150,7 @@ namespace Barnacle.Dialogs
                     clockwise = value;
                     anticlockwise = !clockwise;
                     NotifyPropertyChanged();
-                    Regenerate();
+                    UpdateDisplay();
                 }
             }
         }
@@ -175,7 +167,7 @@ namespace Barnacle.Dialogs
                 {
                     diskOffset = value;
                     NotifyPropertyChanged();
-                    Regenerate();
+                    UpdateDisplay();
                 }
             }
         }
@@ -192,7 +184,7 @@ namespace Barnacle.Dialogs
                 {
                     diskThickness = value;
                     NotifyPropertyChanged();
-                    Regenerate();
+                    UpdateDisplay();
                 }
             }
         }
@@ -209,7 +201,7 @@ namespace Barnacle.Dialogs
                 {
                     hubRadius = value;
                     NotifyPropertyChanged();
-                    Regenerate();
+                    UpdateDisplay();
                 }
             }
         }
@@ -226,42 +218,7 @@ namespace Barnacle.Dialogs
                 {
                     numberOfBlades = value;
                     NotifyPropertyChanged();
-                    Regenerate();
-                }
-            }
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                    Regenerate();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
+                    UpdateDisplay();
                 }
             }
         }
@@ -278,7 +235,7 @@ namespace Barnacle.Dialogs
                 {
                     supportDisk = value;
                     NotifyPropertyChanged();
-                    Regenerate();
+                    UpdateDisplay();
                 }
             }
         }
@@ -576,26 +533,73 @@ namespace Barnacle.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
+            NumberOfBlades = EditorParameters.GetInt("NumberOfBlades", 8);
+            BladeLength = EditorParameters.GetDouble("BladeLength", 20);
+            BladePitch = EditorParameters.GetDouble("BladePitch", 45); ;
+            BladeThickness = EditorParameters.GetDouble("BladeThickness", 1);
+            HubRadius = EditorParameters.GetDouble("HubRadius", 10);
+            DiskThickness = EditorParameters.GetDouble("DiskThickness", 10);
+            DiskOffset = EditorParameters.GetDouble("DiskOffset", 0.5);
+            Clockwise = EditorParameters.GetBoolean("Clockwise", true);
+            Anticlockwise = EditorParameters.GetBoolean("Anticlockwise", false);
+            SupportDisk = EditorParameters.GetBoolean("SupportDisk", false);
         }
 
-        private void Regenerate()
+        private void ResetDefaults(object sender, RoutedEventArgs e)
         {
-            GenerateShape();
-            Redisplay();
+            loaded = false;
+            SetDefaults();
+            loaded = true;
+            UpdateDisplay();
         }
 
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
+            EditorParameters.Set("NumberOfBlades", NumberOfBlades.ToString());
+            EditorParameters.Set("BladeLength", BladeLength.ToString());
+            EditorParameters.Set("BladePitch", BladePitch.ToString()); ;
+            EditorParameters.Set("BladeThickness", BladeThickness.ToString());
+            EditorParameters.Set("HubRadius", HubRadius.ToString());
+            EditorParameters.Set("DiskThickness", DiskThickness.ToString());
+            EditorParameters.Set("DiskOffset", DiskOffset.ToString());
+            EditorParameters.Set("Clockwise", Clockwise.ToString());
+            EditorParameters.Set("Anticlockwise", Anticlockwise.ToString());
+            EditorParameters.Set("SupportDisk", SupportDisk.ToString());
+        }
+
+        private void SetDefaults()
+        {
+            NumberOfBlades = 8;
+            BladeLength = 20;
+            BladePitch = 45;
+            BladeThickness = 1;
+            HubRadius = 10;
+            DiskThickness = 10;
+            DiskOffset = 0.5;
+            Clockwise = true;
+            Anticlockwise = false;
+            SupportDisk = false;
+        }
+
+        private void UpdateDisplay()
+        {
+            if (loaded)
+            {
+                GenerateShape();
+                Viewer.Model = GetModel();
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            loaded = false;
+            SetDefaults();
             LoadEditorParameters();
-            MyModelGroup.Children.Clear();
-            GenerateShape();
+            Viewer.Clear();
             UpdateCameraPos();
-            Redisplay();
+            loaded = true;
+            UpdateDisplay();
         }
     }
 }

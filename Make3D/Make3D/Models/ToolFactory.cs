@@ -81,10 +81,6 @@ namespace Barnacle.Models
                     res = new DualProfileDlg();
                     break;
 
-                case "Filet":
-                    res = new FiletDlg();
-                    break;
-
                 case "ImagePlaque":
                     res = new ImagePlaqueDlg();
                     break;
@@ -93,11 +89,9 @@ namespace Barnacle.Models
                     res = new MorphableModelDlg();
                     break;
 
-
                 case "ObliqueEndCylinder":
                     res = new ObliqueEndCylinderDlg();
                     break;
-
 
                 case "ParabolicDish":
                     res = new ParabolicDishDlg();
@@ -246,10 +240,6 @@ namespace Barnacle.Models
 
                 case "TurboFan":
                     res = new TurboFan();
-                    break;
-
-                case "Figure":
-                    res = new FigureDlg();
                     break;
 
                 case "VaseLoft":

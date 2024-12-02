@@ -1,11 +1,18 @@
-<local:BaseModellerDialog x:Class="Barnacle.Dialogs.TexturedTubeDlg"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Barnacle.Dialogs"
-        mc:Ignorable="d"
-        Title="Textured Tube" Height="450" Width="1000" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
+<local:BaseModellerDialog
+    x:Class="Barnacle.Dialogs.TexturedTubeDlg"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
+    Title="Textured Tube"
+    Width="1000"
+    Height="550"
+    Background="{StaticResource WindowBackBrush}"
+    Loaded="Window_Loaded"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -13,12 +20,16 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="9*" />
             <ColumnDefinition Width="10" />
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10*" />
+            <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Row ="0" Grid.Column="1" Style="{StaticResource ControlBorder}">
+        <Border
+            Grid.Row="0"
+            Grid.Column="1"
+            Style="{StaticResource ControlBorder}" IsEnabled="{Binding EditingEnabled}">
             <Grid>
 
                 <Grid.RowDefinitions>
@@ -36,108 +47,167 @@
                     <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <RadioButton GroupName="SolidRadio" VerticalAlignment="Center"  Content="Disk" IsChecked="{Binding Solid}" ToolTip="Make a solid disc with texture around its circumference" />
-                    <RadioButton GroupName="SolidRadio"  Margin="8,0,0,0" Content="Outer Tube" VerticalAlignment="Center" IsChecked="{Binding OuterTube}" ToolTip="Make a tube with texture around its circumference" />
-                    <RadioButton GroupName="SolidRadio"  Margin="8,0,0,0" Content="Inner Tube" VerticalAlignment="Center" IsChecked="{Binding InnerTube}" ToolTip="Make a tube with texture around its inner circumference" />
-                    <RadioButton GroupName="SolidRadio"  Margin="8,0,0,0" Content="Double Sided Tube" VerticalAlignment="Center" IsChecked="{Binding DoubleTube}" ToolTip="Make a tube with texture around its inner and outer circumferences" />
+                    <RadioButton
+                        VerticalAlignment="Center"
+                        Content="Disk"
+                        GroupName="SolidRadio"
+                        IsChecked="{Binding Solid}"
+                        ToolTip="Make a solid disc with texture around its circumference" />
+                    <RadioButton
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center"
+                        Content="Outer Tube"
+                        GroupName="SolidRadio"
+                        IsChecked="{Binding OuterTube}"
+                        ToolTip="Make a tube with texture around its circumference" />
+                    <RadioButton
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center"
+                        Content="Inner Tube"
+                        GroupName="SolidRadio"
+                        IsChecked="{Binding InnerTube}"
+                        ToolTip="Make a tube with texture around its inner circumference" />
+                    <RadioButton
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center"
+                        Content="Double Sided Tube"
+                        GroupName="SolidRadio"
+                        IsChecked="{Binding DoubleTube}"
+                        ToolTip="Make a tube with texture around its inner and outer circumferences" />
                 </StackPanel>
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="100">Height</Label>
-                    <TextBox Margin="8,0,0,0" Text="{Binding TubeHeight}" Width="150" ToolTip="{Binding TubeHeightToolTip}" />
+                    <Label Width="100" VerticalAlignment="Center">Height</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding TubeHeight}"
+                        ToolTip="{Binding TubeHeightToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="3" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="100">Radius</Label>
-                    <TextBox Margin="8,0,0,0" Text="{Binding InnerRadius}" Width="150" ToolTip="{Binding InnerRadiusToolTip}" />
+                    <Label Width="100" VerticalAlignment="Center">Radius</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding InnerRadius}"
+                        ToolTip="{Binding InnerRadiusToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="4" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="100" Visibility="{Binding ShowThickness}">Thickness</Label>
-                    <TextBox Margin="8,0,0,0" Text="{Binding Thickness}" Width="150" ToolTip="{Binding ThicknessToolTip}" Visibility="{Binding ShowThickness}" />
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Visibility="{Binding ShowThickness}">
+                        Thickness
+                    </Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding Thickness}"
+                        ToolTip="{Binding ThicknessToolTip}"
+                        Visibility="{Binding ShowThickness}" />
                 </StackPanel>
 
                 <StackPanel Grid.Row="5" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="100">Sweep</Label>
-                    <TextBox Margin="8,0,0,0" Text="{Binding Sweep}" Width="150" ToolTip="{Binding SweepToolTip}" />
+                    <Label Width="100" VerticalAlignment="Center">Sweep</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding Sweep}"
+                        ToolTip="{Binding SweepToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="6" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="100">Texture</Label>
-                    <ComboBox Margin="8,0,0,0" SelectedItem="{Binding Texture}" ItemsSource="{Binding TextureItems}" Width="150" ToolTip="{Binding TextureToolTip}" />
+                    <Label Width="100" VerticalAlignment="Center">Texture</Label>
+                    <ComboBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        ItemsSource="{Binding TextureItems}"
+                        SelectedItem="{Binding Texture}"
+                        ToolTip="{Binding TextureToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="7" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="100">Texture Resolution</Label>
-                    <TextBox Margin="8,0,0,0" Text="{Binding TextureResolution}"  Width="150" ToolTip="{Binding TextureResolutionToolTip}" />
+                    <Label Width="100" VerticalAlignment="Center">Texture Resolution</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding TextureResolution}"
+                        ToolTip="{Binding TextureResolutionToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="8" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="100">Texture Depth</Label>
-                    <TextBox Margin="8,0,0,0" Text="{Binding TextureDepth}"  Width="150" ToolTip="{Binding TextureDepthToolTip}" />
+                    <Label Width="100" VerticalAlignment="Center">Texture Depth</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding TextureDepth}"
+                        ToolTip="{Binding TextureDepthToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="9" Orientation="Horizontal">
-                    <RadioButton GroupName="ScaleGroup" Width="100" Content="Clipped Tile" VerticalAlignment="Center" ToolTip="Tile the pattern and clip it against the edges."
-                IsChecked="{Binding ClippedTile}" />
-                    <RadioButton GroupName="ScaleGroup" Width="100" Content="Fitted Tile" VerticalAlignment="Center" ToolTip="Tile the pattern, scale to ensure whole repeats" Margin="8,0,0,0"
-                IsChecked="{Binding FittedTile}" />
+                    <RadioButton
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="Clipped Tile"
+                        GroupName="ScaleGroup"
+                        IsChecked="{Binding ClippedTile}"
+                        ToolTip="Tile the pattern and clip it against the edges." />
+                    <RadioButton
+                        Width="100"
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center"
+                        Content="Fitted Tile"
+                        GroupName="ScaleGroup"
+                        IsChecked="{Binding FittedTile}"
+                        ToolTip="Tile the pattern, scale to ensure whole repeats" />
                 </StackPanel>
                 <StackPanel Grid.Row="10" Orientation="Horizontal">
-                    <RadioButton GroupName="ScaleGroup" Width="100" Content="Clipped Single" VerticalAlignment="Center" ToolTip="Put the pattern on once. If it doesn't fit clip it"
-                IsChecked="{Binding ClippedSingle}" />
-                    <RadioButton GroupName="ScaleGroup" Width="100" Content="Fitted Single" VerticalAlignment="Center" ToolTip="Put the pattern on once and scale it to fit" Margin="8,0,0,0"
-                IsChecked="{Binding FittedSingle}" />
+                    <RadioButton
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="Clipped Single"
+                        GroupName="ScaleGroup"
+                        IsChecked="{Binding ClippedSingle}"
+                        ToolTip="Put the pattern on once. If it doesn't fit clip it" />
+                    <RadioButton
+                        Width="100"
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center"
+                        Content="Fitted Single"
+                        GroupName="ScaleGroup"
+                        IsChecked="{Binding FittedSingle}"
+                        ToolTip="Put the pattern on once and scale it to fit" />
                 </StackPanel>
             </Grid>
         </Border>
 
-        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
-        <Border Grid.Row ="0" Grid.Column="3" Style="{StaticResource ControlBorder}">
-            <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
-              MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
-
-                <Viewport3D.Camera>
-                    <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
-                    </PerspectiveCamera>
-                </Viewport3D.Camera>
-
-                <ModelVisual3D>
-                    <ModelVisual3D.Content>
-                        <Model3DGroup>
-                            <AmbientLight Color="#FF808080" />
-                            <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
-                            </DirectionalLight>
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-
-                <ModelVisual3D x:Name = "MyModel">
-                    <ModelVisual3D.Content>
-                        <Model3DGroup x:Name="MyModelGroup">
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-            </Viewport3D>
-        </Border>
+        <GridSplitter
+            Grid.Row="0"
+            Grid.Column="2"
+            Style="{StaticResource GridSplitterStyle}" />
+        <u:ObjectView
+            x:Name="Viewer"
+            Grid.Row="0"
+            Grid.Column="3" />
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
         </Grid>
-        <Grid Grid.Column="1" Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <CheckBox VerticalAlignment="Center" Content="Floor" Grid.Column="0" IsChecked="{Binding ShowFloor}" />
-            <CheckBox VerticalAlignment="Center" Content="Axies" Grid.Column="1" IsChecked="{Binding ShowAxies}" />
-            <Button Content="Home" Width="80" Margin="0,2,0,2" Grid.Column="2" Click="Home_Click" />
-        </Grid>
 
-        <Grid Grid.Column="3" Grid.Row="1">
+        <Grid Grid.Row="1" Grid.Column="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
-            <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" IsDefault="True" />
+            <Button
+                Grid.Column="1"
+                Margin="2,2,2,2"
+                Click="Cancel_Click"
+                Content="Cancel" />
+            <Button
+                Grid.Column="2"
+                Margin="2,2,2,2"
+                Click="Ok_Click"
+                Content="Ok"
+                IsDefault="True" />
         </Grid>
     </Grid>
 </local:BaseModellerDialog>

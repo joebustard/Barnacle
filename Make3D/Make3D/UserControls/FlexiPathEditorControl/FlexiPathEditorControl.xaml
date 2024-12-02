@@ -13,7 +13,7 @@
     <UserControl.DataContext>
         <local:FlexiPathEditorControlViewModel />
     </UserControl.DataContext>
-    <Border Style="{StaticResource ControlBorder}">
+    <Border Style="{StaticResource ControlBorder}" IsEnabled="{Binding IsEditingEnabled}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="150" />
@@ -376,7 +376,8 @@
                         Command="{Binding SavePresetCommand}"
                         Content="Save"
                         Style="{StaticResource SmallButton}"
-                        Visibility="{Binding ShowPresets}" />
+                        Visibility="{Binding ShowPresets}"
+                        IsEnabled="{Binding SavePresetEnabled}" />
                 </StackPanel>
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
                     <Label

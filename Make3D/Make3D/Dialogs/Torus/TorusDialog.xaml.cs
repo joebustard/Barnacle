@@ -31,6 +31,7 @@ namespace Barnacle.Dialogs
 
         private double horizontalRadius;
         private int knobFactor = 2;
+        private bool loaded;
         private double mainRadius;
 
         private double stretch;
@@ -46,7 +47,6 @@ namespace Barnacle.Dialogs
 
             stretch = 4;
             ToolName = "Torus";
-            ModelGroup = MyModelGroup;
         }
 
         public override bool ShowAxies
@@ -265,9 +265,12 @@ namespace Barnacle.Dialogs
 
         private void UpdateDisplay()
         {
-            GeneratePoints();
-            CentreVertices();
-            Redisplay();
+            if (loaded)
+            {
+                GeneratePoints();
+                CentreVertices();
+                Viewer.Model = GetModel();
+            }
         }
 
         private void VerticalRadiusBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -298,6 +301,7 @@ namespace Barnacle.Dialogs
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            loaded = false;
             String s = EditorParameters.Get("MainRadius");
             if (s != "")
             {
@@ -331,13 +335,13 @@ namespace Barnacle.Dialogs
                 knobFactor = Convert.ToInt16(s);
             }
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             MainRadiusBox.Text = mainRadius.ToString();
             HorizontalRadiusBox.Text = horizontalRadius.ToString();
             VerticalRadiusBox.Text = verticalRadius.ToString();
             StretchBox.Text = stretch.ToString();
             LumpSlider.Value = knobFactor;
-            UpdateDisplay();
+
             switch (curveType)
             {
                 case 1:
@@ -364,6 +368,8 @@ namespace Barnacle.Dialogs
                     }
                     break;
             }
+            loaded = true;
+            UpdateDisplay();
         }
     }
 }

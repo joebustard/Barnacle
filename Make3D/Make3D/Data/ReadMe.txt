@@ -4,16 +4,22 @@ Added
 F12 key to record current camera position, shift F12 to restore it.
 Automatically add seam to object when bending or folding it
 Specify an angle between 1 and 90 for bend and fold operations. (Was previously a fixed angle of 10 degrees)
-Reset parameter button on some toll dialogs that where missing.
+Reset parameter button on some tool dialogs that where missing.
+Defer regeneration of solid on some longer operations if the user is still editing
+Disable "save presets" on flexi path control if the same preset already exists
 
 Fixed
 Bicorn tool was not saving and restoring editor parameters.
+Squirkle tool was not saving and restoring editor parameters
 Plankwall tool was not setting the origin to the center of the object.
+Beziersurface was not applying presets correctly
 
 Changed
 Explicitly set size of main 3dviewport when mainwindow  size changes.
 Explicitly set near clip plane distance for the camera
 Refactored 3d viewport on tool dialogs to use a common control
+Some code refactoring to reduce duplication
+Convert some more tools to asynchronous generation
 
 v1.0.7
 ===========

@@ -21,7 +21,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {
@@ -68,7 +71,7 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "TexturedTube";
             DataContext = this;
-            ModelGroup = MyModelGroup;
+
             loaded = false;
             textureManager = TextureManager.Instance();
             textureManager.LoadTextureNames();
@@ -77,7 +80,10 @@ namespace Barnacle.Dialogs
 
         public bool ClippedSingle
         {
-            get { return clippedSingle; }
+            get
+            {
+                return clippedSingle;
+            }
             set
             {
                 if (clippedSingle != value)
@@ -98,7 +104,10 @@ namespace Barnacle.Dialogs
 
         public bool ClippedTile
         {
-            get { return clippedTile; }
+            get
+            {
+                return clippedTile;
+            }
             set
             {
                 if (clippedTile != value)
@@ -143,7 +152,10 @@ namespace Barnacle.Dialogs
 
         public bool FittedSingle
         {
-            get { return fittedSingle; }
+            get
+            {
+                return fittedSingle;
+            }
             set
             {
                 if (fittedSingle != value)
@@ -164,7 +176,10 @@ namespace Barnacle.Dialogs
 
         public bool FittedTile
         {
-            get { return fittedTile; }
+            get
+            {
+                return fittedTile;
+            }
             set
             {
                 if (fittedTile != value)
@@ -259,43 +274,12 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
         public Visibility ShowThickness
         {
-            get { return showThickness; }
+            get
+            {
+                return showThickness;
+            }
             set
             {
                 if (value != showThickness)
@@ -371,7 +355,10 @@ namespace Barnacle.Dialogs
 
         public string Texture
         {
-            get { return texture; }
+            get
+            {
+                return texture;
+            }
             set
             {
                 if (texture != value)
@@ -416,7 +403,10 @@ namespace Barnacle.Dialogs
 
         public List<String> TextureItems
         {
-            get { return textureManager.TextureNames; }
+            get
+            {
+                return textureManager.TextureNames;
+            }
         }
 
         public double TextureResolution
@@ -449,7 +439,10 @@ namespace Barnacle.Dialogs
 
         public String textureToolTip
         {
-            get { return "Texture Text"; }
+            get
+            {
+                return "Texture Text";
+            }
         }
 
         public double Thickness
@@ -531,13 +524,14 @@ namespace Barnacle.Dialogs
             Close();
         }
 
-        private void GenerateShape()
+        private AsyncGeneratorResult GenerateAsync()
         {
-            ClearShape();
+            Point3DCollection v1 = new Point3DCollection();
+            Int32Collection i1 = new Int32Collection();
             if (solid)
             {
                 TexturedDiskMaker diskmaker = new TexturedDiskMaker(tubeHeight, innerRadius, sweep, texture, textureDepth, textureResolution);
-                diskmaker.Generate(Vertices, Faces);
+                diskmaker.Generate(v1, i1);
             }
             else
             {
@@ -555,10 +549,38 @@ namespace Barnacle.Dialogs
                     sideMask = 3;
                 }
                 TexturedTubeMaker tubemaker = new TexturedTubeMaker(tubeHeight, innerRadius, thickness, sweep, texture, textureDepth, textureResolution, sideMask);
-                tubemaker.Generate(Vertices, Faces);
+                tubemaker.Generate(v1, i1);
             }
 
+            AsyncGeneratorResult res = new AsyncGeneratorResult();
+            // extract the vertices and indices to thread safe arrays
+            // while still in the async function
+            res.points = new Point3D[v1.Count];
+            for (int i = 0; i < v1.Count; i++)
+            {
+                res.points[i] = new Point3D(v1[i].X, v1[i].Y, v1[i].Z);
+            }
+            res.indices = new int[i1.Count];
+            for (int i = 0; i < i1.Count; i++)
+            {
+                res.indices[i] = i1[i];
+            }
+            v1.Clear();
+            i1.Clear();
+            return (res);
+        }
+
+        private async void GenerateShape()
+        {
+            ClearShape();
+            Viewer.Busy();
+            EditingEnabled = false;
+            AsyncGeneratorResult result;
+            result = await Task.Run(() => GenerateAsync());
+            GetVerticesFromAsyncResult(result);
             CentreVertices();
+            Viewer.NotBusy();
+            EditingEnabled = true;
         }
 
         private void LoadEditorParameters()
@@ -607,7 +629,7 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -617,7 +639,7 @@ namespace Barnacle.Dialogs
             LoadEditorParameters();
 
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
             NotifyPropertyChanged("Solid");
             UpdateDisplay();

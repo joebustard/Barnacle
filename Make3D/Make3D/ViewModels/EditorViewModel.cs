@@ -24,6 +24,7 @@ using Barnacle.Models.LoopSmoothing;
 using Barnacle.Object3DLib;
 using Barnacle.ViewModel.BuildPlates;
 using CSGLib;
+using FileUtils;
 using FixLib;
 using HalfEdgeLib;
 using HoleLibrary;
@@ -432,7 +433,6 @@ namespace Barnacle.ViewModels
                 allBounds.Zero();
                 modelItems.Clear();
 
-                // GeometryModel3D gmcb = GetMesh(cb); modelItems.Add(gmcb);
                 if (showFloor)
                 {
                     modelItems.Add(floor.FloorMesh);
@@ -2660,8 +2660,7 @@ namespace Barnacle.ViewModels
 
         private void LoadCamera()
         {
-            string dataPath = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Barnacle");
-            dataPath += "\\" + cameraRecordFile;
+            string dataPath = PathManager.CommonAppDataFolder() + "\\" + cameraRecordFile;
             camera.Read(dataPath);
             LookToCenter();
             ReportCameraPosition();
@@ -3959,83 +3958,85 @@ namespace Barnacle.ViewModels
 
         private void OnMeshEdit(object param)
         {
-            MeshEditorDlg dlg = new MeshEditorDlg();
-            dlg.Owner = Application.Current.MainWindow;
-            CheckPoint();
-            EditorParameters pm = new EditorParameters();
-            Object3D editingObj = null;
-            bool needToAdd = false;
-            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
-            {
-                editingObj = selectedObjectAdorner.SelectedObjects[0];
-                if (editingObj.IsSizable() && editingObj.PrimType == "Mesh")
+            /*
+                MeshEditorDlg dlg = new MeshEditorDlg();
+                dlg.Owner = Application.Current.MainWindow;
+                CheckPoint();
+                EditorParameters pm = new EditorParameters();
+                Object3D editingObj = null;
+                bool needToAdd = false;
+                if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
                 {
-                    if (editingObj.EditorParameters.ToolName == dlg.EditorParameters.ToolName)
+                    editingObj = selectedObjectAdorner.SelectedObjects[0];
+                    if (editingObj.IsSizable() && editingObj.PrimType == "Mesh")
                     {
-                        dlg.EditorParameters = editingObj.EditorParameters;
-                        dlg.MeshColour = editingObj.Color;
-                        Point3DCollection tmp = new Point3DCollection();
-                        PointUtils.P3DToPointCollection(editingObj.RelativeObjectVertices, tmp);
-                        dlg.SetInitialMesh(tmp, editingObj.TriangleIndices);
-                        editingObj.CalcScale();
+                        if (editingObj.EditorParameters.ToolName == dlg.EditorParameters.ToolName)
+                        {
+                            dlg.EditorParameters = editingObj.EditorParameters;
+                            dlg.MeshColour = editingObj.Color;
+                            Point3DCollection tmp = new Point3DCollection();
+                            PointUtils.P3DToPointCollection(editingObj.RelativeObjectVertices, tmp);
+                            dlg.SetInitialMesh(tmp, editingObj.TriangleIndices);
+                            editingObj.CalcScale();
+                        }
                     }
                 }
-            }
-            if (dlg.ShowDialog() == true)
-            {
-                bool positionAtRight = false;
-                if (editingObj == null)
+                if (dlg.ShowDialog() == true)
                 {
-                    editingObj = new Object3D();
-                    editingObj.Name = Document.NextName;
-                    editingObj.Description = "";
-                    needToAdd = true;
-
-                    editingObj.Color = dlg.MeshColour;
-                    positionAtRight = true;
-                }
-                DeselectAll();
-
-                editingObj.EditorParameters = dlg.EditorParameters;
-                PointUtils.PointCollectionToP3D(dlg.Vertices, editingObj.RelativeObjectVertices);
-
-                editingObj.TriangleIndices = dlg.Faces;
-
-                RecalculateAllBounds();
-                Point3D placement = new Point3D(0, 0, 0);
-                editingObj.Position = new Point3D(0, 0, 0);
-
-                editingObj.PrimType = "Mesh";
-
-                editingObj.Remesh();
-
-                editingObj.CalcScale();
-
-                if (positionAtRight)
-                {
-                    if (allBounds.Upper.X > double.MinValue)
+                    bool positionAtRight = false;
+                    if (editingObj == null)
                     {
-                        placement = new Point3D(allBounds.Upper.X + editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
+                        editingObj = new Object3D();
+                        editingObj.Name = Document.NextName;
+                        editingObj.Description = "";
+                        needToAdd = true;
+
+                        editingObj.Color = dlg.MeshColour;
+                        positionAtRight = true;
                     }
-                    else
+                    DeselectAll();
+
+                    editingObj.EditorParameters = dlg.EditorParameters;
+                    PointUtils.PointCollectionToP3D(dlg.Vertices, editingObj.RelativeObjectVertices);
+
+                    editingObj.TriangleIndices = dlg.Faces;
+
+                    RecalculateAllBounds();
+                    Point3D placement = new Point3D(0, 0, 0);
+                    editingObj.Position = new Point3D(0, 0, 0);
+
+                    editingObj.PrimType = "Mesh";
+
+                    editingObj.Remesh();
+
+                    editingObj.CalcScale();
+
+                    if (positionAtRight)
                     {
-                        placement = new Point3D(editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
+                        if (allBounds.Upper.X > double.MinValue)
+                        {
+                            placement = new Point3D(allBounds.Upper.X + editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
+                        }
+                        else
+                        {
+                            placement = new Point3D(editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
+                        }
                     }
+                    editingObj.Position = placement;
+
+                    allBounds += editingObj.AbsoluteBounds;
+
+                    GeometryModel3D gm = GetMesh(editingObj);
+
+                    if (needToAdd)
+                    {
+                        Document.Content.Add(editingObj);
+                    }
+                    Document.Dirty = true;
+                    RegenerateDisplayList();
+                    NotificationManager.Notify("ObjectNamesChanged", null);
                 }
-                editingObj.Position = placement;
-
-                allBounds += editingObj.AbsoluteBounds;
-
-                GeometryModel3D gm = GetMesh(editingObj);
-
-                if (needToAdd)
-                {
-                    Document.Content.Add(editingObj);
-                }
-                Document.Dirty = true;
-                RegenerateDisplayList();
-                NotificationManager.Notify("ObjectNamesChanged", null);
-            }
+                */
         }
 
         private void OnMeshHull(object param)
@@ -4810,7 +4811,7 @@ namespace Barnacle.ViewModels
 
         private void SaveCamera()
         {
-            string dataPath = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Barnacle");
+            string dataPath = PathManager.CommonAppDataFolder();
             dataPath += "\\" + cameraRecordFile;
             camera.Save(dataPath);
         }

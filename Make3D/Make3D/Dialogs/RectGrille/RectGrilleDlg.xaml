@@ -1,12 +1,18 @@
-<local:BaseModellerDialog x:Class="Barnacle.Dialogs.RectGrilleDlg"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Barnacle.Dialogs"
-         xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
-        mc:Ignorable="d"
-        Title="" Height="450" Width="1000" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
+<local:BaseModellerDialog
+    x:Class="Barnacle.Dialogs.RectGrilleDlg"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
+    Title=""
+    Width="1000"
+    Height="550"
+    Background="{StaticResource WindowBackBrush}"
+    Loaded="Window_Loaded"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -19,7 +25,10 @@
             <ColumnDefinition Width="10*" />
             <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
-        <Border Grid.Row ="0" Grid.Column="1" Style="{StaticResource ControlBorder}">
+        <Border
+            Grid.Row="0"
+            Grid.Column="1"
+            Style="{StaticResource ControlBorder}">
             <Grid>
 
                 <Grid.RowDefinitions>
@@ -35,57 +44,120 @@
                     <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="100">Length</Label>
-                    <TextBox Margin="8,0,0,0" Text="{Binding GrillLength}" Width="150" ToolTip="{Binding GrillLengthToolTip}" />
+                    <Label Width="100" VerticalAlignment="Center">Length</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding GrillLength}"
+                        ToolTip="{Binding GrillLengthToolTip}" />
 
-                    <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameters to their defaults" Click="ResetDefaults" />
+                    <Button
+                        Margin="8,0,0,0"
+                        Click="ResetDefaults"
+                        Content="Reset"
+                        ToolTip="Restore parameters to their defaults" />
                 </StackPanel>
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="100">Height</Label>
-                    <TextBox Margin="8,0,0,0" Text="{Binding GrillHeight}" Width="150" ToolTip="{Binding GrillHeightToolTip}" />
+                    <Label Width="100" VerticalAlignment="Center">Height</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding GrillHeight}"
+                        ToolTip="{Binding GrillHeightToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="3" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="100">Width</Label>
-                    <TextBox Margin="8,0,0,0" Text="{Binding GrillWidth}" Width="150" ToolTip="{Binding GrillWidthToolTip}" />
+                    <Label Width="100" VerticalAlignment="Center">Width</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding GrillWidth}"
+                        ToolTip="{Binding GrillWidthToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="4" Orientation="Horizontal">
-                    <CheckBox Content="Make Frame" IsChecked="{Binding MakeEdge}" VerticalAlignment="Center" Width="100" />
-                    <Label Margin="8,0,0,0" VerticalAlignment="Center" Width="50">Edge</Label>
-                    <TextBox Text="{Binding EdgeThickness}" Width="100" ToolTip="{Binding EdgeThicknessToolTip}" />
+                    <CheckBox
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="Make Frame"
+                        IsChecked="{Binding MakeEdge}" />
+                    <Label
+                        Width="50"
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center">
+                        Edge
+                    </Label>
+                    <TextBox
+                        Width="100"
+                        Text="{Binding EdgeThickness}"
+                        ToolTip="{Binding EdgeThicknessToolTip}" />
                 </StackPanel>
 
                 <StackPanel Grid.Row="5" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="100">Vertical Bars</Label>
-                    <TextBox Margin="8,0,0,0" Text="{Binding VerticalBars}" Width="150" ToolTip="{Binding VerticalBarsToolTip}" />
+                    <Label Width="100" VerticalAlignment="Center">Vertical Bars</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding VerticalBars}"
+                        ToolTip="{Binding VerticalBarsToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="6" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="100">V Thickness</Label>
-                    <TextBox Margin="8,0,0,0" Text="{Binding VerticalBarThickness}" Width="150" ToolTip="{Binding VerticalBarThicknessToolTip}" />
+                    <Label Width="100" VerticalAlignment="Center">V Thickness</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding VerticalBarThickness}"
+                        ToolTip="{Binding VerticalBarThicknessToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="7" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="100">Horizontal Bars</Label>
-                    <TextBox Margin="8,0,0,0" Text="{Binding HorizontalBars}" Width="150" ToolTip="{Binding HorizontalBarsToolTip}" />
+                    <Label Width="100" VerticalAlignment="Center">Horizontal Bars</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding HorizontalBars}"
+                        ToolTip="{Binding HorizontalBarsToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="8" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="100">H Thickness</Label>
-                    <TextBox Margin="8,0,0,0" Text="{Binding HorizontalBarThickness}" Width="150" ToolTip="{Binding HorizontalBarThicknessToolTip}" />
+                    <Label Width="100" VerticalAlignment="Center">H Thickness</Label>
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding HorizontalBarThickness}"
+                        ToolTip="{Binding HorizontalBarThicknessToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="9" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
+                    <Label
+                        VerticalAlignment="Center"
+                        Content="{Binding WarningText}"
+                        FontSize="18"
+                        Foreground="{StaticResource WarningColour}" />
                 </StackPanel>
             </Grid>
         </Border>
-        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
+        <GridSplitter
+            Grid.Row="0"
+            Grid.Column="2"
+            Style="{StaticResource GridSplitterStyle}" />
 
-        <u:ObjectView x:Name="Viewer" Grid.Column="3" Grid.Row="0" />
-        <Grid Grid.Column="3" Grid.Row="1">
+        <u:ObjectView
+            x:Name="Viewer"
+            Grid.Row="0"
+            Grid.Column="3" />
+        <Grid Grid.Row="1" Grid.Column="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
-            <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" IsDefault="True" />
+            <Button
+                Grid.Column="1"
+                Margin="2,2,2,2"
+                Click="Cancel_Click"
+                Content="Cancel" />
+            <Button
+                Grid.Column="2"
+                Margin="2,2,2,2"
+                Click="Ok_Click"
+                Content="Ok"
+                IsDefault="True" />
         </Grid>
     </Grid>
 </local:BaseModellerDialog>

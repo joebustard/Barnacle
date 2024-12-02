@@ -17,6 +17,7 @@
 
 using Barnacle.Models;
 using Barnacle.Models.Mru;
+using FileUtils;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -70,28 +71,49 @@ namespace Barnacle.ViewModels
 
         public static Document Document
         {
-            get { return document; }
+            get
+            {
+                return document;
+            }
         }
 
         public static Project PartLibraryProject
         {
-            get { return partLibraryProject; }
-            set { partLibraryProject = value; }
+            get
+            {
+                return partLibraryProject;
+            }
+            set
+            {
+                partLibraryProject = value;
+            }
         }
 
         public static Project Project
         {
-            get { return project; }
+            get
+            {
+                return project;
+            }
         }
 
         public static MostRecentlyUsedManager RecentlyUsedManager
         {
-            get { return recentlyUsedManager; }
+            get
+            {
+                return recentlyUsedManager;
+            }
         }
 
-        public static bool ScriptClearBed { get; protected set; }
+        public static bool ScriptClearBed
+        {
+            get; protected set;
+        }
 
-        public static object ScriptResults { get; protected set; }
+        public static object ScriptResults
+        {
+            get; protected set;
+        }
 
         public SolidColorBrush FillColor
         {
@@ -158,7 +180,10 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public Viewport3D ViewPort { get; set; }
+        public Viewport3D ViewPort
+        {
+            get; set;
+        }
 
         public void CheckPoint()
         {
@@ -188,8 +213,7 @@ namespace Barnacle.ViewModels
             String pth = Properties.Settings.Default.PartLibraryPath;
             if (pth == "")
             {
-                pth = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-                pth += "//Barnacle//Library";
+                pth = PathManager.LibraryFolder();
             }
             return pth;
         }

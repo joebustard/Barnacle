@@ -30,7 +30,7 @@
         <ctrls:FlexiPathEditorControl
             x:Name="PathEditor"
             Grid.Row="0"
-            Grid.Column="1" />
+            Grid.Column="1" IsEnabled="{Binding EditingEnabled}" />
 
         <GridSplitter
             Grid.Row="0"
@@ -39,7 +39,7 @@
         <Border
             Grid.Row="0"
             Grid.Column="3"
-            Style="{StaticResource ControlBorder}">
+            Style="{StaticResource ControlBorder}" IsEnabled="{Binding EditingEnabled}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />

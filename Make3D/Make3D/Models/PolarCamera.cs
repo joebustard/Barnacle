@@ -126,13 +126,13 @@ namespace Barnacle.Models
 
         public void DistanceToFit(double w, double h, double min = 0)
         {
-            double l = w;
-            if (h > l)
-            {
-                l = h;
-            }
+            double dw;
+            double dh;
             double fov_radians = FieldOfView * Math.PI / 180.0;
-            Distance = (l) / Math.Tan(fov_radians / 2);
+            dw = (w) / Math.Tan(fov_radians / 2);
+            dh = (h) / Math.Tan(fov_radians / 2);
+
+            Distance = Math.Max(dw, dh);
             if (Distance < min)
             {
                 Distance = min;

@@ -588,9 +588,9 @@
                             ToolTip="Align objects so their centres match the first selected." />
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton
-                            x:Name="MidwayAlignment"
-                            Label="Midway"
-                            SmallImageSource="/Barnacle;component/Images/Buttons/Align.png">
+                        x:Name="MidwayAlignment"
+                        Label="Midway"
+                        SmallImageSource="/Barnacle;component/Images/Buttons/Align.png">
                         <Custom:RibbonMenuItem
                             x:Name="MidwayLeftRightAlignment"
                             HorizontalAlignment="Stretch"
@@ -872,7 +872,8 @@
                             Command="{Binding GroupCommand}"
                             CommandParameter="GroupForceUnion"
                             Header="Force Union"
-                            ImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Make a new object containing all the points and triangles of the selected ones. The resulting object WONT be manifold" />
+                            ImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                            ToolTip="Make a new object containing all the points and triangles of the selected ones. The resulting object WONT be manifold" />
                         <Custom:RibbonSeparator />
                         <Custom:RibbonMenuItem
                             x:Name="UngroupSelected"
@@ -1002,7 +1003,10 @@
                         </Custom:RibbonMenuItem>
                         <StackPanel Orientation="Horizontal" ToolTip="The angle to bend or fold the selected object. Between 1 and 90 degrees.">
                             <Label Content="Angle" />
-                            <TextBox Margin="4,0,0,0" Width="30" Text="{Binding BendAngle}" />
+                            <TextBox
+                                Width="30"
+                                Margin="4,0,0,0"
+                                Text="{Binding BendAngle}" />
                         </StackPanel>
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton
@@ -1080,7 +1084,10 @@
                         </Custom:RibbonMenuItem>
                         <StackPanel Orientation="Horizontal" ToolTip="The angle to bend or fold the selected object. Between 1 and 90 degrees.">
                             <Label Content="Angle" />
-                            <TextBox Margin="4,0,0,0" Width="30" Text="{Binding BendAngle}" />
+                            <TextBox
+                                Width="30"
+                                Margin="4,0,0,0"
+                                Text="{Binding BendAngle}" />
                         </StackPanel>
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton
@@ -1490,9 +1497,12 @@
                 Grid.Column="1"
                 Style="{StaticResource GridSplitterStyle}" />
 
-            <Border Style="{StaticResource ControlBorder}" Grid.Row="0" Grid.Column="2" ClipToBounds="True">
-                <ContentControl
-                    x:Name="SubViewControl"                   Content="{Binding SubView}" />
+            <Border
+                Grid.Row="0"
+                Grid.Column="2"
+                ClipToBounds="True"
+                Style="{StaticResource ControlBorder}">
+                <ContentControl x:Name="SubViewControl" Content="{Binding SubView}" />
             </Border>
         </Grid>
         <StatusBar Grid.Row="2">

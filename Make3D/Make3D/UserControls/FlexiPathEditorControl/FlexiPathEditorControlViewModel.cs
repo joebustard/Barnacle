@@ -18,6 +18,7 @@
 using Barnacle.LineLib;
 
 using Barnacle.ViewModels;
+using FileUtils;
 using Microsoft.Win32;
 using PolygonLibrary;
 using System;
@@ -61,6 +62,7 @@ namespace Barnacle.UserControls
         private double gridX = 0;
         private double gridY = 0;
         private string imagePath;
+        private bool isEditingEnabled;
         private PenSetting linePen;
         private bool lineShape;
         private bool moving;
@@ -75,6 +77,7 @@ namespace Barnacle.UserControls
         private string positionText;
         private Dictionary<String, Preset> presets;
         private RectangularGrid rectGrid;
+        private bool savePresetEnabled;
         private double scale;
         private DpiScale screenDpi;
         private string selectedCurveName;
@@ -95,6 +98,7 @@ namespace Barnacle.UserControls
         private string toolName;
 
         public FlexiPathEditorControlViewModel()
+
         {
             AddCubicBezierCommand = new RelayCommand(OnAddCubic);
             ApplyPresetCommand = new RelayCommand(OnApplyPreset);
@@ -137,7 +141,6 @@ namespace Barnacle.UserControls
             scale = 1.0;
             lineShape = false;
             showOrtho = true;
-
             snap = true;
             gridSettings = new GridSettings();
             ShowGrid = GridSettings.GridStyle.Rectangular;
@@ -152,12 +155,10 @@ namespace Barnacle.UserControls
             ToolName = "";
             IncludeCommonPresets = true;
             LoadPresets();
+            isEditingEnabled = true;
         }
 
-        private void OnAppendPoint(object obj)
-        {
-            SelectionMode = SelectionModeType.AppendPoint;
-        }
+        public delegate void FlexiUserAction();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -177,7 +178,10 @@ namespace Barnacle.UserControls
 
         public bool AbsolutePaths
         {
-            get { return absolutePaths; }
+            get
+            {
+                return absolutePaths;
+            }
 
             set
             {
@@ -185,16 +189,27 @@ namespace Barnacle.UserControls
             }
         }
 
-        public ICommand AddCubicBezierCommand { get; set; }
+        public ICommand AddCubicBezierCommand
+        {
+            get; set;
+        }
 
-        public ICommand AddQuadBezierCommand { get; set; }
+        public ICommand AddQuadBezierCommand
+        {
+            get; set;
+        }
 
-        public ICommand AddSegmentCommand { get; set; }
-        public ICommand AppendCommand { get; set; }
+        public ICommand AddSegmentCommand
+        {
+            get; set;
+        }
 
         public Visibility AppendButtonVisible
         {
-            get { return appendButtonVisible; }
+            get
+            {
+                return appendButtonVisible;
+            }
 
             set
             {
@@ -206,12 +221,23 @@ namespace Barnacle.UserControls
             }
         }
 
-        public RelayCommand ApplyPresetCommand { get; private set; }
+        public ICommand AppendCommand
+        {
+            get; set;
+        }
+
+        public RelayCommand ApplyPresetCommand
+        {
+            get; private set;
+        }
 
         //public BitmapImage BackgroundImage
         public BitmapSource BackgroundImage
         {
-            get { return backgroundImage; }
+            get
+            {
+                return backgroundImage;
+            }
 
             set
             {
@@ -225,7 +251,10 @@ namespace Barnacle.UserControls
 
         public bool CanCNVDouble
         {
-            get { return canCNVDouble; }
+            get
+            {
+                return canCNVDouble;
+            }
 
             set
             {
@@ -238,7 +267,10 @@ namespace Barnacle.UserControls
             }
         }
 
-        public ICommand CNVDoubleSegCommand { get; set; }
+        public ICommand CNVDoubleSegCommand
+        {
+            get; set;
+        }
 
         public Visibility CNVDoubleVisible
         {
@@ -257,13 +289,22 @@ namespace Barnacle.UserControls
 
         public bool ContinuousPointsNotify { get; set; } = true;
 
-        public ICommand CopyPathCommand { get; set; }
+        public ICommand CopyPathCommand
+        {
+            get; set;
+        }
 
-        public int CurrentPen { get; set; }
+        public int CurrentPen
+        {
+            get; set;
+        }
 
         public ObservableCollection<string> CurveNames
         {
-            get { return curveNames; }
+            get
+            {
+                return curveNames;
+            }
 
             set
             {
@@ -277,7 +318,10 @@ namespace Barnacle.UserControls
 
         public string DefaultImagePath
         {
-            get { return defaultImagePath; }
+            get
+            {
+                return defaultImagePath;
+            }
 
             set
             {
@@ -285,21 +329,33 @@ namespace Barnacle.UserControls
             }
         }
 
-        public ICommand DeleteSegmentCommand { get; set; }
+        public ICommand DeleteSegmentCommand
+        {
+            get; set;
+        }
 
         public List<System.Windows.Point> DisplayOutsidePoints
         {
-            get { return allPaths[0].DisplayPoints(); }
+            get
+            {
+                return allPaths[0].DisplayPoints();
+            }
         }
 
         public List<System.Windows.Point> DisplayPoints
         {
-            get { return selectedFlexiPath.DisplayPoints(); }
+            get
+            {
+                return selectedFlexiPath.DisplayPoints();
+            }
         }
 
         public String EditedPresetText
         {
-            get { return editedPresetText; }
+            get
+            {
+                return editedPresetText;
+            }
 
             set
             {
@@ -307,13 +363,17 @@ namespace Barnacle.UserControls
                 {
                     editedPresetText = value;
                     NotifyPropertyChanged();
+                    CheckEnableSavePreset();
                 }
             }
         }
 
         public bool FixedEndPath
         {
-            get { return fixedEndPath; }
+            get
+            {
+                return fixedEndPath;
+            }
 
             set
             {
@@ -342,7 +402,10 @@ namespace Barnacle.UserControls
 
         public Point FixedPolarGridCentre
         {
-            get { return FixedPolarGridCentre; }
+            get
+            {
+                return FixedPolarGridCentre;
+            }
 
             set
             {
@@ -353,9 +416,15 @@ namespace Barnacle.UserControls
             }
         }
 
-        public RelayCommand FlipCommand { get; private set; }
+        public RelayCommand FlipCommand
+        {
+            get; private set;
+        }
 
-        public ICommand GridCommand { get; set; }
+        public ICommand GridCommand
+        {
+            get; set;
+        }
 
         public List<Shape> GridMarkers
         {
@@ -372,38 +441,104 @@ namespace Barnacle.UserControls
             }
         }
 
-        public ICommand GridSettingsCommand { get; set; }
+        public ICommand GridSettingsCommand
+        {
+            get; set;
+        }
 
         public double GridX
         {
-            get { return gridX; }
-            set { gridX = value; }
+            get
+            {
+                return gridX;
+            }
+            set
+            {
+                gridX = value;
+            }
         }
 
         public double GridY
         {
-            get { return gridY; }
-            set { gridY = value; }
+            get
+            {
+                return gridY;
+            }
+            set
+            {
+                gridY = value;
+            }
         }
 
-        public RelayCommand HoleCommand { get; private set; }
+        public RelayCommand HoleCommand
+        {
+            get; private set;
+        }
 
         public string ImagePath
-        { get { return imagePath; } }
+        {
+            get
+            {
+                return imagePath;
+            }
+        }
 
-        public bool IncludeCommonPresets { get; internal set; }
-        public RelayCommand LineStyleCommand { get; private set; }
+        public bool IncludeCommonPresets
+        {
+            get; internal set;
+        }
 
-        public RelayCommand LoadImageCommand { get; }
+        public bool IsEditingEnabled
+        {
+            get
+            {
+                return isEditingEnabled;
+            }
 
-        public ICommand MovePathCommand { get; set; }
+            set
+            {
+                if (value != isEditingEnabled)
+                {
+                    isEditingEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public RelayCommand LineStyleCommand
+        {
+            get; private set;
+        }
+
+        public RelayCommand LoadImageCommand
+        {
+            get;
+        }
+
+        public ICommand MovePathCommand
+        {
+            get; set;
+        }
 
         public int NumberOfPaths
-        { get { return allPaths.Count; } }
+        {
+            get
+            {
+                return allPaths.Count;
+            }
+        }
+
+        public FlexiUserAction OnFlexiUserActive
+        {
+            get; set;
+        }
 
         public bool OpenEndedPath
         {
-            get { return openEndedPath; }
+            get
+            {
+                return openEndedPath;
+            }
 
             set
             {
@@ -420,7 +555,10 @@ namespace Barnacle.UserControls
             }
         }
 
-        public RelayCommand OrthoLockCommand { get; set; }
+        public RelayCommand OrthoLockCommand
+        {
+            get; set;
+        }
 
         public bool OrthoLocked
         {
@@ -439,7 +577,10 @@ namespace Barnacle.UserControls
             }
         }
 
-        public ICommand PastePathCommand { get; set; }
+        public ICommand PastePathCommand
+        {
+            get; set;
+        }
 
         public string PathText
         {
@@ -458,7 +599,10 @@ namespace Barnacle.UserControls
             }
         }
 
-        public ICommand PickCommand { get; set; }
+        public ICommand PickCommand
+        {
+            get; set;
+        }
 
         public ObservableCollection<FlexiPoint> Points
         {
@@ -479,7 +623,10 @@ namespace Barnacle.UserControls
 
         public bool PointsDirty
         {
-            get { return pointsDirty; }
+            get
+            {
+                return pointsDirty;
+            }
 
             set
             {
@@ -491,11 +638,17 @@ namespace Barnacle.UserControls
             }
         }
 
-        public ICommand PolarGridCommand { get; set; }
+        public ICommand PolarGridCommand
+        {
+            get; set;
+        }
 
         public String PositionText
         {
-            get { return positionText; }
+            get
+            {
+                return positionText;
+            }
 
             set
             {
@@ -507,15 +660,44 @@ namespace Barnacle.UserControls
             }
         }
 
-        public List<string> PresetNames { get; set; }
+        public List<string> PresetNames
+        {
+            get; set;
+        }
 
-        public ICommand ResetPathCommand { get; set; }
+        public ICommand ResetPathCommand
+        {
+            get; set;
+        }
 
-        public RelayCommand SavePresetCommand { get; private set; }
+        public RelayCommand SavePresetCommand
+        {
+            get; private set;
+        }
+
+        public bool SavePresetEnabled
+        {
+            get
+            {
+                return savePresetEnabled;
+            }
+
+            set
+            {
+                if (value != savePresetEnabled)
+                {
+                    savePresetEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public double Scale
         {
-            get { return scale; }
+            get
+            {
+                return scale;
+            }
 
             set
             {
@@ -529,7 +711,10 @@ namespace Barnacle.UserControls
 
         public DpiScale ScreenDpi
         {
-            get { return screenDpi; }
+            get
+            {
+                return screenDpi;
+            }
 
             set
             {
@@ -539,7 +724,10 @@ namespace Barnacle.UserControls
 
         public string SelectedCurveName
         {
-            get { return selectedCurveName; }
+            get
+            {
+                return selectedCurveName;
+            }
 
             set
             {
@@ -581,7 +769,10 @@ namespace Barnacle.UserControls
 
         public string SelectedPreset
         {
-            get { return selectedPreset; }
+            get
+            {
+                return selectedPreset;
+            }
 
             set
             {
@@ -610,11 +801,17 @@ namespace Barnacle.UserControls
             }
         }
 
-        public ICommand ShowAllPointsCommand { get; set; }
+        public ICommand ShowAllPointsCommand
+        {
+            get; set;
+        }
 
         public GridSettings.GridStyle ShowGrid
         {
-            get { return gridSettings.ShowGrid; }
+            get
+            {
+                return gridSettings.ShowGrid;
+            }
 
             set
             {
@@ -633,7 +830,10 @@ namespace Barnacle.UserControls
 
         public Visibility ShowHoleControls
         {
-            get { return showHoleControls; }
+            get
+            {
+                return showHoleControls;
+            }
 
             set
             {
@@ -647,7 +847,10 @@ namespace Barnacle.UserControls
 
         public bool ShowOrtho
         {
-            get { return showOrtho; }
+            get
+            {
+                return showOrtho;
+            }
 
             set
             {
@@ -659,9 +862,17 @@ namespace Barnacle.UserControls
             }
         }
 
+        public bool ShowPointsStatus
+        {
+            get; set;
+        }
+
         public Visibility ShowPresets
         {
-            get { return showPresets; }
+            get
+            {
+                return showPresets;
+            }
 
             set
             {
@@ -675,7 +886,10 @@ namespace Barnacle.UserControls
 
         public Visibility ShowSavePresets
         {
-            get { return showSavePresets; }
+            get
+            {
+                return showSavePresets;
+            }
 
             set
             {
@@ -689,7 +903,10 @@ namespace Barnacle.UserControls
 
         public bool Snap
         {
-            get { return snap; }
+            get
+            {
+                return snap;
+            }
 
             set
             {
@@ -701,11 +918,17 @@ namespace Barnacle.UserControls
             }
         }
 
-        public ICommand SplitQuadBezierCommand { get; set; }
+        public ICommand SplitQuadBezierCommand
+        {
+            get; set;
+        }
 
         public bool SupportsHoles
         {
-            get { return supportsHoles; }
+            get
+            {
+                return supportsHoles;
+            }
 
             set
             {
@@ -727,7 +950,10 @@ namespace Barnacle.UserControls
 
         public string ToolName
         {
-            get { return toolName; }
+            get
+            {
+                return toolName;
+            }
 
             set
             {
@@ -749,8 +975,10 @@ namespace Barnacle.UserControls
             }
         }
 
-        public ICommand ZoomCommand { get; set; }
-        public bool ShowPointsStatus { get; set; }
+        public ICommand ZoomCommand
+        {
+            get; set;
+        }
 
         public bool ConvertLineAtPointToBezier(System.Windows.Point position, bool cubic)
         {
@@ -853,12 +1081,12 @@ namespace Barnacle.UserControls
                     dataPath = AppDomain.CurrentDomain.BaseDirectory + "data\\PresetPaths.txt";
                     LoadPresetFile(dataPath, false);
 
-                    dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PresetPaths.txt";
+                    dataPath = PathManager.ApplicationDataFolder() + "\\PresetPaths.txt";
                     LoadPresetFile(dataPath, true);
                 }
                 dataPath = AppDomain.CurrentDomain.BaseDirectory + "data\\" + ToolName + "PresetPaths.txt";
                 LoadPresetFile(dataPath, false);
-                dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\" + ToolName + "PresetPaths.txt";
+                dataPath = PathManager.UserPresetsPath() + "\\" + ToolName + "PresetPaths.txt";
                 LoadPresetFile(dataPath, true);
 
                 foreach (String s in presets.Keys)
@@ -1106,17 +1334,11 @@ namespace Barnacle.UserControls
                             moving = true;
                             updateRequired = true;
                         }
-                        /*
-                        if (e.LeftButton == MouseButtonState.Pressed)
-                        {
-                            e.Handled = true;
-                            updateRequired = true;
-                        }
-                        */
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
+                    LoggerLib.Logger.LogLine(ex.Message);
                 }
             }
 
@@ -1257,6 +1479,24 @@ namespace Barnacle.UserControls
                 selectedFlexiPath.Start = new FlexiPoint(new System.Windows.Point(position.X, position.Y), 0);
                 SelectionMode = SelectionModeType.AppendPoint;
             }
+        }
+
+        private void CheckEnableSavePreset()
+        {
+            bool enable = false;
+            if (editedPresetText != "")
+            {
+                enable = true;
+                foreach (string s in presets.Keys)
+                {
+                    if (s.ToLower() == editedPresetText.ToLower())
+                    {
+                        enable = false;
+                        break;
+                    }
+                }
+            }
+            SavePresetEnabled = enable;
         }
 
         private void ClearAllHoles()
@@ -1545,23 +1785,41 @@ namespace Barnacle.UserControls
             return updateRequired;
         }
 
+        private void NotifyUserActive()
+        {
+            if (OnFlexiUserActive != null)
+            {
+                OnFlexiUserActive();
+            }
+        }
+
         private void OnAddCubic(object obj)
         {
             SelectionMode = SelectionModeType.ConvertToCubicBezier;
+            NotifyUserActive();
         }
 
         private void OnAddQuad(object obj)
         {
             SelectionMode = SelectionModeType.ConvertToQuadBezier;
+            NotifyUserActive();
         }
 
         private void OnAddSegment(object obj)
         {
             SelectionMode = SelectionModeType.SplitLine;
+            NotifyUserActive();
+        }
+
+        private void OnAppendPoint(object obj)
+        {
+            SelectionMode = SelectionModeType.AppendPoint;
+            NotifyUserActive();
         }
 
         private void OnApplyPreset(object obj)
         {
+            NotifyUserActive();
             if (!String.IsNullOrEmpty(selectedPreset))
             {
                 if (MessageBox.Show("This will replace the path completely. The old one can't be recovered. Continue", "Warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
@@ -1574,6 +1832,7 @@ namespace Barnacle.UserControls
 
         private void OnCnvDoubleSegment(object obj)
         {
+            NotifyUserActive();
             if (canCNVDouble)
             {
                 selectedFlexiPath.ConvertTwoLineSegmentsToQuadraticBezier();
@@ -1586,17 +1845,20 @@ namespace Barnacle.UserControls
 
         private void OnCopy(object obj)
         {
+            NotifyUserActive();
             PathText = selectedFlexiPath.ToPath(absolutePaths);
             System.Windows.Clipboard.SetText(PathText);
         }
 
         private void OnDeleteSegment(object obj)
         {
+            NotifyUserActive();
             SelectionMode = SelectionModeType.DeleteSegment;
         }
 
         private void OnFlip(object obj)
         {
+            NotifyUserActive();
             string cmd = obj.ToString();
             switch (cmd.ToLower())
             {
@@ -1620,6 +1882,7 @@ namespace Barnacle.UserControls
 
         private void OnGrid(object obj)
         {
+            NotifyUserActive();
             switch (gridSettings.ShowGrid)
             {
                 case GridSettings.GridStyle.Hidden:
@@ -1642,6 +1905,7 @@ namespace Barnacle.UserControls
 
         private void OnGridSettings(object obj)
         {
+            NotifyUserActive();
             GridSettingsDlg dlg = new GridSettingsDlg();
             dlg.Settings = gridSettings;
             if (dlg.ShowDialog() == true)
@@ -1658,6 +1922,7 @@ namespace Barnacle.UserControls
 
         private void OnHoleCommand(object obj)
         {
+            NotifyUserActive();
             string cmd = obj.ToString();
             switch (cmd.ToLower())
             {
@@ -1747,6 +2012,7 @@ namespace Barnacle.UserControls
 
         private void OnLoadImage(object obj)
         {
+            NotifyUserActive();
             OpenFileDialog opDlg = new OpenFileDialog();
             if (!String.IsNullOrEmpty(defaultImagePath))
             {
@@ -1770,11 +2036,13 @@ namespace Barnacle.UserControls
 
         private void OnMovePath(object obj)
         {
+            NotifyUserActive();
             SelectionMode = SelectionModeType.MovePath;
         }
 
         private void OnPaste(object obj)
         {
+            NotifyUserActive();
             string pth = System.Windows.Clipboard.GetText();
             if (pth != null && pth != "" && pth.StartsWith("M"))
             {
@@ -1788,11 +2056,13 @@ namespace Barnacle.UserControls
 
         private void OnPickSegment(object obj)
         {
+            NotifyUserActive();
             SelectionMode = SelectionModeType.SelectSegmentAtPoint;
         }
 
         private void OnPolarGrid(object obj)
         {
+            NotifyUserActive();
             switch (gridSettings.ShowGrid)
             {
                 case GridSettings.GridStyle.Hidden:
@@ -1815,6 +2085,7 @@ namespace Barnacle.UserControls
 
         private void OnResetPath(object obj)
         {
+            NotifyUserActive();
             bool clear = true;
             if (selectedFlexiPath == allPaths[0] && allPaths.Count > 1)
             {
@@ -1848,6 +2119,7 @@ namespace Barnacle.UserControls
 
         private void OnSavePreset(object obj)
         {
+            NotifyUserActive();
             String preset = editedPresetText;
             if (!String.IsNullOrEmpty(preset))
             {
@@ -1864,6 +2136,7 @@ namespace Barnacle.UserControls
 
         private void OnShowAllPoints(object obj)
         {
+            NotifyUserActive();
             ShowPointsStatus = !ShowPointsStatus;
             foreach (FlexiPath fp in allPaths)
             {
@@ -1878,16 +2151,19 @@ namespace Barnacle.UserControls
 
         private void OnSplitQuad(object obj)
         {
+            NotifyUserActive();
             SelectionMode = SelectionModeType.SplitQuad;
         }
 
         private void OnToggleOrthoLock(object obj)
         {
+            NotifyUserActive();
             OrthoLocked = !OrthoLocked;
         }
 
         private void OnZoom(object obj)
         {
+            NotifyUserActive();
             string p = obj.ToString();
             switch (p)
             {
@@ -1927,7 +2203,7 @@ namespace Barnacle.UserControls
         {
             if (!String.IsNullOrEmpty(toolName) && !String.IsNullOrEmpty(preset) && !String.IsNullOrEmpty(pathText))
             {
-                string dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\" + ToolName + "PresetPaths.txt";
+                string dataPath = PathManager.UserPresetsPath() + "\\" + ToolName + "PresetPaths.txt";
                 System.IO.File.AppendAllText(dataPath, $"{preset}={pathText}\n");
 
                 Preset p = new Preset();
@@ -1946,6 +2222,7 @@ namespace Barnacle.UserControls
 
         private void SelectedClickedCurve(int i)
         {
+            NotifyUserActive();
             selectedFlexiPath = allPaths[i];
             selectedFlexiPathControlPoints = selectedFlexiPath.FlexiPoints;
             selectedPoint = -1;
@@ -2013,24 +2290,20 @@ namespace Barnacle.UserControls
 
         public struct Preset
         {
-            public String Name { get; set; }
-            public String Path { get; set; }
-            public bool User { get; set; }
-        }
-
-        /*
-        public bool ShowPolyGrid
-        {
-            get { return showGrid; }
-            set
+            public String Name
             {
-                if (value != showGrid)
-                {
-                    showGrid = value;
-                    NotifyPropertyChanged();
-                }
+                get; set;
+            }
+
+            public String Path
+            {
+                get; set;
+            }
+
+            public bool User
+            {
+                get; set;
             }
         }
-        */
     }
 }

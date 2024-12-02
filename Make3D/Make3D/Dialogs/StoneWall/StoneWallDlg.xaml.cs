@@ -26,76 +26,25 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class StoneWallDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private string warningText;
         private bool loaded;
-
-        private double wallLength;
-
-        public double WallLength
-        {
-            get
-            {
-                return wallLength;
-            }
-            set
-            {
-                if (wallLength != value)
-                {
-                    if (value >= 1 && value <= 200)
-                    {
-                        wallLength = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        private double wallHeight;
-
-        public double WallHeight
-        {
-            get
-            {
-                return wallHeight;
-            }
-            set
-            {
-                if (wallHeight != value)
-                {
-                    if (value >= 1 && value <= 200)
-                    {
-                        wallHeight = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        private double wallThickness;
-
-        public double WallThickness
-        {
-            get
-            {
-                return wallThickness;
-            }
-            set
-            {
-                if (wallThickness != value)
-                {
-                    if (value >= 1 && value <= 200)
-                    {
-                        wallThickness = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
         private int stoneSize;
+        private double wallHeight;
+        private double wallLength;
+        private double wallThickness;
+        private string warningText;
+
+        public StoneWallDlg()
+        {
+            InitializeComponent();
+            ToolName = "StoneWall";
+            wallLength = 100;
+            wallHeight = 80;
+            wallThickness = 4;
+            stoneSize = 5;
+            DataContext = this;
+
+            loaded = false;
+        }
 
         public int StoneSize
         {
@@ -121,49 +70,62 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public StoneWallDlg()
-        {
-            InitializeComponent();
-            ToolName = "StoneWall";
-            wallLength = 100;
-            wallHeight = 80;
-            wallThickness = 4;
-            stoneSize = 5;
-            DataContext = this;
-            ModelGroup = MyModelGroup;
-            loaded = false;
-        }
-
-        public override bool ShowAxies
+        public double WallHeight
         {
             get
             {
-                return showAxies;
+                return wallHeight;
             }
             set
             {
-                if (showAxies != value)
+                if (wallHeight != value)
                 {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
+                    if (value >= 1 && value <= 200)
+                    {
+                        wallHeight = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
                 }
             }
         }
 
-        public override bool ShowFloor
+        public double WallLength
         {
             get
             {
-                return showFloor;
+                return wallLength;
             }
             set
             {
-                if (showFloor != value)
+                if (wallLength != value)
                 {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
+                    if (value >= 1 && value <= 200)
+                    {
+                        wallLength = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public double WallThickness
+        {
+            get
+            {
+                return wallThickness;
+            }
+            set
+            {
+                if (wallThickness != value)
+                {
+                    if (value >= 1 && value <= 200)
+                    {
+                        wallThickness = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
                 }
             }
         }
@@ -238,7 +200,7 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -248,7 +210,7 @@ namespace Barnacle.Dialogs
             LoadEditorParameters();
 
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             loaded = true;
 
             UpdateDisplay();

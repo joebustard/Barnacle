@@ -114,7 +114,6 @@ namespace Barnacle.Dialogs
             modelAssignments = new List<ModelAssignmentControl>();
             NotificationManager.Subscribe("FigureDlg", "SelectedFigure", SelectedFigureModelChanged);
             NotificationManager.Subscribe("FigureDlg", "FigureScale", SelectedFigureScaleChanged);
-            ModelGroup = MyModelGroup;
         }
 
         public List<String> AllBoneNames
@@ -545,7 +544,7 @@ namespace Barnacle.Dialogs
                 {
                     showAxies = value;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    Viewer.Model = GetModel();
                 }
             }
         }
@@ -563,7 +562,7 @@ namespace Barnacle.Dialogs
                 {
                     showFloor = value;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    Viewer.Model = GetModel();
                 }
             }
         }
@@ -585,7 +584,7 @@ namespace Barnacle.Dialogs
         {
             if (MyModelGroup != null)
             {
-                MyModelGroup.Children.Clear();
+                Viewer.Clear();
 
                 if (floor != null && ShowFloor)
                 {
@@ -1050,7 +1049,7 @@ namespace Barnacle.Dialogs
                         selectedMarker.OnBoneRotated += OnBoneRotated;
                     }
                     base.Viewport_MouseDown(viewport3D1, e);
-                    Redisplay();
+                    Viewer.Model = GetModel();
                 }
             }
         }
@@ -1209,7 +1208,7 @@ namespace Barnacle.Dialogs
                     CreateBoneModel(p);
                 }
             }
-            Redisplay();
+            Viewer.Model = GetModel();
         }
 
         private void ResetPoseClicked(object sender, RoutedEventArgs e)
@@ -1314,7 +1313,7 @@ namespace Barnacle.Dialogs
         private void UpdateDisplay()
         {
             GenerateShape();
-            Redisplay();
+            Viewer.Model = GetModel();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -1326,9 +1325,9 @@ namespace Barnacle.Dialogs
 
             GenerateShape();
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
 
-            Redisplay();
+            Viewer.Model = GetModel();
 
             NotifyPropertyChanged("FigureModels");
         }

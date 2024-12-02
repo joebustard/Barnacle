@@ -47,14 +47,14 @@
                 Command="{Binding CameraCommand}"
                 CommandParameter="CameraLeft"
                 Style="{StaticResource ImageButton}"
-                ToolTip="Move the camera to the default right position and point it at the centre of the world.">
+                ToolTip="Move the camera to the default left position and point it at the centre of the world." HorizontalAlignment="Left" Margin="3,0,0,2">
                 <Image Source="/Barnacle;component/Images/Buttons/RightEye.png" />
             </Button>
             <Button
                 Command="{Binding CameraCommand}"
                 CommandParameter="CameraRight"
                 Style="{StaticResource ImageButton}"
-                ToolTip="Move the camera to the default left position and point it at the centre of the world.">
+                ToolTip="Move the camera to the default right position and point it at the centre of the world.">
                 <Image Source="/Barnacle;component/Images/Buttons/LeftEye.png" />
             </Button>
             <Button

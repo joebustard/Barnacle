@@ -256,6 +256,10 @@
       <Project>{5bd65286-f34e-45ae-9e8d-2e7a0dff6d0d}</Project>
       <Name>EditorParameterLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FileUtils\FileUtils.csproj">
+      <Project>{6ee47c70-2f51-490a-b50c-97fbad59a0e7}</Project>
+      <Name>FileUtils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LineLib\LineLib.csproj">
       <Project>{8248F033-5DE9-46E4-BF7C-0B108F120577}</Project>
       <Name>LineLib</Name>

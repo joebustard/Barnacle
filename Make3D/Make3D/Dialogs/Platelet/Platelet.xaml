@@ -3,10 +3,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ctrls="clr-namespace:Barnacle.UserControls"
-     xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Barnacle.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
     Title="Platelet"
     Width="1000"
     Height="550"
@@ -39,7 +39,10 @@
                     <RowDefinition />
                     <RowDefinition Height="180" />
                 </Grid.RowDefinitions>
-                <u:ObjectView x:Name="Viewer" Grid.Column="3" Grid.Row="0" />
+                <u:ObjectView
+                    x:Name="Viewer"
+                    Grid.Row="0"
+                    Grid.Column="3" />
                 <TabControl Grid.Row="1" SelectedIndex="{Binding SelectedShape}">
                     <TabItem Header="Solid">
                         <Grid>
@@ -193,13 +196,14 @@
                                 ItemsSource="{Binding TextureItems}"
                                 SelectedItem="{Binding SelectedTexture, UpdateSourceTrigger=PropertyChanged}"
                                 Visibility="{Binding ShowTextures}" />
-                            <Button Style="{StaticResource SmallButton}"
+                            <Button
                                 Grid.Row="2"
                                 Grid.Column="3"
                                 MaxWidth="30"
                                 Margin="8,2"
                                 Click="BrowseTextures_Click"
                                 Content="..."
+                                Style="{StaticResource SmallButton}"
                                 ToolTip="Open the folder containing the user defined textures"
                                 Visibility="{Binding ShowTextures}" />
 

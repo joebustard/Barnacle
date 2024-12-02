@@ -77,7 +77,6 @@ namespace Barnacle.Dialogs
             span = 70;
             sweepAngle = 0;
             dihedralAngle = 0;
-            ModelGroup = MyModelGroup;
         }
 
         public List<string> AirfoilGroups
@@ -274,40 +273,6 @@ namespace Barnacle.Dialogs
                 {
                     shapeNames = value;
                     NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
-                }
-            }
-        }
-
-        public override bool ShowFloor
-        {
-            get
-            {
-                return showFloor;
-            }
-            set
-            {
-                if (showFloor != value)
-                {
-                    showFloor = value;
-                    NotifyPropertyChanged();
-                    Redisplay();
                 }
             }
         }
@@ -1048,7 +1013,7 @@ namespace Barnacle.Dialogs
         {
             EnableControlsForShape();
             GenerateWing();
-            Redisplay();
+            Viewer.Model = GetModel();
             RootDisplay.Refresh();
         }
 
@@ -1066,9 +1031,9 @@ namespace Barnacle.Dialogs
             WholeModelChecked = true;
             LoadEditorParameters();
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             GenerateWing();
-            Redisplay();
+            Viewer.Model = GetModel();
         }
     }
 }

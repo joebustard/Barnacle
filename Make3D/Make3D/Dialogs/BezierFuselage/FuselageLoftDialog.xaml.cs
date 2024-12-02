@@ -51,7 +51,6 @@ namespace Barnacle.Dialogs
             DataContext = this;
             selectedBulkhead = -1;
             EditorParameters.ToolName = "BezierFuselage";
-            ModelGroup = MyModelGroup;
         }
 
         public ObservableCollection<BulkheadControl> BulkHeads
@@ -380,7 +379,7 @@ namespace Barnacle.Dialogs
                 }
 
                 CentreVertices();
-                Redisplay();
+                Viewer.Model = GetModel();
             }
         }
 
@@ -519,7 +518,7 @@ namespace Barnacle.Dialogs
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
             DataContext = this;
             if (!UnpackEditorParameters())
             {

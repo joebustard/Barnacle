@@ -30,12 +30,11 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class CornerShape : UserControl, INotifyPropertyChanged
     {
+        public ModeChanged OnModeChanged;
         private ImageSource currentImage;
         private CornerLocation location;
 
-        public delegate void ModeChanged(int mode);
-
-        public ModeChanged OnModeChanged;
+        private int mode;
 
         public CornerShape()
         {
@@ -45,6 +44,8 @@ namespace Barnacle.Dialogs
             Mode = 0;
             SetShapeImage(Mode);
         }
+
+        public delegate void ModeChanged(int mode);
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -88,7 +89,21 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public int Mode { get; set; }
+        public int Mode
+        {
+            get
+            {
+                return mode;
+            }
+            set
+            {
+                if (mode != value)
+                {
+                    mode = value;
+                    SetShapeImage(mode);
+                }
+            }
+        }
 
         public virtual void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {

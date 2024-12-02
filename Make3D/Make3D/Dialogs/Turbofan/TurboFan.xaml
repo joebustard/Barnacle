@@ -1,30 +1,34 @@
-<local:BaseModellerDialog Background="{StaticResource WindowBackBrush }"
-                          Loaded="Window_Loaded"
-                          mc:Ignorable="d"
-                          Title="Turbo Fan"
-                          WindowStartupLocation="CenterOwner"
-                          x:Class="Barnacle.Dialogs.TurboFan"
-                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                          xmlns:local="clr-namespace:Barnacle.Dialogs"
-                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                          Width="1000"
-                          Height="450">
+<local:BaseModellerDialog
+    x:Class="Barnacle.Dialogs.TurboFan"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.Dialogs"
+     xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Turbo Fan"
+    Width="1000"
+    Height="550"
+    Background="{StaticResource WindowBackBrush}"
+    Loaded="Window_Loaded"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
-            <RowDefinition Height="25" />
+            <RowDefinition Height="30" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
-        <Border Grid.Column="1"
-                Grid.Row="0"
-                Style="{StaticResource ControlBorder}">
+        <Border
+            Grid.Row="0"
+            Grid.Column="1"
+            Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="25" />
@@ -42,200 +46,147 @@
                     <RowDefinition Height="25" />
                     <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="1"
-                        Margin="10,0,0,0"
-                        Orientation="Horizontal">
-                    <Label Width="100">
-                        No. of Blades
+                <StackPanel
+                    Grid.Row="1"
+                    Margin="10,0,0,0"
+                    Orientation="Horizontal">
+                    <Label Width="100" Content="No. of Blades">
                     </Label>
-                    <Slider Maximum="100"
+                    <Slider
+                        Width="200"
+                        Maximum="100"
                         Minimum="4"
-                        Value="{Binding NumberOfBlades}"
-                        Width="200" />
-                    <TextBox Text="{Binding NumberOfBlades}"
-                         Width="50" />
+                        Value="{Binding NumberOfBlades}" />
+                    <TextBox Width="50" Text="{Binding NumberOfBlades}" />
+                    <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameters to their defaults" Click="ResetDefaults" />
                 </StackPanel>
-                <StackPanel Grid.Row="2"
-                        Margin="10,0,0,0"
-                        Orientation="Horizontal">
-                    <Label Width="100">
-                        Blade Overlap
+                <StackPanel
+                    Grid.Row="2"
+                    Margin="10,0,0,0"
+                    Orientation="Horizontal">
+                    <Label Width="100" Content="Blade Overlap">
                     </Label>
-                    <Slider Maximum="99"
+                    <Slider
+                        Width="200"
+                        Maximum="99"
                         Minimum="0"
-                        Value="{Binding BladeOverlap}"
-                        Width="200" />
-                    <TextBox Text="{Binding BladeOverlap}"
-                         Width="50" />
+                        Value="{Binding BladeOverlap}" />
+                    <TextBox Width="50" Text="{Binding BladeOverlap}" />
                 </StackPanel>
-                <StackPanel Grid.Row="3"
-                        Margin="10,0,0,0"
-                        Orientation="Horizontal">
-                    <Label Width="100">
-                        Blade Length
+                <StackPanel
+                    Grid.Row="3"
+                    Margin="10,0,0,0"
+                    Orientation="Horizontal">
+                    <Label Width="100" Content="Blade Length">
                     </Label>
-                    <Slider Maximum="100"
+                    <Slider
+                        Width="200"
+                        Maximum="100"
                         Minimum="10"
-                        Value="{Binding BladeLength}"
-                        Width="200" />
-                    <TextBox Text="{Binding BladeLength}"
-                         Width="50" />
+                        Value="{Binding BladeLength}" />
+                    <TextBox Width="50" Text="{Binding BladeLength}" />
                 </StackPanel>
-                <StackPanel Grid.Row="4"
-                        Margin="10,0,0,0"
-                        Orientation="Horizontal">
-                    <Label Width="100">
-                        Blade Pitch
+                <StackPanel
+                    Grid.Row="4"
+                    Margin="10,0,0,0"
+                    Orientation="Horizontal">
+                    <Label Width="100" Content="Blade Pitch">
                     </Label>
-                    <Slider Maximum="90"
+                    <Slider
+                        Width="200"
+                        Maximum="90"
                         Minimum="1"
-                        Value="{Binding BladePitch}"
-                        Width="200" />
-                    <TextBox Text="{Binding BladePitch}"
-                         Width="50" />
+                        Value="{Binding BladePitch}" />
+                    <TextBox Width="50" Text="{Binding BladePitch}" />
                 </StackPanel>
-                <StackPanel Grid.Row="5"
-                        Margin="10,0,0,0"
-                        Orientation="Horizontal">
-                    <Label Width="100">
-                        Blade Thickness
+                <StackPanel
+                    Grid.Row="5"
+                    Margin="10,0,0,0"
+                    Orientation="Horizontal">
+                    <Label Width="100" Content=" Blade Thickness">
                     </Label>
-                    <Slider Maximum="5"
+                    <Slider
+                        Width="200"
+                        Maximum="5"
                         Minimum="1"
-                        Value="{Binding BladeThickness}"
-                        Width="200" />
-                    <TextBox Text="{Binding BladeThickness}"
-                         Width="50" />
+                        Value="{Binding BladeThickness}" />
+                    <TextBox Width="50" Text="{Binding BladeThickness}" />
                 </StackPanel>
-                <StackPanel Grid.Row="6"
-                        Margin="10,0,0,0"
-                        Orientation="Horizontal">
-                    <Label Width="100">
-                        Hub Radius
+                <StackPanel
+                    Grid.Row="6"
+                    Margin="10,0,0,0"
+                    Orientation="Horizontal">
+                    <Label Width="100" Content="Hub Radius">
                     </Label>
-                    <Slider Maximum="100"
+                    <Slider
+                        Width="200"
+                        Maximum="100"
                         Minimum="1"
-                        Value="{Binding HubRadius}"
-                        Width="200" />
-                    <TextBox Text="{Binding HubRadius}"
-                         Width="50" />
+                        Value="{Binding HubRadius}" />
+                    <TextBox Width="50" Text="{Binding HubRadius}" />
                 </StackPanel>
-                <StackPanel Grid.Row="7"
-                        Margin="10,0,0,0"
-                        Orientation="Horizontal">
-                    <Label Width="100">
-                        Blade Alignment
+                <StackPanel
+                    Grid.Row="7"
+                    Margin="10,0,0,0"
+                    Orientation="Horizontal">
+                    <Label Width="100" Content="Blade Alignment">
                     </Label>
-                    <RadioButton GroupName="BladeAlignGroup"
-                             IsChecked="{Binding Anticlockwise}"
-                             VerticalAlignment="Center">
-                        Anti - clockwise
+                    <RadioButton
+                        VerticalAlignment="Center"
+                        GroupName="BladeAlignGroup"
+                        IsChecked="{Binding Anticlockwise}" Content="Anti - clockwise">
                     </RadioButton>
-                    <RadioButton GroupName="BladeAlignGroup"
-                             IsChecked="{Binding Clockwise}"
-                             Margin="8,0,0,0"
-                             VerticalAlignment="Center">
-                        Clockwise
+                    <RadioButton
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center"
+                        GroupName="BladeAlignGroup"
+                        IsChecked="{Binding Clockwise}" Content="Clockwise">
                     </RadioButton>
                 </StackPanel>
-                <StackPanel Grid.Row="9"
-                        Margin="10,0,0,0"
-                        Orientation="Horizontal">
-                    <Label ToolTip="Include a solid disk behind the blades"
-                       Width="90">
-                        Backing Disk
+                <StackPanel
+                    Grid.Row="9"
+                    Margin="10,0,0,0"
+                    Orientation="Horizontal">
+                    <Label Width="90" ToolTip="Include a solid disk behind the blades" Content="Backing Disk">
                     </Label>
-                    <CheckBox IsChecked="{Binding SupportDisk}"
-                          VerticalAlignment="Center">
-                    </CheckBox>
+                    <CheckBox VerticalAlignment="Center" IsChecked="{Binding SupportDisk}" />
                 </StackPanel>
-                <StackPanel Grid.Row="10"
-                        Margin="10,0,0,0"
-                        Orientation="Horizontal">
-                    <Label Width="90">
-                        Disk Thickness
+                <StackPanel
+                    Grid.Row="10"
+                    Margin="10,0,0,0"
+                    Orientation="Horizontal">
+                    <Label Width="90" Content="Disk Thickness">
                     </Label>
-                    <Slider LargeChange="1"
+                    <Slider
+                        Width="200"
+                        LargeChange="1"
                         Maximum="10"
                         Minimum="1"
-                        Value="{Binding DiskThickness}"
-                        Width="200" />
-                    <TextBox Text="{Binding DiskThickness}"
-                         Width="50" />
+                        Value="{Binding DiskThickness}" />
+                    <TextBox Width="50" Text="{Binding DiskThickness}" />
                 </StackPanel>
-                <StackPanel Grid.Row="11"
-                        Margin="10,0,0,0"
-                        Orientation="Horizontal">
-                    <Label Width="90">
-                        Disk Offset
+                <StackPanel
+                    Grid.Row="11"
+                    Margin="10,0,0,0"
+                    Orientation="Horizontal">
+                    <Label Width="90" Content="Disk Offset">
                     </Label>
-                    <Slider LargeChange="0.1"
+                    <Slider
+                        Width="200"
+                        LargeChange="0.1"
                         Maximum="1"
                         Minimum="0.0"
                         TickFrequency="0.1"
-                        Value="{Binding DiskOffset}"
-                        Width="200" />
-                    <TextBox Text="{Binding DiskOffset}"
-                         Width="50" />
+                        Value="{Binding DiskOffset}" />
+                    <TextBox Width="50" Text="{Binding DiskOffset}" />
                 </StackPanel>
             </Grid>
         </Border>
-        <GridSplitter Grid.Row="0" Grid.Column="2" Style="{StaticResource GridSplitterStyle}" />
-        <Border Grid.Column="3"
-                Grid.Row="0"
-                Style="{StaticResource ControlBorder}">
-            <Viewport3D Name="viewport3D1"
-                        MouseDown="Viewport_MouseDown"
-                        MouseMove="Viewport_MouseMove"
-                        MouseWheel="Viewport_MouseWheel">
-                <Viewport3D.Camera>
-                    <PerspectiveCamera LookDirection="{Binding LookDirection}"
-                                       Position="{Binding CameraPosition}"
-                                       x:Name="camMain">
-                    </PerspectiveCamera>
-                </Viewport3D.Camera>
-                <ModelVisual3D>
-                    <ModelVisual3D.Content>
-                        <Model3DGroup>
-                            <AmbientLight Color="#FF808080" />
-                            <DirectionalLight Color="White"
-                                              Direction="-1,-1,-1"
-                                              x:Name="dirLightMain">
-                            </DirectionalLight>
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-                <ModelVisual3D x:Name="MyModel">
-                    <ModelVisual3D.Content>
-                        <Model3DGroup x:Name="MyModelGroup">
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-            </Viewport3D>
-        </Border>
-        <Grid Grid.Column="1" Grid.ColumnSpan="3"
-              Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <CheckBox Content="Floor"
-                          Grid.Column="0"
-                          IsChecked="{Binding ShowFloor}" VerticalAlignment="Center" />
-                <CheckBox Content="Axies"
-                          Grid.Column="1"
-                          IsChecked="{Binding ShowAxies}" VerticalAlignment="Center" />
-                <Button Click="Home_Click"
-                        Content="Home" Width="80" Margin="0,2,0,2"
-                        Grid.Column="2" />
-            </Grid>
-        </Grid>
+        <GridSplitter
+            Grid.Row="0"
+            Grid.Column="2"
+            Style="{StaticResource GridSplitterStyle}" />
+        <u:ObjectView x:Name="Viewer" Grid.Column="3" Grid.Row="0" />
         <Grid Grid.Row="1" Grid.Column="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
@@ -243,15 +194,17 @@
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="10" />
             </Grid.ColumnDefinitions>
-            <Button Click="Cancel_Click"
-                        Content="Cancel"
-                        Grid.Column="1"
-                        Margin="2,2,2,2" />
+            <Button
+                Grid.Column="1"
+                Margin="2,2,2,2"
+                Click="Cancel_Click"
+                Content="Cancel" />
 
-            <Button Click="Ok_Click"
-                        Content="Ok"
-                        Grid.Column="2"
-                        Margin="2,2,2,2" />
+            <Button
+                Grid.Column="2"
+                Margin="2,2,2,2"
+                Click="Ok_Click"
+                Content="Ok" />
         </Grid>
     </Grid>
 </local:BaseModellerDialog>
