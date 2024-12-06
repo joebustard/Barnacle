@@ -54,7 +54,7 @@
                         <TextBox Margin="8,0,0,0"
                              Text="{Binding SquirkleHeight}"
                              VerticalAlignment="Center"
-                             Width="80" />
+                             Width="50" />
                     </StackPanel>
                     <UniformGrid Columns="2"
                              Grid.Column="1"
@@ -65,6 +65,13 @@
                         <local:CornerShape x:Name="BottomLeftCornerShape" />
                         <local:CornerShape x:Name="BottomRightCornerShape" />
                     </UniformGrid>
+                    <StackPanel Orientation="Horizontal" Grid.Column="3">
+                        <Label Margin="8,0,0,0" VerticalAlignment="Center" Content="Width" />
+                        <TextBox Margin="8,0,0,0"
+                         Text="{Binding SquirkleWidth}"
+                         VerticalAlignment="Center"
+                         Width="50" />
+                    </StackPanel>
                 </Grid>
                 <StackPanel Grid.Row="3"
                         HorizontalAlignment="Center"
@@ -73,9 +80,9 @@
                         Length
                     </Label>
                     <TextBox Margin="8,0,0,0"
-                         Text="{Binding Length}"
+                         Text="{Binding SquirkleLength}"
                          VerticalAlignment="Center"
-                         Width="80" />
+                         Width="50" />
                 </StackPanel>
                 <StackPanel Grid.Row="5"
                         Orientation="Horizontal">

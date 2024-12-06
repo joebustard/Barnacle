@@ -1219,6 +1219,7 @@ namespace Barnacle.UserControls
         {
             selectedFlexiPath.FromString(s);
             PathText = selectedFlexiPath.ToPath(absolutePaths);
+            LoggerLib.Logger.LogLine(selectedFlexiPath.ToOutline());
             if (s != "" && resetMode)
             {
                 SelectionMode = SelectionModeType.SelectSegmentAtPoint;

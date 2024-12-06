@@ -246,35 +246,39 @@ namespace Barnacle.Dialogs
                     {
                         // get the basic size of the wing rib
                         var dp = flexipath.GetUpperAndLowerPoints(t, false);
-                        ribX.Add(dp.X);
-                        if (Math.Abs(1 - t) < 0.000001)
+                        // if (dp.X != 0 || dp.Lower != 0 || dp.Upper != 0)
                         {
-                            if (dp.Upper - dp.Lower > 0.001)
+                            ribX.Add(dp.X);
+                            LoggerLib.Logger.Log($"t {t} dp.x {dp.X} dp.Lower {dp.Lower} dp.Upper {dp.Upper}\n");
+                            if (Math.Abs(1 - t) < 0.000001)
                             {
-                                needToCloseRight = true;
+                                if (dp.Upper - dp.Lower > 0.001)
+                                {
+                                    needToCloseRight = true;
+                                }
                             }
-                        }
-                        if (dihedralAngle == 0.0)
-                        {
-                            dihedralOffset.Add(0);
-                        }
-                        else
-                        {
-                            double da = Math.Sin(DegToRad(dihedralAngle)) * dp.X;
-                            dihedralOffset.Add(da);
-                        }
-                        var si = dp.Upper - dp.Lower;
-                        divisions[currentDivision] = new List<Point>();
-                        for (double m = 0.0; m <= 1.0; m += dt)
-                        {
-                            Point wp = GetProfileAt(selectedWingProfilePoints, selectedWingProfileLength, m);
-                            double px = -((1.0 - wp.X) * si + dp.Lower);
-                            Point scaledPoint = new Point(px, (wp.Y * si));
-                            divisions[currentDivision].Add(scaledPoint);
-                            minX = Math.Min(minX, px);
-                        }
+                            if (dihedralAngle == 0.0)
+                            {
+                                dihedralOffset.Add(0);
+                            }
+                            else
+                            {
+                                double da = Math.Sin(DegToRad(dihedralAngle)) * dp.X;
+                                dihedralOffset.Add(da);
+                            }
+                            var si = dp.Upper - dp.Lower;
+                            divisions[currentDivision] = new List<Point>();
+                            for (double m = 0.0; m <= 1.0; m += dt)
+                            {
+                                Point wp = GetProfileAt(selectedWingProfilePoints, selectedWingProfileLength, m);
+                                double px = -((1.0 - wp.X) * si + dp.Lower);
+                                Point scaledPoint = new Point(px, (wp.Y * si));
+                                divisions[currentDivision].Add(scaledPoint);
+                                minX = Math.Min(minX, px);
+                            }
 
-                        currentDivision++;
+                            currentDivision++;
+                        }
                     }
                 }
 

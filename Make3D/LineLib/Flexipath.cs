@@ -8,10 +8,20 @@ namespace Barnacle.LineLib
 {
     public class FlexiPath
     {
-        private const double selectionDistance = 2;
-        private bool closed;
         protected ObservableCollection<FlexiPoint> flexiPoints;
         protected List<FlexiSegment> segs;
+        private const double selectionDistance = 2;
+        private double brx;
+        private double bry;
+        private bool clipAgainstBounds;
+        private bool closed;
+        private bool openEndedPath;
+
+        private double pathHeight;
+        private double pathWidth;
+
+        private double tlx;
+        private double tly;
 
         public FlexiPath()
         {
@@ -19,40 +29,56 @@ namespace Barnacle.LineLib
             flexiPoints = new ObservableCollection<FlexiPoint>();
             closed = true;
             openEndedPath = false;
+            clipAgainstBounds = false;
         }
 
-        public FlexiSegment FirstSelectedSegment()
+        public bool ClipAgainstBounds
         {
-            FlexiSegment res = null;
-            foreach (FlexiSegment fl in segs)
+            get
             {
-                if (fl.Selected)
-                {
-                    res = fl;
-                    break;
-                }
+                return clipAgainstBounds;
             }
-            return res;
-        }
 
-        private bool openEndedPath;
-
-        public bool OpenEndedPath
-        {
-            get { return openEndedPath; }
-            set { openEndedPath = value; }
+            set
+            {
+                clipAgainstBounds = value;
+            }
         }
 
         public bool Closed
         {
-            get { return closed; }
-            set { closed = value; }
+            get
+            {
+                return closed;
+            }
+            set
+            {
+                closed = value;
+            }
         }
 
         public ObservableCollection<FlexiPoint> FlexiPoints
         {
-            get { return flexiPoints; }
-            set { flexiPoints = value; }
+            get
+            {
+                return flexiPoints;
+            }
+            set
+            {
+                flexiPoints = value;
+            }
+        }
+
+        public bool OpenEndedPath
+        {
+            get
+            {
+                return openEndedPath;
+            }
+            set
+            {
+                openEndedPath = value;
+            }
         }
 
         public FlexiPoint Start
@@ -80,6 +106,15 @@ namespace Barnacle.LineLib
                     flexiPoints[0] = value;
                 }
             }
+        }
+
+        public void AddClosingQCurve(System.Windows.Point p1)
+        {
+            int i = flexiPoints.Count - 1;
+            flexiPoints.Add(new FlexiPoint(p1, i + 1, FlexiPoint.PointMode.Control1));
+
+            FlexiQuadBezier bl = new FlexiQuadBezier(i, i + 1, 0);
+            segs.Add(bl);
         }
 
         public void AddCurve(System.Windows.Point p1, System.Windows.Point p2, System.Windows.Point p3)
@@ -130,15 +165,6 @@ namespace Barnacle.LineLib
             segs.Add(bl);
         }
 
-        public void AddClosingQCurve(System.Windows.Point p1)
-        {
-            int i = flexiPoints.Count - 1;
-            flexiPoints.Add(new FlexiPoint(p1, i + 1, FlexiPoint.PointMode.Control1));
-
-            FlexiQuadBezier bl = new FlexiQuadBezier(i, i + 1, 0);
-            segs.Add(bl);
-        }
-
         public void AppendClosingCurveSegment()
         {
             // get current last point
@@ -161,142 +187,6 @@ namespace Barnacle.LineLib
 
             AddClosingQCurve(new System.Windows.Point(cx1, cy1));
         }
-
-        public virtual void Clear()
-        {
-            segs.Clear();
-            flexiPoints.Clear();
-        }
-
-        public void ConvertLineCurveSegment(int index, System.Windows.Point position)
-        {
-            for (int i = 0; i < segs.Count; i++)
-            {
-                if (segs[i].Start() == index)
-                {
-                    int c1 = index;
-                    int c2 = c1 + 1;
-                    int c3 = c2 + 1;
-                    int c4 = c3 + 1;
-
-                    flexiPoints.Insert(index + 1, new FlexiPoint(position, c3, FlexiPoint.PointMode.Control2));
-                    flexiPoints.Insert(index + 1, new FlexiPoint(position, c2, FlexiPoint.PointMode.Control1));
-
-                    FlexiCubicBezier ls = new FlexiCubicBezier(c1, c2, c3, c4);
-                    // starting at segment i +1, if the point id is c2 or more
-                    PointInserted(segs, i + 1, c2, 2);
-                    segs[i] = ls;
-                    ls.ResetControlPoints(flexiPoints);
-                    DeselectAll();
-                    ls.Select(flexiPoints);
-                    break;
-                }
-            }
-        }
-
-        public void FlipHorizontal()
-        {
-            double low = double.MaxValue;
-            double high = double.MinValue;
-            for (int i = 0; i < flexiPoints.Count; i++)
-            {
-                low = Math.Min(low, flexiPoints[i].X);
-                high = Math.Max(high, flexiPoints[i].X);
-            }
-            for (int i = 0; i < flexiPoints.Count; i++)
-            {
-                flexiPoints[i].X = low + (high - flexiPoints[i].X);
-            }
-        }
-
-        public void FlipVertical()
-        {
-            double low = double.MaxValue;
-            double high = double.MinValue;
-            for (int i = 0; i < flexiPoints.Count; i++)
-            {
-                low = Math.Min(low, flexiPoints[i].Y);
-                high = Math.Max(high, flexiPoints[i].Y);
-            }
-            for (int i = 0; i < flexiPoints.Count; i++)
-            {
-                flexiPoints[i].Y = low + (high - flexiPoints[i].Y);
-            }
-        }
-
-        public void ConvertLineQuadCurveSegment(int index, System.Windows.Point position, bool centreControl = true)
-        {
-            for (int i = 0; i < segs.Count; i++)
-            {
-                if (segs[i].Start() == index)
-                {
-                    int c1 = index;
-                    int c2 = c1 + 1;
-                    int c3 = c2 + 1;
-
-                    flexiPoints.Insert(index + 1, new FlexiPoint(position, c2, FlexiPoint.PointMode.ControlQ));
-
-                    FlexiQuadBezier ls = new FlexiQuadBezier(c1, c2, c3);
-                    // starting at segment i +1, if the point id is c2 or more
-                    PointInserted(segs, i + 1, c2, 1);
-                    segs[i] = ls;
-                    if (centreControl)
-                    {
-                        ls.ResetControlPoints(flexiPoints);
-                    }
-                    DeselectAll();
-                    ls.Select(flexiPoints);
-                    break;
-                }
-            }
-        }
-
-        public void ConvertTwoLineSegmentsToQuadraticBezier()
-        {
-            // have we really got two consecutive line segs selected?
-            int firstSeg = TwoConsecutiveLineSegmentsSelected();
-            if (firstSeg > -1)
-            {
-                int secondSeg = firstSeg + 1;
-                // collect the details of the points in case we need em later
-                int seg1P0 = segs[firstSeg].Start();
-                System.Windows.Point P0 = flexiPoints[seg1P0].ToPoint();
-
-                int seg2P0 = segs[secondSeg].Start();
-                System.Windows.Point targetPoint = flexiPoints[seg2P0].ToPoint();
-
-                int seg2P1 = segs[secondSeg].End();
-                System.Windows.Point P2 = flexiPoints[seg2P1].ToPoint();
-
-                double t = DistToLine.FindTOfClosestToLine(targetPoint, P0, P2);
-                if (t != double.MinValue && t != 0)
-                {
-                    // Now it gets nasty delete the second segment
-                    DeleteSegmentStartingAt(seg1P0);
-                    // calculate where the control point should be so cuve goes through target point
-                    System.Windows.Point P1 = new System.Windows.Point(0, 0);
-                    P1.X = (targetPoint.X - (1.0 - t) * t * P0.X - ((t * t) * P2.X)) / (2.0 * (1 - t) * t);
-                    P1.Y = (targetPoint.Y - (1.0 - t) * t * P0.Y - ((t * t) * P2.Y)) / (2.0 * (1 - t) * t);
-                    // convert seg1 to a quadratic bezier
-                    ConvertLineQuadCurveSegment(seg1P0, P1, false);
-                }
-            }
-        }
-
-        private double Distance(PointF point1, PointF point2)
-        {
-            double diff = ((point2.X - point1.X) * (point2.X - point1.X)) +
-            ((point2.Y - point1.Y) * (point2.Y - point1.Y));
-
-            return Math.Sqrt(diff);
-        }
-
-        private double tlx;
-        private double tly;
-        private double brx;
-        private double bry;
-        private double pathWidth;
-        private double pathHeight;
 
         public void CalculatePathBounds()
         {
@@ -372,6 +262,195 @@ namespace Barnacle.LineLib
             }
         }
 
+        public System.Windows.Point Centroid()
+        {
+            double x = 0;
+            double y = 0;
+            int count = 0;
+
+            foreach (FlexiPoint p in flexiPoints)
+            {
+                x += p.X;
+                y += p.Y;
+                count++;
+            }
+            if (count > 0)
+            {
+                return new System.Windows.Point(x / count, y / count);
+            }
+            else
+            {
+                return new System.Windows.Point(0, 0);
+            }
+        }
+
+        public virtual void Clear()
+        {
+            segs.Clear();
+            flexiPoints.Clear();
+        }
+
+        public void ClosePath()
+        {
+            if (segs.Count >= 2 && openEndedPath == false)
+            {
+                // create a separate segment that goes back to point zero
+                LineSegment sq = new LineSegment(flexiPoints.Count - 1, 0);
+                segs.Add(sq);
+            }
+        }
+
+        public void ConvertLineCurveSegment(int index, System.Windows.Point position)
+        {
+            for (int i = 0; i < segs.Count; i++)
+            {
+                if (segs[i].Start() == index)
+                {
+                    int c1 = index;
+                    int c2 = c1 + 1;
+                    int c3 = c2 + 1;
+                    int c4 = c3 + 1;
+
+                    flexiPoints.Insert(index + 1, new FlexiPoint(position, c3, FlexiPoint.PointMode.Control2));
+                    flexiPoints.Insert(index + 1, new FlexiPoint(position, c2, FlexiPoint.PointMode.Control1));
+
+                    FlexiCubicBezier ls = new FlexiCubicBezier(c1, c2, c3, c4);
+                    // starting at segment i +1, if the point id is c2 or more
+                    PointInserted(segs, i + 1, c2, 2);
+                    segs[i] = ls;
+                    ls.ResetControlPoints(flexiPoints);
+                    DeselectAll();
+                    ls.Select(flexiPoints);
+                    break;
+                }
+            }
+        }
+
+        public void ConvertLineQuadCurveSegment(int index, System.Windows.Point position, bool centreControl = true)
+        {
+            for (int i = 0; i < segs.Count; i++)
+            {
+                if (segs[i].Start() == index)
+                {
+                    int c1 = index;
+                    int c2 = c1 + 1;
+                    int c3 = c2 + 1;
+
+                    flexiPoints.Insert(index + 1, new FlexiPoint(position, c2, FlexiPoint.PointMode.ControlQ));
+
+                    FlexiQuadBezier ls = new FlexiQuadBezier(c1, c2, c3);
+                    // starting at segment i +1, if the point id is c2 or more
+                    PointInserted(segs, i + 1, c2, 1);
+                    segs[i] = ls;
+                    if (centreControl)
+                    {
+                        ls.ResetControlPoints(flexiPoints);
+                    }
+                    DeselectAll();
+                    ls.Select(flexiPoints);
+                    break;
+                }
+            }
+        }
+
+        public bool ConvertToCubic(System.Windows.Point position)
+        {
+            bool found = false;
+            for (int i = 0; i < segs.Count; i++)
+            {
+                if (segs[i].Selected)
+                {
+                    if (segs[i] is LineSegment)
+                    {
+                        int start = segs[i].Start();
+                        int end = segs[i].End();
+                        // closing segment which goes back to 0 is a special case
+                        if (end != 0)
+                        {
+                            ConvertLineCurveSegment(start, position);
+                        }
+                        else
+                        {
+                            // Delete the last dummy segment
+                            segs.RemoveAt(segs.Count - 1);
+                            // Append a new curve
+                            AppendClosingCurveSegment();
+
+                            segs[segs.Count - 1].Select(flexiPoints);
+                        }
+                        found = true;
+                    }
+                    break;
+                }
+            }
+            return found;
+        }
+
+        public bool ConvertToQuadQuadAtSelected(System.Windows.Point position)
+        {
+            bool found = false;
+            for (int i = 0; i < segs.Count; i++)
+            {
+                if (segs[i].Selected)
+                {
+                    if (segs[i] is LineSegment)
+                    {
+                        int start = segs[i].Start();
+                        int end = segs[i].End();
+                        // closing segment which goes back to 0 is a special case
+                        if (end != 0)
+                        {
+                            ConvertLineQuadCurveSegment(start, position);
+                        }
+                        else
+                        {
+                            // Delete the last dummy segment
+                            segs.RemoveAt(segs.Count - 1);
+                            // Append a new curve
+                            AppendClosingQuadCurveSegment();
+
+                            segs[segs.Count - 1].Select(flexiPoints);
+                        }
+                        found = true;
+                    }
+                    break;
+                }
+            }
+            return found;
+        }
+
+        public void ConvertTwoLineSegmentsToQuadraticBezier()
+        {
+            // have we really got two consecutive line segs selected?
+            int firstSeg = TwoConsecutiveLineSegmentsSelected();
+            if (firstSeg > -1)
+            {
+                int secondSeg = firstSeg + 1;
+                // collect the details of the points in case we need em later
+                int seg1P0 = segs[firstSeg].Start();
+                System.Windows.Point P0 = flexiPoints[seg1P0].ToPoint();
+
+                int seg2P0 = segs[secondSeg].Start();
+                System.Windows.Point targetPoint = flexiPoints[seg2P0].ToPoint();
+
+                int seg2P1 = segs[secondSeg].End();
+                System.Windows.Point P2 = flexiPoints[seg2P1].ToPoint();
+
+                double t = DistToLine.FindTOfClosestToLine(targetPoint, P0, P2);
+                if (t != double.MinValue && t != 0)
+                {
+                    // Now it gets nasty delete the second segment
+                    DeleteSegmentStartingAt(seg1P0);
+                    // calculate where the control point should be so cuve goes through target point
+                    System.Windows.Point P1 = new System.Windows.Point(0, 0);
+                    P1.X = (targetPoint.X - (1.0 - t) * t * P0.X - ((t * t) * P2.X)) / (2.0 * (1 - t) * t);
+                    P1.Y = (targetPoint.Y - (1.0 - t) * t * P0.Y - ((t * t) * P2.Y)) / (2.0 * (1 - t) * t);
+                    // convert seg1 to a quadratic bezier
+                    ConvertLineQuadCurveSegment(seg1P0, P1, false);
+                }
+            }
+        }
+
         public void DeleteLastSegment()
         {
             if (segs.Count > 0)
@@ -379,93 +458,6 @@ namespace Barnacle.LineLib
                 segs[segs.Count - 1].DeletePoints(flexiPoints);
                 segs.RemoveAt(segs.Count - 1);
             }
-        }
-
-        public struct Dimension
-        {
-            public double X;
-            public double Lower;
-            public double Upper;
-        }
-
-        public Dimension GetUpperAndLowerPoints(double x, bool autoclose = true)
-        {
-            Dimension res = new Dimension();
-            res.Lower = double.MaxValue;
-            res.Upper = double.MinValue;
-
-            var pnts = DisplayPointsF();
-            if (autoclose)
-            {
-                if ((pnts[0].X != pnts[pnts.Count - 1].X) || (pnts[0].Y != pnts[pnts.Count - 1].Y))
-                {
-                    pnts.Add(new PointF(pnts[0].X, pnts[0].Y));
-                }
-            }
-            else
-            {
-                bool more;
-                do
-                {
-                    more = false;
-                    if (pnts.Count > 4)
-                    {
-                        double dx = Math.Abs(pnts[0].X - pnts[pnts.Count - 1].X);
-                        double dy = Math.Abs(pnts[0].Y - pnts[pnts.Count - 1].Y);
-                        if (dx < 0.0001 && dy < 0.0001)
-                        {
-                            pnts.RemoveAt(pnts.Count - 1);
-                            more = true;
-                        }
-                    }
-                } while (more);
-            }
-            CalculatePathBounds(pnts);
-            double px = (x * pathWidth) + tlx;
-            for (int i = 0; i < pnts.Count; i++)
-            {
-                int j = i + 1;
-                if (j == pnts.Count)
-                {
-                    j = 0;
-                }
-                double y = 0;
-                double sx, sy, ex, ey;
-                if (pnts[i].X <= pnts[j].X)
-                {
-                    sx = pnts[i].X;
-                    sy = pnts[i].Y;
-                    ex = pnts[j].X;
-                    ey = pnts[j].Y;
-                }
-                else
-                {
-                    ex = pnts[i].X;
-                    ey = pnts[i].Y;
-                    sx = pnts[j].X;
-                    sy = pnts[j].Y;
-                }
-                if (px >= sx && px <= ex)
-                {
-                    if (ex - sx > 0)
-                    {
-                        double t = (px - sx) / (ex - sx);
-                        y = sy + t * (ey - sy);
-                        res.X = px;
-                        res.Lower = Math.Min(y, res.Lower);
-                        res.Upper = Math.Max(y, res.Upper);
-                    }
-                    else
-                    {
-                        res.X = px;
-                        res.Lower = Math.Min(sy, res.Lower);
-                        res.Upper = Math.Max(sy, res.Upper);
-                        res.Lower = Math.Min(ey, res.Lower);
-                        res.Upper = Math.Max(ey, res.Upper);
-                    }
-                }
-            }
-            return res;
         }
 
         public void DeleteSegment(int index)
@@ -586,127 +578,53 @@ namespace Barnacle.LineLib
             return res;
         }
 
-        // Return the polygon's area in "square units." Add the areas of the trapezoids defined by
-        // the polygon's edges dropped to the X-axis. When the program considers a bottom edge of a
-        // polygon, the calculation gives a negative area so the space between the polygon and the
-        // axis is subtracted, leaving the polygon's area. This method gives odd results for
-        // non-simple polygons.
-        //
-        // The value will be negative if the polygon is oriented clockwise.
-        private float SignedPolygonArea(List<System.Drawing.PointF> fpoints)
+        public int FindSegmentThatEndsOnPointIndex(int selectedPoint)
         {
-            // Get the areas.
-            float area = 0;
-            // Add the first point to the end.
-            int num_points = fpoints.Count - 1;
-
-            for (int i = 0; i < num_points; i++)
-            {
-                area +=
-                    (fpoints[i + 1].X - fpoints[i].X) *
-                    (fpoints[i + 1].Y + fpoints[i].Y) / 2;
-            }
-
-            // Return the result.
-            return area;
+            throw new NotImplementedException();
         }
 
-        private double SignedPolygonArea(List<System.Windows.Point> fpoints)
+        public FlexiSegment FirstSelectedSegment()
         {
-            // Get the areas.
-            double area = 0;
-            // Add the first point to the end.
-            int num_points = fpoints.Count - 1;
-
-            for (int i = 0; i < num_points; i++)
+            FlexiSegment res = null;
+            foreach (FlexiSegment fl in segs)
             {
-                area +=
-                    (fpoints[i + 1].X - fpoints[i].X) *
-                    (fpoints[i + 1].Y + fpoints[i].Y) / 2;
-            }
-
-            // Return the result.
-            return area;
-        }
-
-        public bool SplitQuadCubic(System.Windows.Point position)
-        {
-            bool found = false;
-            for (int i = 0; i < segs.Count; i++)
-            {
-                if (segs[i].Selected)
+                if (fl.Selected)
                 {
-                    if (segs[i] is FlexiQuadBezier)
-                    {
-                        FlexiQuadBezier quad = segs[i] as FlexiQuadBezier;
-
-                        double splitT = quad.FindT(position, flexiPoints);
-                        int startIndex = quad.Start();
-                        int controlIndex = quad.P1;
-                        int endIndex = quad.End();
-
-                        System.Windows.Point p0 = flexiPoints[startIndex].ToPoint();
-                        System.Windows.Point p1 = flexiPoints[controlIndex].ToPoint();
-                        System.Windows.Point p2 = flexiPoints[endIndex].ToPoint();
-
-                        // calculate points for lower curve
-                        double x, y;
-                        System.Windows.Point lnp0 = p0;
-                        x = (1 - splitT) * p0.X + (splitT * p1.X);
-                        y = (1 - splitT) * p0.Y + (splitT * p1.Y);
-                        System.Windows.Point lnp1 = new System.Windows.Point(x, y);
-
-                        x = Math.Pow((1 - splitT), 2) * p0.X + (2.0 * (1 - splitT) * splitT * p1.X) + (splitT * splitT * p1.X);
-                        y = Math.Pow((1 - splitT), 2) * p0.Y + (2.0 * (1 - splitT) * splitT * p1.Y) + (splitT * splitT * p1.Y);
-                        // System.Windows.Point lnp2 = new System.Windows.Point(x, y);
-                        System.Windows.Point lnp2 = position;
-
-                        // calculate points for higher curve
-                        System.Windows.Point hnp0 = lnp2;
-                        x = (1 - splitT) * p1.X + (splitT * p2.X);
-                        y = (1 - splitT) * p1.Y + (splitT * p2.Y);
-                        System.Windows.Point hnp1 = new System.Windows.Point(x, y);
-
-                        //x = Math.Pow((1 - splitT), 2) * p1.X + (2.0 * (1 - splitT) * splitT * p2.X) + (splitT * splitT * p2.X);
-                        //y = Math.Pow((1 - splitT), 2) * p1.Y + (2.0 * (1 - splitT) * splitT * p2.Y) + (splitT * splitT * p2.Y);
-                        //System.Windows.Point hnp2 = new System.Windows.Point(x, y);
-                        System.Windows.Point hnp2 = p2;
-
-                        // insert two new plexipoints
-                        FlexiPoints.Insert(startIndex + 1, new FlexiPoint(lnp1.X, lnp1.Y));
-                        FlexiPoints.Insert(startIndex + 2, new FlexiPoint(lnp2.X, lnp2.Y));
-
-                        FlexiQuadBezier lowerQuad = new FlexiQuadBezier();
-                        lowerQuad.P0 = startIndex;
-                        lowerQuad.P1 = startIndex + 1;
-                        lowerQuad.P2 = startIndex + 2;
-
-                        FlexiQuadBezier upperQuad = new FlexiQuadBezier();
-                        upperQuad.P0 = startIndex + 2;
-
-                        upperQuad.P1 = startIndex + 3;
-                        flexiPoints[startIndex + 3].X = hnp1.X;
-                        flexiPoints[startIndex + 3].Y = hnp1.Y;
-
-                        upperQuad.P2 = startIndex + 4;
-
-                        for (int j = i + 1; j < segs.Count; j++)
-                        {
-                            segs[j].PointInserted(endIndex, 2);
-                        }
-
-                        segs[i] = lowerQuad;
-                        segs.Insert(i + 1, upperQuad);
-                        if (upperQuad.P2 == flexiPoints.Count)
-                        {
-                            upperQuad.P2 = 0;
-                        }
-                        found = true;
-                    }
+                    res = fl;
                     break;
                 }
             }
-            return found;
+            return res;
+        }
+
+        public void FlipHorizontal()
+        {
+            double low = double.MaxValue;
+            double high = double.MinValue;
+            for (int i = 0; i < flexiPoints.Count; i++)
+            {
+                low = Math.Min(low, flexiPoints[i].X);
+                high = Math.Max(high, flexiPoints[i].X);
+            }
+            for (int i = 0; i < flexiPoints.Count; i++)
+            {
+                flexiPoints[i].X = low + (high - flexiPoints[i].X);
+            }
+        }
+
+        public void FlipVertical()
+        {
+            double low = double.MaxValue;
+            double high = double.MinValue;
+            for (int i = 0; i < flexiPoints.Count; i++)
+            {
+                low = Math.Min(low, flexiPoints[i].Y);
+                high = Math.Max(high, flexiPoints[i].Y);
+            }
+            for (int i = 0; i < flexiPoints.Count; i++)
+            {
+                flexiPoints[i].Y = low + (high - flexiPoints[i].Y);
+            }
         }
 
         public void FromString(string s)
@@ -714,13 +632,163 @@ namespace Barnacle.LineLib
             InterpretTextPath(s);
         }
 
-        public void ClosePath()
+        public List<FlexiPoint> GetSegmentPoints()
         {
-            if (segs.Count >= 2 && openEndedPath == false)
+            List<FlexiPoint> res = new List<FlexiPoint>();
+            res.Add(Start);
+            foreach (FlexiSegment sg in segs)
             {
-                // create a separate segment that goes back to point zero
-                LineSegment sq = new LineSegment(flexiPoints.Count - 1, 0);
-                segs.Add(sq);
+                sg.GetSegmentPoints(res, flexiPoints);
+            }
+            return res;
+        }
+
+        public Dimension GetUpperAndLowerPoints(double x, bool autoclose = true)
+        {
+            Dimension res = new Dimension();
+            res.Lower = double.MaxValue;
+            res.Upper = double.MinValue;
+
+            var pnts = DisplayPointsF();
+            if (autoclose)
+            {
+                if ((pnts[0].X != pnts[pnts.Count - 1].X) || (pnts[0].Y != pnts[pnts.Count - 1].Y))
+                {
+                    pnts.Add(new PointF(pnts[0].X, pnts[0].Y));
+                }
+            }
+            else
+            {
+                bool more;
+                do
+                {
+                    more = false;
+                    if (pnts.Count > 4)
+                    {
+                        double dx = Math.Abs(pnts[0].X - pnts[pnts.Count - 1].X);
+                        double dy = Math.Abs(pnts[0].Y - pnts[pnts.Count - 1].Y);
+                        if (dx < 0.00001 && dy < 0.00001)
+                        {
+                            pnts.RemoveAt(pnts.Count - 1);
+                            more = true;
+                        }
+                    }
+                } while (more);
+            }
+            CalculatePathBounds(pnts);
+            double px = (x * pathWidth) + tlx;
+            for (int i = 0; i < pnts.Count; i++)
+            {
+                int j = i + 1;
+                if (j == pnts.Count)
+                {
+                    j = 0;
+                }
+                double y = 0;
+                double sx, sy, ex, ey;
+                if (pnts[i].X <= pnts[j].X)
+                {
+                    sx = pnts[i].X;
+                    sy = pnts[i].Y;
+                    ex = pnts[j].X;
+                    ey = pnts[j].Y;
+                }
+                else
+                {
+                    ex = pnts[i].X;
+                    ey = pnts[i].Y;
+                    sx = pnts[j].X;
+                    sy = pnts[j].Y;
+                }
+                if (px >= sx && px <= ex)
+                {
+                    if (Math.Abs(ex - sx) > 0.000001)
+                    {
+                        double t = (px - sx) / (ex - sx);
+                        y = sy + t * (ey - sy);
+                        res.X = px;
+                        res.Lower = Math.Min(y, res.Lower);
+                        res.Upper = Math.Max(y, res.Upper);
+                    }
+                    else
+                    {
+                        res.X = px;
+                        res.Lower = Math.Min(sy, res.Lower);
+                        res.Upper = Math.Max(sy, res.Upper);
+                        res.Lower = Math.Min(ey, res.Lower);
+                        res.Upper = Math.Max(ey, res.Upper);
+                    }
+                }
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// Does the path have two consecutive line segments selected Used to enable related buttons
+        /// </summary>
+        /// <returns></returns>
+        public bool HasTwoConsecutiveLineSegmentsSelected()
+        {
+            bool result = false;
+            if (TwoConsecutiveLineSegmentsSelected() != -1)
+            {
+                result = true;
+            }
+            return result;
+        }
+
+        public void InsertCurveSegment(int index, System.Windows.Point position)
+        {
+            for (int i = 0; i < segs.Count; i++)
+            {
+                if (segs[i].Start() == index)
+                {
+                    int end = segs[i].End();
+                    flexiPoints.Insert(index + 1, new FlexiPoint(position, index + 3, FlexiPoint.PointMode.Control2));
+                    flexiPoints.Insert(index + 1, new FlexiPoint(position, index + 2, FlexiPoint.PointMode.Control1));
+                    flexiPoints.Insert(index + 1, new FlexiPoint(position, index + 1));
+
+                    FlexiCubicBezier ls = new FlexiCubicBezier(index + 1, index + 2, index + 3, index + 4);
+                    PointInserted(segs, i + 1, index + 1, 3);
+                    segs.Insert(i + 1, ls);
+                    ls.ResetControlPoints(flexiPoints);
+                    break;
+                }
+            }
+        }
+
+        public void InsertLineSegment(int pointIndex, System.Windows.Point position)
+        {
+            bool found = false;
+            for (int i = 0; i < segs.Count; i++)
+            {
+                if (segs[i].Start() == pointIndex)
+                {
+                    //int end = segs[i].End();
+                    flexiPoints.Insert(pointIndex + 1, new FlexiPoint(position, pointIndex + 1));
+
+                    LineSegment ls = new LineSegment(pointIndex + 1, pointIndex + 2);
+                    PointInserted(segs, i + 1, pointIndex + 1, 1);
+                    segs.Insert(i + 1, ls);
+                    DeselectAll();
+                    segs[i + 1].Select(flexiPoints);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found && closed)
+            {
+                // special case, trying to split the imaginary line that connects the last point
+                // back to the first
+                if (segs[segs.Count - 1].End() == pointIndex)
+                {
+                    FlexiPoint np = new FlexiPoint(position, flexiPoints.Count);
+                    flexiPoints.Add(np);
+                    LineSegment ls = new LineSegment(segs[segs.Count - 1].End(), np.Id);
+                    segs.Add(ls);
+                    DeselectAll();
+                    ls.Select(flexiPoints);
+                }
             }
         }
 
@@ -952,6 +1020,7 @@ namespace Barnacle.LineLib
                 {
                     f.Id = i;
                     flexiPoints.Add(f);
+                    CheckClip(f);
                     i++;
                 }
 
@@ -969,251 +1038,6 @@ namespace Barnacle.LineLib
                 segs.AddRange(segments);
             }
             return valid;
-        }
-
-        public System.Windows.Point OrthoLockPosition(System.Windows.Point position)
-        {
-            int i = flexiPoints.Count - 1;
-            double oldX = flexiPoints[i].X;
-            double oldY = flexiPoints[i].Y;
-            double dx = Math.Abs(position.X - oldX);
-            double dy = Math.Abs(position.Y - oldY);
-            if (dx >= dy)
-            {
-                position.Y = oldY;
-            }
-            else
-            {
-                position.X = oldX;
-            }
-
-            return position;
-        }
-
-        public int FindSegmentThatEndsOnPointIndex(int selectedPoint)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool ConvertToQuadQuadAtSelected(System.Windows.Point position)
-        {
-            bool found = false;
-            for (int i = 0; i < segs.Count; i++)
-            {
-                if (segs[i].Selected)
-                {
-                    if (segs[i] is LineSegment)
-                    {
-                        int start = segs[i].Start();
-                        int end = segs[i].End();
-                        // closing segment which goes back to 0 is a special case
-                        if (end != 0)
-                        {
-                            ConvertLineQuadCurveSegment(start, position);
-                        }
-                        else
-                        {
-                            // Delete the last dummy segment
-                            segs.RemoveAt(segs.Count - 1);
-                            // Append a new curve
-                            AppendClosingQuadCurveSegment();
-
-                            segs[segs.Count - 1].Select(flexiPoints);
-                        }
-                        found = true;
-                    }
-                    break;
-                }
-            }
-            return found;
-        }
-
-        public bool ConvertToCubic(System.Windows.Point position)
-        {
-            bool found = false;
-            for (int i = 0; i < segs.Count; i++)
-            {
-                if (segs[i].Selected)
-                {
-                    if (segs[i] is LineSegment)
-                    {
-                        int start = segs[i].Start();
-                        int end = segs[i].End();
-                        // closing segment which goes back to 0 is a special case
-                        if (end != 0)
-                        {
-                            ConvertLineCurveSegment(start, position);
-                        }
-                        else
-                        {
-                            // Delete the last dummy segment
-                            segs.RemoveAt(segs.Count - 1);
-                            // Append a new curve
-                            AppendClosingCurveSegment();
-
-                            segs[segs.Count - 1].Select(flexiPoints);
-                        }
-                        found = true;
-                    }
-                    break;
-                }
-            }
-            return found;
-        }
-
-        public List<FlexiPoint> GetSegmentPoints()
-        {
-            List<FlexiPoint> res = new List<FlexiPoint>();
-            res.Add(Start);
-            foreach (FlexiSegment sg in segs)
-            {
-                sg.GetSegmentPoints(res, flexiPoints);
-            }
-            return res;
-        }
-
-        /// <summary>
-        /// Does the path have two consecutive line segments selected Used to enable related buttons
-        /// </summary>
-        /// <returns></returns>
-        public bool HasTwoConsecutiveLineSegmentsSelected()
-        {
-            bool result = false;
-            if (TwoConsecutiveLineSegmentsSelected() != -1)
-            {
-                result = true;
-            }
-            return result;
-        }
-
-        public System.Windows.Point Centroid()
-        {
-            double x = 0;
-            double y = 0;
-            int count = 0;
-
-            foreach (FlexiPoint p in flexiPoints)
-            {
-                x += p.X;
-                y += p.Y;
-                count++;
-            }
-            if (count > 0)
-            {
-                return new System.Windows.Point(x / count, y / count);
-            }
-            else
-            {
-                return new System.Windows.Point(0, 0);
-            }
-        }
-
-        public void InsertCurveSegment(int index, System.Windows.Point position)
-        {
-            for (int i = 0; i < segs.Count; i++)
-            {
-                if (segs[i].Start() == index)
-                {
-                    int end = segs[i].End();
-                    flexiPoints.Insert(index + 1, new FlexiPoint(position, index + 3, FlexiPoint.PointMode.Control2));
-                    flexiPoints.Insert(index + 1, new FlexiPoint(position, index + 2, FlexiPoint.PointMode.Control1));
-                    flexiPoints.Insert(index + 1, new FlexiPoint(position, index + 1));
-
-                    FlexiCubicBezier ls = new FlexiCubicBezier(index + 1, index + 2, index + 3, index + 4);
-                    PointInserted(segs, i + 1, index + 1, 3);
-                    segs.Insert(i + 1, ls);
-                    ls.ResetControlPoints(flexiPoints);
-                    break;
-                }
-            }
-        }
-
-        public void InsertLineSegment(int pointIndex, System.Windows.Point position)
-        {
-            bool found = false;
-            for (int i = 0; i < segs.Count; i++)
-            {
-                if (segs[i].Start() == pointIndex)
-                {
-                    //int end = segs[i].End();
-                    flexiPoints.Insert(pointIndex + 1, new FlexiPoint(position, pointIndex + 1));
-
-                    LineSegment ls = new LineSegment(pointIndex + 1, pointIndex + 2);
-                    PointInserted(segs, i + 1, pointIndex + 1, 1);
-                    segs.Insert(i + 1, ls);
-                    DeselectAll();
-                    segs[i + 1].Select(flexiPoints);
-                    found = true;
-                    break;
-                }
-            }
-            if (!found && closed)
-            {
-                // special case, trying to split the imaginary line that connects the last point
-                // back to the first
-                if (segs[segs.Count - 1].End() == pointIndex)
-                {
-                    FlexiPoint np = new FlexiPoint(position, flexiPoints.Count);
-                    flexiPoints.Add(np);
-                    LineSegment ls = new LineSegment(segs[segs.Count - 1].End(), np.Id);
-                    segs.Add(ls);
-                    DeselectAll();
-                    ls.Select(flexiPoints);
-                }
-            }
-        }
-
-        public virtual bool SplitSelectedLineSegment(System.Windows.Point position)
-        {
-            bool found = false;
-            for (int i = 0; i < segs.Count; i++)
-            {
-                if (segs[i].Selected)
-                {
-                    if (segs[i] is LineSegment)
-                    {
-                        int start = segs[i].Start();
-                        int end = segs[i].End();
-                        // closing segment which goes back to 0 is a special case
-                        if (end != 0)
-                        {
-                            InsertLineSegment(start, position);
-                        }
-                        else
-                        {
-                            // add a new flexipoint at the given position
-                            FlexiPoint fx = new FlexiPoint(position.X, position.Y);
-                            flexiPoints.Add(fx);
-                            // Make the existing segment refr to this point
-                            (segs[i] as LineSegment).P1 = flexiPoints.Count - 1;
-                            segs[i].Deselect(flexiPoints);
-                            // now reclose the path to linkback up to the first path
-                            ClosePath();
-                            segs[i + 1].Select(flexiPoints);
-                        }
-                        found = true;
-                    }
-                    else
-                    {
-                        if (segs[i] is FlexiQuadBezier)
-                        {
-                            // insert a line segment between the
-                            // start point of the bezier and the clicked point
-                            int pointIndex = segs[i].Start();
-                            flexiPoints.Insert(pointIndex + 1, new FlexiPoint(position, pointIndex + 1));
-
-                            LineSegment ls = new LineSegment(pointIndex, pointIndex + 1);
-                            PointInserted(segs, i, pointIndex, 1);
-                            segs.Insert(i, ls);
-                            DeselectAll();
-
-                            // move the start point of the bezier to clicked point
-                        }
-                    }
-                    break;
-                }
-            }
-            return found;
         }
 
         public void MoveByOffset(System.Windows.Point offset)
@@ -1244,6 +1068,25 @@ namespace Barnacle.LineLib
                 p.Y += dy;
             }
             return new System.Windows.Point(dx, dy);
+        }
+
+        public System.Windows.Point OrthoLockPosition(System.Windows.Point position)
+        {
+            int i = flexiPoints.Count - 1;
+            double oldX = flexiPoints[i].X;
+            double oldY = flexiPoints[i].Y;
+            double dx = Math.Abs(position.X - oldX);
+            double dy = Math.Abs(position.Y - oldY);
+            if (dx >= dy)
+            {
+                position.Y = oldY;
+            }
+            else
+            {
+                position.X = oldX;
+            }
+
+            return position;
         }
 
         public bool SelectAtPoint(System.Windows.Point position, bool clear = true)
@@ -1302,6 +1145,158 @@ namespace Barnacle.LineLib
                 flexiPoints[index].X = position.X;
                 flexiPoints[index].Y = position.Y;
             }
+        }
+
+        public bool SplitQuadCubic(System.Windows.Point position)
+        {
+            bool found = false;
+            for (int i = 0; i < segs.Count; i++)
+            {
+                if (segs[i].Selected)
+                {
+                    if (segs[i] is FlexiQuadBezier)
+                    {
+                        FlexiQuadBezier quad = segs[i] as FlexiQuadBezier;
+
+                        double splitT = quad.FindT(position, flexiPoints);
+                        int startIndex = quad.Start();
+                        int controlIndex = quad.P1;
+                        int endIndex = quad.End();
+
+                        System.Windows.Point p0 = flexiPoints[startIndex].ToPoint();
+                        System.Windows.Point p1 = flexiPoints[controlIndex].ToPoint();
+                        System.Windows.Point p2 = flexiPoints[endIndex].ToPoint();
+
+                        // calculate points for lower curve
+                        double x, y;
+                        System.Windows.Point lnp0 = p0;
+                        x = (1 - splitT) * p0.X + (splitT * p1.X);
+                        y = (1 - splitT) * p0.Y + (splitT * p1.Y);
+                        System.Windows.Point lnp1 = new System.Windows.Point(x, y);
+
+                        x = Math.Pow((1 - splitT), 2) * p0.X + (2.0 * (1 - splitT) * splitT * p1.X) + (splitT * splitT * p1.X);
+                        y = Math.Pow((1 - splitT), 2) * p0.Y + (2.0 * (1 - splitT) * splitT * p1.Y) + (splitT * splitT * p1.Y);
+                        // System.Windows.Point lnp2 = new System.Windows.Point(x, y);
+                        System.Windows.Point lnp2 = position;
+
+                        // calculate points for higher curve
+                        System.Windows.Point hnp0 = lnp2;
+                        x = (1 - splitT) * p1.X + (splitT * p2.X);
+                        y = (1 - splitT) * p1.Y + (splitT * p2.Y);
+                        System.Windows.Point hnp1 = new System.Windows.Point(x, y);
+
+                        //x = Math.Pow((1 - splitT), 2) * p1.X + (2.0 * (1 - splitT) * splitT * p2.X) + (splitT * splitT * p2.X);
+                        //y = Math.Pow((1 - splitT), 2) * p1.Y + (2.0 * (1 - splitT) * splitT * p2.Y) + (splitT * splitT * p2.Y);
+                        //System.Windows.Point hnp2 = new System.Windows.Point(x, y);
+                        System.Windows.Point hnp2 = p2;
+
+                        // insert two new plexipoints
+                        FlexiPoints.Insert(startIndex + 1, new FlexiPoint(lnp1.X, lnp1.Y));
+                        FlexiPoints.Insert(startIndex + 2, new FlexiPoint(lnp2.X, lnp2.Y));
+
+                        FlexiQuadBezier lowerQuad = new FlexiQuadBezier();
+                        lowerQuad.P0 = startIndex;
+                        lowerQuad.P1 = startIndex + 1;
+                        lowerQuad.P2 = startIndex + 2;
+
+                        FlexiQuadBezier upperQuad = new FlexiQuadBezier();
+                        upperQuad.P0 = startIndex + 2;
+
+                        upperQuad.P1 = startIndex + 3;
+                        flexiPoints[startIndex + 3].X = hnp1.X;
+                        flexiPoints[startIndex + 3].Y = hnp1.Y;
+
+                        upperQuad.P2 = startIndex + 4;
+
+                        for (int j = i + 1; j < segs.Count; j++)
+                        {
+                            segs[j].PointInserted(endIndex, 2);
+                        }
+
+                        segs[i] = lowerQuad;
+                        segs.Insert(i + 1, upperQuad);
+                        if (upperQuad.P2 == flexiPoints.Count)
+                        {
+                            upperQuad.P2 = 0;
+                        }
+                        found = true;
+                    }
+                    break;
+                }
+            }
+            return found;
+        }
+
+        public virtual bool SplitSelectedLineSegment(System.Windows.Point position)
+        {
+            bool found = false;
+            for (int i = 0; i < segs.Count; i++)
+            {
+                if (segs[i].Selected)
+                {
+                    if (segs[i] is LineSegment)
+                    {
+                        int start = segs[i].Start();
+                        int end = segs[i].End();
+                        // closing segment which goes back to 0 is a special case
+                        if (end != 0)
+                        {
+                            InsertLineSegment(start, position);
+                        }
+                        else
+                        {
+                            // add a new flexipoint at the given position
+                            FlexiPoint fx = new FlexiPoint(position.X, position.Y);
+                            flexiPoints.Add(fx);
+                            // Make the existing segment refr to this point
+                            (segs[i] as LineSegment).P1 = flexiPoints.Count - 1;
+                            segs[i].Deselect(flexiPoints);
+                            // now reclose the path to linkback up to the first path
+                            ClosePath();
+                            segs[i + 1].Select(flexiPoints);
+                        }
+                        found = true;
+                    }
+                    else
+                    {
+                        if (segs[i] is FlexiQuadBezier)
+                        {
+                            // insert a line segment between the
+                            // start point of the bezier and the clicked point
+                            int pointIndex = segs[i].Start();
+                            flexiPoints.Insert(pointIndex + 1, new FlexiPoint(position, pointIndex + 1));
+
+                            LineSegment ls = new LineSegment(pointIndex, pointIndex + 1);
+                            PointInserted(segs, i, pointIndex, 1);
+                            segs.Insert(i, ls);
+                            DeselectAll();
+
+                            // move the start point of the bezier to clicked point
+                        }
+                    }
+                    break;
+                }
+            }
+            return found;
+        }
+
+        public string ToOutline()
+        {
+            string result = "";
+            double ox;
+            double oy;
+            if (flexiPoints.Count > 1)
+            {
+                ox = flexiPoints[0].X;
+                oy = flexiPoints[0].Y;
+
+                result = $"M {ox:F3},{oy:F3} ";
+                foreach (FlexiSegment sq in segs)
+                {
+                    result += sq.ToOutline(flexiPoints);
+                }
+            }
+            return result;
         }
 
         public string ToPath(bool absolute = false)
@@ -1379,6 +1374,21 @@ namespace Barnacle.LineLib
             return res;
         }
 
+        private void CheckClip(FlexiPoint f)
+        {
+            if (clipAgainstBounds)
+            {
+                if (f.X < 0)
+                {
+                    f.X = 0;
+                }
+                if (f.Y < 0)
+                {
+                    f.Y = 0;
+                }
+            }
+        }
+
         private void CoordsFromString(string coordPart)
         {
             flexiPoints.Clear();
@@ -1417,6 +1427,14 @@ namespace Barnacle.LineLib
                     flexiPoints.Add(fp);
                 }
             }
+        }
+
+        private double Distance(PointF point1, PointF point2)
+        {
+            double diff = ((point2.X - point1.X) * (point2.X - point1.X)) +
+            ((point2.Y - point1.Y) * (point2.Y - point1.Y));
+
+            return Math.Sqrt(diff);
         }
 
         private bool GetCoord(string v, ref double x, ref double y)
@@ -1511,6 +1529,56 @@ namespace Barnacle.LineLib
                     }
                 }
             }
+        }
+
+        // Return the polygon's area in "square units." Add the areas of the trapezoids defined by
+        // the polygon's edges dropped to the X-axis. When the program considers a bottom edge of a
+        // polygon, the calculation gives a negative area so the space between the polygon and the
+        // axis is subtracted, leaving the polygon's area. This method gives odd results for
+        // non-simple polygons.
+        //
+        // The value will be negative if the polygon is oriented clockwise.
+        private float SignedPolygonArea(List<System.Drawing.PointF> fpoints)
+        {
+            // Get the areas.
+            float area = 0;
+            // Add the first point to the end.
+            int num_points = fpoints.Count - 1;
+
+            for (int i = 0; i < num_points; i++)
+            {
+                area +=
+                    (fpoints[i + 1].X - fpoints[i].X) *
+                    (fpoints[i + 1].Y + fpoints[i].Y) / 2;
+            }
+
+            // Return the result.
+            return area;
+        }
+
+        private double SignedPolygonArea(List<System.Windows.Point> fpoints)
+        {
+            // Get the areas.
+            double area = 0;
+            // Add the first point to the end.
+            int num_points = fpoints.Count - 1;
+
+            for (int i = 0; i < num_points; i++)
+            {
+                area +=
+                    (fpoints[i + 1].X - fpoints[i].X) *
+                    (fpoints[i + 1].Y + fpoints[i].Y) / 2;
+            }
+
+            // Return the result.
+            return area;
+        }
+
+        public struct Dimension
+        {
+            public double Lower;
+            public double Upper;
+            public double X;
         }
     }
 }

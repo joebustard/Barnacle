@@ -13,8 +13,15 @@ namespace Barnacle.LineLib
             P1 = p1;
         }
 
-        public int P0 { get; set; }
-        public int P1 { get; set; }
+        public int P0
+        {
+            get; set;
+        }
+
+        public int P1
+        {
+            get; set;
+        }
 
         public override void DeletePoints(ObservableCollection<FlexiPoint> points)
         {
@@ -26,7 +33,6 @@ namespace Barnacle.LineLib
             Selected = false;
             DeselectHide(P0, points);
             DeselectHide(P1, points);
-
         }
 
         public override void DisplayPoints(List<Point> res, ObservableCollection<FlexiPoint> pnts)
@@ -34,7 +40,6 @@ namespace Barnacle.LineLib
             if (P1 < pnts.Count())
             {
                 AddDisplayPoint(res, pnts[P1].X, pnts[P1].Y);
-                //  res.Add(new Point(pnts[P1].X, pnts[P1].Y));
             }
         }
 
@@ -115,8 +120,12 @@ namespace Barnacle.LineLib
         public override string ToString()
         {
             string s = "L," + P0.ToString() + "," + P1.ToString();
-
             return s;
+        }
+
+        internal override string ToOutline(ObservableCollection<FlexiPoint> flexiPoints)
+        {
+            return $"L {flexiPoints[P1].X:F3},{flexiPoints[P1].Y:F3} ";
         }
 
         internal override string ToPath(ObservableCollection<FlexiPoint> points, ref double ox, ref double oy)

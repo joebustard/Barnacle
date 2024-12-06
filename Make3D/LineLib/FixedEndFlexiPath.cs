@@ -9,43 +9,14 @@ namespace Barnacle.LineLib
 {
     public class FixedEndFlexiPath : FlexiPath
     {
+        public FlexiPoint fixedEndPoint;
+        public FlexiPoint fixedMidPoint;
         public FlexiPoint fixedStartPoint;
 
-        public FlexiPoint FixedStartPoint
+        public FixedEndFlexiPath()
         {
-            get
-            {
-                return fixedStartPoint;
-            }
-
-            set
-            {
-                if (fixedStartPoint != value)
-                {
-                    fixedStartPoint = value;
-                }
-            }
+            ClipAgainstBounds = true;
         }
-
-        public FlexiPoint fixedMidPoint;
-
-        public FlexiPoint FixedMidPoint
-        {
-            get
-            {
-                return fixedMidPoint;
-            }
-
-            set
-            {
-                if (fixedMidPoint != value)
-                {
-                    fixedMidPoint = value;
-                }
-            }
-        }
-
-        public FlexiPoint fixedEndPoint;
 
         public FlexiPoint FixedEndPoint
         {
@@ -63,12 +34,36 @@ namespace Barnacle.LineLib
             }
         }
 
-        public void SetBaseSegment(Point st, Point md, Point ed)
+        public FlexiPoint FixedMidPoint
         {
-            fixedStartPoint = new FlexiPoint(st);
-            fixedMidPoint = new FlexiPoint(md);
-            fixedEndPoint = new FlexiPoint(ed);
-            Clear();
+            get
+            {
+                return fixedMidPoint;
+            }
+
+            set
+            {
+                if (fixedMidPoint != value)
+                {
+                    fixedMidPoint = value;
+                }
+            }
+        }
+
+        public FlexiPoint FixedStartPoint
+        {
+            get
+            {
+                return fixedStartPoint;
+            }
+
+            set
+            {
+                if (fixedStartPoint != value)
+                {
+                    fixedStartPoint = value;
+                }
+            }
         }
 
         public override void Clear()
@@ -89,9 +84,17 @@ namespace Barnacle.LineLib
             }
         }
 
-        private void AddLineToFlexipoint(FlexiPoint fp)
+        public override Point MoveTo(Point position)
         {
-            AddLine(new System.Windows.Point(fp.X, fp.Y));
+            return new Point(0, 0);
+        }
+
+        public void SetBaseSegment(Point st, Point md, Point ed)
+        {
+            fixedStartPoint = new FlexiPoint(st);
+            fixedMidPoint = new FlexiPoint(md);
+            fixedEndPoint = new FlexiPoint(ed);
+            Clear();
         }
 
         // This is similar to the base version but
@@ -120,9 +123,9 @@ namespace Barnacle.LineLib
             return found;
         }
 
-        public override Point MoveTo(Point position)
+        private void AddLineToFlexipoint(FlexiPoint fp)
         {
-            return new Point(0, 0);
+            AddLine(new System.Windows.Point(fp.X, fp.Y));
         }
     }
 }

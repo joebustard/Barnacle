@@ -23,10 +23,25 @@ namespace Barnacle.LineLib
             P3 = point4;
         }
 
-        public int P0 { get; set; }
-        public int P1 { get; set; }
-        public int P2 { get; set; }
-        public int P3 { get; set; }
+        public int P0
+        {
+            get; set;
+        }
+
+        public int P1
+        {
+            get; set;
+        }
+
+        public int P2
+        {
+            get; set;
+        }
+
+        public int P3
+        {
+            get; set;
+        }
 
         public override void DeletePoints(ObservableCollection<FlexiPoint> points)
         {
@@ -42,7 +57,6 @@ namespace Barnacle.LineLib
             DeselectHide(P1, points);
             DeselectHide(P2, points);
             DeselectHide(P3, points);
-
         }
 
         public override void DisplayPoints(List<Point> res, ObservableCollection<FlexiPoint> pnts)
@@ -52,7 +66,7 @@ namespace Barnacle.LineLib
             for (double t = 0; t <= 1; t += dt)
             {
                 Point p = GetCoord(t, pnts);
-                AddDisplayPoint(res, p.X, p.Y);                
+                AddDisplayPoint(res, p.X, p.Y);
             }
             AddDisplayPoint(res, pnts[P3].X, pnts[P3].Y);
         }
@@ -192,8 +206,12 @@ namespace Barnacle.LineLib
         public override string ToString()
         {
             string s = "C," + P0.ToString() + "," + P1.ToString() + "," + P2.ToString() + "," + P3.ToString();
-
             return s;
+        }
+
+        internal override string ToOutline(ObservableCollection<FlexiPoint> flexiPoints)
+        {
+            return $"C {flexiPoints[P1].X:F03},{flexiPoints[P1].Y:F03} {flexiPoints[P2].X:F03},{flexiPoints[P2].Y:F03} {flexiPoints[P3].X:F03},{flexiPoints[P3].Y:F03}";
         }
 
         internal override string ToPath(ObservableCollection<FlexiPoint> points, ref double ox, ref double oy)

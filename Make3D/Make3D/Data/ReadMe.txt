@@ -7,12 +7,14 @@ Specify an angle between 1 and 90 for bend and fold operations. (Was previously 
 Reset parameter button on some tool dialogs that where missing.
 Defer regeneration of solid on some longer operations if the user is still editing
 Disable "save presets" on flexi path control if the same preset already exists
+Added width to squirkle
 
 Fixed
 Bicorn tool was not saving and restoring editor parameters.
 Squirkle tool was not saving and restoring editor parameters
 Plankwall tool was not setting the origin to the center of the object.
 Beziersurface was not applying presets correctly
+Tidied preset wing shapes a little
 
 Changed
 Explicitly set size of main 3dviewport when mainwindow  size changes.

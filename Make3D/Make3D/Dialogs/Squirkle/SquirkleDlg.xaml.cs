@@ -29,9 +29,10 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class SquirkleDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private double depth = 10;
-        private double length;
         private double squirkleheight;
+        private double squirklelength;
+
+        private double squirklewidth;
         private string warningText;
 
         public SquirkleDlg()
@@ -40,31 +41,8 @@ namespace Barnacle.Dialogs
             ToolName = "Squirkle";
             DataContext = this;
             squirkleheight = 10;
-            length = 10;
-        }
-
-        public double Length
-        {
-            get
-            {
-                return length;
-            }
-            set
-            {
-                if (value != length)
-                {
-                    if (value < 1.0 || squirkleheight < 1.0)
-                    {
-                        WarningText = "Length and height must be 1.0 or more";
-                    }
-                    else
-                    {
-                        length = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
+            squirklelength = 10;
+            squirklewidth = 10;
         }
 
         public double SquirkleHeight
@@ -75,9 +53,43 @@ namespace Barnacle.Dialogs
             }
             set
             {
-                if (value != squirkleheight)
+                if (value != squirkleheight && value >= 1)
                 {
                     squirkleheight = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public double SquirkleLength
+        {
+            get
+            {
+                return squirklelength;
+            }
+            set
+            {
+                if (value != squirklelength && value > 1)
+                {
+                    squirklelength = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public double SquirkleWidth
+        {
+            get
+            {
+                return squirklewidth;
+            }
+            set
+            {
+                if (value != squirklewidth && value > 1)
+                {
+                    squirklewidth = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
@@ -127,8 +139,8 @@ namespace Barnacle.Dialogs
             }
 
             int c0 = AddVertice(pnts[i].X, pnts[i].Y, 0.0);
-            int c1 = AddVertice(pnts[i].X, pnts[i].Y, depth);
-            int c2 = AddVertice(pnts[v].X, pnts[v].Y, depth);
+            int c1 = AddVertice(pnts[i].X, pnts[i].Y, squirklewidth);
+            int c2 = AddVertice(pnts[v].X, pnts[v].Y, squirklewidth);
             int c3 = AddVertice(pnts[v].X, pnts[v].Y, 0.0);
             Faces.Add(c0);
             Faces.Add(c2);
@@ -147,7 +159,7 @@ namespace Barnacle.Dialogs
             List<System.Windows.Point> tmp = new List<System.Windows.Point>();
             for (int i = 0; i < points.Count; i++)
             {
-                tmp.Add(new Point(points[i].X * length, points[i].Y * squirkleheight));
+                tmp.Add(new Point(points[i].X * squirklelength, points[i].Y * squirkleheight));
             }
             // generate side triangles so original points are already in list
             for (int i = 0; i < tmp.Count; i++)
@@ -172,9 +184,9 @@ namespace Barnacle.Dialogs
                 Faces.Add(c2);
                 Faces.Add(c1);
 
-                c0 = AddVertice(t.Points[0].X, t.Points[0].Y, depth);
-                c1 = AddVertice(t.Points[1].X, t.Points[1].Y, depth);
-                c2 = AddVertice(t.Points[2].X, t.Points[2].Y, depth);
+                c0 = AddVertice(t.Points[0].X, t.Points[0].Y, squirklewidth);
+                c1 = AddVertice(t.Points[1].X, t.Points[1].Y, squirklewidth);
+                c2 = AddVertice(t.Points[2].X, t.Points[2].Y, squirklewidth);
                 Faces.Add(c0);
                 Faces.Add(c1);
                 Faces.Add(c2);
@@ -269,7 +281,8 @@ namespace Barnacle.Dialogs
         {
             // load back the tool specific parameters
             SquirkleHeight = EditorParameters.GetDouble("SquirkleHeight", 10);
-            Length = EditorParameters.GetDouble("Length", 10);
+            SquirkleLength = EditorParameters.GetDouble("SquirkleLength", 10);
+            SquirkleWidth = EditorParameters.GetDouble("SquirkleWidth", 10);
             BottomLeftCornerShape.Mode = EditorParameters.GetInt("BottomLeftCornerShape", 0);
             TopLeftCornerShape.Mode = EditorParameters.GetInt("TopLeftCornerShape", 0);
             BottomRightCornerShape.Mode = EditorParameters.GetInt("BottomRightCornerShape", 0);
@@ -280,7 +293,8 @@ namespace Barnacle.Dialogs
         {
             // save the parameters for the tool
             EditorParameters.Set("SquirkleHeight", squirkleheight.ToString());
-            EditorParameters.Set("Length", length.ToString());
+            EditorParameters.Set("SquirkleLength", squirklelength.ToString());
+            EditorParameters.Set("SquirkleWidth", squirklewidth.ToString());
             EditorParameters.Set("BottomLeftCornerShape", BottomLeftCornerShape.Mode.ToString());
             EditorParameters.Set("TopLeftCornerShape", TopLeftCornerShape.Mode.ToString());
             EditorParameters.Set("BottomRightCornerShape", BottomRightCornerShape.Mode.ToString());

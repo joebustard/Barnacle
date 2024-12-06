@@ -21,9 +21,20 @@ namespace Barnacle.LineLib
             P2 = point3;
         }
 
-        public int P0 { get; set; }
-        public int P1 { get; set; }
-        public int P2 { get; set; }
+        public int P0
+        {
+            get; set;
+        }
+
+        public int P1
+        {
+            get; set;
+        }
+
+        public int P2
+        {
+            get; set;
+        }
 
         public override void DeletePoints(ObservableCollection<FlexiPoint> points)
         {
@@ -33,11 +44,10 @@ namespace Barnacle.LineLib
 
         public override void Deselect(ObservableCollection<FlexiPoint> points)
         {
-            Selected = false;            
+            Selected = false;
             DeselectHide(P0, points);
             DeselectHide(P1, points);
             DeselectHide(P2, points);
-
         }
 
         public override void DisplayPoints(List<Point> res, ObservableCollection<FlexiPoint> pnts)
@@ -49,7 +59,6 @@ namespace Barnacle.LineLib
             {
                 Point p = GetCoord(t, pnts);
                 AddDisplayPoint(res, p.X, p.Y);
-                //  res.Add(GetCoord(t, pnts));
             }
             AddDisplayPoint(res, pnts[P2].X, pnts[P2].Y);
         }
@@ -62,31 +71,6 @@ namespace Barnacle.LineLib
                 Point p = GetCoord(t, pnts);
                 res.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
             }
-        }
-        public double FindT(Point position, ObservableCollection<FlexiPoint> pnts)
-        {
-            double minT = Double.MaxValue;
-            double minDist = Double.MaxValue;
-
-            double dt = 0.05;
-            for (double t = 0; t <= 1; t += dt)
-            {
-                Point p = GetCoord(t, pnts);
-                double dis = Distance(position, p);
-                if ( dis < minDist)
-                {
-                    minDist = dis;
-                    minT = t;
-                }
-            }
-
-            return minT;
-        }
-
-        private double Distance(Point p1, Point p2)
-        {
-            return Math.Sqrt((p1.X - p2.X) * (p1.X - p2.X) +
-                               (p1.Y - p2.Y) * (p1.Y - p2.Y) );
         }
 
         public override double DistToPoint(Point position, ObservableCollection<FlexiPoint> points)
@@ -114,6 +98,26 @@ namespace Barnacle.LineLib
         public override int End()
         {
             return P2;
+        }
+
+        public double FindT(Point position, ObservableCollection<FlexiPoint> pnts)
+        {
+            double minT = Double.MaxValue;
+            double minDist = Double.MaxValue;
+
+            double dt = 0.05;
+            for (double t = 0; t <= 1; t += dt)
+            {
+                Point p = GetCoord(t, pnts);
+                double dis = Distance(position, p);
+                if (dis < minDist)
+                {
+                    minDist = dis;
+                    minT = t;
+                }
+            }
+
+            return minT;
         }
 
         public Point GetCoord(double t, ObservableCollection<FlexiPoint> points)
@@ -203,6 +207,11 @@ namespace Barnacle.LineLib
             return s;
         }
 
+        internal override string ToOutline(ObservableCollection<FlexiPoint> flexiPoints)
+        {
+            return $"Q {flexiPoints[P1].X:F03},{flexiPoints[P1].Y:F03} {flexiPoints[P2].X:F03},{flexiPoints[P2].Y:F03}  ";
+        }
+
         internal override string ToPath(ObservableCollection<FlexiPoint> points, ref double ox, ref double oy)
         {
             string res = "";
@@ -211,6 +220,12 @@ namespace Barnacle.LineLib
             ox = points[P2].X;
             oy = points[P2].Y;
             return res;
+        }
+
+        private double Distance(Point p1, Point p2)
+        {
+            return Math.Sqrt((p1.X - p2.X) * (p1.X - p2.X) +
+                               (p1.Y - p2.Y) * (p1.Y - p2.Y));
         }
     }
 }
