@@ -14,6 +14,7 @@
     Loaded="Window_Loaded"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
+
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -41,7 +42,7 @@
 
             <Grid.RowDefinitions>
                 <RowDefinition />
-                <RowDefinition Height="25" />
+                <RowDefinition Height="55" />
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
             <u:ObjectView x:Name="Viewer" Grid.Row="0" />
@@ -52,6 +53,7 @@
                 <Label Width="75" VerticalAlignment="Center">Width</Label>
                 <TextBox
                     Width="50"
+                    Height="25"
                     Margin="8,2,0,0"
                     Text="{Binding LoftHeight}"
                     ToolTip="{Binding LoftHeightToolTip}" />
@@ -59,31 +61,48 @@
                     Margin="8,0,0,0"
                     VerticalAlignment="Center"
                     Content="Profile" />
-                <RadioButton
-                    Margin="8,2,0,0"
-                    VerticalAlignment="Center"
-                    Content="UBeam"
-                    GroupName="ShapeGroup"
-                    IsChecked="{Binding UShape}" />
-
-                <RadioButton
-                    Margin="8,2,0,0"
-                    VerticalAlignment="Center"
-                    Content="Flat"
-                    GroupName="ShapeGroup"
-                    IsChecked="{Binding FlatShape}" />
-                <RadioButton
-                    Margin="8,2,0,0"
-                    VerticalAlignment="Center"
-                    Content="Round"
-                    GroupName="ShapeGroup"
-                    IsChecked="{Binding RoundShape}" />
-                <RadioButton
-                    Margin="8,2,0,0"
-                    VerticalAlignment="Center"
-                    Content="Square"
-                    GroupName="ShapeGroup"
-                    IsChecked="{Binding SquareShape}" />
+                <ListBox
+                    Name="ProfileNamesBox"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    BorderThickness="2"
+                    Margin="8,0,0,0"
+                    ItemsSource="{Binding ProfileNames}"
+                    SelectionMode="Single"
+                    SelectedIndex="{Binding ProfileIndex}">
+                    <!--  changing default orientation  -->
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type local:NameOfProfile}">
+                            <Border BorderThickness="4">
+                                <Image
+                                Width="30"
+                                Height="30"
+                                Margin="4,0,2,0"
+                                Source="{Binding Path=ImageUri}" Stretch="UniformToFill"
+                                ToolTip="{Binding Name}" />
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Opacity" Value="0.25" />
+                                        <Setter Property="BorderBrush" Value="AliceBlue" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=IsSelected,
+                                                           RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                         Value="True">
+                                                <Setter Property="Opacity" Value="1" />
+                                                <Setter Property="BorderBrush" Value="DarkGreen" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </StackPanel>
             <StackPanel
                 Grid.Row="2"

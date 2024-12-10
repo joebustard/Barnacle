@@ -1362,6 +1362,15 @@
     <Resource Include="Data\Textures\VerticalPanel.png" />
     <Resource Include="Images\Buttons\ShallowUBeam.png" />
     <Resource Include="Images\Buttons\MidUBeam.png" />
+    <Resource Include="Images\Staircase.png" />
+    <Resource Include="Images\Buttons\Staircase.png" />
+    <Resource Include="Images\Buttons\Squiggle.png" />
+    <Resource Include="Images\Buttons\FlatProfile.png" />
+    <Resource Include="Images\Buttons\RoundProfile.png" />
+    <Resource Include="Images\Buttons\SquareProfile.png" />
+    <Resource Include="Images\Buttons\UBeamProfile.png" />
+    <Resource Include="Images\Buttons\Wedge2Profile.png" />
+    <Resource Include="Images\Buttons\WedgeProfile.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

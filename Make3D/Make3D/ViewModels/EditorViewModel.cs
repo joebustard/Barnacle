@@ -54,6 +54,14 @@ namespace Barnacle.ViewModels
     internal class EditorViewModel : BaseViewModel, INotifyPropertyChanged
     {
         private const string cameraRecordFile = "camerapos.txt";
+
+        private static readonly PrimitiveScaleStruct[] rescales = new[]
+        {
+        new PrimitiveScaleStruct {primName="squiggle",length=20,height=5,width=20},
+        new PrimitiveScaleStruct {primName="star6",length=20,height=5,width=17.5},
+        new PrimitiveScaleStruct {primName="egg",length=20,height=25,width=20},
+        };
+
         private static CancellationTokenSource csgCancelation;
 
         // some of the primitives need to be rotated when they are first created so they match the
@@ -3090,16 +3098,7 @@ namespace Barnacle.ViewModels
                 else
                 {
                     obj.BuildPrimitive(obType);
-                    if (obType == "star6")
-                    {
-                        obj.ScaleMesh(20.0, 5, 17.5);
-                    }
-                    else
-                    if (obType == "egg")
-                    {
-                        obj.ScaleMesh(20, 25, 20);
-                    }
-                    else
+                    if (!Prescale(obj, obType))
                     {
                         obj.ScaleMesh(20.0, 20.0, 20.0);
                     }
@@ -4577,6 +4576,19 @@ namespace Barnacle.ViewModels
             NotificationManager.Notify("ObjectNamesChanged", null);
         }
 
+        private bool Prescale(Object3D obj, string obType)
+        {
+            foreach (PrimitiveScaleStruct str in rescales)
+            {
+                if (str.primName == obType)
+                {
+                    obj.ScaleMesh(str.length, str.height, str.width);
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private void RecalculateAllBounds()
         {
             allBounds = new Bounds3D();
@@ -5514,6 +5526,14 @@ namespace Barnacle.ViewModels
         {
             double d = (double)param;
             keyrotationz = d;
+        }
+
+        public struct PrimitiveScaleStruct
+        {
+            public double height;
+            public double length;
+            public String primName;
+            public double width;
         }
     }
 }

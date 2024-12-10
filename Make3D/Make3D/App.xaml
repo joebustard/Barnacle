@@ -10,6 +10,11 @@
         <SolidColorBrush x:Key="ControlBackBrush" Color="AliceBlue" />
         <SolidColorBrush x:Key="WindowBackBrush" Color="AliceBlue" />
         <SolidColorBrush x:Key="WarningColour" Color="OrangeRed" />
+        <SolidColorBrush x:Key="SelectedBorderColour"
+        Color="DarkGreen" />
+        <!-- Control the background colour of the icons on the primitives palette -->
+        <SolidColorBrush x:Key="PrimitiveButtonBackgroundColour" Color="AliceBlue" />
+
         <Style x:Key="GridSplitterStyle" TargetType="GridSplitter">
             <Setter Property="Background" Value="{StaticResource ControlBackBrush}" />
             <Setter Property="Width" Value="10" />
@@ -246,6 +251,60 @@
                     <ControlTemplate TargetType="Button">
                         <Border
                             Background="White"
+                            BorderBrush="#ccc"
+                            BorderThickness="0,2,2,0"
+                            CornerRadius="{TemplateBinding Border.CornerRadius}">
+                            <ContentPresenter
+                                x:Name="contentPresenter"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}" />
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Button.IsDefaulted" Value="True">
+                                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FFBEE6FD" />
+                                <Setter Property="BorderBrush" Value="#FF3C7FB1" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#FFC4E5F6" />
+                                <Setter Property="BorderBrush" Value="#FF2C628B" />
+                            </Trigger>
+
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#FFF4F4F4" />
+                                <Setter Property="BorderBrush" Value="#FFADB2B5" />
+                                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="Red" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="PrimitiveImageButton" TargetType="Button">
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="Margin" Value="0,0,2,2" />
+            <Setter Property="Button.Effect">
+                <Setter.Value>
+                    <DropShadowEffect
+                        BlurRadius="5"
+                        Direction="320"
+                        Opacity="0.5"
+                        ShadowDepth="3"
+                        Color="Black" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            Background="{StaticResource PrimitiveButtonBackgroundColour}"
                             BorderBrush="#ccc"
                             BorderThickness="0,2,2,0"
                             CornerRadius="{TemplateBinding Border.CornerRadius}">

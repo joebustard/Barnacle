@@ -58,7 +58,10 @@ namespace Barnacle.Object3DLib
 
         public String PrimName
         {
-            get { return primName; }
+            get
+            {
+                return primName;
+            }
             set
             {
                 if (value != primName)
@@ -71,7 +74,10 @@ namespace Barnacle.Object3DLib
 
         public String STLPath
         {
-            get { return stlPath; }
+            get
+            {
+                return stlPath;
+            }
             set
             {
                 if (stlPath != value)
@@ -134,6 +140,10 @@ namespace Barnacle.Object3DLib
                 {
                     MessageBox.Show(ex.Message);
                 }
+            }
+            else
+            {
+                MessageBox.Show("Failed to load STL");
             }
         }
 

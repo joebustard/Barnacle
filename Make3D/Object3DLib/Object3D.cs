@@ -90,10 +90,12 @@ namespace Barnacle.Object3DLib
             new PrimTableEntry( "trispike",PrimitiveGenerator.GenerateTriSpike, Colors.CadetBlue),
             new PrimTableEntry( "tube",PrimitiveGenerator.GenerateTube, Colors.Magenta),
             new PrimTableEntry( "xbar",PrimitiveGenerator.GenerateXBar,Colors.IndianRed),
-             new PrimTableEntry( "ubeam",PrimitiveGenerator.GenerateUBeam,Colors.LightSteelBlue),
-             new PrimTableEntry( "boxframe",PrimitiveGenerator.GenerateBoxFrame,Colors.SteelBlue),
-             new PrimTableEntry( "shallowubeam",PrimitiveGenerator.GenerateShallowUBeam,Colors.MediumOrchid),
-             new PrimTableEntry( "midubeam",PrimitiveGenerator.GenerateMidUBeam,Colors.Coral),
+            new PrimTableEntry( "ubeam",PrimitiveGenerator.GenerateUBeam,Colors.LightSteelBlue),
+            new PrimTableEntry( "boxframe",PrimitiveGenerator.GenerateBoxFrame,Colors.SteelBlue),
+            new PrimTableEntry( "shallowubeam",PrimitiveGenerator.GenerateShallowUBeam,Colors.MediumOrchid),
+            new PrimTableEntry( "midubeam",PrimitiveGenerator.GenerateMidUBeam,Colors.Coral),
+            new PrimTableEntry( "staircase",PrimitiveGenerator.GenerateStaircase,Colors.PaleTurquoise),
+            new PrimTableEntry( "squiggle",PrimitiveGenerator.GenerateSquiggle,Colors.DodgerBlue),
         };
 
         protected Bounds3D absoluteBounds;
@@ -150,19 +152,37 @@ namespace Barnacle.Object3DLib
 
         public Bounds3D AbsoluteBounds
         {
-            get { return absoluteBounds; }
-            set { absoluteBounds = value; }
+            get
+            {
+                return absoluteBounds;
+            }
+            set
+            {
+                absoluteBounds = value;
+            }
         }
 
         public Point3DCollection AbsoluteObjectVertices
         {
-            get { return absoluteObjectVertices; }
-            set { absoluteObjectVertices = value; }
+            get
+            {
+                return absoluteObjectVertices;
+            }
+            set
+            {
+                absoluteObjectVertices = value;
+            }
         }
 
-        public Color Color { get; set; }
+        public Color Color
+        {
+            get; set;
+        }
 
-        public string Description { get; set; }
+        public string Description
+        {
+            get; set;
+        }
 
         public EditorParameters EditorParameters
         {
@@ -176,7 +196,10 @@ namespace Barnacle.Object3DLib
             }
         }
 
-        public bool Exportable { get; set; }
+        public bool Exportable
+        {
+            get; set;
+        }
 
         public List<int> Indices
         {
@@ -190,7 +213,10 @@ namespace Barnacle.Object3DLib
             }
         }
 
-        public bool LockAspectRatio { get; set; }
+        public bool LockAspectRatio
+        {
+            get; set;
+        }
 
         public MeshGeometry3D Mesh
         {
@@ -207,12 +233,21 @@ namespace Barnacle.Object3DLib
             }
         }
 
-        public string Name { get; set; }
+        public string Name
+        {
+            get; set;
+        }
 
         public Vector3DCollection Normals
         {
-            get { return normals; }
-            set { normals = value; }
+            get
+            {
+                return normals;
+            }
+            set
+            {
+                normals = value;
+            }
         }
 
         public Point3D Position
@@ -232,12 +267,21 @@ namespace Barnacle.Object3DLib
             }
         }
 
-        public string PrimType { get => primType; set => primType = value; }
+        public string PrimType
+        {
+            get => primType; set => primType = value;
+        }
 
         public List<P3D> RelativeObjectVertices
         {
-            get { return relativeObjectVertices; }
-            set { relativeObjectVertices = value; }
+            get
+            {
+                return relativeObjectVertices;
+            }
+            set
+            {
+                relativeObjectVertices = value;
+            }
         }
 
         public Point3D Rotation
@@ -258,7 +302,10 @@ namespace Barnacle.Object3DLib
 
         public Transform3DGroup RotationTransformation
         {
-            get { return rotTransformation; }
+            get
+            {
+                return rotTransformation;
+            }
             set
             {
                 rotTransformation = value;
@@ -295,11 +342,20 @@ namespace Barnacle.Object3DLib
 
         public Int32Collection TriangleIndices
         {
-            get { return triangleIndices; }
-            set { triangleIndices = value; }
+            get
+            {
+                return triangleIndices;
+            }
+            set
+            {
+                triangleIndices = value;
+            }
         }
 
-        protected String XmlType { get; set; }
+        protected String XmlType
+        {
+            get; set;
+        }
 
         public static XmlElement FindExternalModel(string name, string path)
         {

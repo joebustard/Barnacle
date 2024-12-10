@@ -264,6 +264,7 @@ namespace Barnacle.Dialogs
 
         private async void GenerateShape()
         {
+            DateTime start = DateTime.Now;
             ClearShape();
             if (plagueThickness > 0 && !String.IsNullOrEmpty(plaqueImagePath))
             {
@@ -274,6 +275,8 @@ namespace Barnacle.Dialogs
                 CentreVertices();
                 NotBusy();
             }
+            TimeSpan duration = DateTime.Now - start;
+            Log($"imageplaque duration {duration.TotalSeconds}");
         }
 
         private void LoadEditorParameters()

@@ -34,15 +34,15 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="Box"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
-                ToolTip="Add a box object">
+                Style="{StaticResource PrimitiveImageButton}"
+                ToolTip="Add a cube object">
                 <Image Source="/Barnacle;component/Images/Buttons/Square.png" />
             </Button>
             <Button
                 Command="{Binding AddCommand}"
                 CommandParameter="Sphere"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a sphere object">
                 <Image Source="/Barnacle;component/Images/Buttons/Circle.png" />
             </Button>
@@ -50,7 +50,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="Cylinder"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a cylinder object">
                 <Image Source="/Barnacle;component/Images/Buttons/Cylinder.png" />
             </Button>
@@ -58,7 +58,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="Roof"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a roof object">
                 <Image Source="/Barnacle;component/Images/Buttons/Roof.png" />
             </Button>
@@ -66,7 +66,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="Cone"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a cone object">
                 <Image Source="/Barnacle;component/Images/Buttons/Cone.png" />
             </Button>
@@ -74,7 +74,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="Pyramid"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a pyramid with a square base">
                 <Image Source="/Barnacle;component/Images/Buttons/Pyramid.png" />
             </Button>
@@ -82,7 +82,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="RoundRoof"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a round roof object">
                 <Image Source="/Barnacle;component/Images/Buttons/RoundRoof.png" />
             </Button>
@@ -90,7 +90,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="Trispike"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a tri-spike object">
                 <Image Source="/Barnacle;component/Images/Buttons/Trispike.png" />
             </Button>
@@ -98,7 +98,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="Cap"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a cap object">
                 <Image Source="/Barnacle;component/Images/Buttons/Cap.png" />
             </Button>
@@ -106,7 +106,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="Polygon"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a polygon object">
                 <Image Source="/Barnacle;component/Images/Buttons/Polygon.png" />
             </Button>
@@ -115,7 +115,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="RightAngle"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a right angle object">
                 <Image Source="/Barnacle;component/Images/Buttons/RightAngle.png" />
             </Button>
@@ -123,7 +123,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="Pointy"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a  pointy object">
                 <Image Source="/Barnacle;component/Images/Buttons/Pointy.png" />
             </Button>
@@ -131,7 +131,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="IBar"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add an ibar object">
                 <Image Source="/Barnacle;component/Images/Buttons/IBar.png" />
             </Button>
@@ -140,7 +140,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="XBar"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add an xbar object">
                 <Image Source="/Barnacle;component/Images/Buttons/XBar.png" />
             </Button>
@@ -148,7 +148,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="UBeam"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a U beam object">
                 <Image Source="/Barnacle;component/Images/Buttons/UBeam.png" />
             </Button>
@@ -156,7 +156,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="MidUBeam"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a Mid U beam object">
                 <Image Source="/Barnacle;component/Images/Buttons/MidUBeam.png" />
             </Button>
@@ -164,7 +164,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="ShallowUBeam"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a Shallow U beam object">
                 <Image Source="/Barnacle;component/Images/Buttons/ShallowUBeam.png" />
             </Button>
@@ -172,7 +172,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="Pyramid2"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a pyramid with a triangular base">
                 <Image Source="/Barnacle;component/Images/Buttons/Pyramid2.png" />
             </Button>
@@ -180,7 +180,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="Octahedron"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add an Octahedron">
                 <Image Source="/Barnacle;component/Images/Buttons/Tetroid.png" />
             </Button>
@@ -188,7 +188,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="ButtonTop"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a button top">
                 <Image Source="/Barnacle;component/Images/Buttons/ButtonTop.png" />
             </Button>
@@ -196,7 +196,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="Star6"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a six point star">
                 <Image Source="/Barnacle;component/Images/Buttons/Star6.png" />
             </Button>
@@ -204,7 +204,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="HexCone"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a hex cone">
                 <Image Source="/Barnacle;component/Images/Buttons/HexCone.png" />
             </Button>
@@ -212,7 +212,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="Dice"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a dice">
                 <Image Source="/Barnacle;component/Images/Buttons/Dice.png" />
             </Button>
@@ -221,7 +221,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="Egg"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add an egg object">
                 <Image Source="/Barnacle;component/Images/Buttons/Egg.png" />
             </Button>
@@ -229,7 +229,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="Tube"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a tube object">
                 <Image Source="/Barnacle;component/Images/Buttons/Tube.png" />
             </Button>
@@ -238,7 +238,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="stellatedodec"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a Stellate Dodecahedron">
                 <Image Source="/Barnacle;component/Images/Buttons/StellateDodec.png" />
             </Button>
@@ -246,7 +246,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="stellateocto"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a Stellate Octahedron">
                 <Image Source="/Barnacle;component/Images/Buttons/StellateOcto.png" />
             </Button>
@@ -254,7 +254,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="BoxFrame"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a box frame object">
                 <Image Source="/Barnacle;component/Images/Buttons/BoxFrame.png" />
             </Button>
@@ -262,7 +262,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="Torus"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a torus object">
                 <Image Source="/Barnacle;component/Images/Buttons/Torus.png" />
             </Button>
@@ -270,7 +270,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="TriangleCell"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a hollow Triangle">
                 <Image Source="/Barnacle;component/Images/Buttons/TriangleCell.png" />
             </Button>
@@ -278,7 +278,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="BoxCell"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a hollow Cube">
                 <Image Source="/Barnacle;component/Images/Buttons/BoxCell.png" />
             </Button>
@@ -286,7 +286,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="PentagonCell"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a hollow Pentagon">
                 <Image Source="/Barnacle;component/Images/Buttons/PentagonCell.png" />
             </Button>
@@ -294,7 +294,7 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="HexagonCell"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a hollow Hexagon">
                 <Image Source="/Barnacle;component/Images/Buttons/HexagonCell.png" />
             </Button>
@@ -302,9 +302,25 @@
                 Command="{Binding AddCommand}"
                 CommandParameter="OctagonCell"
                 IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource ImageButton}"
+                Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a hollow Octagon">
                 <Image Source="/Barnacle;component/Images/Buttons/OctagonCell.png" />
+            </Button>
+            <Button
+                Command="{Binding AddCommand}"
+                CommandParameter="Staircase"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource PrimitiveImageButton}"
+                ToolTip="Add a staircase">
+                <Image Source="/Barnacle;component/Images/Buttons/Staircase.png" />
+            </Button>
+            <Button
+                Command="{Binding AddCommand}"
+                CommandParameter="Squiggle"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource PrimitiveImageButton}"
+                ToolTip="Add a corrigation">
+                <Image Source="/Barnacle;component/Images/Buttons/Squiggle.png" />
             </Button>
         </UniformGrid>
     </Grid>

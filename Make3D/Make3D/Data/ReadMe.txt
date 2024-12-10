@@ -1,4 +1,17 @@
-﻿v1.0.8
+﻿v1.0.9
+===========
+Added
+Added setlength(), setheight() and set width() to the standard limpet library
+Two more primitives, staircase and squiggle
+
+Fixed
+
+Changed
+
+
+
+
+v1.0.8
 ===========
 Added
 F12 key to record current camera position, shift F12 to restore it.

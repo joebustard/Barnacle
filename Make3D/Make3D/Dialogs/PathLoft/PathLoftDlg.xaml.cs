@@ -21,6 +21,7 @@ using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media.Media3D;
 using static Barnacle.Models.BufferedPolyline.BufferedPolyline;
@@ -28,6 +29,53 @@ using Triangle = PolygonTriangulationLib.Triangle;
 
 namespace Barnacle.Dialogs
 {
+    public class NameOfProfile : INotifyPropertyChanged
+    {
+        private bool isSelected;
+
+        public NameOfProfile(string n, string u)
+        {
+            Name = n;
+            ImageUri = new Uri(@"pack://application:,,,/Images/Buttons/" + u);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Uri ImageUri
+        {
+            get; set;
+        }
+
+        public bool IsSelected
+        {
+            get
+            {
+                return isSelected;
+            }
+            set
+            {
+                if (value != isSelected)
+                {
+                    isSelected = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public string Name
+        {
+            get; set;
+        }
+
+        public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+
     /// <summary>
     /// Interaction logic for PathLoft.xaml
     /// </summary>
@@ -46,11 +94,9 @@ namespace Barnacle.Dialogs
         private double loftThickness;
         private OctTree octTree;
         private List<Point> pathPoints;
-        private bool roundShape;
-        private bool squareShape;
-
+        private int profileIndex;
+        private List<NameOfProfile> profileNames;
         private Visibility ubeamVisibility;
-        private bool uShape;
         private string warningText;
         private double xExtent;
         private double yExtent;
@@ -68,6 +114,24 @@ namespace Barnacle.Dialogs
             PathEditor.HasPresets = false;
             PathEditor.ShowAppend = true;
             PathEditor.ContinuousPointsNotify = true;
+            profileNames = new List<NameOfProfile>();
+            profileNames.Add(new NameOfProfile("Flat", "FlatProfile.png"));
+            profileNames.Add(new NameOfProfile("Round", "RoundProfile.png"));
+            profileNames.Add(new NameOfProfile("Square", "SquareProfile.png"));
+            profileNames.Add(new NameOfProfile("UBeam", "UBeamProfile.png"));
+            profileNames.Add(new NameOfProfile("Wedge", "WedgeProfile.png"));
+            profileNames.Add(new NameOfProfile("Wedge2", "Wedge2Profile.png"));
+            profileNames[0].IsSelected = true;
+        }
+
+        private enum ProfileIndices
+        {
+            FlatProfile,
+            RoundProfile,
+            SquareProfile,
+            UBeamProfile,
+            WedgeProfile,
+            WedgeProfile2
         }
 
         public double BaseThickness
@@ -95,24 +159,6 @@ namespace Barnacle.Dialogs
             get
             {
                 return $"BaseThickness must be in the range {minBaseThickness} to Loft Thickness";
-            }
-        }
-
-        public bool FlatShape
-        {
-            get
-            {
-                return flatShape;
-            }
-
-            set
-            {
-                if (value != flatShape)
-                {
-                    flatShape = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
             }
         }
 
@@ -175,39 +221,36 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public bool RoundShape
+        public int ProfileIndex
         {
             get
             {
-                return roundShape;
+                return profileIndex;
             }
-
             set
             {
-                if (value != roundShape)
+                if (value != profileIndex)
                 {
-                    roundShape = value;
+                    profileIndex = value;
                     NotifyPropertyChanged();
+                    if (profileIndex == (int)ProfileIndices.UBeamProfile)
+                    {
+                        UBeamVisibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        UBeamVisibility = Visibility.Hidden;
+                    }
                     UpdateDisplay();
                 }
             }
         }
 
-        public bool SquareShape
+        public List<NameOfProfile> ProfileNames
         {
             get
             {
-                return squareShape;
-            }
-
-            set
-            {
-                if (value != squareShape)
-                {
-                    squareShape = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
+                return profileNames;
             }
         }
 
@@ -223,32 +266,6 @@ namespace Barnacle.Dialogs
                 {
                     ubeamVisibility = value;
                     NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public bool UShape
-        {
-            get
-            {
-                return uShape;
-            }
-
-            set
-            {
-                if (value != uShape)
-                {
-                    uShape = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                    if (uShape)
-                    {
-                        UBeamVisibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        UBeamVisibility = Visibility.Hidden;
-                    }
                 }
             }
         }
@@ -339,6 +356,101 @@ namespace Barnacle.Dialogs
             Faces.Add(c2);
         }
 
+        private void CreateSolidFromProfile(int numProfilePoints, double lx, double rx, double ty, double by, double bz, double fz, List<CurvePoint> curvePoints, Point3D[,] surface)
+        {
+            octTree = CreateOctree(new Point3D(lx - 10, by - 10, bz - 10),
+                                   new Point3D(rx + 10, ty + 10, fz + 10));
+
+            for (int i = 0; i < curvePoints.Count - 1; i++)
+            {
+                for (int j = 0; j < numProfilePoints; j++)
+                {
+                    int k = j + 1;
+                    if (k == numProfilePoints)
+                    {
+                        k = 0;
+                    }
+
+                    int p0 = AddVerticeOctTree(surface[i, j].X, ty - surface[i, j].Y, surface[i, j].Z);
+                    int p1 = AddVerticeOctTree(surface[i + 1, j].X, ty - surface[i + 1, j].Y, surface[i + 1, j].Z);
+                    int p2 = AddVerticeOctTree(surface[i, k].X, ty - surface[i, k].Y, surface[i, k].Z);
+                    int p3 = AddVerticeOctTree(surface[i + 1, k].X, ty - surface[i + 1, k].Y, surface[i + 1, k].Z);
+
+                    Faces.Add(p0);
+                    Faces.Add(p1);
+                    Faces.Add(p2);
+
+                    Faces.Add(p1);
+                    Faces.Add(p3);
+                    Faces.Add(p2);
+                }
+            }
+
+            // close start
+            int cp = AddVerticeOctTree(curvePoints[0].point.X, ty - curvePoints[0].point.Y, 0);
+            for (int j = 0; j < numProfilePoints; j++)
+            {
+                int k = j + 1;
+                if (k == numProfilePoints)
+                {
+                    k = 0;
+                }
+
+                int p1 = AddVerticeOctTree(surface[0, j].X, ty - surface[0, j].Y, surface[0, j].Z);
+                int p2 = AddVerticeOctTree(surface[0, k].X, ty - surface[0, k].Y, surface[0, k].Z);
+
+                Faces.Add(cp);
+                Faces.Add(p1);
+                Faces.Add(p2);
+            }
+
+            // close end
+            int last = curvePoints.Count - 1;
+            cp = AddVerticeOctTree(curvePoints[last].point.X, ty - curvePoints[last].point.Y, 0);
+            for (int j = 0; j < numProfilePoints; j++)
+            {
+                int k = j + 1;
+                if (k == numProfilePoints)
+                {
+                    k = 0;
+                }
+
+                int p1 = AddVerticeOctTree(surface[last, j].X, ty - surface[last, j].Y, surface[last, j].Z);
+                int p2 = AddVerticeOctTree(surface[last, k].X, ty - surface[last, k].Y, surface[last, k].Z);
+
+                Faces.Add(cp);
+                Faces.Add(p2);
+                Faces.Add(p1);
+            }
+        }
+
+        private Point3D[,] CreateSurfaceFromProfile(List<CurvePoint> curvePoints, List<Point3D> profile, ref double lx, ref double rx, ref double ty, ref double by, ref double bz, ref double fz)
+        {
+            int numProfilePoints = profile.Count;
+            Point3D[,] surface = new Point3D[curvePoints.Count, numProfilePoints];
+            for (int i = 0; i < curvePoints.Count; i++)
+            {
+                double rotation = curvePoints[i].angle;
+                List<Point3D> tmp = RotatePoints(profile, 0, rotation, 0);
+                for (int j = 0; j < numProfilePoints; j++)
+                {
+                    Point3D pn = tmp[j];
+                    pn.X += curvePoints[i].point.X;
+                    pn.Y += curvePoints[i].point.Y;
+
+                    surface[i, j] = pn;
+                    if (pn.X < lx) lx = pn.X;
+                    if (pn.X > rx) rx = pn.X;
+                    if (pn.Y < by) by = pn.Y;
+                    if (pn.Y > ty) ty = pn.Y;
+                    if (pn.Z < bz) bz = pn.Z;
+                    if (pn.Z > fz) fz = pn.Z;
+                }
+            }
+
+            return surface;
+        }
+
         private void CreateTubeInnerSideFace(List<System.Windows.Point> pnts, int i, double baseHeight)
         {
             int v = i + 1;
@@ -359,6 +471,21 @@ namespace Barnacle.Dialogs
             Faces.Add(c0);
             Faces.Add(c2);
             Faces.Add(c3);
+        }
+
+        private List<Point3D> GenerateCircularProfile(int numProfilePoints, BufferedPolyline bl)
+        {
+            List<Point3D> profile = new List<Point3D>();
+            double dt = (2 * Math.PI) / numProfilePoints;
+            double theta = 0;
+            for (int i = 0; i < numProfilePoints; i++)
+            {
+                Point p = CalcPoint(theta, bl.BufferRadius);
+                profile.Add(new Point3D(0, p.Y, p.X));
+                theta += dt;
+            }
+
+            return profile;
         }
 
         private void GenerateFlat()
@@ -422,113 +549,24 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void GenerateRound(int numCircumferencePoints)
+        private void GenerateRound(int numProfilePoints)
         {
-            BufferedPolyline bl = new BufferedPolyline(pathPoints);
-            bl.BufferRadius = loftThickness / 2;
-            List<CurvePoint> curvePoints = bl.GenerateBufferCurvePoints();
-            bl.BufferRadius = loftThickness / 2;
+            double lx, rx, ty, by, bz, fz;
+            lx = by = bz = double.MaxValue;
+            rx = ty = fz = double.MinValue;
+            BufferedPolyline bl = null;
+            List<CurvePoint> curvePoints = null;
+            GetBufferedPolyLine(out bl, out curvePoints);
             if (curvePoints != null && curvePoints.Count > 1)
             {
-                List<Point3D> circumference = new List<Point3D>();
-                double dt = (2 * Math.PI) / numCircumferencePoints;
-                double theta = 0;
-                for (int i = 0; i < numCircumferencePoints; i++)
+                List<Point3D> profile = GenerateCircularProfile(numProfilePoints, bl);
+
+                Point3D[,] surface = CreateSurfaceFromProfile(curvePoints, profile, ref lx, ref rx, ref ty, ref by, ref bz, ref fz);
+                if (surface != null)
                 {
-                    Point p = CalcPoint(theta, bl.BufferRadius);
-                    circumference.Add(new Point3D(0, p.Y, p.X));
-                    theta += dt;
+                    CreateSolidFromProfile(numProfilePoints, lx, rx, ty, by, bz, fz, curvePoints, surface);
+                    CentreVertices();
                 }
-                double lx, rx, ty, by, bz, fz;
-                lx = by = bz = double.MaxValue;
-                rx = ty = fz = double.MinValue;
-
-                Point3D[,] surface = new Point3D[curvePoints.Count, numCircumferencePoints];
-                for (int i = 0; i < curvePoints.Count; i++)
-                {
-                    double rotation = curvePoints[i].angle;
-                    List<Point3D> tmp = RotatePoints(circumference, 0, rotation, 0);
-                    for (int j = 0; j < numCircumferencePoints; j++)
-                    {
-                        Point3D pn = tmp[j];
-                        pn.X += curvePoints[i].point.X;
-                        pn.Y += curvePoints[i].point.Y;
-
-                        surface[i, j] = pn;
-                        if (pn.X < lx) lx = pn.X;
-                        if (pn.X > rx) rx = pn.X;
-                        if (pn.Y < by) by = pn.Y;
-                        if (pn.Y > ty) ty = pn.Y;
-                        if (pn.Z < bz) bz = pn.Z;
-                        if (pn.Z > fz) fz = pn.Z;
-                    }
-                }
-
-                octTree = CreateOctree(new Point3D(lx - 10, by - 10, bz - 10),
-                                       new Point3D(rx + 10, ty + 10, fz + 10));
-
-                for (int i = 0; i < curvePoints.Count - 1; i++)
-                {
-                    for (int j = 0; j < numCircumferencePoints; j++)
-                    {
-                        int k = j + 1;
-                        if (k == numCircumferencePoints)
-                        {
-                            k = 0;
-                        }
-
-                        int p0 = AddVerticeOctTree(surface[i, j].X, ty - surface[i, j].Y, surface[i, j].Z);
-                        int p1 = AddVerticeOctTree(surface[i + 1, j].X, ty - surface[i + 1, j].Y, surface[i + 1, j].Z);
-                        int p2 = AddVerticeOctTree(surface[i, k].X, ty - surface[i, k].Y, surface[i, k].Z);
-                        int p3 = AddVerticeOctTree(surface[i + 1, k].X, ty - surface[i + 1, k].Y, surface[i + 1, k].Z);
-
-                        Faces.Add(p0);
-                        Faces.Add(p1);
-                        Faces.Add(p2);
-
-                        Faces.Add(p1);
-                        Faces.Add(p3);
-                        Faces.Add(p2);
-                    }
-                }
-
-                // close start
-                int cp = AddVerticeOctTree(curvePoints[0].point.X, ty - curvePoints[0].point.Y, 0);
-                for (int j = 0; j < numCircumferencePoints; j++)
-                {
-                    int k = j + 1;
-                    if (k == numCircumferencePoints)
-                    {
-                        k = 0;
-                    }
-
-                    int p1 = AddVerticeOctTree(surface[0, j].X, ty - surface[0, j].Y, surface[0, j].Z);
-                    int p2 = AddVerticeOctTree(surface[0, k].X, ty - surface[0, k].Y, surface[0, k].Z);
-
-                    Faces.Add(cp);
-                    Faces.Add(p1);
-                    Faces.Add(p2);
-                }
-
-                // close end
-                int last = curvePoints.Count - 1;
-                cp = AddVerticeOctTree(curvePoints[last].point.X, ty - curvePoints[last].point.Y, 0);
-                for (int j = 0; j < numCircumferencePoints; j++)
-                {
-                    int k = j + 1;
-                    if (k == numCircumferencePoints)
-                    {
-                        k = 0;
-                    }
-
-                    int p1 = AddVerticeOctTree(surface[last, j].X, ty - surface[last, j].Y, surface[last, j].Z);
-                    int p2 = AddVerticeOctTree(surface[last, k].X, ty - surface[last, k].Y, surface[last, k].Z);
-
-                    Faces.Add(cp);
-                    Faces.Add(p2);
-                    Faces.Add(p1);
-                }
-                CentreVertices();
             }
         }
 
@@ -537,23 +575,46 @@ namespace Barnacle.Dialogs
             ClearShape();
             if (pathPoints != null && pathPoints.Count > 0)
             {
-                if (flatShape)
+                switch ((ProfileIndices)profileIndex)
                 {
-                    GenerateFlat();
-                }
-                else
-                if (UShape)
-                {
-                    GenerateU();
-                }
-                else
-                if (squareShape)
-                {
-                    GenerateRound(4);
-                }
-                else
-                {
-                    GenerateRound(36);
+                    case ProfileIndices.FlatProfile:
+                        {
+                            GenerateFlat();
+                        }
+                        break;
+
+                    case ProfileIndices.RoundProfile:
+                        {
+                            GenerateRound(36);
+                        }
+                        break;
+
+                    case ProfileIndices.SquareProfile:
+                        {
+                            GenerateRound(4);
+                        }
+                        break;
+
+                    case ProfileIndices.UBeamProfile:
+                        {
+                            GenerateU();
+                        }
+                        break;
+
+                    case ProfileIndices.WedgeProfile:
+                        {
+                            GenerateWedge();
+                        }
+                        break;
+
+                    case ProfileIndices.WedgeProfile2:
+                        {
+                            GenerateWedge(true);
+                        }
+                        break;
+
+                    default:
+                        break;
                 }
             }
         }
@@ -676,10 +737,12 @@ namespace Barnacle.Dialogs
                     c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, baseHeight);
                     c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, baseHeight);
                     c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, baseHeight);
-
+                    AddFace(c0, c1, c2);
+                    /*
                     Faces.Add(c0);
                     Faces.Add(c1);
                     Faces.Add(c2);
+                    */
                 }
 
                 for (int i = 0; i < endOfOutbound /*- 1*/; i++)
@@ -698,13 +761,17 @@ namespace Barnacle.Dialogs
                     c1 = AddVerticeOctTree(tmp[i + 1].X, tmp[i + 1].Y, loftHeight);
                     c2 = AddVerticeOctTree(tmp2[i].X, tmp2[i].Y, loftHeight);
                     c3 = AddVerticeOctTree(tmp2[i + 1].X, tmp2[i + 1].Y, loftHeight);
-                    Faces.Add(c0);
+                    AddFace(c0, c1, c2);
+                    AddFace(c1, c3, c2);
+
+                    /*Faces.Add(c0);
                     Faces.Add(c1);
                     Faces.Add(c2);
 
                     Faces.Add(c1);
                     Faces.Add(c3);
                     Faces.Add(c2);
+                    */
                 }
 
                 for (int i = (tmp2.Count / 2); i < tmp2.Count - 1; i++)
@@ -713,6 +780,7 @@ namespace Barnacle.Dialogs
                     c1 = AddVerticeOctTree(tmp[i + 1].X, tmp[i + 1].Y, loftHeight);
                     c2 = AddVerticeOctTree(tmp2[i].X, tmp2[i].Y, loftHeight);
                     c3 = AddVerticeOctTree(tmp2[i + 1].X, tmp2[i + 1].Y, loftHeight);
+                    /*
                     Faces.Add(c0);
                     Faces.Add(c1);
                     Faces.Add(c2);
@@ -720,6 +788,9 @@ namespace Barnacle.Dialogs
                     Faces.Add(c1);
                     Faces.Add(c3);
                     Faces.Add(c2);
+                    */
+                    AddFace(c0, c1, c2);
+                    AddFace(c1, c3, c2);
                 }
 
                 // close start end
@@ -728,58 +799,78 @@ namespace Barnacle.Dialogs
                 c1 = AddVerticeOctTree(startEdgeP2.X, startEdgeP2.Y, baseHeight);
                 c2 = AddVerticeOctTree(startEdgeP3.X, startEdgeP3.Y, 0);
                 c3 = AddVerticeOctTree(startEdgeP3.X, startEdgeP3.Y, baseHeight);
-                Faces.Add(c0);
-                Faces.Add(c1);
-                Faces.Add(c2);
 
-                Faces.Add(c1);
-                Faces.Add(c3);
-                Faces.Add(c2);
+                AddFace(c0, c1, c2);
+                AddFace(c1, c3, c2);
+                /*
+                                Faces.Add(c0);
+                                Faces.Add(c1);
+                                Faces.Add(c2);
 
+                                Faces.Add(c1);
+                                Faces.Add(c3);
+                                Faces.Add(c2);
+                                */
                 // raised edge
                 c0 = AddVerticeOctTree(startEdgeP0.X, startEdgeP0.Y, 0);
                 c1 = AddVerticeOctTree(startEdgeP0.X, startEdgeP0.Y, loftHeight);
                 c2 = AddVerticeOctTree(startEdgeP2.X, startEdgeP2.Y, 0);
                 c3 = AddVerticeOctTree(startEdgeP2.X, startEdgeP2.Y, loftHeight);
-                Faces.Add(c0);
-                Faces.Add(c1);
-                Faces.Add(c2);
+                AddFace(c0, c1, c2);
+                AddFace(c1, c3, c2);
+                /*
+                                Faces.Add(c0);
+                                Faces.Add(c1);
+                                Faces.Add(c2);
 
-                Faces.Add(c1);
-                Faces.Add(c3);
-                Faces.Add(c2);
-
+                                Faces.Add(c1);
+                                Faces.Add(c3);
+                                Faces.Add(c2);
+                                */
                 c0 = AddVerticeOctTree(startEdgeP1.X, startEdgeP1.Y, 0);
                 c1 = AddVerticeOctTree(startEdgeP1.X, startEdgeP1.Y, loftHeight);
                 c2 = AddVerticeOctTree(startEdgeP3.X, startEdgeP3.Y, 0);
                 c3 = AddVerticeOctTree(startEdgeP3.X, startEdgeP3.Y, loftHeight);
-                Faces.Add(c0);
-                Faces.Add(c2);
-                Faces.Add(c1);
 
-                Faces.Add(c1);
-                Faces.Add(c2);
-                Faces.Add(c3);
+                AddFace(c0, c2, c1);
+                AddFace(c1, c2, c3);
+                /*
+                                Faces.Add(c0);
+                                Faces.Add(c2);
+                                Faces.Add(c1);
 
+                                Faces.Add(c1);
+                                Faces.Add(c2);
+                                Faces.Add(c3);
+                */
                 // close start end
                 // central area
                 c0 = AddVerticeOctTree(endEdgeP2.X, endEdgeP2.Y, 0);
                 c1 = AddVerticeOctTree(endEdgeP2.X, endEdgeP2.Y, baseHeight);
                 c2 = AddVerticeOctTree(endEdgeP3.X, endEdgeP3.Y, 0);
                 c3 = AddVerticeOctTree(endEdgeP3.X, endEdgeP3.Y, baseHeight);
-                Faces.Add(c0);
-                Faces.Add(c2);
-                Faces.Add(c1);
 
-                Faces.Add(c1);
-                Faces.Add(c2);
-                Faces.Add(c3);
+                AddFace(c0, c2, c1);
+                AddFace(c1, c2, c3);
+
+                /*
+                                Faces.Add(c0);
+                                Faces.Add(c2);
+                                Faces.Add(c1);
+
+                                Faces.Add(c1);
+                                Faces.Add(c2);
+                                Faces.Add(c3);
+                                */
 
                 // raised edge
                 c0 = AddVerticeOctTree(endEdgeP0.X, endEdgeP0.Y, 0);
                 c1 = AddVerticeOctTree(endEdgeP0.X, endEdgeP0.Y, loftHeight);
                 c2 = AddVerticeOctTree(endEdgeP2.X, endEdgeP2.Y, 0);
                 c3 = AddVerticeOctTree(endEdgeP2.X, endEdgeP2.Y, loftHeight);
+                AddFace(c0, c2, c1);
+                AddFace(c1, c2, c3);
+                /*
                 Faces.Add(c0);
                 Faces.Add(c2);
                 Faces.Add(c1);
@@ -787,20 +878,74 @@ namespace Barnacle.Dialogs
                 Faces.Add(c1);
                 Faces.Add(c2);
                 Faces.Add(c3);
-
+                */
                 c0 = AddVerticeOctTree(endEdgeP1.X, endEdgeP1.Y, 0);
                 c1 = AddVerticeOctTree(endEdgeP1.X, endEdgeP1.Y, loftHeight);
                 c2 = AddVerticeOctTree(endEdgeP3.X, endEdgeP3.Y, 0);
                 c3 = AddVerticeOctTree(endEdgeP3.X, endEdgeP3.Y, loftHeight);
-                Faces.Add(c0);
-                Faces.Add(c1);
-                Faces.Add(c2);
 
-                Faces.Add(c1);
-                Faces.Add(c3);
-                Faces.Add(c2);
+                AddFace(c0, c1, c2);
+                AddFace(c1, c3, c2);
+                /*
+                                Faces.Add(c0);
+                                Faces.Add(c1);
+                                Faces.Add(c2);
+
+                                Faces.Add(c1);
+                                Faces.Add(c3);
+                                Faces.Add(c2);
+                                */
             }
             CentreVertices();
+        }
+
+        private void GenerateWedge(bool thinFront = false)
+        {
+            double lx, rx, ty, by, bz, fz;
+            lx = by = bz = double.MaxValue;
+            rx = ty = fz = double.MinValue;
+            BufferedPolyline bl = null;
+            List<CurvePoint> curvePoints = null;
+            GetBufferedPolyLine(out bl, out curvePoints);
+            if (curvePoints != null && curvePoints.Count > 1)
+            {
+                List<Point3D> profile = GenerateWedgeProfile(loftHeight, loftThickness, thinFront);
+
+                Point3D[,] surface = CreateSurfaceFromProfile(curvePoints, profile, ref lx, ref rx, ref ty, ref by, ref bz, ref fz);
+                if (surface != null)
+                {
+                    CreateSolidFromProfile(profile.Count, lx, rx, ty, by, bz, fz, curvePoints, surface);
+                    CentreVertices();
+                }
+            }
+        }
+
+        private List<Point3D> GenerateWedgeProfile(double loftHeight, double loftThickness, bool thinFront)
+        {
+            List<Point3D> prof = new List<Point3D>();
+            double h2 = loftThickness / 2;
+            double w2 = loftHeight / 2;
+            prof.Add(new Point3D(0, h2, -w2)); //1
+            prof.Add(new Point3D(0, h2, w2)); // 2
+            if (thinFront)
+            {
+                prof.Add(new Point3D(0, 0.8 * h2, w2)); // 3
+            }
+            else
+            {
+                prof.Add(new Point3D(0, 0, w2)); // 3
+            }
+            prof.Add(new Point3D(0, -h2, -w2)); // 4
+
+            return prof;
+        }
+
+        private void GetBufferedPolyLine(out BufferedPolyline bl, out List<CurvePoint> curvePoints)
+        {
+            bl = new BufferedPolyline(pathPoints);
+            bl.BufferRadius = loftThickness / 2;
+            curvePoints = bl.GenerateBufferCurvePoints();
+            bl.BufferRadius = loftThickness / 2;
         }
 
         private void LoadEditorParameters()
@@ -818,10 +963,7 @@ namespace Barnacle.Dialogs
             {
                 PathEditor.FromString(s);
             }
-            FlatShape = EditorParameters.GetBoolean("FlatShape", true);
-            RoundShape = EditorParameters.GetBoolean("RoundShape", false);
-            SquareShape = EditorParameters.GetBoolean("SquareShape", false);
-            UShape = EditorParameters.GetBoolean("UShape", false);
+            ProfileIndex = EditorParameters.GetInt("ProfileIndex", 0);
             BaseThickness = EditorParameters.GetDouble("BaseThickness", 1);
         }
 
@@ -880,21 +1022,8 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("LoftThickness", LoftThickness.ToString());
             EditorParameters.Set("Path", PathEditor.AbsolutePathString);
             EditorParameters.Set("ImagePath", PathEditor.ImagePath);
-            EditorParameters.Set("FlatShape", FlatShape.ToString());
-            EditorParameters.Set("RoundShape", RoundShape.ToString());
-            EditorParameters.Set("UShape", UShape.ToString());
+            EditorParameters.Set("ProfileIndex", ProfileIndex.ToString());
             EditorParameters.Set("BaseThickness", BaseThickness.ToString());
-        }
-
-        private void TestCurve()
-        {
-            List<Point> pnts = new List<Point>();
-            pnts.Add(new Point(10, 10));
-            pnts.Add(new Point(20, 10));
-            pnts.Add(new Point(25, 0));
-            BufferedPolyline bl = new BufferedPolyline(pnts);
-            bl.BufferRadius = loftThickness / 2;
-            List<CurvePoint> curvePoints = bl.GenerateBufferCurvePoints();
         }
 
         private void UpdateDisplay()

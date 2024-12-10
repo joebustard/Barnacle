@@ -84,9 +84,6 @@ Procedure SetSolidSize( Solid sl, Size sz)
 }
 
 
-
-
-
 Procedure MakeSameSize( Solid sl1, Solid sl2)
 {
   Size sz;
@@ -187,6 +184,41 @@ function solid ClipRight( solid sl, double l)
 	}
 	return sl;
 }
+
+   // Name       : SetLength
+   // Does       : Changes the length of a solid while keeping the height and width
+   // unchanged
+   // Parameters :
+   Procedure Setlength( Solid  item, Double  newlen )
+   {
+       Double oldh = Height ( item ) ;
+       Double oldw = Width ( item ) ;
+       Resize item, newlen, oldh, oldw ;
+   }
+
+   // Name       : SetHeight
+   // Does       : Changes the height of a solid while keeping the length and width
+   // unchanged
+   // Parameters :
+   Procedure Setheight( Solid  item, Double  newheight )
+   {
+       Double oldl = Length ( item ) ;
+       Double oldw = Width ( item ) ;
+       Resize item, oldl, newheight, oldw ;
+   }
+
+
+   // Name       : SetWidth
+   // Does       : Changes the width of a solid while keeping the length and height
+   // unchanged
+   // Parameters :
+   Procedure Setwidth( Solid  item, Double  newwidth )
+   {
+       Double oldl = Length ( item ) ;
+       Double oldh = Height ( item ) ;
+       Resize item, oldl, oldh, newwidth ;
+   }
+
 
  procedure InitialiseLimpLib()
  {
