@@ -51,6 +51,11 @@ namespace Barnacle.LineLib
             }
         }
 
+        public override int DisplayPointsInSegment()
+        {
+            return 2;
+        }
+
         public override double DistToPoint(Point position, ObservableCollection<FlexiPoint> points)
         {
             double dist = DistToLine.FindDistanceToLine(position, points[P0].ToPoint(), points[P1].ToPoint());

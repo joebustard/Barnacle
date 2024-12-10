@@ -173,7 +173,12 @@ namespace Barnacle.Dialogs
             {
                 line.Add(new Point(p.X, top - p.Y));
             }
-            line.RemoveAt(0);
+            // remove the points of the first line segment
+            int pointsInFirstSegment = PathEditor.PointsInFirstSegment();
+            for (int i = 0; i < pointsInFirstSegment - 1; i++)
+            {
+                line.RemoveAt(0);
+            }
 
             // dirty hack
             // if there is only two points the shelltosolid goes wrong

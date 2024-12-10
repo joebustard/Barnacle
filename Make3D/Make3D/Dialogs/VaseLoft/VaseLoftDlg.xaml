@@ -53,8 +53,8 @@
                     <CheckBox
                         Margin="2,0,16,0"
                         VerticalAlignment="Center"
-                        Content="Hollow"
-                        IsChecked="{Binding IsHollow}" />
+                        Content="Open"
+                        IsChecked="{Binding IsHollow}" ToolTip="If checked, the first segment of the path will be ignored and an open object created" />
                     <Label
                         Margin="4,0,0,0"
                         VerticalAlignment="Center"

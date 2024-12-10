@@ -3,6 +3,7 @@
 Added
 Added setlength(), setheight() and set width() to the standard limpet library
 Two more primitives, staircase and squiggle
+Two "Wedge" profiles added to path loft
 
 Fixed
 

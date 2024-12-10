@@ -1089,6 +1089,16 @@ namespace Barnacle.LineLib
             return position;
         }
 
+        public int PointsInFirstSegment()
+        {
+            int res = 0;
+            if (segs != null)
+            {
+                res = segs[0].DisplayPointsInSegment();
+            }
+            return res;
+        }
+
         public bool SelectAtPoint(System.Windows.Point position, bool clear = true)
         {
             bool found = false;

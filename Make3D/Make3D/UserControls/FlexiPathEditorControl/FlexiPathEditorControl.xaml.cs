@@ -574,6 +574,17 @@ namespace Barnacle.UserControls
             }
         }
 
+        internal int PointsInFirstSegment()
+        {
+            int res = 0;
+            if (vm != null)
+            {
+                res = vm.PointsInFirstSegment();
+            }
+
+            return res;
+        }
+
         internal void SetPath(string v)
         {
             if (pathText != v)

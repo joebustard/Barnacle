@@ -37,6 +37,11 @@ namespace Barnacle.LineLib
         {
         }
 
+        public virtual int DisplayPointsInSegment()
+        {
+            return 0;
+        }
+
         public virtual double DistToPoint(Point position, ObservableCollection<FlexiPoint> res)
         {
             return double.MaxValue;

@@ -7,6 +7,8 @@ namespace Barnacle.LineLib
 {
     public class FlexiQuadBezier : FlexiSegment
     {
+        private const double subSegmentRatio = 0.05;
+
         public FlexiQuadBezier()
         {
             P0 = -1;
@@ -52,7 +54,7 @@ namespace Barnacle.LineLib
 
         public override void DisplayPoints(List<Point> res, ObservableCollection<FlexiPoint> pnts)
         {
-            double dt = 0.05;
+            double dt = subSegmentRatio;
             AddDisplayPoint(res, pnts[P0].X, pnts[P0].Y);
 
             for (double t = 0; t <= 1; t += dt)
@@ -71,6 +73,11 @@ namespace Barnacle.LineLib
                 Point p = GetCoord(t, pnts);
                 res.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
             }
+        }
+
+        public override int DisplayPointsInSegment()
+        {
+            return (int)(1 / subSegmentRatio);
         }
 
         public override double DistToPoint(Point position, ObservableCollection<FlexiPoint> points)

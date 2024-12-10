@@ -1360,6 +1360,16 @@ namespace Barnacle.UserControls
             return updateRequired;
         }
 
+        internal int PointsInFirstSegment()
+        {
+            int res = 0;
+            if (selectedFlexiPath != null)
+            {
+                res = selectedFlexiPath.PointsInFirstSegment();
+            }
+            return res;
+        }
+
         internal void SetFixedEnds(Point fixedPathStartPoint, Point fixedPathMidPoint, Point fixedPathEndPoint)
         {
             this.fixedPathStartPoint = fixedPathStartPoint;
