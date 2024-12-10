@@ -89,7 +89,7 @@
                     MaxWidth="30"
                     Click="Home_Click"
                     Style="{StaticResource ImageButton}"
-                    ToolTip="Move the camera to the default front position and point it at the centre of the world.">
+                    ToolTip="Move the camera to the default front position and point it at the centre.">
                     <Image Source="/Barnacle;component/Images/Buttons/FrontEye.png" />
                 </Button>
                 <Button
@@ -97,7 +97,7 @@
                     MaxWidth="30"
                     Click="Back_Click"
                     Style="{StaticResource ImageButton}"
-                    ToolTip="Move the camera to the default back position and point it at the centre of the world.">
+                    ToolTip="Move the camera to the default back position and point it at the centre.">
                     <Image Source="/Barnacle;component/Images/Buttons/BackEye.png" />
                 </Button>
                 <Button
@@ -105,7 +105,7 @@
                     MaxWidth="30"
                     Click="Left_Click"
                     Style="{StaticResource ImageButton}"
-                    ToolTip="Move the camera to the default left position and point it at the centre of the world.">
+                    ToolTip="Move the camera to the default left position and point it at the centre.">
                     <Image Source="/Barnacle;component/Images/Buttons/RightEye.png" />
                 </Button>
                 <Button
@@ -113,7 +113,7 @@
                     MaxWidth="30"
                     Click="Right_Click"
                     Style="{StaticResource ImageButton}"
-                    ToolTip="Move the camera to the default right position and point it at the centre of the world.">
+                    ToolTip="Move the camera to the default right position and point it at the centre.">
                     <Image Source="/Barnacle;component/Images/Buttons/LeftEye.png" />
                 </Button>
             </Grid>
