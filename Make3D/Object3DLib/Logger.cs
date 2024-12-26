@@ -31,6 +31,7 @@ namespace Barnacle.Object3DLib
             {
                 File.AppendAllText(path, s);
                 File.AppendAllText(path, "\n");
+                System.Diagnostics.Debug.WriteLine(s);
             }
             catch
             {

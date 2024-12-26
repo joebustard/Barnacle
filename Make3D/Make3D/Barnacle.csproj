@@ -126,6 +126,7 @@
       <DependentUpon>ConfirmObjectNameDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\ConstructionStrip\ConstructionStripDlg.xaml.cs" />
+    <Compile Include="Dialogs\CrossGrille\CrossGrillDlg.xaml.cs" />
     <Compile Include="Dialogs\CurvedFunnel\CurvedFunnelDlg.xaml.cs" />
     <Compile Include="Dialogs\CutHPlane\CutHorizontalPlaneDlg.xaml.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\Dimension.cs" />
@@ -492,6 +493,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\ConstructionStrip\ConstructionStripDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\CrossGrille\CrossGrilleDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1371,6 +1376,8 @@
     <Resource Include="Images\Buttons\UBeamProfile.png" />
     <Resource Include="Images\Buttons\Wedge2Profile.png" />
     <Resource Include="Images\Buttons\WedgeProfile.png" />
+    <Resource Include="Images\Buttons\CrossGrill.png" />
+    <Resource Include="Images\Buttons\CrossGrille.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

@@ -5,6 +5,9 @@ using System.Windows;
 using System.Windows.Media.Media3D;
 using System.Runtime.CompilerServices;
 using System.Windows.Threading;
+using System.Threading.Tasks;
+using System.Windows.Media;
+
 
 namespace Barnacle.Dialogs
 {
@@ -20,7 +23,7 @@ namespace Barnacle.Dialogs
         //TOOLPROPS
         private string ConstructToolTip(string p)
         {
-            string res=";
+            string res="";
             if ( maker != null )
             {
               ParamLimit pl = maker.GetLimits(p);
@@ -93,7 +96,7 @@ namespace Barnacle.Dialogs
             EditingEnabled = true;
         }
 
-  private AsyncGeneratorResult GenerateAsync(bool final, int alignment)
+  private AsyncGeneratorResult GenerateAsync()
         {
             Point3DCollection v1 = new Point3DCollection();
             Int32Collection i1 = new Int32Collection();

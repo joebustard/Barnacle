@@ -82,6 +82,7 @@ namespace ScriptLanguage
                 "makebrickwall",
                 "makebricktower",
                 "makeconstructionstrip",
+                "makecrossgrille",
                 "makehollow",
                 "makeimageplaque",
                 "makedualprofile",
@@ -2558,6 +2559,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "makecrossgrille":
+                            {
+                                exp = ParseMakeCrossGrillFunction(parentName);
+                            }
+                            break;
+
                         case "makeconstructionstrip":
                             {
                                 exp = ParseMakeConstructionStripFunction(parentName);
@@ -3231,6 +3238,47 @@ namespace ScriptLanguage
             if (parsed && coll.Count() == exprCount)
             {
                 MakeConstructionStripNode mn = new MakeConstructionStripNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
+
+        private ExpressionNode ParseMakeCrossGrillFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeCrossGrill";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 7;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeCrossGrillNode mn = new MakeCrossGrillNode(coll);
                 mn.IsInLibrary = tokeniser.InIncludeFile();
                 exp = mn;
             }

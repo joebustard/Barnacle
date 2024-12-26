@@ -1,12 +1,12 @@
 <local:BaseModellerDialog
-    x:Class="Barnacle.Dialogs.BlankDlg"
+    x:Class="Barnacle.Dialogs.CrossGrilleDlg"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Barnacle.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
-    Title="DIALOGTITLE"
+    Title=""
     Width="1000"
     Height="450"
     Background="{StaticResource WindowBackBrush}"
@@ -44,7 +44,16 @@
                     <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <!--P1CONTROLS-->
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="Length" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding GrilleLength}"
+                        ToolTip="{Binding GrilleLengthToolTip}" />
+
                     <Button
                         Margin="8,0,0,0"
                         Click="ResetDefaults"
@@ -52,26 +61,73 @@
                         ToolTip="Restore parameters to their defaults" />
                 </StackPanel>
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
-                    <!--P2CONTROLS-->
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="Height" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding GrilleHeight}"
+                        ToolTip="{Binding GrilleHeightToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="3" Orientation="Horizontal">
-                    <!--P3CONTROLS-->
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="Width" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding GrilleWidth}"
+                        ToolTip="{Binding GrillWidthToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="4" Orientation="Horizontal">
-                    <!--P4CONTROLS-->
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="Cross Beams" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding NumberOfCrossBeams}"
+                        ToolTip="{Binding NumberOfCrossBeamsToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="5" Orientation="Horizontal">
-                    <!--P5CONTROLS-->
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="Beam Width" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding CrossBeamWidth}"
+                        ToolTip="{Binding CrossBeamWidthToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="6" Orientation="Horizontal">
-                    <!--P6CONTROLS-->
+
+                    <CheckBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Content="Edge"
+                        IsChecked="{Binding MakeEdge}"
+                        ToolTip="{Binding ShowEdgeToolTip}" />
                 </StackPanel>
-                <StackPanel Grid.Row="7" Orientation="Horizontal">
-                    <!--P7CONTROLS-->
+                <StackPanel
+                    Grid.Row="7"
+                    Orientation="Horizontal"
+                    Visibility="{Binding ShowEdgeControls}">
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="Edge Size" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding EdgeWidth}"
+                        ToolTip="{Binding EdgeWidthToolTip}" />
                 </StackPanel>
-                <StackPanel Grid.Row="8" Orientation="Horizontal">
-                    <!--P8CONTROLS-->
-                </StackPanel>
+                <StackPanel Grid.Row="8" Orientation="Horizontal" />
                 <StackPanel Grid.Row="9" Orientation="Horizontal">
                     <Label
                         VerticalAlignment="Center"
@@ -110,4 +166,4 @@
                 IsDefault="True" />
         </Grid>
     </Grid>
-</local:BaseModellerDialog> 
+</local:BaseModellerDialog>

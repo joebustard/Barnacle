@@ -486,8 +486,6 @@ namespace Barnacle.Models.BufferedPolyline
             double dy = se.Y - sp.Y;
             Point p0 = new Point(0, 0);
             Point p1 = new Point(0, 0);
-            Point p2 = new Point(0, 0);
-            Point p3 = new Point(0, 0);
 
             // is the line horizontal
             if (dy != 0)

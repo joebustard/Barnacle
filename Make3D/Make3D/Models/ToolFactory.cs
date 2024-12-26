@@ -64,6 +64,10 @@ namespace Barnacle.Models
                     res = new ConstructionStripDlg();
                     break;
 
+                case "CrossGrille":
+                    res = new CrossGrilleDlg();
+                    break;
+
                 case "CanvasWing":
                     res = new CanvasWingDlg();
                     break;

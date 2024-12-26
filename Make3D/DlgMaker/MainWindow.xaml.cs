@@ -12,21 +12,20 @@ namespace DlgMaker
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private static string ctrString = @"                <Label VerticalAlignment=""Center"" Width=""100"" Content=""<pName>""/>
-                 <TextBox Margin=""8,0,0,0"" Text=""{Binding <pName>}"" Width=""150"" ToolTip=""{Binding <pName>ToolTip}""/>
+        private static string addLimit = @"
+        paramLimits.AddLimit(""<pName>"", <pMin>, <pMax>);
 ";
 
         private static string ctrCombo = @"                <Label VerticalAlignment=""Center"" Width=""100"" Content=""<pName>""/>
                  <ComboBox Margin=""8,0,0,0"" SelectedItem=""{Binding <pName>}"" ItemsSource=""{Binding <pName>Items}"" Width=""150"" ToolTip=""{Binding <pName>ToolTip}""/>
 ";
 
-        private static string ldrb = @"
-           <pName>= EditorParameters.GetBoolean(""<pName>"",<pinitial>);
-
+        private static string ctrString = @"                <Label VerticalAlignment=""Center"" Width=""100"" Content=""<pName>""/>
+                 <TextBox Margin=""8,0,0,0"" Text=""{Binding <pName>}"" Width=""150"" ToolTip=""{Binding <pName>ToolTip}""/>
 ";
 
-        private static string ldrs = @"
-           <pName>= EditorParameters.Get(""<pName>"");
+        private static string ldrb = @"
+           <pName>= EditorParameters.GetBoolean(""<pName>"",<pinitial>);
 
 ";
 
@@ -38,6 +37,11 @@ namespace DlgMaker
         private static string ldri = @"
 
               <pName>= EditorParameters.GetInt(""<pName>"",<pinitial>);
+
+";
+
+        private static string ldrs = @"
+           <pName>= EditorParameters.Get(""<pName>"");
 
 ";
 
@@ -63,72 +67,8 @@ public <pType> <PName>
 
 ";
 
-        private static string propTemplateh = @"
-private const <pType> max<pName> = <pMax>;
-private <pType> <pName>;
-public <pType> <PName>
-{
-    get
-    {
-      return <pName>;
-    }
-    set
-    {
-        if ( <pName> != value )
-        {
-            if ( value <= max<pName>)
-            {
-              <pName> = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
-        }
-    }
-}
-public String <PName>ToolTip
-{
-    get
-    {
-return $""<PName> must be <= {max<pName>}"";
-    }
-}
-
-";
-
-        private static string propTemplatel = @"
-private const <pType> min<pName> = <pMin>;
-private <pType> <pName>;
-public <pType> <PName>
-{
-    get
-    {
-      return <pName>;
-    }
-    set
-    {
-        if ( <pName> != value )
-        {
-            if ( value >= min<pName>)
-            {
-              <pName> = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
-        }
-    }
-}
-public String <PName>ToolTip
-{
-    get
-    {
-        return $""<PName> must be >= {min<pName>}"";
-    }
-}
-";
-
         private static string propTemplatelh = @"
-private const <pType> min<pName> = <pMin>;
-private const <pType> max<pName> = <pMax>;
+
 private <pType> <pName>;
 public <pType> <PName>
 {
@@ -154,7 +94,7 @@ public String <PName>ToolTip
 {
     get
     {
-        return ContructToolTip(""<pName>"");
+        return ConstructToolTip(""<pName>"");
     }
 }
 
@@ -177,22 +117,19 @@ public String <PName>ToolTip
 ";
 
         private static string rchklh = @"
-            inRange = RangeCheck(maker, ""<pName>"", v<pName>) && inRange;
-";
-
-        private static string addLimit = @"
-        paramLimits.Add(""<pName>"", <pMin>, <pMax>);
+            inRange = RangeCheck(maker, ""<pName>"", val<pName>) && inRange;
 ";
 
         private string dialogName;
         private string dialogTitle;
         private string exportPath;
         private String makerName;
+        private string p1Initial;
         private String p1Max;
         private String p1Min;
         private String p1Name;
         private String p1Type;
-        private string p1Initial;
+        private string p2Initial;
 
         //
         private String p2Max;
@@ -200,7 +137,7 @@ public String <PName>ToolTip
         private String p2Min;
         private String p2Name;
         private String p2Type;
-        private string p2Initial;
+        private string p3Initial;
 
         //
         private String p3Max;
@@ -208,7 +145,7 @@ public String <PName>ToolTip
         private String p3Min;
         private String p3Name;
         private String p3Type;
-        private string p3Initial;
+        private string p4Initial;
 
         //
         private String p4Max;
@@ -216,7 +153,7 @@ public String <PName>ToolTip
         private String p4Min;
         private String p4Name;
         private String p4Type;
-        private string p4Initial;
+        private string p5Initial;
 
         //
         private String p5Max;
@@ -224,7 +161,7 @@ public String <PName>ToolTip
         private String p5Min;
         private String p5Name;
         private String p5Type;
-        private string p5Initial;
+        private string p6Initial;
 
         //
         private String p6Max;
@@ -232,7 +169,7 @@ public String <PName>ToolTip
         private String p6Min;
         private String p6Name;
         private String p6Type;
-        private string p6Initial;
+        private string p7Initial;
 
         //
         private String p7Max;
@@ -240,7 +177,7 @@ public String <PName>ToolTip
         private String p7Min;
         private String p7Name;
         private String p7Type;
-        private string p7Initial;
+        private string p8Initial;
 
         //
         private String p8Max;
@@ -248,7 +185,6 @@ public String <PName>ToolTip
         private String p8Min;
         private String p8Name;
         private String p8Type;
-        private string p8Initial;
 
         //
         private List<String> parameterTypes;
@@ -327,22 +263,6 @@ public String <PName>ToolTip
             }
         }
 
-        public String P1Max
-        {
-            get
-            {
-                return p1Max;
-            }
-            set
-            {
-                if (p1Max != value)
-                {
-                    p1Max = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
         public String P1Initial
         {
             get
@@ -359,113 +279,17 @@ public String <PName>ToolTip
             }
         }
 
-        public String P8Initial
+        public String P1Max
         {
             get
             {
-                return p8Initial;
+                return p1Max;
             }
             set
             {
-                if (p8Initial != value)
+                if (p1Max != value)
                 {
-                    p8Initial = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public String P7Initial
-        {
-            get
-            {
-                return p7Initial;
-            }
-            set
-            {
-                if (p7Initial != value)
-                {
-                    p7Initial = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public String P2Initial
-        {
-            get
-            {
-                return p2Initial;
-            }
-            set
-            {
-                if (p2Initial != value)
-                {
-                    p2Initial = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public String P3Initial
-        {
-            get
-            {
-                return p3Initial;
-            }
-            set
-            {
-                if (p3Initial != value)
-                {
-                    p3Initial = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public String P4Initial
-        {
-            get
-            {
-                return p4Initial;
-            }
-            set
-            {
-                if (p4Initial != value)
-                {
-                    p4Initial = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public String P5Initial
-        {
-            get
-            {
-                return p5Initial;
-            }
-            set
-            {
-                if (p5Initial != value)
-                {
-                    p5Initial = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public String P6Initial
-        {
-            get
-            {
-                return p6Initial;
-            }
-            set
-            {
-                if (p6Initial != value)
-                {
-                    p6Initial = value;
+                    p1Max = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -514,6 +338,22 @@ public String <PName>ToolTip
                 if (p1Type != value)
                 {
                     p1Type = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String P2Initial
+        {
+            get
+            {
+                return p2Initial;
+            }
+            set
+            {
+                if (p2Initial != value)
+                {
+                    p2Initial = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -584,6 +424,22 @@ public String <PName>ToolTip
             }
         }
 
+        public String P3Initial
+        {
+            get
+            {
+                return p3Initial;
+            }
+            set
+            {
+                if (p3Initial != value)
+                {
+                    p3Initial = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public String P3Max
         {
             get
@@ -643,6 +499,22 @@ public String <PName>ToolTip
                 if (p3Type != value)
                 {
                     p3Type = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String P4Initial
+        {
+            get
+            {
+                return p4Initial;
+            }
+            set
+            {
+                if (p4Initial != value)
+                {
+                    p4Initial = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -713,6 +585,22 @@ public String <PName>ToolTip
             }
         }
 
+        public String P5Initial
+        {
+            get
+            {
+                return p5Initial;
+            }
+            set
+            {
+                if (p5Initial != value)
+                {
+                    p5Initial = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         //
         public String P5Max
         {
@@ -773,6 +661,22 @@ public String <PName>ToolTip
                 if (p5Type != value)
                 {
                     p5Type = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String P6Initial
+        {
+            get
+            {
+                return p6Initial;
+            }
+            set
+            {
+                if (p6Initial != value)
+                {
+                    p6Initial = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -843,6 +747,22 @@ public String <PName>ToolTip
             }
         }
 
+        public String P7Initial
+        {
+            get
+            {
+                return p7Initial;
+            }
+            set
+            {
+                if (p7Initial != value)
+                {
+                    p7Initial = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         //
         public String P7Max
         {
@@ -903,6 +823,22 @@ public String <PName>ToolTip
                 if (p7Type != value)
                 {
                     p7Type = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String P8Initial
+        {
+            get
+            {
+                return p8Initial;
+            }
+            set
+            {
+                if (p8Initial != value)
+                {
+                    p8Initial = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -1026,14 +962,7 @@ public String <PName>ToolTip
                 {
                     res1 = propTemplate;
                 }
-                if (l != "" && h == "")
-                {
-                    res1 = propTemplatel;
-                }
-                if (l == "" && h != "")
-                {
-                    res1 = propTemplateh;
-                }
+
                 if (l != "" && h != "")
                 {
                     res1 = propTemplatelh;
@@ -1116,6 +1045,14 @@ public String <PName>ToolTip
             }
         }
 
+        private void CheckBoolean(string t, ref string s)
+        {
+            if (t.ToLower() == "bool")
+            {
+                s = "True";
+            }
+        }
+
         private void CloseClicked(object sender, RoutedEventArgs e)
         {
             System.Windows.Application.Current.Shutdown();
@@ -1134,6 +1071,7 @@ public String <PName>ToolTip
             saveParams += GetSaveParams(p6Name);
             saveParams += GetSaveParams(p7Name);
             saveParams += GetSaveParams(p8Name);
+            saveParams = saveParams.Trim();
 
             string loadParams = "";
             loadParams += GetLoadParams(p1Name, p1Type, p1Initial);
@@ -1144,8 +1082,17 @@ public String <PName>ToolTip
             loadParams += GetLoadParams(p6Name, p6Type, p6Initial);
             loadParams += GetLoadParams(p7Name, p7Type, p7Initial);
             loadParams += GetLoadParams(p8Name, p8Type, p8Initial);
+            loadParams = loadParams.Trim();
 
             string defaultParams = "";
+            CheckBoolean(p1Type, ref p1Initial);
+            CheckBoolean(p2Type, ref p2Initial);
+            CheckBoolean(p3Type, ref p3Initial);
+            CheckBoolean(p4Type, ref p4Initial);
+            CheckBoolean(p5Type, ref p5Initial);
+            CheckBoolean(p6Type, ref p6Initial);
+            CheckBoolean(p7Type, ref p7Initial);
+            CheckBoolean(p8Type, ref p8Initial);
             defaultParams += GetParamDefault(p1Name, p1Initial);
             defaultParams += GetParamDefault(p2Name, p2Initial);
             defaultParams += GetParamDefault(p3Name, p3Initial);
@@ -1170,82 +1117,43 @@ public String <PName>ToolTip
             {
                 string targetName = fn.Replace(templateRoot, targetFolder);
                 targetName = targetName.Replace("Blank", DialogName);
-                StreamReader fin = new StreamReader(fn);
-                if (fin != null)
+                if (!fn.ToLower().EndsWith("png"))
                 {
-                    StreamWriter fout = new StreamWriter(targetName);
-                    while (!fin.EndOfStream)
+                    StreamReader fin = new StreamReader(fn);
+                    if (fin != null)
                     {
-                        String l = fin.ReadLine();
-                        l = l.Replace("Blank", ToolName);
-                        l = l.Replace("DIALOGTITLE", DialogTitle);
-                        l = l.Replace("//TOOLPROPS", toolProps);
-                        l = l.Replace("//MAKEPARAMETERS", makerParams);
-                        l = l.Replace("<!--P1CONTROLS-->", p1Controls);
-                        l = l.Replace("<!--P2CONTROLS-->", p2Controls);
-                        l = l.Replace("<!--P3CONTROLS-->", p3Controls);
-                        l = l.Replace("<!--P4CONTROLS-->", p4Controls);
-                        l = l.Replace("<!--P5CONTROLS-->", p5Controls);
-                        l = l.Replace("<!--P6CONTROLS-->", p6Controls);
-                        l = l.Replace("<!--P7CONTROLS-->", p7Controls);
-                        l = l.Replace("<!--P8CONTROLS-->", p8Controls);
-                        l = l.Replace("//LOADPARMETERS", loadParams);
-                        l = l.Replace("//SAVEPARMETERS", saveParams);
+                        StreamWriter fout = new StreamWriter(targetName);
+                        while (!fin.EndOfStream)
+                        {
+                            String l = fin.ReadLine();
+                            l = l.Replace("Blank", ToolName);
+                            l = l.Replace("DIALOGTITLE", DialogTitle);
+                            l = l.Replace("//TOOLPROPS", toolProps);
+                            l = l.Replace("//MAKEPARAMETERS", makerParams);
+                            l = l.Replace("<!--P1CONTROLS-->", p1Controls);
+                            l = l.Replace("<!--P2CONTROLS-->", p2Controls);
+                            l = l.Replace("<!--P3CONTROLS-->", p3Controls);
+                            l = l.Replace("<!--P4CONTROLS-->", p4Controls);
+                            l = l.Replace("<!--P5CONTROLS-->", p5Controls);
+                            l = l.Replace("<!--P6CONTROLS-->", p6Controls);
+                            l = l.Replace("<!--P7CONTROLS-->", p7Controls);
+                            l = l.Replace("<!--P8CONTROLS-->", p8Controls);
+                            l = l.Replace("//LOADPARMETERS", loadParams);
+                            l = l.Replace("//SAVEPARMETERS", saveParams);
 
-                        l = l.Replace("//SETPROPERTIES", pSet);
+                            l = l.Replace("//SETPROPERTIES", pSet);
 
-                        l = l.Replace("//SETDEFAULTS", defaultParams);
-                        l = l.Replace("\r\n\r\n", "\r\n");
-                        l = l.Replace("\n\n", "\n");
+                            l = l.Replace("//SETDEFAULTS", defaultParams);
+                            l = l.Replace("\r\n\r\n", "\r\n");
+                            l = l.Replace("\n\n", "\n");
 
-                        fout.WriteLine(l);
+                            fout.WriteLine(l);
+                        }
+                        fin.Close();
+                        fout.Close();
                     }
-                    fin.Close();
-                    fout.Close();
                 }
             }
-        }
-
-        private string GetParamDefault(string pn, string pi)
-        {
-            if (pn != "")
-            {
-                return $"    {pn} = {pi};\n";
-            }
-
-            return "";
-        }
-
-        private string GetControls(string p1Name, string ptype)
-        {
-            string res = "";
-            if (ptype == "combo")
-            {
-                res = GenControls(p1Name, ctrCombo);
-            }
-            else
-            {
-                res = GenControls(p1Name, ctrString);
-            }
-            return res;
-        }
-
-        private string GetInitialSettings(string n, string v, string t)
-        {
-            string res = "";
-            if (n != "")
-            {
-                if (t.ToLower() == "string")
-                {
-                    res = $"        {n} = \"{v}\";";
-                }
-                else
-                {
-                    res = $"        {n} = {v};";
-                }
-            }
-
-            return res;
         }
 
         private void CreateInterpreterNode(string templateRoot, string targetFolder)
@@ -1358,6 +1266,17 @@ public String <PName>ToolTip
             }
         }
 
+        private string GenControls(string name, string s)
+        {
+            string res = "";
+            if (name != null && name != "")
+            {
+                name = name.ToUpper().Substring(0, 1) + name.Substring(1);
+                res = s.Replace("<pName>", name);
+            }
+            return res;
+        }
+
         private void GenerateClicked(object sender, RoutedEventArgs e)
         {
             if (exportPath != null && exportPath.Trim() != "")
@@ -1371,6 +1290,7 @@ public String <PName>ToolTip
                     CreateMaker(templateRoot, targetFolder);
                     CreateInterpreterNode(templateRoot, targetFolder);
                     CreateParser(templateRoot, targetFolder);
+                    File.Copy(templateRoot + "\\Blank.png", targetFolder + toolName.Trim() + ".png", true);
                     System.Windows.MessageBox.Show("Done");
                 }
                 catch (Exception ex)
@@ -1490,13 +1410,16 @@ public String <PName>ToolTip
             return res;
         }
 
-        private string GenControls(string name, string s)
+        private string GetControls(string p1Name, string ptype)
         {
             string res = "";
-            if (name != null && name != "")
+            if (ptype == "combo")
             {
-                name = name.ToUpper().Substring(0, 1) + name.Substring(1);
-                res = s.Replace("<pName>", name);
+                res = GenControls(p1Name, ctrCombo);
+            }
+            else
+            {
+                res = GenControls(p1Name, ctrString);
             }
             return res;
         }
@@ -1600,6 +1523,37 @@ public String <PName>ToolTip
             return res;
         }
 
+        private string GetInitialSettings(string n, string v, string t)
+        {
+            string res = "";
+            if (n != "")
+            {
+                if (t.ToLower() == "string")
+                {
+                    res = $"        {n} = \"{v}\";";
+                }
+                else
+                {
+                    res = $"        {n} = {v};";
+                }
+            }
+
+            return res;
+        }
+
+        private string GetLimitDef(string pName, string pMin, string pMax, string pType)
+        {
+            string res = "";
+            if (pName != null && pName != "" && pType.ToLower() != "bool")
+            {
+                res = addLimit;
+                res = res.Replace("<pName>", pName);
+                res = res.Replace("<pMin>", pMin);
+                res = res.Replace("<pMax>", pMax);
+            }
+            return res;
+        }
+
         private string GetLoadParams(String n, string t, string init)
         {
             string res = "";
@@ -1630,7 +1584,7 @@ public String <PName>ToolTip
 
                 res += r.Replace("<pinitial>", init);
             }
-            return res;
+            return res.Trim();
         }
 
         private string GetMakerNodeParam(string res, string name)
@@ -1745,6 +1699,16 @@ public String <PName>ToolTip
             return i.ToString();
         }
 
+        private string GetParamDefault(string pn, string pi)
+        {
+            if (pn != "")
+            {
+                return $"    {pn} = {pi};\n";
+            }
+
+            return "";
+        }
+
         private string GetPlainTextParam(string res, string name)
         {
             if (name != null && name != "")
@@ -1777,7 +1741,7 @@ public String <PName>ToolTip
         private string GetRangeCheck(string n, string l, string m, string t)
         {
             string res = "";
-            if (n != null && n != "" && t != "combo")
+            if (n != null && n != "" && t != "combo" && t != "bool")
             {
                 if (l != null && l != "")
                 {
@@ -1821,33 +1785,6 @@ public String <PName>ToolTip
             return res;
         }
 
-        private string GetSetLimits()
-        {
-            string res = "";
-            res += GetLimitDef(P1Name, p1Min, p1Max, p1Type);
-            res += GetLimitDef(P2Name, p2Min, p2Max, p2Type);
-            res += GetLimitDef(P3Name, p3Min, p3Max, p3Type);
-            res += GetLimitDef(P4Name, p4Min, p4Max, p4Type);
-            res += GetLimitDef(P5Name, p5Min, p5Max, p5Type);
-            res += GetLimitDef(P6Name, p6Min, p6Max, p6Type);
-            res += GetLimitDef(P7Name, p7Min, p7Max, p7Type);
-            res += GetLimitDef(P8Name, p8Min, p8Max, p8Type);
-            return res;
-        }
-
-        private string GetLimitDef(string pName, string pMin, string pMax, string pType)
-        {
-            string res = "";
-            if (pName != null && pName != "")
-            {
-                res = addLimit;
-                res = res.Replace("<pName>", pName);
-                res = res.Replace("<pMin>", pMin);
-                res = res.Replace("<pMax>", pMax);
-            }
-            return res;
-        }
-
         private string GetRichTextParam(string res, string name)
         {
             if (name != null && name != "")
@@ -1885,6 +1822,20 @@ public String <PName>ToolTip
                 res = @"
             EditorParameters.Set(""" + s + @"""," + s + ".ToString());";
             }
+            return res.Trim();
+        }
+
+        private string GetSetLimits()
+        {
+            string res = "";
+            res += GetLimitDef(P1Name, p1Min, p1Max, p1Type);
+            res += GetLimitDef(P2Name, p2Min, p2Max, p2Type);
+            res += GetLimitDef(P3Name, p3Min, p3Max, p3Type);
+            res += GetLimitDef(P4Name, p4Min, p4Max, p4Type);
+            res += GetLimitDef(P5Name, p5Min, p5Max, p5Type);
+            res += GetLimitDef(P6Name, p6Min, p6Max, p6Type);
+            res += GetLimitDef(P7Name, p7Min, p7Max, p7Type);
+            res += GetLimitDef(P8Name, p8Min, p8Max, p8Type);
             return res;
         }
 

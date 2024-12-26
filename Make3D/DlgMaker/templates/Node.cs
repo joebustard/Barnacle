@@ -104,7 +104,7 @@ namespace ScriptLanguage
                 }
                 else
                 {
-                    Log.Instance().AddEntry($"MakeRailWheel : Can't check parameter {paramName}");
+                    Log.Instance().AddEntry($"Make//TOOLNAME : Can't check parameter {paramName}");
                 }
             }
 
