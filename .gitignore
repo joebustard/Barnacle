@@ -407,3 +407,4 @@ Make3D/.vs/Make3D/v15/.suo
 *.ide-shm
 *.ide-wal
 Make3D/Make3D/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+*.bak

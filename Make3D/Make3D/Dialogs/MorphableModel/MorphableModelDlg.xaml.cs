@@ -64,7 +64,7 @@ namespace Barnacle.Dialogs
             DataContext = this;
             loaded = false;
             regenTimer = new DispatcherTimer();
-            regenTimer.Interval = new TimeSpan(0, 0, 1);
+            regenTimer.Interval = new TimeSpan(0, 0, 5);
             regenTimer.Tick += RegenTick;
         }
 
@@ -319,10 +319,18 @@ namespace Barnacle.Dialogs
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
-            SaveEditorParmeters();
-            base.SaveSizeAndLocation();
-            DialogResult = true;
-            Close();
+            if (regenTimer.IsEnabled)
+            {
+                regenTimer.Stop();
+                UpdateDisplay();
+            }
+            else
+            {
+                base.SaveSizeAndLocation();
+                SaveEditorParmeters();
+                DialogResult = true;
+                Close();
+            }
         }
 
         private ObservableCollection<string> CreateShapeList()

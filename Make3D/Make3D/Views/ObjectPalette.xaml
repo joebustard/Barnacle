@@ -322,6 +322,32 @@
                 ToolTip="Add a corrigation">
                 <Image Source="/Barnacle;component/Images/Buttons/Squiggle.png" />
             </Button>
+            <Button
+                Command="{Binding AddCommand}"
+                CommandParameter="CrossBlock"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource PrimitiveImageButton}"
+                ToolTip="Add a cross block">
+                <Image Source="/Barnacle;component/Images/Buttons/CrossBlock.png" />
+            </Button>
+
+            <Button
+                Command="{Binding AddCommand}"
+                CommandParameter="RightBracket"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource PrimitiveImageButton}"
+                ToolTip="Add a Right Bracket">
+                <Image Source="/Barnacle;component/Images/Buttons/RightBracket.png" />
+            </Button>
+
+            <Button
+                Command="{Binding AddCommand}"
+                CommandParameter="ScrewDriverBit"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource PrimitiveImageButton}"
+                ToolTip="Add a Screw Driver Bit">
+                <Image Source="/Barnacle;component/Images/Buttons/Screwdriverbit.png" />
+            </Button>
         </UniformGrid>
     </Grid>
 </UserControl>

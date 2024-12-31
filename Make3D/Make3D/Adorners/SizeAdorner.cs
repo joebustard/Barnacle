@@ -82,28 +82,18 @@ namespace Barnacle.Models.Adorners
             NotificationManager.Subscribe("SizeAdorner", "CameraOrientation", OnCameraOrientation);
         }
 
-        private void OnCameraOrientation(object param)
-        {
-            if (labelLocations.Count > 0)
-            {
-                UpdateLabelVisibility();
-            }
-        }
-
-        private void OnCameraMoved(object param)
-        {
-            if (labelLocations.Count > 0)
-            {
-                UpdateLabelVisibility();
-            }
-        }
-
         public Bounds3D Bounds
         {
-            get { return bounds; }
+            get
+            {
+                return bounds;
+            }
         }
 
-        internal PolarCamera Camera { get; set; }
+        internal PolarCamera Camera
+        {
+            get; set;
+        }
 
         public override void AdornObject(Object3D obj)
         {
@@ -173,142 +163,6 @@ namespace Barnacle.Models.Adorners
                 }
             }
             return handled;
-        }
-
-        private void UpdateLabelVisibility()
-        {
-            switch (Camera.VerticalOrientation)
-            {
-                case PolarCamera.Orientations.Top:
-                    {
-                        TopLabelVisibility();
-                    }
-                    break;
-
-                case PolarCamera.Orientations.Bottom:
-                    {
-                        BottomLabelVisibility();
-                    }
-                    break;
-            }
-        }
-
-        private void BottomLabelVisibility()
-        {
-            switch (Camera.HorizontalOrientation)
-            {
-                case PolarCamera.Orientations.Front:
-                    {
-                        SetLabelVisibility("TopThumb", false);
-                        SetLabelVisibility("BottomThumb", true);
-                        SetLabelVisibility("LeftThumb", false);
-                        SetLabelVisibility("RightThumb", true);
-                        SetLabelVisibility("FrontThumb", true);
-                        SetLabelVisibility("BackThumb", false);
-                    }
-                    break;
-
-                case PolarCamera.Orientations.Back:
-                    {
-                        SetLabelVisibility("TopThumb", false);
-                        SetLabelVisibility("BottomThumb", true);
-                        SetLabelVisibility("LeftThumb", true);
-                        SetLabelVisibility("RightThumb", false);
-                        SetLabelVisibility("FrontThumb", false);
-                        SetLabelVisibility("BackThumb", true);
-                    }
-                    break;
-
-                case PolarCamera.Orientations.Left:
-                    {
-                        SetLabelVisibility("TopThumb", false);
-                        SetLabelVisibility("BottomThumb", true);
-                        SetLabelVisibility("LeftThumb", true);
-                        SetLabelVisibility("RightThumb", false);
-                        SetLabelVisibility("FrontThumb", true);
-                        SetLabelVisibility("BackThumb", false);
-                    }
-                    break;
-
-                case PolarCamera.Orientations.Right:
-                    {
-                        SetLabelVisibility("TopThumb", false);
-                        SetLabelVisibility("BottomThumb", true);
-                        SetLabelVisibility("LeftThumb", false);
-                        SetLabelVisibility("RightThumb", true);
-                        SetLabelVisibility("FrontThumb", false);
-                        SetLabelVisibility("BackThumb", true);
-                    }
-                    break;
-            }
-        }
-
-        private void TopLabelVisibility()
-        {
-            switch (Camera.HorizontalOrientation)
-            {
-                case PolarCamera.Orientations.Front:
-                    {
-                        SetLabelVisibility("TopThumb", true);
-                        SetLabelVisibility("BottomThumb", false);
-                        SetLabelVisibility("LeftThumb", false);
-                        SetLabelVisibility("RightThumb", true);
-                        SetLabelVisibility("FrontThumb", true);
-                        SetLabelVisibility("BackThumb", false);
-                    }
-                    break;
-
-                case PolarCamera.Orientations.Back:
-                    {
-                        SetLabelVisibility("TopThumb", true);
-                        SetLabelVisibility("BottomThumb", false);
-                        SetLabelVisibility("LeftThumb", true);
-                        SetLabelVisibility("RightThumb", false);
-                        SetLabelVisibility("FrontThumb", false);
-                        SetLabelVisibility("BackThumb", true);
-                    }
-                    break;
-
-                case PolarCamera.Orientations.Left:
-                    {
-                        SetLabelVisibility("TopThumb", true);
-                        SetLabelVisibility("BottomThumb", false);
-                        SetLabelVisibility("LeftThumb", true);
-                        SetLabelVisibility("RightThumb", false);
-                        SetLabelVisibility("FrontThumb", true);
-                        SetLabelVisibility("BackThumb", false);
-                    }
-                    break;
-
-                case PolarCamera.Orientations.Right:
-                    {
-                        SetLabelVisibility("TopThumb", true);
-                        SetLabelVisibility("BottomThumb", false);
-                        SetLabelVisibility("LeftThumb", false);
-                        SetLabelVisibility("RightThumb", true);
-                        SetLabelVisibility("FrontThumb", false);
-                        SetLabelVisibility("BackThumb", true);
-                    }
-                    break;
-            }
-        }
-
-        private void SetLabelVisibility(string v1, bool v2)
-        {
-            if (thumbLabels.ContainsKey(v1))
-            {
-                Visibility vs;
-                if (v2)
-                {
-                    vs = Visibility.Visible;
-                }
-                else
-                {
-                    vs = Visibility.Hidden;
-                }
-                thumbLabels[v1].Visibility = vs;
-                PositionLabel(v1);
-            }
         }
 
         internal override void MouseUp(MouseButtonEventArgs e)
@@ -404,6 +258,68 @@ namespace Barnacle.Models.Adorners
             l.GotFocus += L_GotFocus;
 
             thumbLabels[name] = l;
+        }
+
+        private void AutomaticScaleUpdate()
+        {
+            keyboardTimer.Stop();
+            if (scaleChange.X != 1 || scaleChange.Y != 1 || scaleChange.Z != 1)
+            {
+                UpdateScale();
+                refreshTimer?.Start();
+            }
+
+            scaleChange = new Point3D(1, 1, 1);
+        }
+
+        private void BottomLabelVisibility()
+        {
+            switch (Camera.HorizontalOrientation)
+            {
+                case PolarCamera.Orientations.Front:
+                    {
+                        SetLabelVisibility("TopThumb", false);
+                        SetLabelVisibility("BottomThumb", true);
+                        SetLabelVisibility("LeftThumb", false);
+                        SetLabelVisibility("RightThumb", true);
+                        SetLabelVisibility("FrontThumb", true);
+                        SetLabelVisibility("BackThumb", false);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Back:
+                    {
+                        SetLabelVisibility("TopThumb", false);
+                        SetLabelVisibility("BottomThumb", true);
+                        SetLabelVisibility("LeftThumb", true);
+                        SetLabelVisibility("RightThumb", false);
+                        SetLabelVisibility("FrontThumb", false);
+                        SetLabelVisibility("BackThumb", true);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Left:
+                    {
+                        SetLabelVisibility("TopThumb", false);
+                        SetLabelVisibility("BottomThumb", true);
+                        SetLabelVisibility("LeftThumb", true);
+                        SetLabelVisibility("RightThumb", false);
+                        SetLabelVisibility("FrontThumb", true);
+                        SetLabelVisibility("BackThumb", false);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Right:
+                    {
+                        SetLabelVisibility("TopThumb", false);
+                        SetLabelVisibility("BottomThumb", true);
+                        SetLabelVisibility("LeftThumb", false);
+                        SetLabelVisibility("RightThumb", true);
+                        SetLabelVisibility("FrontThumb", false);
+                        SetLabelVisibility("BackThumb", true);
+                    }
+                    break;
+            }
         }
 
         private void CaclBoxSize(out Point3D midp, out Point3D size)
@@ -569,18 +485,6 @@ namespace Barnacle.Models.Adorners
             AutomaticScaleUpdate();
         }
 
-        private void AutomaticScaleUpdate()
-        {
-            keyboardTimer.Stop();
-            if (scaleChange.X != 1 || scaleChange.Y != 1 || scaleChange.Z != 1)
-            {
-                UpdateScale();
-                refreshTimer?.Start();
-            }
-
-            scaleChange = new Point3D(1, 1, 1);
-        }
-
         private void KeyboardTimer_Tick(object sender, EventArgs e)
         {
             AutomaticScaleUpdate();
@@ -651,6 +555,13 @@ namespace Barnacle.Models.Adorners
                 }
                 keyboardTimer.Start();
             }
+        }
+
+        private Point3D Location(Point3D p1, Point3D p2)
+        {
+            return new Point3D(p1.X + p2.X,
+                                p1.Y + p2.Y,
+                                p1.Z + p2.Z);
         }
 
         private void MouseMoveBox(Point lastPos, Point newPos, bool ctrlDown)
@@ -947,6 +858,22 @@ namespace Barnacle.Models.Adorners
             }
         }
 
+        private void OnCameraMoved(object param)
+        {
+            if (labelLocations.Count > 0)
+            {
+                UpdateLabelVisibility();
+            }
+        }
+
+        private void OnCameraOrientation(object param)
+        {
+            if (labelLocations.Count > 0)
+            {
+                UpdateLabelVisibility();
+            }
+        }
+
         private void OnScaleRefresh(object param)
         {
             Object3D ob = param as Object3D;
@@ -960,21 +887,16 @@ namespace Barnacle.Models.Adorners
             {
                 Point3D loc = Location(labelLocations[v], label3DOffsets[v]);
                 Point point = CameraUtils.Convert3DPoint(loc, ViewPort);
-
-                Canvas.SetLeft(thumbLabels[v], point.X);
-                Canvas.SetTop(thumbLabels[v], point.Y);
-                if (!Overlay.Children.Contains(thumbLabels[v]))
+                if (!double.IsInfinity(point.X) && !double.IsInfinity(point.Y))
                 {
-                    Overlay.Children.Add(thumbLabels[v]);
+                    Canvas.SetLeft(thumbLabels[v], point.X);
+                    Canvas.SetTop(thumbLabels[v], point.Y);
+                    if (!Overlay.Children.Contains(thumbLabels[v]))
+                    {
+                        Overlay.Children.Add(thumbLabels[v]);
+                    }
                 }
             }
-        }
-
-        private Point3D Location(Point3D p1, Point3D p2)
-        {
-            return new Point3D(p1.X + p2.X,
-                                p1.Y + p2.Y,
-                                p1.Z + p2.Z);
         }
 
         private void PositionLabels()
@@ -996,6 +918,92 @@ namespace Barnacle.Models.Adorners
             GenerateAdornments();
             NotificationManager.Notify("DocDirty", null);
             NotificationManager.Notify("ScaleUpdated", null);
+        }
+
+        private void SetLabelVisibility(string v1, bool v2)
+        {
+            if (thumbLabels.ContainsKey(v1))
+            {
+                Visibility vs;
+                if (v2)
+                {
+                    vs = Visibility.Visible;
+                }
+                else
+                {
+                    vs = Visibility.Hidden;
+                }
+                thumbLabels[v1].Visibility = vs;
+                PositionLabel(v1);
+            }
+        }
+
+        private void TopLabelVisibility()
+        {
+            switch (Camera.HorizontalOrientation)
+            {
+                case PolarCamera.Orientations.Front:
+                    {
+                        SetLabelVisibility("TopThumb", true);
+                        SetLabelVisibility("BottomThumb", false);
+                        SetLabelVisibility("LeftThumb", false);
+                        SetLabelVisibility("RightThumb", true);
+                        SetLabelVisibility("FrontThumb", true);
+                        SetLabelVisibility("BackThumb", false);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Back:
+                    {
+                        SetLabelVisibility("TopThumb", true);
+                        SetLabelVisibility("BottomThumb", false);
+                        SetLabelVisibility("LeftThumb", true);
+                        SetLabelVisibility("RightThumb", false);
+                        SetLabelVisibility("FrontThumb", false);
+                        SetLabelVisibility("BackThumb", true);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Left:
+                    {
+                        SetLabelVisibility("TopThumb", true);
+                        SetLabelVisibility("BottomThumb", false);
+                        SetLabelVisibility("LeftThumb", true);
+                        SetLabelVisibility("RightThumb", false);
+                        SetLabelVisibility("FrontThumb", true);
+                        SetLabelVisibility("BackThumb", false);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Right:
+                    {
+                        SetLabelVisibility("TopThumb", true);
+                        SetLabelVisibility("BottomThumb", false);
+                        SetLabelVisibility("LeftThumb", false);
+                        SetLabelVisibility("RightThumb", true);
+                        SetLabelVisibility("FrontThumb", false);
+                        SetLabelVisibility("BackThumb", true);
+                    }
+                    break;
+            }
+        }
+
+        private void UpdateLabelVisibility()
+        {
+            switch (Camera.VerticalOrientation)
+            {
+                case PolarCamera.Orientations.Top:
+                    {
+                        TopLabelVisibility();
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Bottom:
+                    {
+                        BottomLabelVisibility();
+                    }
+                    break;
+            }
         }
 
         private void UpdateScale()

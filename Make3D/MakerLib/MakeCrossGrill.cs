@@ -156,6 +156,9 @@ namespace MakerLib
 
         private void GenerateDoubleWithoutEdge()
         {
+            double hl = grilleLength / 2;
+            SingleNoEdge(hl, 0, true, false);
+            SingleNoEdge(hl, hl, false, true);
         }
 
         private void GenerateLeftWithEdge(double length)
@@ -348,6 +351,26 @@ namespace MakerLib
 
         private void GenerateMultiWithoutEdge()
         {
+            // all parts will be the same length
+            double len = grilleLength / numberOfCrossBeams;
+            bool closeLeft;
+            bool closeRight;
+            double x = 0;
+            for (int i = 0; i < numberOfCrossBeams; i++)
+            {
+                closeLeft = false;
+                closeRight = false;
+                if (i == 0)
+                {
+                    closeLeft = true;
+                }
+                if (i == numberOfCrossBeams - 1)
+                {
+                    closeRight = true;
+                }
+                SingleNoEdge(len, x, closeLeft, closeRight);
+                x += len;
+            }
         }
 
         private void GenerateRightWithEdge(double position, double length)
@@ -517,77 +540,7 @@ namespace MakerLib
 
         private void GenerateSingleWithoutEdge()
         {
-            Point[] sps = new Point[16];
-            double hb = crossBeamWidth / 2;
-            sps[0] = new Point(0, 0);
-            sps[1] = new Point(0, grilleHeight);
-            sps[2] = new Point(grilleLength, grilleHeight);
-            sps[3] = new Point(grilleLength, 0);
-
-            Line2D offsetLine1 = GetOffsetLine(sps[0], sps[2], hb);
-            Line2D offsetLine2 = GetOffsetLine(sps[0], sps[2], -hb);
-            Line2D offsetLine3 = GetOffsetLine(sps[1], sps[3], hb);
-            Line2D offsetLine4 = GetOffsetLine(sps[1], sps[3], -hb);
-
-            double x = GetX(offsetLine2, edgeWidth);
-            sps[4] = new Point(x, edgeWidth);
-            double y = GetY(offsetLine1, edgeWidth);
-            sps[5] = new Point(edgeWidth, y);
-
-            y = GetY(offsetLine4, edgeWidth);
-            sps[6] = new Point(edgeWidth, y);
-            x = GetX(offsetLine3, grilleHeight - edgeWidth);
-            if (x < edgeWidth)
-            {
-                // extra triangle need top left
-            }
-            sps[7] = new Point(x, grilleHeight - edgeWidth);
-
-            x = GetX(offsetLine1, grilleHeight - edgeWidth);
-            if (x > grilleLength - edgeWidth)
-            {
-                // extra triangle need
-            }
-            sps[8] = new Point(x, grilleHeight - edgeWidth);
-            y = GetY(offsetLine2, grilleLength - edgeWidth);
-            sps[9] = new Point(grilleLength - edgeWidth, y);
-
-            y = GetY(offsetLine3, grilleLength - edgeWidth);
-            sps[10] = new Point(grilleLength - edgeWidth, y);
-            x = GetX(offsetLine4, edgeWidth);
-            sps[11] = new Point(x, edgeWidth);
-
-            sps[12] = Intercept(offsetLine2, offsetLine4);
-            sps[13] = Intercept(offsetLine1, offsetLine4);
-            sps[14] = Intercept(offsetLine1, offsetLine3);
-            sps[15] = Intercept(offsetLine2, offsetLine3);
-
-            MakeSurfaceForSingleWithoutEdge(sps, 0);
-            MakeSurfaceForSingleWithoutEdge(sps, grilleWidth);
-            CloseSide(sps[0], sps[1]);
-            CloseSide(sps[1], sps[2]);
-            CloseSide(sps[2], sps[3]);
-            CloseSide(sps[3], sps[0]);
-
-            // left hole
-            CloseSide(sps[6], sps[5]);
-            CloseSide(sps[13], sps[6]);
-            CloseSide(sps[5], sps[13]);
-
-            // Top Hole
-            CloseSide(sps[8], sps[7]);
-            CloseSide(sps[14], sps[8]);
-            CloseSide(sps[7], sps[14]);
-
-            // right
-            CloseSide(sps[10], sps[9]);
-            CloseSide(sps[15], sps[10]);
-            CloseSide(sps[9], sps[15]);
-
-            // bottom
-            CloseSide(sps[4], sps[11]);
-            CloseSide(sps[12], sps[4]);
-            CloseSide(sps[11], sps[12]);
+            SingleNoEdge(grilleLength);
         }
 
         private Line2D GetOffsetLine(Point sp, Point se, double offset)
@@ -786,6 +739,92 @@ namespace MakerLib
             paramLimits.AddLimit("NumberOfCrossBeams", 1, 20);
             paramLimits.AddLimit("CrossBeamWidth", 1, 100);
             paramLimits.AddLimit("EdgeWidth", 1, 100);
+        }
+
+        private void SingleNoEdge(double len, double position = 0, bool closeLeft = true, bool closeRight = true)
+        {
+            Point[] sps = new Point[16];
+            double hb = crossBeamWidth / 2;
+            sps[0] = new Point(0, 0);
+            sps[1] = new Point(0, grilleHeight);
+            sps[2] = new Point(len, grilleHeight);
+            sps[3] = new Point(len, 0);
+
+            Line2D offsetLine1 = GetOffsetLine(sps[0], sps[2], hb);
+            Line2D offsetLine2 = GetOffsetLine(sps[0], sps[2], -hb);
+            Line2D offsetLine3 = GetOffsetLine(sps[1], sps[3], hb);
+            Line2D offsetLine4 = GetOffsetLine(sps[1], sps[3], -hb);
+
+            double x = GetX(offsetLine2, 0);
+            sps[4] = new Point(x, 0);
+            double y = GetY(offsetLine1, 0);
+            sps[5] = new Point(0, y);
+
+            y = GetY(offsetLine4, 0);
+            sps[6] = new Point(0, y);
+            x = GetX(offsetLine3, grilleHeight);
+            if (x < edgeWidth)
+            {
+                // extra triangle need top left
+            }
+            sps[7] = new Point(x, grilleHeight);
+
+            x = GetX(offsetLine1, grilleHeight);
+            if (x > len - edgeWidth)
+            {
+                // extra triangle need
+            }
+            sps[8] = new Point(x, grilleHeight);
+            y = GetY(offsetLine2, len);
+            sps[9] = new Point(len, y);
+
+            y = GetY(offsetLine3, len);
+            sps[10] = new Point(len, y);
+            x = GetX(offsetLine4, 0);
+            sps[11] = new Point(x, 0);
+
+            sps[12] = Intercept(offsetLine2, offsetLine4);
+            sps[13] = Intercept(offsetLine1, offsetLine4);
+            sps[14] = Intercept(offsetLine1, offsetLine3);
+            sps[15] = Intercept(offsetLine2, offsetLine3);
+            for (int i = 0; i < sps.GetLength(0); i++)
+            {
+                sps[i].X = sps[i].X + position;
+            }
+            MakeSurfaceForSingleWithoutEdge(sps, 0);
+            MakeSurfaceForSingleWithoutEdge(sps, grilleWidth);
+
+            if (closeLeft)
+            {
+                CloseSide(sps[0], sps[5]);
+                CloseSide(sps[6], sps[1]);
+            }
+            if (closeRight)
+            {
+                CloseSide(sps[2], sps[9]);
+                CloseSide(sps[10], sps[3]);
+            }
+
+            CloseSide(sps[1], sps[7]);
+            CloseSide(sps[8], sps[2]);
+            CloseSide(sps[3], sps[11]);
+            CloseSide(sps[4], sps[0]);
+
+            // left hole
+            CloseSide(sps[13], sps[6]);
+            CloseSide(sps[5], sps[13]);
+
+            // Top Hole
+            CloseSide(sps[7], sps[14]);
+            CloseSide(sps[14], sps[8]);
+
+            // right
+            CloseSide(sps[15], sps[10]);
+            CloseSide(sps[9], sps[15]);
+
+            // bottom
+            CloseSide(sps[12], sps[4]);
+            CloseSide(sps[11], sps[12]);
         }
 
         internal struct Line2D

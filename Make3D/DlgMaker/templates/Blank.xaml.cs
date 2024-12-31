@@ -8,7 +8,6 @@ using System.Windows.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-
 namespace Barnacle.Dialogs
 {
     /// <summary>
@@ -78,9 +77,18 @@ namespace Barnacle.Dialogs
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
-            SaveEditorParmeters();
-            DialogResult = true;
-            Close();
+            if (regenTimer.IsEnabled)
+            {
+                regenTimer.Stop();
+                Regenerate();
+            }
+            else
+            {
+                base.SaveSizeAndLocation();
+                SaveEditorParmeters();
+                DialogResult = true;
+                Close();
+            }
         }
 
         private async void GenerateShape()

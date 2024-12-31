@@ -190,9 +190,18 @@ namespace Barnacle.Dialogs
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
-            SaveEditorParmeters();
-            DialogResult = true;
-            Close();
+            if (regenTimer.IsEnabled)
+            {
+                regenTimer.Stop();
+                Regenerate();
+            }
+            else
+            {
+                base.SaveSizeAndLocation();
+                SaveEditorParmeters();
+                DialogResult = true;
+                Close();
+            }
         }
 
         private void DeferRegen()

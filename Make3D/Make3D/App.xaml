@@ -10,9 +10,8 @@
         <SolidColorBrush x:Key="ControlBackBrush" Color="AliceBlue" />
         <SolidColorBrush x:Key="WindowBackBrush" Color="AliceBlue" />
         <SolidColorBrush x:Key="WarningColour" Color="OrangeRed" />
-        <SolidColorBrush x:Key="SelectedBorderColour"
-        Color="DarkGreen" />
-        <!-- Control the background colour of the icons on the primitives palette -->
+        <SolidColorBrush x:Key="SelectedBorderColour" Color="DarkGreen" />
+        <!--  Control the background colour of the icons on the primitives palette  -->
         <SolidColorBrush x:Key="PrimitiveButtonBackgroundColour" Color="AliceBlue" />
 
         <Style x:Key="GridSplitterStyle" TargetType="GridSplitter">

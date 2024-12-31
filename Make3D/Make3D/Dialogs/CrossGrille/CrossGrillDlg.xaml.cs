@@ -276,9 +276,17 @@ namespace Barnacle.Dialogs
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
-            SaveEditorParmeters();
-            DialogResult = true;
-            Close();
+            if (regenTimer.IsEnabled)
+            {
+                regenTimer.Stop();
+                Regenerate();
+            }
+            else
+            {
+                SaveEditorParmeters();
+                DialogResult = true;
+                Close();
+            }
         }
 
         private bool CheckRange(double v, [CallerMemberName] String propertyName = "")
@@ -360,6 +368,14 @@ namespace Barnacle.Dialogs
             CrossBeamWidth = EditorParameters.GetDouble("CrossBeamWidth", 2);
             MakeEdge = EditorParameters.GetBoolean("MakeEdge", true);
             EdgeWidth = EditorParameters.GetDouble("EdgeWidth", 1);
+            if (makeEdge)
+            {
+                ShowEdgeControls = Visibility.Visible;
+            }
+            else
+            {
+                ShowEdgeControls = Visibility.Hidden;
+            }
         }
 
         private void Regenerate()

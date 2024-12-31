@@ -15,6 +15,7 @@
             <RowDefinition Height="40" />
             <RowDefinition Height="40" />
             <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -56,12 +57,20 @@
                 MinWidth="100"
                 VerticalAlignment="Center"
                 Text="{Binding PrimName}" />
+            <Label Margin="8,0,0,0" Content="Description" VerticalAlignment="Center" />
+            <TextBox Margin="8,0,0,0" Width="200"
+            Text="{Binding PrimitiveDesc}" />
+        </StackPanel>
+        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
+            <Label Content="Colour" VerticalAlignment="Center"
+            Width="100" />
+            <ComboBox x:Name="ColourBox" Width="100" ItemsSource="{Binding ColourNames}"
+            SelectedItem="{Binding SelectedColour}" />
         </StackPanel>
         <Button
             x:Name="ExitButton"
-            Grid.Row="3"
+            Grid.Row="5"
             Grid.Column="2"
-            Margin="0,0.333,0.333,0.333"
             Click="ExitButton_Click"
             Content="Exit" />
     </Grid>

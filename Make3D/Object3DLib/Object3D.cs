@@ -1,4 +1,4 @@
-﻿using Barnacle.EditorParameterLib;
+using Barnacle.EditorParameterLib;
 using CSGLib;
 using HullLibrary;
 using System;
@@ -96,6 +96,10 @@ namespace Barnacle.Object3DLib
             new PrimTableEntry( "midubeam",PrimitiveGenerator.GenerateMidUBeam,Colors.Coral),
             new PrimTableEntry( "staircase",PrimitiveGenerator.GenerateStaircase,Colors.PaleTurquoise),
             new PrimTableEntry( "squiggle",PrimitiveGenerator.GenerateSquiggle,Colors.DodgerBlue),
+             new PrimTableEntry( "crossblock", PrimitiveGenerator.GenerateCrossBlock,Colors.MediumAquamarine),
+             new PrimTableEntry( "rightbracket", PrimitiveGenerator.GenerateRightBracket,Colors.Plum),
+             new PrimTableEntry( "screwdriverbit", PrimitiveGenerator.GenerateScrewDriverBit,Colors.Teal),
+            //Next_Primitive_Table_Entry
         };
 
         protected Bounds3D absoluteBounds;

@@ -1376,8 +1376,10 @@
     <Resource Include="Images\Buttons\UBeamProfile.png" />
     <Resource Include="Images\Buttons\Wedge2Profile.png" />
     <Resource Include="Images\Buttons\WedgeProfile.png" />
-    <Resource Include="Images\Buttons\CrossGrill.png" />
     <Resource Include="Images\Buttons\CrossGrille.png" />
+    <Resource Include="Images\Buttons\CrossBlock.png" />
+    <Resource Include="Images\Buttons\RightBracket.png" />
+    <Resource Include="Images\Buttons\Screwdriverbit.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
