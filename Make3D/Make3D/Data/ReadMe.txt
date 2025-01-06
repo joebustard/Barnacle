@@ -1,10 +1,11 @@
 ﻿v1.0.9
 ===========
 Added
-Added setlength(), setheight() and setwidth() to the standard limpet library
+Setlength(), setheight() and setwidth() to the standard limpet library
 Five more primitives, staircase, squiggle, cross block, right bracket and screw diver bit
 Two "Wedge" profiles added to path loft
 Cross grille with edge
+Setting for the minimum number of faces to be added for every primitive.
 
 Fixed
 

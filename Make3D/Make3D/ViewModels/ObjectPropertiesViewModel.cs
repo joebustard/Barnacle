@@ -27,75 +27,39 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using System.Windows.Threading;
 
 namespace Barnacle.ViewModels
 {
     internal class ObjectPropertiesViewModel : BaseViewModel, INotifyPropertyChanged
     {
+        private List<AvailableColour> availableColours;
         private bool canScale;
 
+        private bool controlsEnabled;
         private String description;
+        private bool editingActive;
         private bool exportable;
+        private bool lockAspectRatio;
         private AvailableColour objectColour;
 
         private string objectName;
 
+        private string objectType;
         private double percentScale;
 
+        private double rescaleFactorX;
+        private double rescaleFactorY;
+        private double rescaleFactorZ;
+        private DispatcherTimer rescaleTimer;
         private double rotationX;
 
         private double rotationY;
 
         private double rotationZ;
 
+        private double scaleX;
         private Object3D selectedObject;
-        private List<AvailableColour> availableColours;
-        private bool lockAspectRatio;
-
-        public bool LockAspectRatio
-        {
-            get { return lockAspectRatio; }
-            set
-            {
-                if (lockAspectRatio != value)
-                {
-                    lockAspectRatio = value;
-                    if (selectedObject != null)
-                    {
-                        CheckPoint();
-                        selectedObject.LockAspectRatio = lockAspectRatio;
-                        Document.Dirty = true;
-                    }
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private void SuspendEditing(object param)
-        {
-            bool b = Convert.ToBoolean(param);
-            EditingActive = !b;
-        }
-
-        private bool editingActive;
-
-        public bool EditingActive
-        {
-            get
-            {
-                return editingActive;
-            }
-            set
-            {
-                if (editingActive != value)
-                {
-                    editingActive = value;
-                    NotifyPropertyChanged();
-                    NotifyPropertyChanged("CanScale");
-                    NotifyPropertyChanged("ControlsEnabled");
-                }
-            }
-        }
 
         public ObjectPropertiesViewModel()
         {
@@ -121,46 +85,17 @@ namespace Barnacle.ViewModels
             CanScale = false;
             LockAspectRatio = false;
             SetAvailableColours();
-        }
-
-        private void SetAvailableColours()
-        {
-            string[] ignore =
-            {
-        "AliceBlue",
-        "Azure",
-        "Beige",
-        "Cornsilk",
-        "Ivory",
-        "GhostWhite",
-        "LavenderBlush",
-        "LightYellow",
-        "Linen",
-        "MintCream",
-        "OldLace",
-        "SeaShell",
-        "Snow",
-        "WhiteSmoke",
-        "Transparent"
-        };
-            List<AvailableColour> cls = new List<AvailableColour>();
-            Type colors = typeof(System.Drawing.Color);
-            PropertyInfo[] colorInfo = colors.GetProperties(BindingFlags.Public |
-                BindingFlags.Static);
-            foreach (PropertyInfo info in colorInfo)
-            {
-                var result = Array.Find(ignore, element => element == info.Name);
-                if (result == null || result == String.Empty)
-                {
-                    cls.Add(new AvailableColour(info.Name));
-                }
-            }
-            AvailableColours = cls;
+            rescaleTimer = new DispatcherTimer();
+            rescaleTimer.Interval = new TimeSpan(0, 0, 2);
+            rescaleTimer.Tick += RescaleTimer_Tick;
         }
 
         public List<AvailableColour> AvailableColours
         {
-            get { return availableColours; }
+            get
+            {
+                return availableColours;
+            }
             set
             {
                 if (availableColours != value)
@@ -187,20 +122,19 @@ namespace Barnacle.ViewModels
             }
         }
 
-        private string objectType;
-
-        public String ObjectType
+        public bool ControlsEnabled
         {
             get
             {
-                return objectType;
+                return (controlsEnabled && editingActive);
             }
             set
             {
-                if (objectType != value)
+                if (controlsEnabled != value)
                 {
-                    objectType = value;
+                    controlsEnabled = value;
                     NotifyPropertyChanged();
+                    NotifyPropertyChanged("CanScale");
                 }
             }
         }
@@ -227,6 +161,24 @@ namespace Barnacle.ViewModels
             }
         }
 
+        public bool EditingActive
+        {
+            get
+            {
+                return editingActive;
+            }
+            set
+            {
+                if (editingActive != value)
+                {
+                    editingActive = value;
+                    NotifyPropertyChanged();
+                    NotifyPropertyChanged("CanScale");
+                    NotifyPropertyChanged("ControlsEnabled");
+                }
+            }
+        }
+
         public bool Exportable
         {
             get
@@ -249,26 +201,47 @@ namespace Barnacle.ViewModels
             }
         }
 
-        private bool controlsEnabled;
-
-        public bool ControlsEnabled
+        public bool LockAspectRatio
         {
-            get { return (controlsEnabled && editingActive); }
+            get
+            {
+                return lockAspectRatio;
+            }
             set
             {
-                if (controlsEnabled != value)
+                if (lockAspectRatio != value)
                 {
-                    controlsEnabled = value;
+                    lockAspectRatio = value;
+                    if (selectedObject != null)
+                    {
+                        CheckPoint();
+                        selectedObject.LockAspectRatio = lockAspectRatio;
+                        Document.Dirty = true;
+                    }
                     NotifyPropertyChanged();
-                    NotifyPropertyChanged("CanScale");
                 }
             }
         }
 
-        public ICommand MoveToCentreCommand { get; set; }
-        public ICommand MoveToFloorCommand { get; set; }
-        public ICommand MoveToZeroCommand { get; set; }
-        public ICommand NudgeCommand { get; set; }
+        public ICommand MoveToCentreCommand
+        {
+            get; set;
+        }
+
+        public ICommand MoveToFloorCommand
+        {
+            get; set;
+        }
+
+        public ICommand MoveToZeroCommand
+        {
+            get; set;
+        }
+
+        public ICommand NudgeCommand
+        {
+            get; set;
+        }
 
         public AvailableColour ObjectColour
         {
@@ -315,6 +288,22 @@ namespace Barnacle.ViewModels
                             NotificationManager.Notify("ObjectNamesChanged", null);
                         }
                     }
+                }
+            }
+        }
+
+        public String ObjectType
+        {
+            get
+            {
+                return objectType;
+            }
+            set
+            {
+                if (objectType != value)
+                {
+                    objectType = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -438,9 +427,20 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand RotateXCommand { get; set; }
-        public ICommand RotateYCommand { get; set; }
-        public ICommand RotateZCommand { get; set; }
+        public ICommand RotateXCommand
+        {
+            get; set;
+        }
+
+        public ICommand RotateYCommand
+        {
+            get; set;
+        }
+
+        public ICommand RotateZCommand
+        {
+            get; set;
+        }
 
         public double RotationX
         {
@@ -496,9 +496,12 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand ScaleByPercentCommand { get; set; }
+        public ICommand ScaleByPercentCommand
+        {
+            get; set;
+        }
 
-        public String ScaleX
+        public string ScaleX
         {
             get
             {
@@ -524,18 +527,12 @@ namespace Barnacle.ViewModels
                         double d = v / p.X;
                         if (lockAspectRatio)
                         {
-                            selectedObject.ScaleMesh(d, d, d);
+                            RescaleSelectedObject(d, d, d);
                         }
                         else
                         {
-                            selectedObject.ScaleMesh(d, 1.0, 1.0);
+                            selectedObject.ScaleMesh(d, 1, 1);
                         }
-                        selectedObject.CalcScale(false);
-                        selectedObject.Remesh();
-                        OnScaleUpdated(null);
-                        NotificationManager.Notify("ScaleRefresh", selectedObject);
-                        NotificationManager.Notify("RefreshAdorners", null);
-                        Document.Dirty = true;
                     }
                 }
             }
@@ -567,18 +564,12 @@ namespace Barnacle.ViewModels
                         double d = v / p.Y;
                         if (lockAspectRatio)
                         {
-                            selectedObject.ScaleMesh(d, d, d);
+                            RescaleSelectedObject(d, d, d);
                         }
                         else
                         {
-                            selectedObject.ScaleMesh(1.0, d, 1.0);
+                            RescaleSelectedObject(1.0, d, 1.0);
                         }
-                        selectedObject.CalcScale(false);
-                        selectedObject.Remesh();
-                        OnScaleUpdated(null);
-                        NotificationManager.Notify("ScaleRefresh", selectedObject);
-                        NotificationManager.Notify("RefreshAdorners", null);
-                        Document.Dirty = true;
                     }
                 }
             }
@@ -610,24 +601,38 @@ namespace Barnacle.ViewModels
                         double d = v / p.Z;
                         if (lockAspectRatio)
                         {
-                            selectedObject.ScaleMesh(d, d, d);
+                            RescaleSelectedObject(d, d, d);
                         }
                         else
                         {
-                            selectedObject.ScaleMesh(1.0, 1.0, d);
+                            RescaleSelectedObject(1.0, 1.0, d);
                         }
-                        selectedObject.CalcScale(false);
-                        selectedObject.Remesh();
-                        OnScaleUpdated(null);
-                        NotificationManager.Notify("ScaleRefresh", selectedObject);
-                        NotificationManager.Notify("RefreshAdorners", null);
-                        Document.Dirty = true;
                     }
                 }
             }
         }
 
-        public ICommand SetRotationCommand { get; set; }
+        public ICommand SetRotationCommand
+        {
+            get; set;
+        }
+
+        private AvailableColour FindAvailableColour(Color color)
+        {
+            AvailableColour res = null;
+            foreach (AvailableColour cl in AvailableColours)
+            {
+                if (cl.Colour.A == color.A &&
+                cl.Colour.R == color.R &&
+                cl.Colour.G == color.G &&
+                cl.Colour.B == color.B)
+                {
+                    res = cl;
+                    break;
+                }
+            }
+            return res;
+        }
 
         private double GetDouble(string value)
         {
@@ -636,8 +641,9 @@ namespace Barnacle.ViewModels
             {
                 res = Convert.ToDouble(value);
             }
-            catch
+            catch (Exception ex)
             {
+                LoggerLib.Logger.LogLine(ex.Message);
             }
             return res;
         }
@@ -799,23 +805,6 @@ namespace Barnacle.ViewModels
             NotifyPropertyChanged("ControlsEnabled");
         }
 
-        private AvailableColour FindAvailableColour(Color color)
-        {
-            AvailableColour res = null;
-            foreach (AvailableColour cl in AvailableColours)
-            {
-                if (cl.Colour.A == color.A &&
-                cl.Colour.R == color.R &&
-                cl.Colour.G == color.G &&
-                cl.Colour.B == color.B)
-                {
-                    res = cl;
-                    break;
-                }
-            }
-            return res;
-        }
-
         private void OnPositionUpdated(object param)
         {
             Object3D o = param as Object3D;
@@ -937,6 +926,30 @@ namespace Barnacle.ViewModels
             NotificationManager.Notify("ObjectZRotationChange", rotationZ);
         }
 
+        private void RescaleSelectedObject(double d1, double d2, double d3)
+        {
+            selectedObject.ScaleMesh(d1, d2, d3);
+            selectedObject.CalcScale(false);
+            selectedObject.Remesh();
+            OnScaleUpdated(null);
+            NotificationManager.Notify("ScaleRefresh", selectedObject);
+            NotificationManager.Notify("RefreshAdorners", null);
+            Document.Dirty = true;
+        }
+
+        private void RescaleTimer_Tick(object sender, EventArgs e)
+        {
+            rescaleTimer.Stop();
+            CheckPoint();
+            selectedObject.ScaleMesh(rescaleFactorX, rescaleFactorY, rescaleFactorZ);
+            selectedObject.CalcScale(false);
+            selectedObject.Remesh();
+            OnScaleUpdated(null);
+            NotificationManager.Notify("ScaleRefresh", selectedObject);
+            NotificationManager.Notify("RefreshAdorners", null);
+            Document.Dirty = true;
+        }
+
         private void RotateSelected(Point3D p2)
         {
             if (selectedObject != null)
@@ -967,6 +980,47 @@ namespace Barnacle.ViewModels
             OnScaleUpdated(null);
             Document.Dirty = true;
             return v;
+        }
+
+        private void SetAvailableColours()
+        {
+            string[] ignore =
+            {
+        "AliceBlue",
+        "Azure",
+        "Beige",
+        "Cornsilk",
+        "Ivory",
+        "GhostWhite",
+        "LavenderBlush",
+        "LightYellow",
+        "Linen",
+        "MintCream",
+        "OldLace",
+        "SeaShell",
+        "Snow",
+        "WhiteSmoke",
+        "Transparent"
+        };
+            List<AvailableColour> cls = new List<AvailableColour>();
+            Type colors = typeof(System.Drawing.Color);
+            PropertyInfo[] colorInfo = colors.GetProperties(BindingFlags.Public |
+                BindingFlags.Static);
+            foreach (PropertyInfo info in colorInfo)
+            {
+                var result = Array.Find(ignore, element => element == info.Name);
+                if (result == null || result == String.Empty)
+                {
+                    cls.Add(new AvailableColour(info.Name));
+                }
+            }
+            AvailableColours = cls;
+        }
+
+        private void SuspendEditing(object param)
+        {
+            bool b = Convert.ToBoolean(param);
+            EditingActive = !b;
         }
     }
 }

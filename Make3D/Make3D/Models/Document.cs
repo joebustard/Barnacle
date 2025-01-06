@@ -103,23 +103,52 @@ namespace Barnacle.Models
 
         public Guid DocumentId
         {
-            get { return documentID; }
+            get
+            {
+                return documentID;
+            }
         }
 
-        public string Extension { get; set; }
+        public string Extension
+        {
+            get; set;
+        }
 
-        public string FileFilter { get; set; }
+        public string FileFilter
+        {
+            get; set;
+        }
 
-        public string FileName { get; set; }
+        public string FileName
+        {
+            get; set;
+        }
 
-        public string FilePath { get; set; }
-        public Project ParentProject { get; set; }
-        public ProjectSettings ProjectSettings { get; set; }
+        public string FilePath
+        {
+            get; set;
+        }
+
+        public Project ParentProject
+        {
+            get; set;
+        }
+
+        public ProjectSettings ProjectSettings
+        {
+            get; set;
+        }
 
         public int Revision
         {
-            get { return revision; }
-            set { revision = value; }
+            get
+            {
+                return revision;
+            }
+            set
+            {
+                revision = value;
+            }
         }
 
         public static XmlElement FindExternalModel(string name, string path)
@@ -642,8 +671,9 @@ namespace Barnacle.Models
                                 {
                                     System.IO.File.Delete(f);
                                 }
-                                catch
+                                catch (Exception ex)
                                 {
+                                    LoggerLib.Logger.LogLine(ex.Message);
                                 }
                             }
                         }

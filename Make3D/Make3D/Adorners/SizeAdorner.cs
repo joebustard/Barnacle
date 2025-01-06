@@ -1042,8 +1042,9 @@ namespace Barnacle.Models.Adorners
                             valid = true;
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        LoggerLib.Logger.LogLine(ex.Message);
                     }
                 }
             }

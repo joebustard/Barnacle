@@ -29,34 +29,17 @@ namespace VisualSolutionExplorer
             Init();
         }
 
-        public Boolean AutoLoad { get; set; }
-        public bool CanBeRenamed { get; set; }
-
-        // should this folder be cleared when a clean command is issued
-        public bool Clean { get; set; }
-
-        // should the files added here show "Edit"
-        public bool EditFile { get; set; }
-
-        // can this folder be opened in explorer
-        public bool Explorer { get; set; }
-
-        // should the contents of this folder be exported when a project export is done
-        public bool Export { get; set; }
-
-        public string FileTemplate { get; set; }
-        public string FolderName { get; set; }
-        public string FolderPath { get; set; }
-
-        public bool IsInLibrary
+        public Boolean AutoLoad
         {
-            get { return isInLibrary; }
-            set { isInLibrary = value; }
+            get; set;
         }
 
         public bool CanAddToLibrary
         {
-            get { return canAddToLibrary; }
+            get
+            {
+                return canAddToLibrary;
+            }
 
             internal set
             {
@@ -75,39 +58,136 @@ namespace VisualSolutionExplorer
             }
         }
 
-        public string OldName { get; set; }
-        public Project ParentProject { get; set; }
+        public bool CanBeRenamed
+        {
+            get; set;
+        }
+
+        // should this folder be cleared when a clean command is issued
+        public bool Clean
+        {
+            get; set;
+        }
+
+        // should the files added here show "Edit"
+        public bool EditFile
+        {
+            get; set;
+        }
+
+        // can this folder be opened in explorer
+        public bool Explorer
+        {
+            get; set;
+        }
+
+        // should the contents of this folder be exported when a project export is done
+        public bool Export
+        {
+            get; set;
+        }
+
+        public string FileTemplate
+        {
+            get; set;
+        }
+
+        public string FolderName
+        {
+            get; set;
+        }
+
+        public string FolderPath
+        {
+            get; set;
+        }
+
+        public bool IsInLibrary
+        {
+            get
+            {
+                return isInLibrary;
+            }
+            set
+            {
+                isInLibrary = value;
+            }
+        }
+
+        public string OldName
+        {
+            get; set;
+        }
+
+        public Project ParentProject
+        {
+            get; set;
+        }
 
         public List<ProjectFile> ProjectFiles
         {
-            get { return _projectFiles; }
+            get
+            {
+                return _projectFiles;
+            }
         }
 
         public List<ProjectFolder> ProjectFolders
         {
-            get { return _projectFolders; }
-            set { _projectFolders = value; }
+            get
+            {
+                return _projectFolders;
+            }
+            set
+            {
+                _projectFolders = value;
+            }
         }
 
         // should the files added here show "Run"
-        public bool RunFile { get; set; }
+        public bool RunFile
+        {
+            get; set;
+        }
 
-        public string SupportedFileExtension { get; set; }
+        public string SupportedFileExtension
+        {
+            get; set;
+        }
 
         public bool SupportsFiles
         {
-            get { return supportsFiles; }
-            set { supportsFiles = value; }
+            get
+            {
+                return supportsFiles;
+            }
+            set
+            {
+                supportsFiles = value;
+            }
         }
 
         public bool SupportsSubFolders
         {
-            get { return supportsSubFolders; }
-            set { supportsSubFolders = value; }
+            get
+            {
+                return supportsSubFolders;
+            }
+            set
+            {
+                supportsSubFolders = value;
+            }
         }
 
-        public string TimeDependency { get; set; }
-        public ProjectFolderViewModel Vm { get; internal set; }
+        public string TimeDependency
+        {
+            get; set;
+        }
+
+        public ProjectFolderViewModel Vm
+        {
+            get; internal set;
+        }
 
         public int CompareTo(ProjectFolder comparePart)
         {
@@ -116,6 +196,27 @@ namespace VisualSolutionExplorer
                 return 1;
             else
                 return this.FolderName.CompareTo(comparePart.FolderName);
+        }
+
+        public string CreateNamedFolder(string folderName)
+        {
+            ProjectFolder fo = new ProjectFolder(folderName);
+            fo.SupportsSubFolders = SupportsSubFolders;
+            fo.SupportsFiles = SupportsFiles;
+            fo.SupportedFileExtension = SupportedFileExtension;
+            fo.Export = Export;
+            fo.EditFile = EditFile;
+            fo.RunFile = RunFile;
+            fo.FileTemplate = FileTemplate;
+            fo.CanBeRenamed = true;
+            fo.AutoLoad = AutoLoad;
+            fo.Explorer = Explorer;
+            fo.IsInLibrary = IsInLibrary;
+            fo.ParentProject = this.ParentProject;
+            _projectFolders.Add(fo);
+            _projectFolders.Sort();
+            fo.FolderPath = FolderPath + System.IO.Path.DirectorySeparatorChar + folderName;
+            return fo.FolderPath;
         }
 
         public string CreateNewFile()
@@ -148,27 +249,6 @@ namespace VisualSolutionExplorer
             string folderName = GetNextFolderName("New Folder");
             String folderPath = CreateNamedFolder(folderName);
             return folderPath;
-        }
-
-        public string CreateNamedFolder(string folderName)
-        {
-            ProjectFolder fo = new ProjectFolder(folderName);
-            fo.SupportsSubFolders = SupportsSubFolders;
-            fo.SupportsFiles = SupportsFiles;
-            fo.SupportedFileExtension = SupportedFileExtension;
-            fo.Export = Export;
-            fo.EditFile = EditFile;
-            fo.RunFile = RunFile;
-            fo.FileTemplate = FileTemplate;
-            fo.CanBeRenamed = true;
-            fo.AutoLoad = AutoLoad;
-            fo.Explorer = Explorer;
-            fo.IsInLibrary = IsInLibrary;
-            fo.ParentProject = this.ParentProject;
-            _projectFolders.Add(fo);
-            _projectFolders.Sort();
-            fo.FolderPath = FolderPath + System.IO.Path.DirectorySeparatorChar + folderName;
-            return fo.FolderPath;
         }
 
         public void Load(XmlDocument doc, XmlNode nd)
@@ -490,8 +570,9 @@ namespace VisualSolutionExplorer
                         AddExistingFile(nm);
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
+                    LoggerLib.Logger.LogLine(ex.Message);
                 }
             }
 

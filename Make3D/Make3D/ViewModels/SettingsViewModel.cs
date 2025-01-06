@@ -36,6 +36,7 @@ namespace Barnacle.ViewModels
         private string exportScale;
         private bool floorAll;
         private bool importSwapAxis;
+        private int minVerticesForPrimitives;
         private AvailableColour objectColour;
         private bool placeNewAtMarker;
         private bool repeatHoleFixes;
@@ -74,11 +75,15 @@ namespace Barnacle.ViewModels
 
             PlaceNewAtMarker = Project.SharedProjectSettings.PlaceNewAtMarker;
             AutoSaveChanges = Properties.Settings.Default.AutoSaveOn;
+            MinVerticesForPrimitives = Properties.Settings.Default.MinPrimVertices;
         }
 
         public bool AutoSaveChanges
         {
-            get { return autoSaveChanges; }
+            get
+            {
+                return autoSaveChanges;
+            }
             set
             {
                 if (autoSaveChanges != value)
@@ -123,7 +128,10 @@ namespace Barnacle.ViewModels
 
         public bool ConfirmNameAfterCSG
         {
-            get { return confirmNameAfterCSG; }
+            get
+            {
+                return confirmNameAfterCSG;
+            }
             set
             {
                 if (value != confirmNameAfterCSG)
@@ -230,6 +238,23 @@ namespace Barnacle.ViewModels
             }
         }
 
+        public int MinVerticesForPrimitives
+        {
+            get
+            {
+                return minVerticesForPrimitives;
+            }
+
+            set
+            {
+                if (minVerticesForPrimitives != value && value >= 0 && value <= 1000)
+                {
+                    minVerticesForPrimitives = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public AvailableColour ObjectColour
         {
             get
@@ -250,7 +275,10 @@ namespace Barnacle.ViewModels
 
         public bool PlaceNewAtMarker
         {
-            get { return placeNewAtMarker; }
+            get
+            {
+                return placeNewAtMarker;
+            }
             set
             {
                 if (placeNewAtMarker != value)
@@ -263,7 +291,10 @@ namespace Barnacle.ViewModels
 
         public bool RepeatHoleFixes
         {
-            get { return repeatHoleFixes; }
+            get
+            {
+                return repeatHoleFixes;
+            }
             set
             {
                 repeatHoleFixes = value;
@@ -338,7 +369,10 @@ namespace Barnacle.ViewModels
 
         public String SDCardName
         {
-            get { return sdCardName; }
+            get
+            {
+                return sdCardName;
+            }
             set
             {
                 if (sdCardName != value)
@@ -367,7 +401,10 @@ namespace Barnacle.ViewModels
 
         public string SlicerPath
         {
-            get { return slicerPath; }
+            get
+            {
+                return slicerPath;
+            }
             set
             {
                 if (value != slicerPath)

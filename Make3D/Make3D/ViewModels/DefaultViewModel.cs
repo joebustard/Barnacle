@@ -18,6 +18,7 @@
 using Barnacle.Dialogs;
 using Barnacle.Models;
 using Barnacle.Models.Mru;
+using Barnacle.Object3DLib;
 using Barnacle.ViewModel.BuildPlates;
 using System;
 using System.Collections.Generic;
@@ -198,6 +199,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("GroupSelected", GroupSelected);
             NotificationManager.Subscribe("BackupProject", BackupProject);
             NotificationManager.Subscribe("IdleTimer", OnIdleTimer);
+            NotificationManager.Subscribe("ObjectSelected", OnObjectSelected);
             SubView = subViewMan.GetView("editor");
 
             CreateToolMenus();
@@ -2038,6 +2040,19 @@ namespace Barnacle.ViewModels
         {
             NotificationManager.Notify("NewProject", null);
             CollectionViewSource.GetDefaultView(RecentFilesList).Refresh();
+        }
+
+        private void OnObjectSelected(object param)
+        {
+            if (param != null)
+            {
+                selectedObjectName = (param as Object3D).Name;
+            }
+            else
+            {
+                selectedObjectName = "";
+            }
+            NotifyPropertyChanged("SelectedObjectName");
         }
 
         private void OnOpen(object obj)

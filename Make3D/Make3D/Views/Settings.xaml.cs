@@ -101,6 +101,7 @@ namespace Barnacle.Views
                     Properties.Settings.Default.ConfirmNameAfterCSG = vm.ConfirmNameAfterCSG;
                     Properties.Settings.Default.RepeatHoleFixes = vm.RepeatHoleFixes;
                     Properties.Settings.Default.AutoSaveOn = vm.AutoSaveChanges;
+                    Properties.Settings.Default.MinPrimVertices = vm.MinVerticesForPrimitives;
                     NotificationManager.IdleMode = Properties.Settings.Default.AutoSaveOn;
                     Properties.Settings.Default.Save();
                 }

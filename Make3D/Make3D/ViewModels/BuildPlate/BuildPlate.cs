@@ -33,12 +33,35 @@ namespace Barnacle.ViewModel.BuildPlates
             BorderColour = Colors.CadetBlue;
         }
 
-        public Color BorderColour { get; set; }
-        public double BorderThickness { get; set; }
-        public double Height { get; set; }
-        public double Length { get; set; }
-        public String PrinterName { get; set; }
-        public double Width { get; set; }
+        public Color BorderColour
+        {
+            get; set;
+        }
+
+        public double BorderThickness
+        {
+            get; set;
+        }
+
+        public double Height
+        {
+            get; set;
+        }
+
+        public double Length
+        {
+            get; set;
+        }
+
+        public String PrinterName
+        {
+            get; set;
+        }
+
+        public double Width
+        {
+            get; set;
+        }
 
         internal virtual XmlElement Read(XmlDocument doc, XmlElement ele)
         {
@@ -79,8 +102,9 @@ namespace Barnacle.ViewModel.BuildPlates
                     string s = ele.GetAttribute(nm);
                     res = Convert.ToDouble(s);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    LoggerLib.Logger.LogLine(ex.Message);
                 }
             }
             return res;

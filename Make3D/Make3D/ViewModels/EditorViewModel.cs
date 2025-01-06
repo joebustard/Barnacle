@@ -48,6 +48,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using System.Windows.Threading;
 
 namespace Barnacle.ViewModels
 {
@@ -91,6 +92,7 @@ namespace Barnacle.ViewModels
         private Model3DCollection modelItems;
         private double onePercentZoom;
         private PrinterPlate printerPlate;
+        private DispatcherTimer regenTimer;
         private List<Object3D> selectedItems;
         private Adorner selectedObjectAdorner;
         private bool showAdorners;
@@ -200,6 +202,9 @@ namespace Barnacle.ViewModels
             bendAngle = 10;
             CheckForScriptResults();
             RegenerateDisplayList();
+            regenTimer = new DispatcherTimer();
+            regenTimer.Interval = new TimeSpan(0, 0, 1);
+            regenTimer.Tick += RegenTimer_Tick;
         }
 
         private enum CameraModes
@@ -494,8 +499,9 @@ namespace Barnacle.ViewModels
                 NotifyPropertyChanged("ModelItems");
                 ReportStatistics();
             }
-            catch
+            catch (Exception ex)
             {
+                LoggerLib.Logger.LogLine(ex.Message);
             }
         }
 
@@ -540,6 +546,15 @@ namespace Barnacle.ViewModels
             if (isEditingEnabled)
             {
                 handled = HandleKeyWhenEditingIsEnabled(key, shift, ctrl, alt);
+                if (handled)
+                {
+                    LoggerLib.Logger.LogLine($"KeyDown {key.ToString()} handled Starting regen timer");
+                    regenTimer.Start();
+                }
+                else
+                {
+                    LoggerLib.Logger.LogLine($"KeyDown {key.ToString()} NOT handled Not Starting regen timer");
+                }
             }
             else
             {
@@ -670,11 +685,11 @@ namespace Barnacle.ViewModels
                         }
                         floorMarker = new FloorMarker();
                         floorMarker.Position = hitPos;
-                        RegenerateDisplayList();
                     }
                 }
-
+                RegenerateDisplayList();
                 ShowToolForCurrentSelection();
+                NotifyPropertyChanged("ModelItems");
             }
         }
 
@@ -690,8 +705,9 @@ namespace Barnacle.ViewModels
                     {
                         File.Delete(f);
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        LoggerLib.Logger.LogLine(ex.Message);
                     }
                 }
             }
@@ -1290,6 +1306,11 @@ namespace Barnacle.ViewModels
             else
             {
                 NotificationManager.Notify("ObjectSelected", null);
+                if (selectedObjectAdorner != null)
+                {
+                    // remove the current visible elements of the adorner
+                    RemoveObjectAdorner();
+                }
                 foreach (Object3D ob in Document.Content)
                 {
                     if (ob.Mesh == geo.Geometry)
@@ -1298,9 +1319,6 @@ namespace Barnacle.ViewModels
                         selectedItems.Add(ob);
                         if (selectedObjectAdorner != null)
                         {
-                            // remove the currnt visible elements of the adorner
-                            RemoveObjectAdorner();
-
                             // append the the object to the existing list of
                             selectedObjectAdorner.AdornObject(ob);
                             PassOnGroupStatus(ob);
@@ -1310,10 +1328,11 @@ namespace Barnacle.ViewModels
                             {
                                 modelItems.Add(md);
                             }
-                            NotifyPropertyChanged("ModelItems");
                         }
+                        break;
                     }
                 }
+                NotifyPropertyChanged("ModelItems");
             }
             if (handled)
             {
@@ -1334,8 +1353,9 @@ namespace Barnacle.ViewModels
                     {
                         File.Delete(f);
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        LoggerLib.Logger.LogLine(ex.Message);
                     }
                 }
 
@@ -2204,6 +2224,7 @@ namespace Barnacle.ViewModels
 
         private bool HandleKeyWhenEditingIsEnabled(Key key, bool shift, bool ctrl, bool alt)
         {
+            LoggerLib.Logger.LogLine($"HandleKeyWhenEditingIsEnabled {key.ToString()}");
             bool handled = false;
             if (holdKey != "")
             {
@@ -2257,14 +2278,17 @@ namespace Barnacle.ViewModels
 
                     case Key.Down:
                         {
+                            LoggerLib.Logger.LogLine("Down Key");
                             handled = true;
                             if (selectedObjectAdorner != null)
                             {
                                 // If R is down treat as rotate
                                 if (Keyboard.IsKeyDown(Key.R))
                                 {
+                                    LoggerLib.Logger.LogLine("Rotating");
                                     KeyboardRotation rd = GetRotationDirection(Key.Down);
                                     OnKeyRotate(rd);
+                                    LoggerLib.Logger.LogLine("Rotating complete");
                                 }
                                 else
                                 {
@@ -2456,6 +2480,13 @@ namespace Barnacle.ViewModels
                         }
                         break;
 
+                    case Key.R:
+                        {
+                            // Needs other keys but at least acknowledge it
+                            handled = true;
+                        }
+                        break;
+
                     case Key.S:
                         {
                             if (ctrl)
@@ -2594,6 +2625,12 @@ namespace Barnacle.ViewModels
                         }
                         break;
                 }
+            }
+            if (handled)
+            {
+                LoggerLib.Logger.LogLine("handled so refreshing camera pos");
+                NotifyPropertyChanged("CameraPos");
+                NotifyPropertyChanged("ModelItems");
             }
             return handled;
         }
@@ -3113,6 +3150,14 @@ namespace Barnacle.ViewModels
                             obj.SwapYZAxies();
 
                             break;
+                        }
+                    }
+                    if (Properties.Settings.Default.MinPrimVertices > 0)
+                    {
+                        while (obj.RelativeObjectVertices.Count < Properties.Settings.Default.MinPrimVertices)
+                        {
+                            allBounds = new Bounds3D();
+                            SubdivideObjectTriangles(obj);
                         }
                     }
                     obj.Remesh();
@@ -4605,6 +4650,15 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private void RegenTimer_Tick(object sender, EventArgs e)
+        {
+            LoggerLib.Logger.LogLine("RegenTimerTick");
+            regenTimer.Stop();
+            RegenerateDisplayList();
+            NotifyPropertyChanged("CameraPos");
+            NotifyPropertyChanged("ModelItems");
+        }
+
         private int RemoveDuplicateVertices(Object3D ob)
         {
             CheckPoint();
@@ -4813,8 +4867,7 @@ namespace Barnacle.ViewModels
                 CheckPoint();
                 obj.Rotate(pr);
                 obj.Remesh();
-
-                NotifyPropertyChanged();
+                RegenerateDisplayList();
                 NotificationManager.Notify("ScaleRefresh", obj);
                 NotificationManager.Notify("RefreshAdorners", null);
                 Document.Dirty = true;

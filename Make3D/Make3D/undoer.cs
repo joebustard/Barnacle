@@ -15,6 +15,7 @@
 // *                                                                         *
 // *************************************************************************
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -48,8 +49,9 @@ namespace Barnacle
                     File.Delete(s);
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                LoggerLib.Logger.LogLine(ex.Message);
             }
             checkIds.Clear();
         }

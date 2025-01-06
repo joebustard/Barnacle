@@ -1094,8 +1094,9 @@ namespace Barnacle.UserControls
                     PresetNames.Add(s);
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                LoggerLib.Logger.LogLine(ex.Message);
             }
         }
 
@@ -2039,8 +2040,9 @@ namespace Barnacle.UserControls
                 {
                     LoadImage(opDlg.FileName);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    LoggerLib.Logger.LogLine(ex.Message);
                 }
             }
         }

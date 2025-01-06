@@ -9,7 +9,7 @@
     xmlns:uc="clr-namespace:Barnacle.UserControls"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     Title="Project Settings"
-    Width="500"
+    Width="600"
     Height="500"
     Background="{StaticResource WindowBackBrush}"
     Loaded="Window_Loaded"
@@ -66,9 +66,8 @@
                             Grid.Column="0"
                             Grid.ColumnSpan="2"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center">
-                            Description
-                        </Label>
+                            VerticalAlignment="Center"
+                            Content="Description" />
                     </Grid>
                     <TextBox
                         x:Name="DescriptionBox"
@@ -79,29 +78,7 @@
                         VerticalAlignment="Stretch"
                         AcceptsReturn="True"
                         Text="{Binding Description}" />
-                    <Grid Grid.Row="3" Grid.Column="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" VerticalAlignment="Center">
-                            Tool Model Colour
-                        </Label>
-                        <!--
-                        <ComboBox Name="cmbColors" Grid.Column="1" ItemsSource="{Binding AvailableColours}" SelectedItem="{Binding ObjectColour}" Margin="0,4">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                        <Rectangle Fill="{Binding Name}" Width="20" Height="20" Margin="0,0,5,0" />
-                                        <TextBlock Text="{Binding Title}" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                        -->
-                        <uc:ColourPicker x:Name="ColourOfNewObject" Grid.Column="1" />
-                    </Grid>
+
                     <Grid Grid.Row="5" Grid.Column="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*" />
@@ -111,7 +88,10 @@
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" VerticalAlignment="Center">Slicer Folder</Label>
+                        <Label
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            Content="Slicer Folder" />
                         <TextBox
                             Grid.Column="1"
                             Grid.ColumnSpan="4"
@@ -127,9 +107,9 @@
                         <Label
                             Grid.Row="6"
                             Grid.Column="0"
-                            VerticalAlignment="Center">
-                            Slicer Folder
-                        </Label>
+                            VerticalAlignment="Center"
+                            Content="Slicer Folder" />
+
                         <TextBox
                             Grid.Column="1"
                             Grid.ColumnSpan="4"
@@ -147,7 +127,10 @@
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" VerticalAlignment="Center">SD Card</Label>
+                        <Label
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            Content="SD Card" />
                         <TextBox
                             Grid.Column="1"
                             Grid.ColumnSpan="5"
@@ -155,8 +138,57 @@
                             Text="{Binding SDCardName}"
                             ToolTip="The label of the SDCard that is used with the 3D Printer. If set Barnacle will enable some extra functions when this SD card is detected." />
                     </Grid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Editor">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="12*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Orientation="Horizontal">
+
+                        <Label
+                            Width="150"
+                            VerticalAlignment="Center"
+                            Content="Min Vertices for primitives" />
+
+                        <TextBox  Margin="8,2,0,0" Width="80" Text="{Binding MinVerticesForPrimitives}"
+                        ToolTip="The minimum number of vertices to create when adding a primitive. 0 means ignore." />
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Orientation="Horizontal">
+
+                        <Label
+                            Width="150"
+                            VerticalAlignment="Center"
+                            Content="Tool Model Colour" />
+
+                        <uc:ColourPicker x:Name="ColourOfNewObject" Margin="8,0,0,0" Width="150" />
+                    </StackPanel>
                     <CheckBox
-                        Grid.Row="7"
+                        Grid.Row="2"
                         Grid.Column="1"
                         Grid.ColumnSpan="2"
                         VerticalAlignment="Center"
@@ -164,7 +196,7 @@
                         IsChecked="{Binding PlaceNewAtMarker}"
                         ToolTip="If set new objects are placed at the floor marker. If clear they are added to the right of any existing objects." />
                     <CheckBox
-                        Grid.Row="8"
+                        Grid.Row="3"
                         Grid.Column="1"
                         Grid.ColumnSpan="2"
                         VerticalAlignment="Center"
@@ -172,18 +204,23 @@
                         IsChecked="{Binding ConfirmNameAfterCSG}"
                         ToolTip="By default when new group objects are created by CSG they take the name of the root object. If checked, CSG operations will ask for the name of the new object." />
                     <CheckBox
-                        Grid.Row="9"
+                        Grid.Row="4"
                         Grid.Column="1"
                         Grid.ColumnSpan="2"
                         VerticalAlignment="Center"
                         Content="Auto repeat hole fixing"
                         IsChecked="{Binding RepeatHoleFixes}"
                         ToolTip="Hole fixing is slow. Running it once may leave some holes that can still be fixed by running it again. If checked hole fixing runs repeatedly until no more holes can be fixed." />
-                    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Grid.Row="10" Grid.Column="1">
-                        <CheckBox Content="Auto Save Changes" IsChecked="{Binding AutoSaveChanges}" VerticalAlignment="Center" ToolTip="Automatically save any edits if the program has been idle for a while" />
-                    </StackPanel>
+                    <CheckBox
+                        Grid.Row="5"
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Content="Auto Save Changes"
+                        IsChecked="{Binding AutoSaveChanges}"
+                        ToolTip="Automatically save any edits if the program has been idle for a while" />
                 </Grid>
             </TabItem>
+
             <TabItem Header="Import/Export">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -206,9 +243,10 @@
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" VerticalAlignment="Center">
-                            Base Scale
-                        </Label>
+                        <Label
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            Content="Base Scale" />
                         <ComboBox
                             x:Name="ScaleBox"
                             Grid.Column="1"
@@ -217,9 +255,10 @@
                             VerticalAlignment="Center"
                             ItemsSource="{Binding Scales}"
                             SelectedItem="{Binding SelectedScale}" />
-                        <Label Grid.Column="3" VerticalAlignment="Center">
-                            Export Scale
-                        </Label>
+                        <Label
+                            Grid.Column="3"
+                            VerticalAlignment="Center"
+                            Content="Export Scale" />
                         <ComboBox
                             x:Name="ExportScaleBox"
                             Grid.Column="4"

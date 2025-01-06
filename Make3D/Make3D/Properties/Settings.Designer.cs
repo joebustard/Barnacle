@@ -280,5 +280,11 @@ namespace Barnacle.Properties {
                 this["RegenerationDelay"] = value;
             }
         }
+
+        public int MinPrimVertices
+        {
+            get;
+            internal set;
+        }
     }
 }
