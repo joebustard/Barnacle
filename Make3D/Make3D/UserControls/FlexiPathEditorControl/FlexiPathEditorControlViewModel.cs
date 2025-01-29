@@ -80,6 +80,7 @@ namespace Barnacle.UserControls
         private bool savePresetEnabled;
         private double scale;
         private DpiScale screenDpi;
+        private int selectedArcPoint;
         private string selectedCurveName;
         private FlexiPath selectedFlexiPath;
         private ObservableCollection<FlexiPoint> selectedFlexiPathControlPoints; // SHOULD BE CALLED FLEXIPAHCONTROLPOINTS
@@ -95,6 +96,7 @@ namespace Barnacle.UserControls
         private Visibility showWidth;
         private bool snap;
         private bool supportsHoles;
+        private Visibility swapArcVisible;
         private string toolName;
 
         public FlexiPathEditorControlViewModel()
@@ -124,6 +126,9 @@ namespace Barnacle.UserControls
             SavePresetCommand = new RelayCommand(OnSavePreset);
             HoleCommand = new RelayCommand(OnHoleCommand);
             FlipCommand = new RelayCommand(OnFlip);
+            AntiClockwiseArcCommand = new RelayCommand(OnAntiClockwiseArc);
+            SwapArcSegmentSizeCommand = new RelayCommand(OnSwapArcSegmentSize);
+            SwapArcDirectionCommand = new RelayCommand(OnSwapArcDirection);
             fixedEndPath = false;
             supportsHoles = false;
             showHoleControls = Visibility.Hidden;
@@ -150,6 +155,7 @@ namespace Barnacle.UserControls
             CreatePen();
             editedPresetText = "";
             ShowPresets = Visibility.Visible;
+            SwapArcVisible = Visibility.Hidden;
             presets = new Dictionary<string, Preset>();
             PresetNames = new List<string>();
             ToolName = "";
@@ -173,7 +179,9 @@ namespace Barnacle.UserControls
             ConvertToQuadBezier,
             MovePath,
             DraggingPath,
-            SplitQuad
+            SplitQuad,
+            AntiClockwiseArc,
+            ClockwiseArc
         }
 
         public bool AbsolutePaths
@@ -200,6 +208,11 @@ namespace Barnacle.UserControls
         }
 
         public ICommand AddSegmentCommand
+        {
+            get; set;
+        }
+
+        public ICommand AntiClockwiseArcCommand
         {
             get; set;
         }
@@ -948,6 +961,33 @@ namespace Barnacle.UserControls
             }
         }
 
+        public ICommand SwapArcDirectionCommand
+        {
+            get; set;
+        }
+
+        public ICommand SwapArcSegmentSizeCommand
+        {
+            get; set;
+        }
+
+        public Visibility SwapArcVisible
+        {
+            get
+            {
+                return swapArcVisible;
+            }
+
+            set
+            {
+                if (swapArcVisible != value)
+                {
+                    swapArcVisible = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public string ToolName
         {
             get
@@ -1175,7 +1215,7 @@ namespace Barnacle.UserControls
             position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
             if (selectedFlexiPath.SelectAtPoint(position, true))
             {
-                split = selectedFlexiPath.SplitQuadCubic(position);
+                split = selectedFlexiPath.SplitQuadBezier(position);
 
                 if (split)
                 {
@@ -1195,6 +1235,26 @@ namespace Barnacle.UserControls
         internal Point Centroid()
         {
             return selectedFlexiPath.Centroid();
+        }
+
+        internal bool ConvertToArc(Point position, bool clockwise)
+        {
+            bool converted = false;
+
+            position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
+            if (selectedFlexiPath.SelectAtPoint(position, true))
+            {
+                converted = selectedFlexiPath.ConvertToArc(position, clockwise);
+
+                if (converted)
+                {
+                    PathText = selectedFlexiPath.ToPath(absolutePaths);
+                    PointsDirty = true;
+                    NotifyPropertyChanged("Points");
+                }
+            }
+
+            return converted;
         }
 
         internal void CreateGrid(DpiScale dpiScale, double actualWidth, double actualHeight)
@@ -1220,7 +1280,7 @@ namespace Barnacle.UserControls
         {
             selectedFlexiPath.FromString(s);
             PathText = selectedFlexiPath.ToPath(absolutePaths);
-            LoggerLib.Logger.LogLine(selectedFlexiPath.ToOutline());
+            LoggerLib.Logger.LogLine($"FlexiPathEditorViewModel::FromString() {selectedFlexiPath.ToOutline()}");
             if (s != "" && resetMode)
             {
                 SelectionMode = SelectionModeType.SelectSegmentAtPoint;
@@ -1271,6 +1331,8 @@ namespace Barnacle.UserControls
         internal bool MouseDown(MouseButtonEventArgs e, System.Windows.Point position)
         {
             bool updateRequired = false;
+            SwapArcVisible = Visibility.Hidden;
+
             if (selectionMode == SelectionModeType.StartPoint)
             {
                 AddStartPointToPoly(position);
@@ -1335,6 +1397,10 @@ namespace Barnacle.UserControls
                             Points[SelectedPoint].Selected = true;
                             moving = true;
                             updateRequired = true;
+                            if (Points[SelectedPoint].Mode == FlexiPoint.PointMode.ControlA)
+                            {
+                                SwapArcVisible = Visibility.Visible;
+                            }
                         }
                     }
                 }
@@ -1551,6 +1617,16 @@ namespace Barnacle.UserControls
             linePen = ps;
         }
 
+        private void DeselectAll()
+        {
+            selectedFlexiPath.DeselectAll();
+            foreach (FlexiPoint p in Points)
+            {
+                p.Selected = false;
+                p.Visible = false;
+            }
+        }
+
         private bool FixedEndMouseUp(Point position, bool updateRequired)
         {
             if (selectedPoint != -1)
@@ -1732,6 +1808,9 @@ namespace Barnacle.UserControls
             {
                 if (selectedPoint != -1 && moving)
                 {
+                    selectedArcPoint = -1;
+                    SwapArcVisible = Visibility.Hidden;
+
                     System.Windows.Point positionSnappedToMM = SnapPositionToMM(position);
                     bool okToSet = true;
                     if (editingHole)
@@ -1740,11 +1819,30 @@ namespace Barnacle.UserControls
                     }
                     if (okToSet)
                     {
-                        selectedFlexiPathControlPoints[selectedPoint].X = position.X;
-                        selectedFlexiPathControlPoints[selectedPoint].Y = position.Y;
+                        // if the selected point is the control point for an arc
+                        // it isn't snapped to the grid but has to follow the arc control line
+                        if (Points[selectedPoint].Mode == FlexiPoint.PointMode.ControlA)
+                        {
+                            Point unsnappedPositionMM = new Point(0, 0);
+                            unsnappedPositionMM.X = ToMMX(position.X);
+                            unsnappedPositionMM.Y = ToMMY(position.Y);
 
-                        selectedFlexiPath.SetPointPos(selectedPoint, positionSnappedToMM);
+                            Point snappedPos = selectedFlexiPath.ArcSnap(selectedPoint, unsnappedPositionMM);
 
+                            selectedFlexiPathControlPoints[selectedPoint].X = snappedPos.X;
+                            selectedFlexiPathControlPoints[selectedPoint].Y = snappedPos.Y;
+
+                            selectedFlexiPath.SetPointPos(selectedPoint, snappedPos);
+                            selectedArcPoint = selectedPoint;
+                            SwapArcVisible = Visibility.Visible;
+                        }
+                        else
+                        {
+                            selectedFlexiPathControlPoints[selectedPoint].X = position.X;
+                            selectedFlexiPathControlPoints[selectedPoint].Y = position.Y;
+
+                            selectedFlexiPath.SetPointPos(selectedPoint, positionSnappedToMM);
+                        }
                         PointsDirty = true;
                         updateRequired = true;
                         selectedPoint = -1;
@@ -1775,6 +1873,16 @@ namespace Barnacle.UserControls
                 {
                     if (e.LeftButton == MouseButtonState.Pressed && moving)
                     {
+                        // if the selected point is the control point for an arc
+                        // it isn't snapped to the grid but has to follow the arc control line
+                        if (Points[selectedPoint].Mode == FlexiPoint.PointMode.ControlA)
+                        {
+                            Point unsnappedPositionMM = new Point(0, 0);
+                            unsnappedPositionMM.X = ToMMX(position.X);
+                            unsnappedPositionMM.Y = ToMMY(position.Y);
+                            snappedPos = selectedFlexiPath.ArcSnap(selectedPoint, unsnappedPositionMM);
+                            // snappedPos = new Point(ToMMX(snappedPos.X), ToMMY(snappedPos.Y));
+                        }
                         // polyPoints[selectedPoint].X = position.X; polyPoints[selectedPoint].Y = position.Y;
                         bool okToSet = true;
                         if (editingHole)
@@ -1820,6 +1928,12 @@ namespace Barnacle.UserControls
         private void OnAddSegment(object obj)
         {
             SelectionMode = SelectionModeType.SplitLine;
+            NotifyUserActive();
+        }
+
+        private void OnAntiClockwiseArc(object obj)
+        {
+            SelectionMode = SelectionModeType.AntiClockwiseArc;
             NotifyUserActive();
         }
 
@@ -2168,6 +2282,28 @@ namespace Barnacle.UserControls
             SelectionMode = SelectionModeType.SplitQuad;
         }
 
+        private void OnSwapArcDirection(object obj)
+        {
+            if (selectedArcPoint != -1 && selectedFlexiPath != null)
+            {
+                selectedFlexiPath.ArcSwapDirection(selectedArcPoint);
+                pointsDirty = true;
+                NotifyPropertyChanged("Points");
+            }
+            NotifyUserActive();
+        }
+
+        private void OnSwapArcSegmentSize(object obj)
+        {
+            if (selectedArcPoint != -1 && selectedFlexiPath != null)
+            {
+                selectedFlexiPath.SwapArcSegmentSize(selectedArcPoint);
+                pointsDirty = true;
+                NotifyPropertyChanged("Points");
+            }
+            NotifyUserActive();
+        }
+
         private void OnToggleOrthoLock(object obj)
         {
             NotifyUserActive();
@@ -2296,6 +2432,18 @@ namespace Barnacle.UserControls
         }
 
         private double ToPixelY(double y)
+        {
+            double res = ScreenDpi.PixelsPerInchY * y / 25.4;
+            return res;
+        }
+
+        private double ToScreenX(double x)
+        {
+            double res = ScreenDpi.PixelsPerInchX * x / 25.4;
+            return res;
+        }
+
+        private double ToScreenY(double y)
         {
             double res = ScreenDpi.PixelsPerInchY * y / 25.4;
             return res;

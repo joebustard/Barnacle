@@ -133,25 +133,32 @@ namespace Barnacle.LineLib
             return $"L {flexiPoints[P1].X:F3},{flexiPoints[P1].Y:F3} ";
         }
 
-        internal override string ToPath(ObservableCollection<FlexiPoint> points, ref double ox, ref double oy)
+        internal override string ToPath(ObservableCollection<FlexiPoint> points, ref double ox, ref double oy, bool absolute)
         {
             string res = "";
 
-            if (points[P1].X == ox)
+            if (absolute)
             {
-                // relative vertical
-                res = $"RV {points[P1].Y - oy:F3} ";
+                res = $"L {points[P1].X:F07},{points[P1].Y:F07} ";
             }
             else
             {
-                if (points[P1].Y == oy)
+                if (points[P1].X == ox)
                 {
-                    // relative horizontal
-                    res = $"RH {points[P1].X - ox:F3} ";
+                    // relative vertical
+                    res = $"RV {points[P1].Y - oy:F07} ";
                 }
                 else
                 {
-                    res = $"RL {points[P1].X - ox:F03},{points[P1].Y - oy:F03} ";
+                    if (points[P1].Y == oy)
+                    {
+                        // relative horizontal
+                        res = $"RH {points[P1].X - ox:F07} ";
+                    }
+                    else
+                    {
+                        res = $"RL {points[P1].X - ox:F07},{points[P1].Y - oy:F07} ";
+                    }
                 }
             }
             ox = points[P1].X;

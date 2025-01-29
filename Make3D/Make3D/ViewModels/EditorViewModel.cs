@@ -545,8 +545,9 @@ namespace Barnacle.ViewModels
             bool handled = false;
             if (isEditingEnabled)
             {
-                handled = HandleKeyWhenEditingIsEnabled(key, shift, ctrl, alt);
-                if (handled)
+                bool regen = false;
+                handled = HandleKeyWhenEditingIsEnabled(key, shift, ctrl, alt, out regen);
+                if (handled && regen)
                 {
                     LoggerLib.Logger.LogLine($"KeyDown {key.ToString()} handled Starting regen timer");
                     regenTimer.Start();
@@ -2150,6 +2151,7 @@ namespace Barnacle.ViewModels
         private bool HandleKeyWhenEditingDisabled(Key key, bool shift)
         {
             bool handled = false;
+            LoggerLib.Logger.LogLine($"HandleKeyWhenEditingDisabled {key.ToString()}");
             switch (key)
             {
                 // if editing is disable, ignore all keys except escape ( which may enale it again)
@@ -2222,9 +2224,10 @@ namespace Barnacle.ViewModels
             return handled;
         }
 
-        private bool HandleKeyWhenEditingIsEnabled(Key key, bool shift, bool ctrl, bool alt)
+        private bool HandleKeyWhenEditingIsEnabled(Key key, bool shift, bool ctrl, bool alt, out bool regen)
         {
             LoggerLib.Logger.LogLine($"HandleKeyWhenEditingIsEnabled {key.ToString()}");
+            regen = true;
             bool handled = false;
             if (holdKey != "")
             {
@@ -2378,6 +2381,20 @@ namespace Barnacle.ViewModels
                     case Key.OemPlus:
                         {
                             handled = true;
+                            NotificationManager.Notify("ScaleByPercent", "+");
+                        }
+                        break;
+
+                    case Key.OemMinus:
+                        {
+                            handled = true;
+                            NotificationManager.Notify("ScaleByPercent", "-");
+                        }
+                        break;
+
+                    case Key.OemPipe:
+                        {
+                            handled = true;
                             CloseObjectDistances();
                         }
                         break;
@@ -2476,6 +2493,7 @@ namespace Barnacle.ViewModels
                     case Key.O:
                         {
                             handled = true;
+                            regen = false;
                             SwitchToObjectProperties();
                         }
                         break;
@@ -2547,6 +2565,7 @@ namespace Barnacle.ViewModels
                     case Key.Insert:
                         {
                             handled = true;
+                            regen = false;
                             LeftCamera();
                         }
                         break;
@@ -2554,6 +2573,7 @@ namespace Barnacle.ViewModels
                     case Key.PageUp:
                         {
                             handled = true;
+                            regen = false;
                             RightCamera();
                         }
                         break;
@@ -2561,6 +2581,7 @@ namespace Barnacle.ViewModels
                     case Key.Home:
                         {
                             handled = true;
+                            regen = false;
                             if (shift)
                             {
                                 BackCamera();
@@ -2586,6 +2607,7 @@ namespace Barnacle.ViewModels
                         {
                             handled = true;
                             RotateCamera(-0.5, 0.0);
+                            regen = false;
                         }
                         break;
 
@@ -2593,6 +2615,7 @@ namespace Barnacle.ViewModels
                         {
                             handled = true;
                             RotateCamera(0.5, 0.0);
+                            regen = false;
                         }
                         break;
 
@@ -2600,6 +2623,7 @@ namespace Barnacle.ViewModels
                         {
                             handled = true;
                             RotateCamera(0.0, -0.5);
+                            regen = false;
                         }
                         break;
 
@@ -2607,11 +2631,13 @@ namespace Barnacle.ViewModels
                         {
                             handled = true;
                             RotateCamera(0.0, 0.5);
+                            regen = false;
                         }
                         break;
 
                     case Key.F12:
                         {
+                            regen = false;
                             if (shift)
                             {
                                 handled = true;
@@ -2630,6 +2656,7 @@ namespace Barnacle.ViewModels
             {
                 LoggerLib.Logger.LogLine("handled so refreshing camera pos");
                 NotifyPropertyChanged("CameraPos");
+                RegenerateDisplayList();
                 NotifyPropertyChanged("ModelItems");
             }
             return handled;

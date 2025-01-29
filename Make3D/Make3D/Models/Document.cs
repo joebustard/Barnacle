@@ -855,111 +855,144 @@ namespace Barnacle.Models
 
         internal void ImportObjs(string fileName)
         {
+            string line = "";
             try
             {
                 if (File.Exists(fileName))
                 {
-                    Object3D ob = new Object3D();
-                    ob.Name = fileName;
-                    Content.Add(ob);
-
-                    string[] lines = File.ReadAllLines(fileName);
-                    foreach (string s in lines)
+                    try
                     {
-                        string t = s.Trim();
-                        if (t != "")
+                        Object3D ob = new Object3D();
+                        ob.Name = fileName;
+                        Content.Add(ob);
+
+                        string[] lines = File.ReadAllLines(fileName);
+                        foreach (string s in lines)
                         {
-                            if (!t.StartsWith("#"))
+                            line = s;
+                            string t = s.Trim();
+                            if (t != "")
                             {
-                                if (t.StartsWith("o"))
+                                if (!t.StartsWith("#"))
                                 {
-                                    if (ob != null)
+                                    if (t.StartsWith("o"))
                                     {
-                                        ob.PrimType = "Mesh";
-                                        ob.CalcScale();
-                                        ob.RelativeToAbsolute();
-                                        ob.Mesh.Positions = ob.AbsoluteObjectVertices;
-                                        ob.Mesh.TriangleIndices = ob.TriangleIndices;
-                                        ob.Mesh.Normals = ob.Normals;
-                                        ob.Rotate(new Point3D(-90, 0, 0));
-                                        ob.MoveToFloor();
-                                        ob.Remesh();
-                                    }
-                                    String name = t.Substring(2);
-                                    ob = new Object3D();
-                                    ob.Name = name;
-                                    Content.Add(ob);
-                                }
-                                if (t.StartsWith("v "))
-                                {
-                                    t = t.Replace("  ", " ");
-                                    string[] words = t.Split(' ');
-                                    double x = Convert.ToDouble(words[1]);
-                                    double y = Convert.ToDouble(words[2]);
-                                    double z = Convert.ToDouble(words[3]);
-
-                                    P3D p = new P3D(x, y, z);
-                                    ob.RelativeObjectVertices.Add(p);
-                                }
-
-                                if (t.StartsWith("vn "))
-                                {
-                                    t = t.Replace("  ", " ");
-                                    string[] words = t.Split(' ');
-                                    double x = Convert.ToDouble(words[1]);
-                                    double y = Convert.ToDouble(words[2]);
-                                    double z = Convert.ToDouble(words[3]);
-                                    Vector3D p = new Vector3D(x, y, z);
-                                    ob.Normals.Add(p);
-                                }
-                                if (t.StartsWith("f "))
-                                {
-                                    t = t.Replace("  ", " ");
-                                    string[] words = t.Split(' ');
-                                    if (words.GetLength(0) == 4)
-                                    {
-                                        int ind = Convert.ToInt32(words[1]);
-                                        ob.TriangleIndices.Add(ind - 1);
-                                        ind = Convert.ToInt32(words[2]);
-                                        ob.TriangleIndices.Add(ind - 1);
-                                        ind = Convert.ToInt32(words[3]);
-                                        ob.TriangleIndices.Add(ind - 1);
-                                    }
-                                    else
-                                    {
-                                        List<int> indices = new List<int>();
-
-                                        double cx = 0;
-                                        double cy = 0;
-                                        double cz = 0;
-                                        for (int j = 1; j < words.GetLength(0); j++)
+                                        if (ob != null)
                                         {
-                                            int pi = Convert.ToInt32(words[j]);
-                                            indices.Add(pi);
-                                            cx += ob.RelativeObjectVertices[pi].X;
-                                            cy += ob.RelativeObjectVertices[pi].Y;
-                                            cz += ob.RelativeObjectVertices[pi].Z;
+                                            ob.PrimType = "Mesh";
+                                            ob.CalcScale();
+                                            ob.RelativeToAbsolute();
+                                            ob.Mesh.Positions = ob.AbsoluteObjectVertices;
+                                            ob.Mesh.TriangleIndices = ob.TriangleIndices;
+                                            ob.Mesh.Normals = ob.Normals;
+                                            ob.Rotate(new Point3D(-90, 0, 0));
+                                            ob.MoveToFloor();
+                                            ob.Remesh();
                                         }
-                                        cx = cx / indices.Count;
-                                        cy = cy / indices.Count;
-                                        cz = cz / indices.Count;
+                                        String name = t.Substring(2);
+                                        ob = new Object3D();
+                                        ob.Name = name;
+                                        Content.Add(ob);
+                                    }
+                                    if (t.StartsWith("v "))
+                                    {
+                                        t = t.Replace("  ", " ");
+                                        string[] words = t.Split(' ');
+                                        double x = Convert.ToDouble(words[1]);
+                                        double y = Convert.ToDouble(words[2]);
+                                        double z = Convert.ToDouble(words[3]);
 
-                                        ob.RelativeObjectVertices.Add(new P3D(cx, cy, cz));
-                                        int id = ob.RelativeObjectVertices.Count - 1;
-                                        for (int j = 0; j < indices.Count - 1; j++)
+                                        P3D p = new P3D(x, y, z);
+                                        ob.RelativeObjectVertices.Add(p);
+                                    }
+
+                                    if (t.StartsWith("vn "))
+                                    {
+                                        t = t.Replace("  ", " ");
+                                        string[] words = t.Split(' ');
+                                        double x = Convert.ToDouble(words[1]);
+                                        double y = Convert.ToDouble(words[2]);
+                                        double z = Convert.ToDouble(words[3]);
+                                        Vector3D p = new Vector3D(x, y, z);
+                                        ob.Normals.Add(p);
+                                    }
+                                    if (t.StartsWith("f "))
+                                    {
+                                        t = t.Replace("  ", " ");
+                                        string[] words = t.Split(' ');
+                                        if (words.GetLength(0) == 4)
                                         {
-                                            ob.TriangleIndices.Add(indices[j]);
-                                            ob.TriangleIndices.Add(indices[j + 1]);
-                                            ob.TriangleIndices.Add(id);
+                                            if (words[1].Contains("/"))
+                                            {
+                                                // either f v/t v/t v/t or
+                                                //        f v/t/n v/t/n v/t/n
+                                                string[] subs = words[1].Split('/');
+                                                var v = Convert.ToInt32(subs[0]);
+                                                ob.TriangleIndices.Add(v - 1);
+
+                                                subs = words[2].Split('/');
+
+                                                v = Convert.ToInt32(subs[0]);
+                                                ob.TriangleIndices.Add(v - 1);
+
+                                                subs = words[3].Split('/');
+
+                                                v = Convert.ToInt32(subs[0]);
+                                                ob.TriangleIndices.Add(v - 1);
+                                            }
+                                            else
+                                            {
+                                                // just f v,v,v
+                                                int ind = Convert.ToInt32(words[1]);
+                                                ob.TriangleIndices.Add(ind - 1);
+                                                ind = Convert.ToInt32(words[2]);
+                                                ob.TriangleIndices.Add(ind - 1);
+                                                ind = Convert.ToInt32(words[3]);
+                                                ob.TriangleIndices.Add(ind - 1);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            List<int> indices = new List<int>();
+
+                                            double cx = 0;
+                                            double cy = 0;
+                                            double cz = 0;
+                                            for (int j = 1; j < words.GetLength(0); j++)
+                                            {
+                                                int pi = Convert.ToInt32(words[j]);
+                                                indices.Add(pi);
+                                                cx += ob.RelativeObjectVertices[pi].X;
+                                                cy += ob.RelativeObjectVertices[pi].Y;
+                                                cz += ob.RelativeObjectVertices[pi].Z;
+                                            }
+                                            cx = cx / indices.Count;
+                                            cy = cy / indices.Count;
+                                            cz = cz / indices.Count;
+
+                                            ob.RelativeObjectVertices.Add(new P3D(cx, cy, cz));
+                                            int id = ob.RelativeObjectVertices.Count - 1;
+                                            for (int j = 0; j < indices.Count - 1; j++)
+                                            {
+                                                ob.TriangleIndices.Add(indices[j]);
+                                                ob.TriangleIndices.Add(indices[j + 1]);
+                                                ob.TriangleIndices.Add(id);
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
+
+                        ob.PrimType = "Mesh";
+                        ob.Remesh();
+                        ob.MoveToFloor();
                     }
-                    ob.PrimType = "Mesh";
-                    ob.Remesh();
-                    ob.MoveToFloor();
+                    catch (Exception ex)
+                    {
+                        LoggerLib.Logger.LogLine(ex.Message);
+                        MessageBox.Show(line + ":" + ex.Message);
+                    }
                 }
             }
             catch (Exception ex)

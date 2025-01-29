@@ -118,6 +118,20 @@
                                 <Image Source="/Barnacle;component/Images/Buttons/AddQuadBezier.png" />
                             </Button>
                         </Border>
+
+                        <Border
+                            x:Name="AntiClockwiseArcBorder"
+                            BorderThickness="4"
+                            CornerRadius="2">
+                            <Button
+                                x:Name="AntiClockwiseArcButton"
+                                Command="{Binding AntiClockwiseArcCommand}"
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Convert a segment to an anti-clockwise arc">
+                                <Image Source="/Barnacle;component/Images/Buttons/AntiClockwiseArc.png" />
+                            </Button>
+                        </Border>
+
                         <Border
                             x:Name="SplitQuadBezierBorder"
                             BorderThickness="4"
@@ -130,6 +144,7 @@
                                 <Image Source="/Barnacle;component/Images/Buttons/SplitQuadBezier.png" />
                             </Button>
                         </Border>
+
                         <Border
                             x:Name="DelSegBorder"
                             BorderThickness="4"
@@ -283,9 +298,14 @@
                         Margin="8,0,2,0"
                         VerticalAlignment="Center"
                         IsChecked="{Binding ShowOrtho}"
-                        ToolTip="Show orthogononal guides and highlight orthogonal points">
-                        Highlight Orthogonal Points
-                    </CheckBox>
+                        ToolTip="Show orthogononal guides and highlight orthogonal points" Content="Highlight Orthogonal Points" />
+                    <Button x:Name="SwapArcSize" Style="{StaticResource SmallButton}" Visibility="{Binding SwapArcVisible}" Margin="8,0,0,0" Command="{Binding SwapArcSegmentSizeCommand}" ToolTip="Toggle arc between small and large segment">
+                        <Image Source="/Barnacle;component/Images/Buttons/SwapArc.png" />
+                    </Button>
+                    <Button x:Name="SwapArcDirection" Style="{StaticResource SmallButton}" Visibility="{Binding SwapArcVisible}" Margin="8,0,8,0" Command="{Binding SwapArcDirectionCommand}" ToolTip="Toggle arc between clockwise and anticlockwise">
+                        <Image Source="/Barnacle;component/Images/Buttons/ToggleArcDirection.png" />
+                    </Button>
+
                     <ComboBox
                         Width="120"
                         ItemsSource="{Binding CurveNames}"

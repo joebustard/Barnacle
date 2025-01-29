@@ -341,11 +341,13 @@
                         VerticalAlignment="Top"
                         Command="{Binding SettingsCommand}"
                         CommandParameter="Settings"
+                        IsEnabled="{Binding EditingActive}"
                         Label="Settings"
                         SmallImageSource="/Barnacle;component/Images/Buttons/settings.png" />
                     <Custom:RibbonMenuButton
                         x:Name="Import"
                         Label="Import"
+                        IsEnabled="{Binding EditingActive}"
                         SmallImageSource="/Barnacle;component/Images/Buttons/Import.png">
                         <Custom:RibbonMenuItem
                             x:Name="ImportOBJ"
@@ -386,6 +388,7 @@
                     <Custom:RibbonMenuButton
                         x:Name="Export"
                         Label="Export"
+                        IsEnabled="{Binding EditingActive}"
                         SmallImageSource="/Barnacle;component/Images/Buttons/export.png">
                         <Custom:RibbonMenuItem
                             x:Name="AllModels"
@@ -470,6 +473,7 @@
                     <Custom:RibbonButton
                         x:Name="Autofix"
                         HorizontalAlignment="Stretch"
+                        IsEnabled="{Binding EditingActive}"
                         VerticalAlignment="Top"
                         Command="{Binding AutoFixCommand}"
                         Label="AutoFix"
@@ -527,6 +531,7 @@
                             x:Name="LeftAlignment"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
+                            IsEnabled="{Binding EditingActive}"
                             Command="{Binding AlignCommand}"
                             CommandParameter="Left"
                             Header="Left"
@@ -536,6 +541,7 @@
                             x:Name="RightAlignment"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
+                            IsEnabled="{Binding EditingActive}"
                             Command="{Binding AlignCommand}"
                             CommandParameter="Right"
                             Header="Right"
@@ -545,6 +551,7 @@
                             x:Name="TopAlignment"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
+                            IsEnabled="{Binding EditingActive}"
                             Command="{Binding AlignCommand}"
                             CommandParameter="Top"
                             Header="Top"
@@ -554,6 +561,7 @@
                             x:Name="BottomAlignment"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
+                            IsEnabled="{Binding EditingActive}"
                             Command="{Binding AlignCommand}"
                             CommandParameter="Bottom"
                             Header="Bottom"
@@ -563,6 +571,7 @@
                             x:Name="FrontAlignment"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
+                            IsEnabled="{Binding EditingActive}"
                             Command="{Binding AlignCommand}"
                             CommandParameter="Front"
                             Header="Front"
@@ -572,6 +581,7 @@
                             x:Name="BackAlignment"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
+                            IsEnabled="{Binding EditingActive}"
                             Command="{Binding AlignCommand}"
                             CommandParameter="Back"
                             Header="Back"
@@ -584,12 +594,14 @@
                             Command="{Binding AlignCommand}"
                             CommandParameter="Centres"
                             Header="Centres"
+                            IsEnabled="{Binding EditingActive}"
                             ImageSource="/Barnacle;component/Images/Buttons/Centres.png"
                             ToolTip="Align objects so their centres match the first selected." />
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton
                         x:Name="MidwayAlignment"
                         Label="Midway"
+                        IsEnabled="{Binding EditingActive}"
                         SmallImageSource="/Barnacle;component/Images/Buttons/Align.png">
                         <Custom:RibbonMenuItem
                             x:Name="MidwayLeftRightAlignment"
@@ -623,6 +635,7 @@
                     <Custom:RibbonMenuButton
                         x:Name="Stack"
                         Label="Stack"
+                        IsEnabled="{Binding EditingActive}"
                         SmallImageSource="/Barnacle;component/Images/Buttons/Stack.png">
                         <Custom:RibbonMenuItem
                             x:Name="StackLeftAlignment"
@@ -682,6 +695,7 @@
                     <Custom:RibbonMenuButton
                         x:Name="Distibution"
                         Label="Distribution"
+                        IsEnabled="{Binding EditingActive}"
                         SmallImageSource="/Barnacle;component/Images/Buttons/Distribution.png">
                         <!--
                         <Custom:RibbonButton Command="{Binding DistributeCommand}"
@@ -781,6 +795,7 @@
                     <Custom:RibbonMenuButton
                         x:Name="Size"
                         Label="Size"
+                        IsEnabled="{Binding EditingActive}"
                         SmallImageSource="/Barnacle;component/Images/Buttons/Size.png">
                         <Custom:RibbonMenuItem
                             x:Name="SameLength"
@@ -822,6 +837,7 @@
                     <Custom:RibbonMenuButton
                         x:Name="GroupButton"
                         Label="Group"
+                        IsEnabled="{Binding EditingActive}"
                         SmallImageSource="/Barnacle;component/Images/Buttons/group.png">
                         <Custom:RibbonMenuItem
                             x:Name="GroupUnion"
@@ -899,6 +915,7 @@
                     <Custom:RibbonMenuButton
                         x:Name="Split"
                         Label="Split"
+                        IsEnabled="{Binding EditingActive}"
                         SmallImageSource="/Barnacle;component/Images/Buttons/split.png">
                         <Custom:RibbonMenuItem
                             x:Name="SplitX"
@@ -930,8 +947,7 @@
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton
                         x:Name="Bend"
-                        Label="Bend"
-                        SmallImageSource="/Barnacle;component/Images/Buttons/Bend.png">
+                        Label="Bend" SmallImageSource="/Barnacle;component/Images/Buttons/Bend.png">
                         <Custom:RibbonMenuItem
                             x:Name="BendX"
                             Header="X"

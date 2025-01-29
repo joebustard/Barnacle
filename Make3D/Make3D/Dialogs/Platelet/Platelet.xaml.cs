@@ -1185,6 +1185,7 @@ namespace Barnacle.Dialogs
             List<System.Drawing.PointF> innerPolygon = new List<System.Drawing.PointF>();
             ClearShape();
             List<System.Windows.Point> tmp = new List<System.Windows.Point>();
+
             double top = 0;
             double lx = double.MaxValue;
             double rx = double.MinValue;
@@ -1237,7 +1238,7 @@ namespace Barnacle.Dialogs
                     outerPolygon.Add(new System.Drawing.PointF((float)tmp[i].X, (float)tmp[i].Y));
                 }
                 outerPolygon = LineUtils.RemoveCoplanarSegments(outerPolygon);
-
+                outerPolygon = LineUtils.RemoveDuplicatePoints(outerPolygon);
                 for (int i = 0; i < outerPolygon.Count; i++)
                 {
                     innerPolygon.Add(new System.Drawing.PointF((float)outerPolygon[i].X, (float)outerPolygon[i].Y));

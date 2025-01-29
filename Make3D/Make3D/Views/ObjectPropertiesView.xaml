@@ -58,6 +58,7 @@
             <RowDefinition Height="18" />
             <RowDefinition Height="18" />
             <RowDefinition Height="18" />
+            <RowDefinition Height="18" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="30*" />
@@ -166,7 +167,7 @@
             Grid.Column="1"
             FontSize="14"
             IsEnabled="{Binding ControlsEnabled}"
-            Text="{Binding PositionY, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding PositionY}" />
         <UniformGrid
             Grid.Row="6"
             Grid.RowSpan="2"
@@ -286,7 +287,7 @@
             Grid.ColumnSpan="2"
             FontSize="14"
             IsEnabled="{Binding CanScale}"
-            Text="{Binding ScaleY, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding ScaleY}" />
         <Label
             Grid.Row="14"
             Grid.RowSpan="2"
@@ -301,7 +302,7 @@
             Grid.ColumnSpan="2"
             FontSize="14"
             IsEnabled="{Binding CanScale}"
-            Text="{Binding ScaleZ, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding ScaleZ}" />
         <CheckBox
             Grid.Row="15"
             Grid.Column="0"
@@ -522,6 +523,12 @@
             Text="{Binding ObjectType}" />
         <TextBox
             Grid.Row="29"
+            Grid.ColumnSpan="3"
+            VerticalAlignment="Stretch"
+            IsReadOnly="True"
+            Text="{Binding ObjectMetrics}" />
+        <TextBox
+            Grid.Row="30"
             Grid.ColumnSpan="3"
             VerticalAlignment="Stretch"
             AcceptsReturn="True"

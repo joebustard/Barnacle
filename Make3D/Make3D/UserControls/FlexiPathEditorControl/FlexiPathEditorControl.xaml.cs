@@ -728,14 +728,15 @@ namespace Barnacle.UserControls
                     }
 
                     // only show the points if they are marked as visible OR they are orthogonal to
-                    // the selected one
-                    if (vm.Points[i].Visible || (ortho && vm.ShowOrtho))
+                    // the selected one or showallpoints is selected
+                    if (vm.Points[i].Visible || (ortho && vm.ShowOrtho) || vm.ShowPointsStatus)
                     {
                         if (vm.Points[i].Mode == FlexiPoint.PointMode.Data)
                         {
                             p = MakeEllipse(rad, br, p);
                         }
                         if (vm.Points[i].Mode == FlexiPoint.PointMode.Control1 ||
+                            vm.Points[i].Mode == FlexiPoint.PointMode.ControlA ||
                             vm.Points[i].Mode == FlexiPoint.PointMode.ControlQ)
                         {
                             p = MakeRect(rad, br, p);
@@ -768,6 +769,7 @@ namespace Barnacle.UserControls
                     if (vm.Points[i].Visible)
                     {
                         if (vm.Points[i].Mode == FlexiPoint.PointMode.Control1 ||
+                            vm.Points[i].Mode == FlexiPoint.PointMode.ControlA ||
                             vm.Points[i].Mode == FlexiPoint.PointMode.ControlQ)
                         {
                             int j = i - 1;
@@ -778,6 +780,7 @@ namespace Barnacle.UserControls
                             DrawControlLine(vm.Points[i].ToPoint(), vm.Points[j].ToPoint());
                         }
                         if (vm.Points[i].Mode == FlexiPoint.PointMode.Control2 ||
+                            vm.Points[i].Mode == FlexiPoint.PointMode.ControlA ||
                             vm.Points[i].Mode == FlexiPoint.PointMode.ControlQ)
                         {
                             int j = i + 1;
@@ -855,6 +858,7 @@ namespace Barnacle.UserControls
             DoButtonBorder(src, DelSegBorder);
             DoButtonBorder(src, MovePathBorder);
             DoButtonBorder(src, AppendBorder);
+            DoButtonBorder(src, AntiClockwiseArcBorder);
         }
 
         private void FlexiUserActive()
@@ -938,6 +942,20 @@ namespace Barnacle.UserControls
                         {
                             found = vm.DeleteSegment(position);
 
+                            vm.SelectionMode = FlexiPathEditorControlViewModel.SelectionModeType.SelectSegmentAtPoint;
+                        }
+                        break;
+
+                    case FlexiPathEditorControlViewModel.SelectionModeType.AntiClockwiseArc:
+                        {
+                            found = vm.ConvertToArc(position, false);
+                            vm.SelectionMode = FlexiPathEditorControlViewModel.SelectionModeType.SelectSegmentAtPoint;
+                        }
+                        break;
+
+                    case FlexiPathEditorControlViewModel.SelectionModeType.ClockwiseArc:
+                        {
+                            found = vm.ConvertToArc(position, true);
                             vm.SelectionMode = FlexiPathEditorControlViewModel.SelectionModeType.SelectSegmentAtPoint;
                         }
                         break;
@@ -1143,6 +1161,12 @@ namespace Barnacle.UserControls
                     }
                     break;
 
+                case FlexiPathEditorControlViewModel.SelectionModeType.AntiClockwiseArc:
+                    {
+                        EnableSelectionModeBorder(AntiClockwiseArcBorder);
+                    }
+                    break;
+
                 case FlexiPathEditorControlViewModel.SelectionModeType.SplitQuad:
                     {
                         EnableSelectionModeBorder(SplitQuadBezierBorder);
@@ -1271,6 +1295,7 @@ namespace Barnacle.UserControls
                     ShowGridStatus();
                     ShowPointsStatus();
                     vm.AbsolutePaths = absolutePaths;
+                    LoggerLib.Logger.LogLine($"UserControl_Loaded vm.SetPath(pathText); {pathText}");
                     vm.SetPath(pathText);
                     vm.DefaultImagePath = defaultImagePath;
                     vm.ContinuousPointsNotify = continuosPointsNotify;

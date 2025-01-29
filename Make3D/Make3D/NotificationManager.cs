@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Threading;
 
 namespace Barnacle
@@ -58,7 +59,10 @@ namespace Barnacle
 
         public static int IdleTimeSeconds
         {
-            get { return idleTimeSeconds; }
+            get
+            {
+                return idleTimeSeconds;
+            }
             set
             {
                 if (idleTimeSeconds != value)
@@ -198,6 +202,7 @@ namespace Barnacle
                         catch (Exception ex)
                         {
                             System.Diagnostics.Debug.WriteLine(ex.Message);
+                            MessageBox.Show(ex.Message);
                             df.alive = false;
                             adjust = true;
                         }

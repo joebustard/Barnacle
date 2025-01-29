@@ -1,17 +1,20 @@
 ﻿v1.0.9
 ===========
 Added
-Setlength(), setheight() and setwidth() to the standard limpet library
-Five more primitives, staircase, squiggle, cross block, right bracket and screw diver bit
-Two "Wedge" profiles added to path loft
-Cross grille with edge
-Setting for the minimum number of faces to be added for every primitive.
-
+  Setlength(), setheight() and setwidth() to the standard limpet library
+  Five more primitives, staircase, squiggle, cross block, right bracket and screw diver bit
+  Two "Wedge" profiles added to path loft
+  Cross grille with edge
+  Setting for the minimum number of faces to be added for every primitive.
+  First cut of arc support in flexipath control
+  Key strokes + and - to scale selected object by percentage given in object properties window
+  show number of vertices and faces on object properties page
 Fixed
 
 Changed
-
-
+  Platelet width from int to double to allow fractions of millimetres
+  Changed key stroke for closing two selected objects from = to \
+  Replaced Spacetree in CutH tool by Octtree to deal with large vertex counts better 
 
 
 v1.0.8

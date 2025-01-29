@@ -216,14 +216,20 @@ namespace Barnacle.LineLib
 
         internal override string ToOutline(ObservableCollection<FlexiPoint> flexiPoints)
         {
-            return $"Q {flexiPoints[P1].X:F03},{flexiPoints[P1].Y:F03} {flexiPoints[P2].X:F03},{flexiPoints[P2].Y:F03}  ";
+            return $"Q {flexiPoints[P1].X:F07},{flexiPoints[P1].Y:F07} {flexiPoints[P2].X:F07},{flexiPoints[P2].Y:F07}  ";
         }
 
-        internal override string ToPath(ObservableCollection<FlexiPoint> points, ref double ox, ref double oy)
+        internal override string ToPath(ObservableCollection<FlexiPoint> points, ref double ox, ref double oy, bool absolute)
         {
             string res = "";
-
-            res = $"RQ {points[P1].X - ox:F03},{points[P1].Y - oy:F03} {points[P2].X - ox:F03},{points[P2].Y - oy:F03} ";
+            if (absolute)
+            {
+                res = $"Q {points[P1].X:F07},{points[P1].Y:F07} {points[P2].X:F07},{points[P2].Y:F07} ";
+            }
+            else
+            {
+                res = $"RQ {points[P1].X - ox:F07},{points[P1].Y - oy:F07} {points[P2].X - ox:F07},{points[P2].Y - oy:F07} ";
+            }
             ox = points[P2].X;
             oy = points[P2].Y;
             return res;

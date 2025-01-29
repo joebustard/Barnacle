@@ -1027,6 +1027,8 @@ namespace Barnacle.Dialogs
 
         private void SidePathChanged(string pathText)
         {
+            LoggerLib.Logger.LogLine($"rcved notification from path control -SidePath changed to {pathText}");
+
             SidePath = pathText;
         }
 
@@ -1055,6 +1057,8 @@ namespace Barnacle.Dialogs
                     ModelIsVisible = false;
                 }
             }
+            System.Windows.Controls.TabItem ti = tc.SelectedItem as System.Windows.Controls.TabItem;
+            LoggerLib.Logger.LogLine($"{ti.Header}");
         }
 
         private void TabItem_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -1083,8 +1087,9 @@ namespace Barnacle.Dialogs
 
         private void TopPathChanged(string pathText)
         {
+            LoggerLib.Logger.LogLine($"rcved notification from path control -TopPath changed to {pathText}");
             TopPath = pathText;
-            UpdateModel();
+            //  UpdateModel();
         }
 
         private void TriangulatePerimiter(List<PointF> points, double xo, double yo, double z, bool invert)

@@ -44,7 +44,8 @@ namespace Barnacle.LineLib
             Data,
             Control1,
             Control2,
-            ControlQ
+            ControlQ,
+            ControlA
         }
 
         public int Id { get; set; }

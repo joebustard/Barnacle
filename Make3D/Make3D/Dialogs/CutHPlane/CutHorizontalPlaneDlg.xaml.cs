@@ -25,6 +25,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using OctTreeLib;
 
 namespace Barnacle.Dialogs
 {
@@ -38,6 +39,8 @@ namespace Barnacle.Dialogs
         private Bounds3D bounds;
         private DpiScale dpi;
         private bool loaded;
+        private OctTree octTree;
+        private Bounds3D originalBounds;
         private HorizontalPlane plane;
         private double planeLevel;
         private bool planeSelected;
@@ -153,6 +156,29 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public int AddVerticeOctTree(double x, double y, double z)
+        {
+            int res = -1;
+            if (octTree != null)
+            {
+                Point3D v = new Point3D(x, y, z);
+                res = octTree.PointPresent(v);
+
+                if (res == -1)
+                {
+                    res = Vertices.Count;
+                    octTree.AddPoint(res, v);
+                }
+            }
+            return res;
+        }
+
+        protected OctTree CreateOctree(Point3D minPoint, Point3D maxPoint)
+        {
+            octTree = new OctTree(Vertices, minPoint, maxPoint, 200);
+            return octTree;
+        }
+
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
@@ -250,6 +276,11 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private int AddVerticeOctTree(Point3D p)
+        {
+            return AddVerticeOctTree(p.X, p.Y, p.Z);
+        }
+
         private int CrossingPoint(int a, int b)
         {
             double t;
@@ -263,7 +294,7 @@ namespace Barnacle.Dialogs
 
             double x = x0 + t * (x1 - x0);
             double z = z0 + t * (z1 - z0);
-            int res = AddVertice(x, planeLevel, z);
+            int res = AddVerticeOctTree(x, planeLevel, z);
             return res;
         }
 
@@ -412,9 +443,9 @@ namespace Barnacle.Dialogs
                     List<Triangle> tris = ply.Triangulate();
                     foreach (Triangle t in tris)
                     {
-                        int c0 = AddVertice(t.Points[0].X, planeLevel, t.Points[0].Y);
-                        int c1 = AddVertice(t.Points[1].X, planeLevel, t.Points[1].Y);
-                        int c2 = AddVertice(t.Points[2].X, planeLevel, t.Points[2].Y);
+                        int c0 = AddVerticeOctTree(t.Points[0].X, planeLevel, t.Points[0].Y);
+                        int c1 = AddVerticeOctTree(t.Points[1].X, planeLevel, t.Points[1].Y);
+                        int c2 = AddVerticeOctTree(t.Points[2].X, planeLevel, t.Points[2].Y);
                         newFaces.Add(c0);
                         newFaces.Add(c1);
                         newFaces.Add(c2);
@@ -429,10 +460,10 @@ namespace Barnacle.Dialogs
             Point3DCollection allPoints = Vertices;
             Vertices = new Point3DCollection();
             ClearShape();
-
+            octTree = CreateOctree(originalBounds.Lower, originalBounds.Upper);
             foreach (int j in newFaces)
             {
-                int v = AddVertice(allPoints[j]);
+                int v = AddVerticeOctTree(allPoints[j]);
                 Faces.Add(v);
             }
 
@@ -457,7 +488,7 @@ namespace Barnacle.Dialogs
             double x = x0 + t * (x1 - x0);
             double z = z0 + t * (z1 - z0);
 
-            b = AddVertice(x, planeLevel, z);
+            b = AddVerticeOctTree(x, planeLevel, z);
 
             x1 = Vertices[c].X;
             y1 = Vertices[c].Y;
@@ -467,7 +498,7 @@ namespace Barnacle.Dialogs
             x = x0 + t * (x1 - x0);
             z = z0 + t * (z1 - z0);
 
-            c = AddVertice(x, planeLevel, z);
+            c = AddVerticeOctTree(x, planeLevel, z);
         }
 
         private void ResetDefaults(object sender, RoutedEventArgs e)
@@ -481,25 +512,18 @@ namespace Barnacle.Dialogs
             bounds = new Bounds3D();
             bounds.Zero();
             ClearShape();
+            octTree = CreateOctree(originalBounds.Lower, originalBounds.Upper);
+
             if (OriginalFaces != null)
             {
                 foreach (int i in OriginalFaces)
                 {
                     Point3D p = OriginalVertices[i];
                     bounds.Adjust(p);
-                    int k = AddVertice(p);
+                    int k = AddVerticeOctTree(p.X, p.Y, p.Z);
                     Faces.Add(k);
                 }
             }
-            /*
-            if (OriginalVertices != null)
-            {
-                foreach (Point3D p in OriginalVertices)
-                {
-                    bounds.Adjust(p);
-                }
-            }
-           */
 
             CentreVertices();
         }
@@ -539,7 +563,22 @@ namespace Barnacle.Dialogs
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             loaded = true;
+            originalBounds = new Bounds3D();
+            originalBounds.Zero();
+            bounds = new Bounds3D();
+            bounds.Zero();
+            ClearShape();
+            if (OriginalVertices != null)
+            {
+                foreach (Point3D p in OriginalVertices)
+                {
+                    originalBounds.Adjust(p);
+                }
+            }
+            octTree = CreateOctree(originalBounds.Lower, originalBounds.Upper);
+
             RestoreOriginal();
+
             plane = new HorizontalPlane(planeLevel, bounds.Width + 20, bounds.Depth + 20);
             plane.MoveTo(PlaneLevel);
             UpdateDisplay();

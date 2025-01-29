@@ -43,6 +43,7 @@ namespace Barnacle.ViewModels
         private bool lockAspectRatio;
         private AvailableColour objectColour;
 
+        private String objectMetrics;
         private string objectName;
 
         private string objectType;
@@ -73,10 +74,12 @@ namespace Barnacle.ViewModels
             MoveToCentreCommand = new RelayCommand(OnMoveToCentre);
             MoveToZeroCommand = new RelayCommand(OnMoveToZero);
             NudgeCommand = new RelayCommand(OnNudge);
-            NotificationManager.Subscribe("ObjectSelected", OnObjectSelected);
-            NotificationManager.Subscribe("ScaleUpdated", OnScaleUpdated);
-            NotificationManager.Subscribe("PositionUpdated", OnPositionUpdated);
+            NotificationManager.Subscribe("ObjectProperties", "ObjectSelected", OnObjectSelected);
+            NotificationManager.Subscribe("ObjectProperties", "ScaleUpdated", OnScaleUpdated);
+            NotificationManager.Subscribe("ObjectProperties", "PositionUpdated", OnPositionUpdated);
             NotificationManager.Subscribe("ObjectProperties", "SuspendEditing", SuspendEditing);
+            NotificationManager.Subscribe("ObjectProperties", "ScaleByPercent", OnScaleByPercent);
+
             editingActive = true;
             rotationX = 90;
             rotationY = 90;
@@ -262,6 +265,23 @@ namespace Barnacle.ViewModels
                         selectedObject.Color = System.Windows.Media.Color.FromArgb(tmp.A, tmp.R, tmp.G, tmp.B);
                         Document.Dirty = true;
                     }
+                }
+            }
+        }
+
+        public String ObjectMetrics
+        {
+            get
+            {
+                return objectMetrics;
+            }
+
+            set
+            {
+                if (objectMetrics != value)
+                {
+                    objectMetrics = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -531,7 +551,7 @@ namespace Barnacle.ViewModels
                         }
                         else
                         {
-                            selectedObject.ScaleMesh(d, 1, 1);
+                            RescaleSelectedObject(d, 1, 1);
                         }
                     }
                 }
@@ -760,6 +780,7 @@ namespace Barnacle.ViewModels
                 ControlsEnabled = false;
                 ObjectType = "";
                 LockAspectRatio = false;
+                ObjectMetrics = "";
             }
             else
             {
@@ -770,6 +791,7 @@ namespace Barnacle.ViewModels
                 description = selectedObject.Description;
                 lockAspectRatio = selectedObject.LockAspectRatio;
                 ControlsEnabled = true;
+                ObjectMetrics = $"v:{selectedObject.RelativeObjectVertices.Count} f:{selectedObject.TotalFaces}";
                 if (selectedObject is Group3D)
                 {
                     ObjectType = "Group";

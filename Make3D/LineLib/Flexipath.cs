@@ -108,6 +108,17 @@ namespace Barnacle.LineLib
             }
         }
 
+        public void AddClosingArcCurve(System.Windows.Point p1, bool clockwise, double radius)
+        {
+            int i = flexiPoints.Count - 1;
+            flexiPoints.Add(new FlexiPoint(p1, i + 1, FlexiPoint.PointMode.ControlA));
+
+            FlexiArcSegment bl = new FlexiArcSegment(i, i + 1, 0);
+            bl.Radius = radius;
+            bl.Clockwise = clockwise;
+            segs.Add(bl);
+        }
+
         public void AddClosingQCurve(System.Windows.Point p1)
         {
             int i = flexiPoints.Count - 1;
@@ -186,6 +197,40 @@ namespace Barnacle.LineLib
             double cy1 = lp.Y + 0.5 * (fp.Y - lp.Y);
 
             AddClosingQCurve(new System.Windows.Point(cx1, cy1));
+        }
+
+        public System.Windows.Point ArcSnap(int selectedPoint, System.Windows.Point position)
+        {
+            System.Windows.Point p = position;
+            foreach (FlexiSegment fs in segs)
+            {
+                if (fs is FlexiArcSegment)
+                {
+                    FlexiArcSegment fa = fs as FlexiArcSegment;
+                    if (fa.P1 == selectedPoint)
+                    {
+                        p = fa.Snap(p, flexiPoints);
+                        break;
+                    }
+                }
+            }
+            return p;
+        }
+
+        public void ArcSwapDirection(int selectedPoint)
+        {
+            foreach (FlexiSegment fs in segs)
+            {
+                if (fs is FlexiArcSegment)
+                {
+                    FlexiArcSegment fa = fs as FlexiArcSegment;
+                    if (fa.P1 == selectedPoint)
+                    {
+                        fa.Clockwise = !fa.Clockwise;
+                        break;
+                    }
+                }
+            }
         }
 
         public void CalculatePathBounds()
@@ -351,6 +396,39 @@ namespace Barnacle.LineLib
                     break;
                 }
             }
+        }
+
+        public bool ConvertToArc(System.Windows.Point position, bool clockwise)
+        {
+            bool found = false;
+            for (int i = 0; i < segs.Count; i++)
+            {
+                if (segs[i].Selected)
+                {
+                    if (segs[i] is LineSegment)
+                    {
+                        int start = segs[i].Start();
+                        int end = segs[i].End();
+                        // closing segment which goes back to 0 is a special case
+                        if (end != 0)
+                        {
+                            ConvertLineArcSegment(start, position, clockwise);
+                        }
+                        else
+                        {
+                            // Delete the last dummy segment
+                            segs.RemoveAt(segs.Count - 1);
+                            // Append a new curve
+                            AppendClosingArcSegment(clockwise);
+
+                            segs[segs.Count - 1].Select(flexiPoints);
+                        }
+                        found = true;
+                    }
+                    break;
+                }
+            }
+            return found;
         }
 
         public bool ConvertToCubic(System.Windows.Point position)
@@ -563,7 +641,7 @@ namespace Barnacle.LineLib
                     sg.DisplayPointsF(res, flexiPoints);
                 }
             }
-            // We want a consistent orientaion of the final points, no matter how the user has drawn
+            // We want a consistent orientation of the final points, no matter how the user has drawn
             // his curve
             bool anticlockwise = SignedPolygonArea(res) > 0;
             if (anticlockwise)
@@ -576,11 +654,6 @@ namespace Barnacle.LineLib
                 res = tmp;
             }
             return res;
-        }
-
-        public int FindSegmentThatEndsOnPointIndex(int selectedPoint)
-        {
-            throw new NotImplementedException();
         }
 
         public FlexiSegment FirstSelectedSegment()
@@ -1008,6 +1081,78 @@ namespace Barnacle.LineLib
                                 i += 3;
                             }
                             break;
+
+                        case "A":
+                            {
+                                bool clockwise = false;
+                                bool isLarge = false;
+                                valid = LoadArc(pnts, segments, blks, ref x, ref y, i, clockwise, isLarge);
+                                i += 2;
+                            }
+                            break;
+
+                        case "AC":
+                            {
+                                bool clockwise = true;
+                                bool isLarge = false;
+                                valid = LoadArc(pnts, segments, blks, ref x, ref y, i, clockwise, isLarge);
+                                i += 2;
+                            }
+                            break;
+
+                        case "AL":
+                            {
+                                bool clockwise = false;
+                                bool isLarge = true;
+                                valid = LoadArc(pnts, segments, blks, ref x, ref y, i, clockwise, isLarge);
+                                i += 2;
+                            }
+                            break;
+
+                        case "ACL":
+                            {
+                                bool clockwise = true;
+                                bool isLarge = true;
+                                valid = LoadArc(pnts, segments, blks, ref x, ref y, i, clockwise, isLarge);
+                                i += 2;
+                            }
+                            break;
+
+                        case "RA":
+                            {
+                                bool clockwise = false;
+                                bool isLarge = false;
+                                valid = LoadRArc(pnts, segments, blks, ref x, ref y, i, clockwise, isLarge);
+                                i += 2;
+                            }
+                            break;
+
+                        case "RAC":
+                            {
+                                bool clockwise = true;
+                                bool isLarge = false;
+                                valid = LoadRArc(pnts, segments, blks, ref x, ref y, i, clockwise, isLarge);
+                                i += 2;
+                            }
+                            break;
+
+                        case "RAL":
+                            {
+                                bool clockwise = false;
+                                bool isLarge = true;
+                                valid = LoadRArc(pnts, segments, blks, ref x, ref y, i, clockwise, isLarge);
+                                i += 2;
+                            }
+                            break;
+
+                        case "RACL":
+                            {
+                                bool clockwise = true;
+                                bool isLarge = true;
+                                valid = LoadRArc(pnts, segments, blks, ref x, ref y, i, clockwise, isLarge);
+                                i += 2;
+                            }
+                            break;
                     }
                     i++;
                 }
@@ -1157,7 +1302,12 @@ namespace Barnacle.LineLib
             }
         }
 
-        public bool SplitQuadCubic(System.Windows.Point position)
+        /// <summary>
+        /// SplitQuadCubic splits a quad bezier into to seperate ones
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        public bool SplitQuadBezier(System.Windows.Point position)
         {
             bool found = false;
             for (int i = 0; i < segs.Count; i++)
@@ -1195,9 +1345,6 @@ namespace Barnacle.LineLib
                         y = (1 - splitT) * p1.Y + (splitT * p2.Y);
                         System.Windows.Point hnp1 = new System.Windows.Point(x, y);
 
-                        //x = Math.Pow((1 - splitT), 2) * p1.X + (2.0 * (1 - splitT) * splitT * p2.X) + (splitT * splitT * p2.X);
-                        //y = Math.Pow((1 - splitT), 2) * p1.Y + (2.0 * (1 - splitT) * splitT * p2.Y) + (splitT * splitT * p2.Y);
-                        //System.Windows.Point hnp2 = new System.Windows.Point(x, y);
                         System.Windows.Point hnp2 = p2;
 
                         // insert two new plexipoints
@@ -1290,6 +1437,22 @@ namespace Barnacle.LineLib
             return found;
         }
 
+        public void SwapArcSegmentSize(int selectedPoint)
+        {
+            foreach (FlexiSegment fs in segs)
+            {
+                if (fs is FlexiArcSegment)
+                {
+                    FlexiArcSegment fa = fs as FlexiArcSegment;
+                    if (fa.P1 == selectedPoint)
+                    {
+                        fa.IsLargeArc = !fa.IsLargeArc;
+                        break;
+                    }
+                }
+            }
+        }
+
         public string ToOutline()
         {
             string result = "";
@@ -1329,7 +1492,7 @@ namespace Barnacle.LineLib
                 }
                 foreach (FlexiSegment sq in segs)
                 {
-                    result += sq.ToPath(flexiPoints, ref ox, ref oy);
+                    result += sq.ToPath(flexiPoints, ref ox, ref oy, absolute);
                 }
             }
             return result;
@@ -1384,6 +1547,17 @@ namespace Barnacle.LineLib
             return res;
         }
 
+        private void AppendClosingArcSegment(bool clockwise)
+        {
+            // get current last point
+            FlexiPoint lp = flexiPoints[flexiPoints.Count - 1];
+            FlexiPoint fp = flexiPoints[0];
+            double cx1 = lp.X + 0.5 * (fp.X - lp.X);
+            double cy1 = lp.Y + 0.5 * (fp.Y - lp.Y);
+            double radius = Distance(lp, fp) / 2.0;
+            AddClosingArcCurve(new System.Windows.Point(cx1, cy1), clockwise, radius);
+        }
+
         private void CheckClip(FlexiPoint f)
         {
             if (clipAgainstBounds)
@@ -1395,6 +1569,39 @@ namespace Barnacle.LineLib
                 if (f.Y < 0)
                 {
                     f.Y = 0;
+                }
+            }
+        }
+
+        private void ConvertLineArcSegment(int index, System.Windows.Point position, bool clockwise, bool centreControl = true)
+        {
+            for (int i = 0; i < segs.Count; i++)
+            {
+                if (segs[i].Start() == index)
+                {
+                    int c1 = index;
+                    int c2 = c1 + 1;
+                    int c3 = c2 + 1;
+                    FlexiPoint lp = flexiPoints[c1];
+                    FlexiPoint fp = flexiPoints[c1 + 1];
+                    double cx1 = lp.X + 0.5 * (fp.X - lp.X);
+                    double cy1 = lp.Y + 0.5 * (fp.Y - lp.Y);
+                    double radius = Distance(lp, fp) / 2;
+                    flexiPoints.Insert(index + 1, new FlexiPoint(new System.Windows.Point(cx1, cy1), c2, FlexiPoint.PointMode.ControlA));
+
+                    FlexiArcSegment ls = new FlexiArcSegment(c1, c2, c3);
+                    ls.Clockwise = clockwise;
+                    ls.Radius = radius;
+                    // starting at segment i +1, if the point id is c2 or more
+                    PointInserted(segs, i + 1, c2, 1);
+                    segs[i] = ls;
+                    if (centreControl)
+                    {
+                        ls.ResetControlPoints(flexiPoints);
+                    }
+                    DeselectAll();
+                    ls.Select(flexiPoints);
+                    break;
                 }
             }
         }
@@ -1447,6 +1654,14 @@ namespace Barnacle.LineLib
             return Math.Sqrt(diff);
         }
 
+        private double Distance(FlexiPoint point1, FlexiPoint point2)
+        {
+            double diff = ((point2.X - point1.X) * (point2.X - point1.X)) +
+            ((point2.Y - point1.Y) * (point2.Y - point1.Y));
+
+            return Math.Sqrt(diff);
+        }
+
         private bool GetCoord(string v, ref double x, ref double y)
         {
             bool res = false;
@@ -1480,6 +1695,54 @@ namespace Barnacle.LineLib
             {
             }
             return res;
+        }
+
+        private bool LoadArc(List<FlexiPoint> pnts, List<FlexiSegment> segments, string[] blks, ref double x, ref double y, int i, bool clockwise, bool isLarge)
+        {
+            bool valid = GetCoord(blks[i + 1], ref x, ref y);
+            FlexiPoint fp = new FlexiPoint(x, y);
+            fp.Mode = FlexiPoint.PointMode.ControlA;
+            pnts.Add(fp);
+            if (valid)
+            {
+                valid = GetCoord(blks[i + 2], ref x, ref y);
+                FlexiPoint fp2 = new FlexiPoint(x, y);
+                fp2.Mode = FlexiPoint.PointMode.Data;
+                pnts.Add(fp2);
+
+                FlexiArcSegment sq = new FlexiArcSegment(pnts.Count - 3, pnts.Count - 2, pnts.Count - 1);
+                sq.IsLargeArc = isLarge;
+                sq.Clockwise = clockwise;
+                sq.Radius = Distance(fp, fp2);
+                segments.Add(sq);
+            }
+
+            return valid;
+        }
+
+        private bool LoadRArc(List<FlexiPoint> pnts, List<FlexiSegment> segments, string[] blks, ref double x, ref double y, int i, bool clockwise, bool isLarge)
+        {
+            double ox = pnts[pnts.Count - 1].X;
+            double oy = pnts[pnts.Count - 1].Y;
+            bool valid = GetCoord(blks[i + 1], ref x, ref y);
+            FlexiPoint fp = new FlexiPoint(x + ox, y + oy);
+            fp.Mode = FlexiPoint.PointMode.ControlA;
+            pnts.Add(fp);
+            if (valid)
+            {
+                valid = GetCoord(blks[i + 2], ref x, ref y);
+                FlexiPoint fp2 = new FlexiPoint(x + ox, y + oy);
+                fp2.Mode = FlexiPoint.PointMode.Data;
+                pnts.Add(fp2);
+
+                FlexiArcSegment sq = new FlexiArcSegment(pnts.Count - 3, pnts.Count - 2, pnts.Count - 1);
+                sq.IsLargeArc = isLarge;
+                sq.Clockwise = clockwise;
+                sq.Radius = Distance(fp, fp2);
+                segments.Add(sq);
+            }
+
+            return valid;
         }
 
         private void PointInserted(List<FlexiSegment> segs, int startSegment, int v2, int numInserted)

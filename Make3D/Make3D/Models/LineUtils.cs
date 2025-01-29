@@ -24,6 +24,8 @@ namespace Barnacle.Models
 {
     internal class LineUtils
     {
+        private static float toleranceF = 0.000001F;
+
         public static void CoplanerTest()
         {
             List<PointF> points = new List<PointF>();
@@ -34,6 +36,44 @@ namespace Barnacle.Models
             points.Add(new PointF(1.0F, 0.0F));
             points.Add(new PointF(0.5F, 0.0F));
             points = RemoveCoplanarSegments(points);
+        }
+
+        // Find the point of intersection between
+        // the lines p1 --> p2 and p3 --> p4.
+        public static bool DoSegmentsIntersect(
+            PointF p1, PointF p2, PointF p3, PointF p4)
+        {
+            bool intersect = false;
+            PointF intersection;
+            // Get the segments' parameters.
+            float dx12 = p2.X - p1.X;
+            float dy12 = p2.Y - p1.Y;
+            float dx34 = p4.X - p3.X;
+            float dy34 = p4.Y - p3.Y;
+
+            // Solve for t1 and t2
+            float denominator = (dy12 * dx34 - dx12 * dy34);
+
+            float t1 =
+                ((p1.X - p3.X) * dy34 + (p3.Y - p1.Y) * dx34)
+                    / denominator;
+            if (float.IsInfinity(t1))
+            {
+                return false;
+            }
+
+            float t2 =
+                ((p3.X - p1.X) * dy12 + (p1.Y - p3.Y) * dx12)
+                    / -denominator;
+
+            // Find the point of intersection.
+            intersection = new PointF(p1.X + dx12 * t1, p1.Y + dy12 * t1);
+
+            // The segments intersect if t1 and t2 are between 0 and 1.
+            intersect =
+                ((t1 >= 0) && (t1 <= 1) &&
+                 (t2 >= 0) && (t2 <= 1));
+            return intersect;
         }
 
         // Find the point of intersection between
@@ -101,44 +141,6 @@ namespace Barnacle.Models
 
             close_p1 = new PointF(p1.X + dx12 * t1, p1.Y + dy12 * t1);
             close_p2 = new PointF(p3.X + dx34 * t2, p3.Y + dy34 * t2);
-        }
-
-        // Find the point of intersection between
-        // the lines p1 --> p2 and p3 --> p4.
-        public static bool DoSegmentsIntersect(
-            PointF p1, PointF p2, PointF p3, PointF p4)
-        {
-            bool intersect = false;
-            PointF intersection;
-            // Get the segments' parameters.
-            float dx12 = p2.X - p1.X;
-            float dy12 = p2.Y - p1.Y;
-            float dx34 = p4.X - p3.X;
-            float dy34 = p4.Y - p3.Y;
-
-            // Solve for t1 and t2
-            float denominator = (dy12 * dx34 - dx12 * dy34);
-
-            float t1 =
-                ((p1.X - p3.X) * dy34 + (p3.Y - p1.Y) * dx34)
-                    / denominator;
-            if (float.IsInfinity(t1))
-            {
-                return false;
-            }
-
-            float t2 =
-                ((p3.X - p1.X) * dy12 + (p1.Y - p3.Y) * dx12)
-                    / -denominator;
-
-            // Find the point of intersection.
-            intersection = new PointF(p1.X + dx12 * t1, p1.Y + dy12 * t1);
-
-            // The segments intersect if t1 and t2 are between 0 and 1.
-            intersect =
-                ((t1 >= 0) && (t1 <= 1) &&
-                 (t2 >= 0) && (t2 <= 1));
-            return intersect;
         }
 
         // Return points representing an enlarged polygon.
@@ -214,6 +216,30 @@ namespace Barnacle.Models
             return res;
         }
 
+        // assumes polygon DOES not have repeated points
+        public static bool IsPointInPolygon(PointF point, List<PointF> polygon)
+        {
+            int polyCorners = polygon.Count;
+            int i = 0;
+            int j = polyCorners - 1;
+            bool oddNodes = false;
+
+            for (i = 0; i < polyCorners; i++)
+            {
+                if (polygon[i].Y < point.Y && polygon[j].Y >= point.Y
+                || polygon[j].Y < point.Y && polygon[i].Y >= point.Y)
+                {
+                    if (polygon[i].X + (point.Y - polygon[i].Y) / (polygon[j].Y - polygon[i].Y) * (polygon[j].X - polygon[i].X) < point.X)
+                    {
+                        oddNodes = !oddNodes;
+                    }
+                }
+                j = i;
+            }
+
+            return oddNodes;
+        }
+
         public static List<PointF> RemoveCoplanarSegments(List<PointF> points)
         {
             bool found = true;
@@ -276,6 +302,27 @@ namespace Barnacle.Models
             return res;
         }
 
+        internal static List<PointF> RemoveDuplicatePoints(List<PointF> ply)
+        {
+            List<PointF> tmp = new List<PointF>();
+            foreach (PointF pf in ply)
+            {
+                if (tmp.Count == 0)
+                {
+                    tmp.Add(new PointF(pf.X, pf.Y));
+                }
+                else
+                {
+                    if ((Math.Abs(pf.X - tmp[tmp.Count - 1].X) > toleranceF) ||
+                         (Math.Abs(pf.Y - tmp[tmp.Count - 1].Y) > toleranceF))
+                    {
+                        tmp.Add(new PointF(pf.X, pf.Y));
+                    }
+                }
+            }
+            return tmp;
+        }
+
         private static bool IsCoPlanar(PointF p0, PointF p1, PointF p2)
         {
             bool coplaner = false;
@@ -298,30 +345,6 @@ namespace Barnacle.Models
             }
 
             return coplaner;
-        }
-
-        // assumes polygon DOES not have repeated points
-        public static bool IsPointInPolygon(PointF point, List<PointF> polygon)
-        {
-            int polyCorners = polygon.Count;
-            int i = 0;
-            int j = polyCorners - 1;
-            bool oddNodes = false;
-
-            for (i = 0; i < polyCorners; i++)
-            {
-                if (polygon[i].Y < point.Y && polygon[j].Y >= point.Y
-                || polygon[j].Y < point.Y && polygon[i].Y >= point.Y)
-                {
-                    if (polygon[i].X + (point.Y - polygon[i].Y) / (polygon[j].Y - polygon[i].Y) * (polygon[j].X - polygon[i].X) < point.X)
-                    {
-                        oddNodes = !oddNodes;
-                    }
-                }
-                j = i;
-            }
-
-            return oddNodes;
         }
     }
 }

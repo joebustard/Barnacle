@@ -24,7 +24,7 @@ namespace Barnacle.Dialogs
     {
         public NodeColour Colour;
 
-        private const double leftRightTolerance = 1E-4;
+        private const double leftRightTolerance = 1E-5;
 
         private const double tolerance = 1E-7;
 

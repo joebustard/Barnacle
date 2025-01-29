@@ -1380,6 +1380,10 @@
     <Resource Include="Images\Buttons\CrossBlock.png" />
     <Resource Include="Images\Buttons\RightBracket.png" />
     <Resource Include="Images\Buttons\Screwdriverbit.png" />
+    <Resource Include="Images\Buttons\AntiClockwiseArc.png" />
+    <Resource Include="Images\Buttons\ClockwiseArc.png" />
+    <Resource Include="Images\Buttons\swaparc.png" />
+    <Resource Include="Images\Buttons\ToggleArcDirection.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
