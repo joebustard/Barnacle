@@ -12,7 +12,6 @@ namespace Workflow
 {
     public class CuraEngineInterface
     {
-        
         // Cura gets upset if you send too many parameters It also gets upset if you don't send
         // these ones even if they still have their default values
         private static string[] mustAlwaysSend =
@@ -193,7 +192,6 @@ namespace Workflow
 "z_seam_type",
 "gantry_height",
         };
-
 
         private static string slicecmdtemplate =
         @"
@@ -388,6 +386,7 @@ exit 0
                                     res.TotalSeconds = Convert.ToInt32(dummy);
 
                                     TimeSpan ts = new TimeSpan(0, 0, res.TotalSeconds);
+                                    res.Days = ts.Days;
                                     res.Hours = ts.Hours;
                                     res.Minutes = ts.Minutes;
                                     res.Seconds = ts.Seconds;

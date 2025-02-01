@@ -2673,6 +2673,7 @@ namespace Barnacle.ViewModels
             zoomPercent = 100;
         }
 
+        /*
         private void ImportOneOfMany(string fpath)
         {
             string rootName = System.IO.Path.GetFileNameWithoutExtension(fpath);
@@ -2717,6 +2718,7 @@ namespace Barnacle.ViewModels
                 System.Windows.MessageBox.Show("File already exists: " + targetPath, "Error");
             }
         }
+        */
 
         private void LeftCamera()
         {
@@ -3842,7 +3844,10 @@ namespace Barnacle.ViewModels
                 selectedObjectAdorner.Clear();
             }
             OpenFileDialog dlg = new OpenFileDialog();
-
+            bool swapStlYZ = BaseViewModel.Project.SharedProjectSettings.ImportStlAxisSwap;
+            bool swapObjYZ = BaseViewModel.Project.SharedProjectSettings.ImportObjAxisSwap;
+            bool swapOffYZ = BaseViewModel.Project.SharedProjectSettings.ImportOffAxisSwap;
+            bool setCentroid = BaseViewModel.Project.SharedProjectSettings.SetOriginToCentroid;
             string s = param.ToString();
             switch (s.ToLower())
             {
@@ -3853,7 +3858,7 @@ namespace Barnacle.ViewModels
                         {
                             if (File.Exists(dlg.FileName))
                             {
-                                Document.ImportOffs(dlg.FileName);
+                                Document.ImportOffs(dlg.FileName, swapOffYZ, setCentroid);
                                 document.Dirty = true;
                                 RegenerateDisplayList();
                             }
@@ -3868,7 +3873,7 @@ namespace Barnacle.ViewModels
                         {
                             if (File.Exists(dlg.FileName))
                             {
-                                Document.ImportObjs(dlg.FileName);
+                                document.ImportObjs(dlg.FileName, swapObjYZ, setCentroid);
                                 document.Dirty = true;
                                 RegenerateDisplayList();
                             }
@@ -3883,7 +3888,7 @@ namespace Barnacle.ViewModels
                         {
                             if (File.Exists(dlg.FileName))
                             {
-                                Document.ImportStl(dlg.FileName, BaseViewModel.Project.SharedProjectSettings.ImportAxisSwap);
+                                Document.ImportStl(dlg.FileName, swapStlYZ, setCentroid);
                                 RegenerateDisplayList();
                                 NotificationManager.Notify("ObjectNamesChanged", null);
                             }

@@ -87,10 +87,13 @@ namespace Barnacle.Views
                     double z = Convert.ToDouble(vm.RotZ);
                     BaseViewModel.Project.SharedProjectSettings.ExportRotation = new Point3D(x, y, z);
                     BaseViewModel.Project.SharedProjectSettings.ExportAxisSwap = vm.SwapAxis;
-                    BaseViewModel.Project.SharedProjectSettings.ImportAxisSwap = vm.ImportSwapAxis;
-                    BaseViewModel.Project.SharedProjectSettings.FloorAll = vm.FloorAll;
-                    BaseViewModel.Project.SharedProjectSettings.VersionExport = vm.VersionExport;
+                    BaseViewModel.Project.SharedProjectSettings.ImportStlAxisSwap = vm.ImportSwapStlAxis;
+                    BaseViewModel.Project.SharedProjectSettings.ImportObjAxisSwap = vm.ImportObjSwapAxis;
+                    BaseViewModel.Project.SharedProjectSettings.ImportOffAxisSwap = vm.ImportOffSwapAxis;
 
+                    BaseViewModel.Project.SharedProjectSettings.FloorAllOnExport = vm.FloorAlOnExport;
+                    BaseViewModel.Project.SharedProjectSettings.VersionExport = vm.VersionExport;
+                    BaseViewModel.Project.SharedProjectSettings.SetOriginToCentroid = vm.SetOriginToCentroid;
                     BaseViewModel.Project.SharedProjectSettings.ClearPreviousVersionsOnExport = vm.ClearPreviousVersionsOnExport;
                     BaseViewModel.Project.SharedProjectSettings.DefaultObjectColour = vm.DefaultObjectColour;
                     BaseViewModel.Project.SharedProjectSettings.ExportEmptyFiles = !vm.IgnoreEmpty;

@@ -219,7 +219,7 @@ namespace Barnacle.Models
             ProjectSettings = null;
         }
 
-        public void ImportStl(string fileName, bool swapYZ)
+        public void ImportStl(string fileName, bool swapYZ, bool setCentroid)
         {
             STLExporter exp = new STLExporter();
 
@@ -234,11 +234,16 @@ namespace Barnacle.Models
             ob.PrimType = "Mesh";
             ob.CalcScale();
             ob.RelativeToAbsolute();
-
+            if (setCentroid)
+            {
+                ob.MoveOriginToCentroid();
+            }
             ob.Mesh.Positions = ob.AbsoluteObjectVertices;
             ob.Mesh.TriangleIndices = ob.TriangleIndices;
             ob.Mesh.Normals = ob.Normals;
             ob.Rotate(new Point3D(-90, 0, 0));
+
+            ob.Remesh();
             ob.MoveToFloor();
             ob.Remesh();
             Content.Add(ob);
@@ -549,7 +554,7 @@ namespace Barnacle.Models
                         clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
                         clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
                     }
-                    if (ProjectSettings.FloorAll)
+                    if (ProjectSettings.FloorAllOnExport)
                     {
                         clone.MoveToFloor();
                     }
@@ -635,7 +640,7 @@ namespace Barnacle.Models
                         clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
                         clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
                     }
-                    if (ProjectSettings.FloorAll)
+                    if (ProjectSettings.FloorAllOnExport)
                     {
                         clone.MoveToFloor();
                         clone.Remesh();
@@ -795,7 +800,7 @@ namespace Barnacle.Models
                             clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
                             clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
                         }
-                        if (ProjectSettings.FloorAll)
+                        if (ProjectSettings.FloorAllOnExport)
                         {
                             clone.MoveToFloor();
                         }
@@ -853,7 +858,7 @@ namespace Barnacle.Models
             return neo;
         }
 
-        internal void ImportObjs(string fileName)
+        internal void ImportObjs(string fileName, bool swapYZ, bool setCentroid)
         {
             string line = "";
             try
@@ -885,6 +890,7 @@ namespace Barnacle.Models
                                             ob.Mesh.Positions = ob.AbsoluteObjectVertices;
                                             ob.Mesh.TriangleIndices = ob.TriangleIndices;
                                             ob.Mesh.Normals = ob.Normals;
+
                                             ob.Rotate(new Point3D(-90, 0, 0));
                                             ob.MoveToFloor();
                                             ob.Remesh();
@@ -902,7 +908,15 @@ namespace Barnacle.Models
                                         double y = Convert.ToDouble(words[2]);
                                         double z = Convert.ToDouble(words[3]);
 
-                                        P3D p = new P3D(x, y, z);
+                                        P3D p;
+                                        if (swapYZ)
+                                        {
+                                            p = new P3D(x, z, y);
+                                        }
+                                        else
+                                        {
+                                            p = new P3D(x, y, z);
+                                        }
                                         ob.RelativeObjectVertices.Add(p);
                                     }
 
@@ -914,6 +928,10 @@ namespace Barnacle.Models
                                         double y = Convert.ToDouble(words[2]);
                                         double z = Convert.ToDouble(words[3]);
                                         Vector3D p = new Vector3D(x, y, z);
+                                        if (swapYZ)
+                                        {
+                                            p = -p;
+                                        }
                                         ob.Normals.Add(p);
                                     }
                                     if (t.StartsWith("f "))
@@ -986,7 +1004,12 @@ namespace Barnacle.Models
 
                         ob.PrimType = "Mesh";
                         ob.Remesh();
+                        if (setCentroid)
+                        {
+                            ob.MoveOriginToCentroid();
+                        }
                         ob.MoveToFloor();
+                        ob.Remesh();
                     }
                     catch (Exception ex)
                     {
@@ -1001,13 +1024,13 @@ namespace Barnacle.Models
             }
         }
 
-        internal void ImportOffs(string fileName)
+        internal void ImportOffs(string fileName, bool swapYZ, bool setCentroid)
         {
             try
             {
                 Point3DCollection vertices = new Point3DCollection();
                 Int32Collection faces = new Int32Collection();
-                if (OFFFormat.ReadOffFile(fileName, vertices, faces))
+                if (OFFFormat.ReadOffFile(fileName, vertices, faces, swapYZ))
                 {
                     Object3D ob = new Object3D();
                     ob.Name = System.IO.Path.GetFileNameWithoutExtension(fileName);
@@ -1021,7 +1044,10 @@ namespace Barnacle.Models
                     ob.Mesh.Positions = ob.AbsoluteObjectVertices;
                     ob.Mesh.TriangleIndices = ob.TriangleIndices;
                     ob.Mesh.Normals = ob.Normals;
-
+                    if (setCentroid)
+                    {
+                        ob.MoveOriginToCentroid();
+                    }
                     ob.MoveToFloor();
                     ob.Remesh();
                 }

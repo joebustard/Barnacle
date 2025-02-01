@@ -9,13 +9,15 @@ Added
   First cut of arc support in flexipath control
   Key strokes + and - to scale selected object by percentage given in object properties window
   show number of vertices and faces on object properties page
+
 Fixed
+  Slice was showing estimated time wrong if it was more than a day
 
 Changed
   Platelet width from int to double to allow fractions of millimetres
   Changed key stroke for closing two selected objects from = to \
   Replaced Spacetree in CutH tool by Octtree to deal with large vertex counts better 
-
+  Split the import/export tab on the project settings into two seperate ones
 
 v1.0.8
 ===========

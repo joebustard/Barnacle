@@ -826,7 +826,15 @@ M84 ; Disable stepper motors
                         exportedParts++;
                     }
                 }
-                string timeFormat = sliceRes.Hours.ToString("00") + ":" + sliceRes.Minutes.ToString("00") + ":" + sliceRes.Seconds.ToString("00");
+                string timeFormat;
+                if (sliceRes.Days == 0)
+                {
+                    timeFormat = sliceRes.Hours.ToString("00") + ":" + sliceRes.Minutes.ToString("00") + ":" + sliceRes.Seconds.ToString("00");
+                }
+                else
+                {
+                    timeFormat = sliceRes.Days.ToString("00") + ":" + sliceRes.Hours.ToString("00") + ":" + sliceRes.Minutes.ToString("00") + ":" + sliceRes.Seconds.ToString("00");
+                }
                 AppendResults($"{exportedParts.ToString().PadRight(3)}, {timeFormat}, {sliceRes.Filament}");
             }
             else

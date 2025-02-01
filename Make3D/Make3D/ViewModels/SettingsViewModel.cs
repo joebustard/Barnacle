@@ -35,6 +35,8 @@ namespace Barnacle.ViewModels
         private bool exportEmptyDocs;
         private string exportScale;
         private bool floorAll;
+        private bool importObjSwapAxis;
+        private bool importOffSwapAxis;
         private bool importSwapAxis;
         private int minVerticesForPrimitives;
         private AvailableColour objectColour;
@@ -46,6 +48,7 @@ namespace Barnacle.ViewModels
         private List<String> scales;
         private String sdCardName;
         private string selectedScale;
+        private bool setOriginToCentroid;
         private string slicerPath;
         private bool swapAxis;
         private bool versionExport;
@@ -61,8 +64,11 @@ namespace Barnacle.ViewModels
             RotY = Project.SharedProjectSettings.ExportRotation.Y.ToString("F3");
             RotZ = Project.SharedProjectSettings.ExportRotation.Z.ToString("F3");
             SwapAxis = Project.SharedProjectSettings.ExportAxisSwap;
-            ImportSwapAxis = Project.SharedProjectSettings.ImportAxisSwap;
-            FloorAll = Project.SharedProjectSettings.FloorAll;
+            SetOriginToCentroid = Project.SharedProjectSettings.SetOriginToCentroid;
+            ImportSwapStlAxis = Project.SharedProjectSettings.ImportStlAxisSwap;
+            ImportObjSwapAxis = Project.SharedProjectSettings.ImportObjAxisSwap;
+            ImportOffSwapAxis = Project.SharedProjectSettings.ImportOffAxisSwap;
+            FloorAlOnExport = Project.SharedProjectSettings.FloorAllOnExport;
             VersionExport = Project.SharedProjectSettings.VersionExport;
             ClearPreviousVersionsOnExport = Project.SharedProjectSettings.ClearPreviousVersionsOnExport;
             IgnoreEmpty = !Project.SharedProjectSettings.ExportEmptyFiles;
@@ -190,7 +196,7 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public bool FloorAll
+        public bool FloorAlOnExport
         {
             get
             {
@@ -222,7 +228,41 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public bool ImportSwapAxis
+        public bool ImportObjSwapAxis
+        {
+            get
+            {
+                return importObjSwapAxis;
+            }
+
+            set
+            {
+                if (importObjSwapAxis != value)
+                {
+                    importObjSwapAxis = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool ImportOffSwapAxis
+        {
+            get
+            {
+                return importOffSwapAxis;
+            }
+
+            set
+            {
+                if (importOffSwapAxis != value)
+                {
+                    importOffSwapAxis = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool ImportSwapStlAxis
         {
             get
             {
@@ -394,6 +434,23 @@ namespace Barnacle.ViewModels
                 if (selectedScale != value)
                 {
                     selectedScale = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool SetOriginToCentroid
+        {
+            get
+            {
+                return setOriginToCentroid;
+            }
+
+            set
+            {
+                if (setOriginToCentroid != value)
+                {
+                    setOriginToCentroid = value;
                     NotifyPropertyChanged();
                 }
             }

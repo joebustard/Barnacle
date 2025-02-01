@@ -215,7 +215,7 @@ namespace Barnacle.Object3DLib
                 try
                 {
                     Document doc = new Document();
-                    doc.ImportStl(stlPath, false);
+                    doc.ImportStl(stlPath, false, false);
                     if (doc.Content.Count == 1)
                     {
                         Object3D ob = doc.Content[0];

@@ -412,8 +412,9 @@ namespace Barnacle.Dialogs
                         {
                             localDoc = new Document();
                             string fldr = System.IO.Path.GetDirectoryName(targetPath);
-
-                            localDoc.ImportStl(tmpFile, BaseViewModel.Project.SharedProjectSettings.ImportAxisSwap);
+                            bool swapYZ = BaseViewModel.Project.SharedProjectSettings.ImportStlAxisSwap;
+                            bool setCentroid = BaseViewModel.Project.SharedProjectSettings.SetOriginToCentroid;
+                            localDoc.ImportStl(tmpFile, swapYZ, setCentroid);
                             int numObs = 0;
                             foreach (Object3D ob in localDoc.Content)
                             {
@@ -465,6 +466,11 @@ namespace Barnacle.Dialogs
             bool result = false;
             string rootName = System.IO.Path.GetFileNameWithoutExtension(fpath);
             bool flip = false;
+            bool swapYZ = BaseViewModel.Project.SharedProjectSettings.ImportStlAxisSwap;
+            bool swapObjYZ = BaseViewModel.Project.SharedProjectSettings.ImportObjAxisSwap;
+            bool swapOffYZ = BaseViewModel.Project.SharedProjectSettings.ImportOffAxisSwap;
+            bool setCentroid = BaseViewModel.Project.SharedProjectSettings.SetOriginToCentroid;
+
             string targetPath = BaseViewModel.Project.ProjectPathToAbsPath(rootName + ".txt");
             if (targetSubFolder != "")
             {
@@ -480,13 +486,19 @@ namespace Barnacle.Dialogs
 
                     if (fpath.ToLower().EndsWith("stl"))
                     {
-                        localDoc.ImportStl(fpath, BaseViewModel.Project.SharedProjectSettings.ImportAxisSwap);
+                        localDoc.ImportStl(fpath, swapYZ, setCentroid);
                         flip = true;
                     }
                     else
                     if (fpath.ToLower().EndsWith("off"))
                     {
-                        localDoc.ImportOffs(fpath);
+                        localDoc.ImportOffs(fpath, swapOffYZ, setCentroid);
+                        flip = false;
+                    }
+                    else
+                    if (fpath.ToLower().EndsWith("obj"))
+                    {
+                        localDoc.ImportObjs(fpath, swapObjYZ, setCentroid);
                         flip = false;
                     }
                     int numObs = 0;
@@ -503,7 +515,6 @@ namespace Barnacle.Dialogs
                             ob.FlipX();
                         }
                         ob.Color = BaseViewModel.Project.SharedProjectSettings.DefaultObjectColour;
-                        ob.MoveOriginToCentroid();
 
                         if (xRot != 0 || yRot != 0 || zRot != 0)
                         {

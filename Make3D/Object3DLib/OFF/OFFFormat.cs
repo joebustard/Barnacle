@@ -12,38 +12,10 @@ namespace Object3DLib.OFF
 {
     public class OFFFormat
     {
-        public static bool WriteOffFile(String fileName,
-                                        Point3DCollection vertices,
-                                        Int32Collection faces)
-        {
-            bool res = false;
-            try
-            {
-                File.WriteAllText(fileName, "OFF\r\n");
-                String l = $"{vertices.Count} {faces.Count / 3} 0\r\n";
-                File.AppendAllText(fileName, l);
-                foreach (Point3D p in vertices)
-                {
-                    l = $"{p.X} {p.Y} {p.Z}\r\n";
-                    File.AppendAllText(fileName, l);
-                }
-                for (int i = 0; i < faces.Count; i += 3)
-                {
-                    l = $"3 {faces[i]} {faces[i + 1]} {faces[i + 2]}\r\n";
-                    File.AppendAllText(fileName, l);
-                }
-                res = true;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            return res;
-        }
-
         public static bool ReadOffFile(String fileName,
                                 Point3DCollection vertices,
-                                Int32Collection faces)
+                                Int32Collection faces,
+                                bool swapYZ)
         {
             bool res = false;
             vertices.Clear();
@@ -78,7 +50,16 @@ namespace Object3DLib.OFF
                                 double y = Convert.ToDouble(words[1]);
                                 double z = Convert.ToDouble(words[2]);
 
-                                Point3D p = new Point3D(x, y, z);
+                                Point3D p;
+                                if (swapYZ)
+                                {
+                                    p = new Point3D(x, z, y);
+                                }
+                                else
+                                {
+                                    p = new Point3D(x, y, z);
+                                }
+
                                 vertices.Add(p);
 
                                 lineIndex++;
@@ -107,6 +88,35 @@ namespace Object3DLib.OFF
                     }
                 }
 
+                res = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            return res;
+        }
+
+        public static bool WriteOffFile(String fileName,
+                                                Point3DCollection vertices,
+                                        Int32Collection faces)
+        {
+            bool res = false;
+            try
+            {
+                File.WriteAllText(fileName, "OFF\r\n");
+                String l = $"{vertices.Count} {faces.Count / 3} 0\r\n";
+                File.AppendAllText(fileName, l);
+                foreach (Point3D p in vertices)
+                {
+                    l = $"{p.X} {p.Y} {p.Z}\r\n";
+                    File.AppendAllText(fileName, l);
+                }
+                for (int i = 0; i < faces.Count; i += 3)
+                {
+                    l = $"3 {faces[i]} {faces[i + 1]} {faces[i + 2]}\r\n";
+                    File.AppendAllText(fileName, l);
+                }
                 res = true;
             }
             catch (Exception ex)

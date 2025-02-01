@@ -15,8 +15,11 @@ namespace VisualSolutionExplorer
             Description = "A 3D project created by Barnacle";
             ExportRotation = new Point3D(0, 0, 0);
             ExportAxisSwap = true;
-            ImportAxisSwap = true;
-            FloorAll = true;
+            ImportStlAxisSwap = true;
+            ImportObjAxisSwap = false;
+            ImportOffAxisSwap = false;
+            SetOriginToCentroid = true;
+            FloorAllOnExport = true;
             VersionExport = false;
             ClearPreviousVersionsOnExport = true;
             ExportEmptyFiles = false;
@@ -26,25 +29,115 @@ namespace VisualSolutionExplorer
             PlaceNewAtMarker = true;
         }
 
-        public bool PlaceNewAtMarker { get; set; }
-        public bool AutoSaveScript { get; set; }
-        public string BaseScale { get; set; }
-        public bool ClearPreviousVersionsOnExport { get; set; }
-        public Color DefaultObjectColour { get; set; }
-        public string Description { get; set; }
-        public bool ExportAxisSwap { get; set; }
-        public bool ExportEmptyFiles { get; set; }
-        public string ExportRootName { get; set; }
-        public Point3D ExportRotation { get; set; }
-        public string ExportScale { get; set; }
-        public bool FloorAll { get; set; }
-        public bool ImportAxisSwap { get; set; }
-        public bool VersionExport { get; set; }
-        public string SlicerPath { get; set; }
-        public string SDCardName { get; set; }
-        public bool RepeatHoleFix { get; set; }
-        public int AutoSaveMinutes { get; set; }
-        public bool AutoSaveOn { get; set; }
+        public int AutoSaveMinutes
+        {
+            get; set;
+        }
+
+        public bool AutoSaveOn
+        {
+            get; set;
+        }
+
+        public bool AutoSaveScript
+        {
+            get; set;
+        }
+
+        public string BaseScale
+        {
+            get; set;
+        }
+
+        public bool ClearPreviousVersionsOnExport
+        {
+            get; set;
+        }
+
+        public Color DefaultObjectColour
+        {
+            get; set;
+        }
+
+        public string Description
+        {
+            get; set;
+        }
+
+        public bool ExportAxisSwap
+        {
+            get; set;
+        }
+
+        public bool ExportEmptyFiles
+        {
+            get; set;
+        }
+
+        public string ExportRootName
+        {
+            get; set;
+        }
+
+        public Point3D ExportRotation
+        {
+            get; set;
+        }
+
+        public string ExportScale
+        {
+            get; set;
+        }
+
+        public bool FloorAllOnExport
+        {
+            get; set;
+        }
+
+        public bool ImportObjAxisSwap
+        {
+            get; set;
+        }
+
+        public bool ImportOffAxisSwap
+        {
+            get; set;
+        }
+
+        public bool ImportStlAxisSwap
+        {
+            get; set;
+        }
+
+        public bool PlaceNewAtMarker
+        {
+            get; set;
+        }
+
+        public bool RepeatHoleFix
+        {
+            get; set;
+        }
+
+        public string SDCardName
+        {
+            get; set;
+        }
+
+        public bool SetOriginToCentroid
+        {
+            get; set;
+        }
+
+        public string SlicerPath
+        {
+            get; set;
+        }
+
+        public bool VersionExport
+        {
+            get; set;
+        }
 
         internal void Read(XmlNode nd)
         {
@@ -66,22 +159,13 @@ namespace VisualSolutionExplorer
             {
                 ExportScale = ele.GetAttribute("ExportScale");
             }
-            if (ele.HasAttribute("SwapAxis"))
-            {
-                string s = ele.GetAttribute("SwapAxis");
-                ExportAxisSwap = Convert.ToBoolean(s);
-            }
-            if (ele.HasAttribute("ImportSwapAxis"))
-            {
-                string s = ele.GetAttribute("ImportSwapAxis");
-                ImportAxisSwap = Convert.ToBoolean(s);
-            }
-            if (ele.HasAttribute("FloorAll"))
-            {
-                string s = ele.GetAttribute("FloorAll");
-                FloorAll = Convert.ToBoolean(s);
-            }
 
+            ExportAxisSwap = GetBool(ele, "ExportAxisSwap", ExportAxisSwap);
+            SetOriginToCentroid = GetBool(ele, "SetOriginToCentroid", SetOriginToCentroid);
+            ImportStlAxisSwap = GetBool(ele, "ImportStlAxisSwap", ImportStlAxisSwap);
+            ImportObjAxisSwap = GetBool(ele, "ImportObjAxisSwap", ImportObjAxisSwap);
+            ImportOffAxisSwap = GetBool(ele, "ImportOffAxisSwap", ImportOffAxisSwap);
+            FloorAllOnExport = GetBool(ele, "FloorAllOnExport", FloorAllOnExport);
             if (ele.HasAttribute("SlicerPath"))
             {
                 SlicerPath = ele.GetAttribute("SlicerPath");
@@ -132,9 +216,12 @@ namespace VisualSolutionExplorer
             ele.SetAttribute("ExportRootName", ExportRootName);
             ele.SetAttribute("BaseScale", BaseScale);
             ele.SetAttribute("ExportScale", ExportScale);
-            ele.SetAttribute("SwapAxis", ExportAxisSwap.ToString());
-            ele.SetAttribute("ImportSwapAxis", ImportAxisSwap.ToString());
-            ele.SetAttribute("FloorAll", FloorAll.ToString());
+            ele.SetAttribute("ExportSwapAxis", ExportAxisSwap.ToString());
+            ele.SetAttribute("ImportStlSwapAxis", ImportStlAxisSwap.ToString());
+            ele.SetAttribute("ImportObjSwapAxis", ImportObjAxisSwap.ToString());
+            ele.SetAttribute("ImportOffSwapAxis", ImportOffAxisSwap.ToString());
+            ele.SetAttribute("SetOriginToCentroid", SetOriginToCentroid.ToString());
+            ele.SetAttribute("FloorAllOnExport", FloorAllOnExport.ToString());
             ele.SetAttribute("VersionExport", VersionExport.ToString());
             ele.SetAttribute("ClearPreviousVersionsOnExport", ClearPreviousVersionsOnExport.ToString());
 
@@ -156,6 +243,28 @@ namespace VisualSolutionExplorer
             XmlElement el = pn as XmlElement;
             string val = el.GetAttribute(v);
             return Convert.ToDouble(val);
+        }
+
+        private bool GetBool(XmlElement ele, string key, bool defvalue)
+        {
+            if (ele.HasAttribute(key))
+            {
+                try
+                {
+                    string s = ele.GetAttribute(key);
+                    bool b = Convert.ToBoolean(s);
+                    return b;
+                }
+                catch (Exception ex)
+                {
+                    LoggerLib.Logger.Log(ex.Message);
+                    return defvalue;
+                }
+            }
+            else
+            {
+                return defvalue;
+            }
         }
     }
 }
