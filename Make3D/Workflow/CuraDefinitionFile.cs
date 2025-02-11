@@ -259,7 +259,10 @@ namespace Workflow
 }
     ";
 
-        public CuraDefinitionFile BaseFile { get; set; }
+        public CuraDefinitionFile BaseFile
+        {
+            get; set;
+        }
 
         public List<SettingDefinition> Overrides
         {
@@ -269,7 +272,10 @@ namespace Workflow
             }
         }
 
-        private String FilePath { get; set; }
+        private String FilePath
+        {
+            get; set;
+        }
 
         public void Dump()
         {
@@ -2671,7 +2677,7 @@ namespace Workflow
                 or.Calculated = true;
             }
         }
-        
+
         private void ReadChildren(JObject children, string section)
         {
             foreach (JProperty prop in children.Properties())
@@ -2680,7 +2686,7 @@ namespace Workflow
                 // if this property is a new one then create a new setting definition if its old,
                 // then override the values in the existing one
                 SettingDefinition cdf;
-                
+
                 if (CuraDefinition.definitionSettings.Keys.Contains(prop.Name))
                 {
                     cdf = CuraDefinition.definitionSettings[prop.Name];
@@ -2727,12 +2733,12 @@ namespace Workflow
                             case "default_value":
                                 {
                                     if (cdf.Type == "polygon")
-                                    {                                        
+                                    {
                                         cdf.DefaultValue = ReadPolygon(cdf, setProp);
                                     }
                                     else
                                     if (cdf.Type == "polygons")
-                                    {                                     
+                                    {
                                         cdf.DefaultValue = ReadPolygon(cdf, setProp);
                                     }
                                     else
@@ -2747,14 +2753,14 @@ namespace Workflow
                                             }
                                             catch (System.InvalidCastException ex)
                                             {
-                                                cdf.DefaultValue = (string)setProp.Value; 
+                                                LoggerLib.Logger.LogException(ex);
+                                                cdf.DefaultValue = (string)setProp.Value;
                                             }
                                         }
                                         else
                                         {
                                             cdf.DefaultValue = (string)setProp.Value;
                                         }
-
                                     }
                                 }
                                 break;
@@ -2816,7 +2822,6 @@ namespace Workflow
                                         {
                                             cdf.OverideValue = (string)setProp.Value;
                                         }
-
                                     }
                                 }
                                 break;

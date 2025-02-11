@@ -357,6 +357,8 @@ namespace Barnacle.Dialogs
                         // first get the x positions of the ribs and the height and width at that
                         // position from the top and side views. generate the profile points for the
                         // ribs at the same time.
+                        RibImageDetailsModel prevcp = null;
+                        double rib1X = 0;
                         for (int i = 0; i < fuselageData.Ribs.Count; i++)
                         {
                             double x = fuselageData.Markers[i].Position;
@@ -376,14 +378,21 @@ namespace Barnacle.Dialogs
                                 // if the path for the current rib is the same as the last one and
                                 // they are reasonable difference apart full the gap with with some
                                 // other virtual ribs
-                                if (cpPath == prevPath && x - prevX > autofirDx)
+                                if (x - prevX > autofirDx)
                                 {
-                                    double nx = prevX + autofirDx;
-                                    while (nx < x - autofirDx)
+                                    double dummyRibX = prevX + autofirDx;
+                                    while (dummyRibX < x - autofirDx)
                                     {
-                                        CreateIntermediateRib(topViewFlexiPath, sideViewFlexiPath, generatingRibs, ribXs, topDims, sideDims, cp, nx);
-                                        prevX = nx;
-                                        nx += autofirDx;
+                                        if (cpPath == prevPath)
+                                        {
+                                            CreateIntermediateRibwWithTheSamePath(topViewFlexiPath, sideViewFlexiPath, generatingRibs, ribXs, topDims, sideDims, cp, dummyRibX);
+                                        }
+                                        else
+                                        {
+                                            CreateIntermediateRibwWithInterpolatedPath(topViewFlexiPath, sideViewFlexiPath, generatingRibs, ribXs, topDims, sideDims, rib1X, prevcp, x, cp, dummyRibX);
+                                        }
+                                        prevX = dummyRibX;
+                                        dummyRibX += autofirDx;
                                     }
                                 }
                             }
@@ -400,6 +409,8 @@ namespace Barnacle.Dialogs
 
                             // move on
                             prevX = x;
+                            rib1X = x;
+                            prevcp = cp;
                         }
 
                         okToGenerate = CheckAllRibsHaveData(generatingRibs);
@@ -592,7 +603,41 @@ namespace Barnacle.Dialogs
             SideView.Markers = GetMarkers();
         }
 
-        private void CreateIntermediateRib(FlexiPath topViewFlexiPath, FlexiPath sideViewFlexiPath, List<RibImageDetailsModel> generatingRibs, List<double> ribXs, List<Dimension> topDims, List<Dimension> sideDims, RibImageDetailsModel cp, double nx)
+        private void CreateIntermediateRibwWithInterpolatedPath(FlexiPath topViewFlexiPath, FlexiPath sideViewFlexiPath, List<RibImageDetailsModel> generatingRibs, List<double> ribXs, List<Dimension> topDims, List<Dimension> sideDims, double rib1X, RibImageDetailsModel rib1, double rib2X, RibImageDetailsModel rib2, double targetx)
+        {
+            if (rib1 != null && rib2 != null)
+            {
+                // copy the rib
+                RibImageDetailsModel nr = rib1.Clone();
+                nr.ProfilePoints.Clear();
+                float distanceBetweenRealRibs = (float)(rib2X - rib1X);
+                float t = (float)(targetx - rib1X) / distanceBetweenRealRibs;
+
+                for (int i = 0; i < rib1.ProfilePoints.Count; i++)
+
+                {
+                    PointF p1 = rib1.ProfilePoints[i];
+                    PointF p2 = rib2.ProfilePoints[i];
+                    PointF tp = new PointF();
+                    tp.X = p1.X + t * (p2.X - p1.X);
+                    tp.Y = p1.Y + t * (p2.Y - p1.Y);
+                    nr.ProfilePoints.Add(tp);
+                }
+
+                nr.NumDivisions = NumberOfDivisions;
+
+                generatingRibs.Add(nr);
+
+                // get the dimensions from the side and top at the intermediate point
+                var dp = topViewFlexiPath.GetUpperAndLowerPoints(targetx);
+                topDims.Add(new Dimension(new System.Windows.Point(dp.X, dp.Lower), new System.Windows.Point(dp.X, dp.Upper)));
+                dp = sideViewFlexiPath.GetUpperAndLowerPoints(targetx);
+                sideDims.Add(new Dimension(new System.Windows.Point(dp.X, dp.Lower), new System.Windows.Point(dp.X, dp.Upper)));
+                ribXs.Add(dp.X);
+            }
+        }
+
+        private void CreateIntermediateRibwWithTheSamePath(FlexiPath topViewFlexiPath, FlexiPath sideViewFlexiPath, List<RibImageDetailsModel> generatingRibs, List<double> ribXs, List<Dimension> topDims, List<Dimension> sideDims, RibImageDetailsModel cp, double nx)
         {
             // copy the rib
             RibImageDetailsModel nr = cp.Clone();

@@ -547,10 +547,6 @@ namespace Barnacle.Dialogs
                     }
                 }
             }
-            else
-            {
-                bool skipp = true;
-            }
         }
 
         private void GenerateShape()

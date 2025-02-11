@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.34601.136
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barnacle", "Make3D\Barnacle.csproj", "{2F327EA0-F3C2-455E-A057-CE718CFD4E5D}"
 EndProject
@@ -77,6 +77,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreateMorphablePrimitives", "CreateMorphablePrimitives\CreateMorphablePrimitives.csproj", "{B06EB596-0396-490F-979B-16D8F06C9CCE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileUtils", "FileUtils\FileUtils.csproj", "{6EE47C70-2F51-490A-B50C-97FBAD59A0E7}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetUp2022", "SetUp2022\SetUp2022.vdproj", "{3ED5BB7F-B16C-4942-A4BD-AF1B6215C039}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -214,6 +216,8 @@ Global
 		{6EE47C70-2F51-490A-B50C-97FBAD59A0E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EE47C70-2F51-490A-B50C-97FBAD59A0E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6EE47C70-2F51-490A-B50C-97FBAD59A0E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3ED5BB7F-B16C-4942-A4BD-AF1B6215C039}.Debug|Any CPU.ActiveCfg = Debug
+		{3ED5BB7F-B16C-4942-A4BD-AF1B6215C039}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

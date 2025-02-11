@@ -128,26 +128,11 @@ namespace Barnacle.Views
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            bool shift = false;
-            bool control = false;
-            bool leftButton = (e.LeftButton == MouseButtonState.Pressed);
             lastHitModel = null;
             lastHitPoint = new Point3D(0, 0, 0);
             HitTest(sender, e);
-            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
-            {
-                shift = true;
-            }
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-            {
-                control = true;
-            }
             lastMousePos = e.GetPosition(this);
             vm.MouseDown(lastMousePos, e);
-            if (lastHitModel != null)
-            {
-                //     vm.Select(lastHitModel, lastHitPoint, leftButton, shift, control);
-            }
         }
 
         private void Grid_MouseMove(object sender, MouseEventArgs e)

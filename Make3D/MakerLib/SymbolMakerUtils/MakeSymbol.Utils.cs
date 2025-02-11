@@ -77,6 +77,40 @@ namespace MakerLib
             }
         }
 
+        private void EastEdges(WriteableBitmap wrb)
+        {
+            int x = 0;
+            while (x < imageWidth)
+            {
+                int y = 0;
+                while (y < imageHeight)
+                {
+                    // find first black
+                    while (y < imageHeight && wrb.GetPixel(x, y).R > 128)
+                    {
+                        y++;
+                    }
+                    if (y < imageHeight)
+                    {
+                        if (x == imageWidth - 1 || wrb.GetPixel(x + 1, y).R > 128)
+                        {
+                            double px = x + 1;
+                            double py = y;
+                            double ly = y + 1;
+                            int v0 = AddVerticeOctTree(px, 0, py);
+                            int v1 = AddVerticeOctTree(px, 0, ly);
+                            int v2 = AddVerticeOctTree(px, thickness, ly);
+                            int v3 = AddVerticeOctTree(px, thickness, py);
+                            AddFace(v0, v2, v1);
+                            AddFace(v0, v3, v2);
+                        }
+                    }
+                    y++;
+                }
+                x++;
+            }
+        }
+
         private void FrontAndBack(WriteableBitmap wrb)
         {
             int y = 0;
@@ -192,7 +226,6 @@ namespace MakerLib
                 int y = 0;
                 while (y < imageHeight)
                 {
-                    bool add = false;
                     // find first black
                     while (y < imageHeight && wrb.GetPixel(x, y).R > 128)
                     {
@@ -211,40 +244,6 @@ namespace MakerLib
                             int v3 = AddVerticeOctTree(px, thickness, py);
                             AddFace(v0, v1, v2);
                             AddFace(v0, v2, v3);
-                        }
-                    }
-                    y++;
-                }
-                x++;
-            }
-        }
-
-        private void EastEdges(WriteableBitmap wrb)
-        {
-            int x = 0;
-            while (x < imageWidth)
-            {
-                int y = 0;
-                while (y < imageHeight)
-                {
-                    // find first black
-                    while (y < imageHeight && wrb.GetPixel(x, y).R > 128)
-                    {
-                        y++;
-                    }
-                    if (y < imageHeight)
-                    {
-                        if (x == imageWidth - 1 || wrb.GetPixel(x + 1, y).R > 128)
-                        {
-                            double px = x + 1;
-                            double py = y;
-                            double ly = y + 1;
-                            int v0 = AddVerticeOctTree(px, 0, py);
-                            int v1 = AddVerticeOctTree(px, 0, ly);
-                            int v2 = AddVerticeOctTree(px, thickness, ly);
-                            int v3 = AddVerticeOctTree(px, thickness, py);
-                            AddFace(v0, v2, v1);
-                            AddFace(v0, v3, v2);
                         }
                     }
                     y++;

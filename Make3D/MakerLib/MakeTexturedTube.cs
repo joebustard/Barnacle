@@ -429,7 +429,7 @@ namespace MakerLib
 
                 int maxFacePixel = (int)((Math.PI * 2.0) / inswe);
                 double facePixelHeight = tubeHeight / vTextureResolution;
-                double x = 0;
+
                 double y = 0;
                 int tx = 0;
                 int ty = 0;

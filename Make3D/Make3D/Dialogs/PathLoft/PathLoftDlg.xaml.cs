@@ -87,8 +87,6 @@ namespace Barnacle.Dialogs
         private const double minloftHeight = 0.1;
         private const double minloftThickness = 0.1;
         private double baseThickness;
-
-        private bool flatShape;
         private bool loaded;
         private double loftHeight;
         private double loftThickness;
@@ -98,8 +96,6 @@ namespace Barnacle.Dialogs
         private List<NameOfProfile> profileNames;
         private Visibility ubeamVisibility;
         private string warningText;
-        private double xExtent;
-        private double yExtent;
 
         public PathLoftDlg()
         {
@@ -330,8 +326,6 @@ namespace Barnacle.Dialogs
                 by = Math.Min(tmp[i].Y, by);
                 ty = Math.Max(tmp[i].Y, ty);
             }
-            xExtent = rx - lx;
-            yExtent = ty - by;
         }
 
         private void CreateSideFace(List<System.Windows.Point> pnts, int i)

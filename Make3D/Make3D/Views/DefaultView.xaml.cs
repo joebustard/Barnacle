@@ -162,9 +162,6 @@ namespace Barnacle.Views
 
         private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            // Scroller.Width = MyGrid.Width;
-            // Scroller.Height = MyGrid.Height;
-
             SubViewControl.Width = MyGrid.Width;
             SubViewControl.Height = MyGrid.Height;
         }
@@ -567,13 +564,6 @@ namespace Barnacle.Views
                             {
                                 vm.SwitchToView("Script");
                                 NotificationManager.Notify("LimpetLoaded", p);
-                            }
-                            else
-                             // throw the file at the operating system
-                             // if its a batch or command file, use environment variables
-                             if (ext == ".cmd" || ext == ".bat")
-                            {
-                                LaunchCmdOrBat(p);
                             }
                             else
                             {

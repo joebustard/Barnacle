@@ -882,10 +882,6 @@ namespace MakerLib
                     // distance of this from the centre
                     double vdx1 = cx - vx1;
                     double vdx2 = cx - vx2;
-                    if (Math.Abs(vdx1) > innerRadius || Math.Abs(vdx2) > innerRadius)
-                    {
-                        bool breakhere = true;
-                    }
 
                     //Uppers
                     double h1 = Math.Sqrt((innerRadius * innerRadius) - (vdx1 * vdx1));

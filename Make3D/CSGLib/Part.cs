@@ -77,7 +77,7 @@ namespace CSGLib
         /// <param name="solid">solid used to construct the Object3d object</param>
         public Part(Solid solid)
         {
-            Vertex v1, v2, v3, vertex;
+            Vertex v1, v2, v3;
             Vector3D[] verticesPoints = solid.GetVertices();
             int[] indices = solid.GetIndices();
             var verticesTemp = new List<Vertex>();
@@ -124,6 +124,8 @@ namespace CSGLib
         /// </summary>
         /// <returns>solid bound</returns>
         public Bound Bound => _Bound;
+
+        public int MaxFacesAllowed { get; set; } = 5000000;
 
         /// <summary>
         /// Gets the number of faces
@@ -224,6 +226,11 @@ namespace CSGLib
             }
         }
 
+        public Vertex GetVertex(int i)
+        {
+            return Vertices[i];
+        }
+
         /// <summary>
         /// Inverts faces classified as INSIDE, making its normals point outside. Usually used into the second solid when the difference is applied.
         /// </summary>
@@ -244,8 +251,6 @@ namespace CSGLib
         {
             cancelToken = cancellationToken;
         }
-
-        public int MaxFacesAllowed { get; set; } = 5000000;
 
         /// <summary>
         /// Split faces so that none face is intercepted by a face of other object
@@ -405,7 +410,6 @@ namespace CSGLib
         /// <returns>The vertex inserted (if a similar vertex already exists, this is returned).</returns>
         private Vertex AddVertex(OctTree octTree, Vector3D pos, Status status)
         {
-            int i;
             //if already there is an equal vertex, it is not inserted
             Vertex vertex = new Vertex(pos, status);
 

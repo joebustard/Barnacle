@@ -2251,12 +2251,17 @@ namespace Barnacle.ViewModels
                                 }
                                 else
                                 {
+                                    regen = false;
                                     CheckPointForNudge();
                                     if (ctrl)
                                     {
                                         if (shift)
                                         {
                                             selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 0.1);
+                                        }
+                                        else if (Keyboard.IsKeyDown(Key.Space))
+                                        {
+                                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 10.0);
                                         }
                                         else
                                         {
@@ -2268,6 +2273,10 @@ namespace Barnacle.ViewModels
                                         if (shift)
                                         {
                                             selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 0.1);
+                                        }
+                                        else if (Keyboard.IsKeyDown(Key.Space))
+                                        {
+                                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 10.0);
                                         }
                                         else
                                         {
@@ -2295,12 +2304,17 @@ namespace Barnacle.ViewModels
                                 }
                                 else
                                 {
+                                    regen = false;
                                     CheckPointForNudge();
                                     if (ctrl)
                                     {
                                         if (shift)
                                         {
                                             selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 0.1);
+                                        }
+                                        else if (Keyboard.IsKeyDown(Key.Space))
+                                        {
+                                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 10.0);
                                         }
                                         else
                                         {
@@ -2312,6 +2326,10 @@ namespace Barnacle.ViewModels
                                         if (shift)
                                         {
                                             selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 0.1);
+                                        }
+                                        else if (Keyboard.IsKeyDown(Key.Space))
+                                        {
+                                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 10.0);
                                         }
                                         else
                                         {
@@ -2337,10 +2355,15 @@ namespace Barnacle.ViewModels
                                 }
                                 else
                                 {
+                                    regen = false;
                                     CheckPointForNudge();
                                     if (shift)
                                     {
                                         selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 0.1);
+                                    }
+                                    else if (Keyboard.IsKeyDown(Key.Space))
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 10.0);
                                     }
                                     else
                                     {
@@ -2364,10 +2387,15 @@ namespace Barnacle.ViewModels
                                 }
                                 else
                                 {
+                                    regen = false;
                                     CheckPointForNudge();
                                     if (shift)
                                     {
                                         selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 0.1);
+                                    }
+                                    else if (Keyboard.IsKeyDown(Key.Space))
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 10.0);
                                     }
                                     else
                                     {
@@ -2502,6 +2530,7 @@ namespace Barnacle.ViewModels
                         {
                             // Needs other keys but at least acknowledge it
                             handled = true;
+                            regen = false;
                         }
                         break;
 
@@ -2575,6 +2604,14 @@ namespace Barnacle.ViewModels
                             handled = true;
                             regen = false;
                             RightCamera();
+                        }
+                        break;
+
+                    case Key.End:
+                        {
+                            handled = true;
+                            regen = false;
+                            BackCamera();
                         }
                         break;
 
@@ -2765,7 +2802,6 @@ namespace Barnacle.ViewModels
                 if (dlg.ShowDialog() == true)
                 {
                     PointUtils.PointCollectionToP3D(dlg.Vertices, obj.RelativeObjectVertices);
-                    //obj.RelativeObjectVertices = dlg.Vertices;
                     obj.TriangleIndices = dlg.Faces;
                     obj.CalcScale(false);
                     res = true;
@@ -2776,7 +2812,6 @@ namespace Barnacle.ViewModels
                 FuselageLoftDialog dlg = new FuselageLoftDialog();
                 if (dlg.ShowDialog() == true)
                 {
-                    // obj.RelativeObjectVertices = dlg.Vertices;
                     PointUtils.PointCollectionToP3D(dlg.Vertices, obj.RelativeObjectVertices);
                     obj.TriangleIndices = dlg.Faces;
                     obj.CalcScale(false);

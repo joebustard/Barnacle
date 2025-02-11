@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml;
+using static System.Windows.Forms.LinkLabel;
 using Solid = CSGLib.Solid;
 using Vector3D = System.Windows.Media.Media3D.Vector3D;
 
@@ -228,8 +229,12 @@ namespace Barnacle.Object3DLib
 
             leftSolid = new Solid(leftObject.AbsoluteObjectVertices, leftObject.TriangleIndices, false);
             rightSolid = new Solid(rightObject.AbsoluteObjectVertices, rightObject.TriangleIndices, false);
-
-            modeller = new BooleanModeller(leftSolid, rightSolid);
+            bool classifyFaces = true;
+            if (PrimType == "groupforceunion")
+            {
+                classifyFaces = false;
+            }
+            modeller = new BooleanModeller(leftSolid, rightSolid, classifyFaces);
             if (modeller.State == CSGState.Good)
             {
                 Solid result = null;
@@ -256,6 +261,12 @@ namespace Barnacle.Object3DLib
                     case "groupintersection":
                         {
                             result = modeller.GetIntersection();
+                        }
+                        break;
+
+                    case "groupforceunion":
+                        {
+                            result = modeller.GetForceUnion();
                         }
                         break;
                 }

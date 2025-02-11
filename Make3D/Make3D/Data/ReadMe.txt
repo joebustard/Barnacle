@@ -8,7 +8,9 @@ Added
   Setting for the minimum number of faces to be added for every primitive.
   First cut of arc support in flexipath control
   Key strokes + and - to scale selected object by percentage given in object properties window
-  show number of vertices and faces on object properties page
+  Show number of vertices and faces on object properties page
+  CSG function ForceUnion(Solid1,solid2) added to Limpet
+  Horizontal Plane hcut statement added to Limpet
 
 Fixed
   Slice was showing estimated time wrong if it was more than a day
@@ -18,6 +20,7 @@ Changed
   Changed key stroke for closing two selected objects from = to \
   Replaced Spacetree in CutH tool by Octtree to deal with large vertex counts better 
   Split the import/export tab on the project settings into two seperate ones
+  Improved the curve interpolation of the aircraft rib fuselage tool
 
 v1.0.8
 ===========

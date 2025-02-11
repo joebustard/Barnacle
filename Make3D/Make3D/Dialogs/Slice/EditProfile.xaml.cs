@@ -201,6 +201,7 @@ namespace Barnacle.Dialogs.Slice
                     }
                     catch (Exception ex)
                     {
+                        LoggerLib.Logger.LogException(ex);
                     }
                 }
                 Close();

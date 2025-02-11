@@ -19,7 +19,10 @@ namespace ScriptLanguage
             this.PrimType = prim;
         }
 
-        public string PrimType { get; set; }
+        public string PrimType
+        {
+            get; set;
+        }
 
         /// Execute this node
         /// returning false terminates the application
@@ -68,14 +71,13 @@ namespace ScriptLanguage
                                     grp.Remesh();
                                     int id = Script.NextObjectId;
                                     Script.ResultArtefacts[id] = grp;
-                                    ExecutionStack.Instance().PushSolid(id); 
+                                    ExecutionStack.Instance().PushSolid(id);
                                     leftie.Remesh();
                                     rightie.Remesh();
                                     result = true;
                                     // invalidate the two source objects
                                     Script.ResultArtefacts.Remove(ls);
                                     Script.ResultArtefacts.Remove(rs);
-
                                 }
                                 else
                                 {
@@ -89,13 +91,12 @@ namespace ScriptLanguage
                         }
                         else
                         {
-                            Log.Instance().AddEntry(Id() + $" : Solid "+rightSolid.ToString()+ " doesn't exist. Have you deleted it?");
+                            Log.Instance().AddEntry(Id() + $" : Solid " + rightSolid.ToString() + " doesn't exist. Have you deleted it?");
                         }
-
                     }
                     else
                     {
-                        Log.Instance().AddEntry(Id() + $" : Solid "+leftSolid.ToString()+"  doesn't exist. Have you deleted it?");
+                        Log.Instance().AddEntry(Id() + $" : Solid " + leftSolid.ToString() + "  doesn't exist. Have you deleted it?");
                     }
                 }
             }
@@ -143,6 +144,10 @@ namespace ScriptLanguage
             else if (PrimType == "groupcut")
             {
                 res = "Cutout";
+            }
+            else if (PrimType == "groupforceunion")
+            {
+                res = "Forceunion";
             }
             return res;
         }

@@ -49,17 +49,11 @@ namespace Barnacle.ViewModels
         private string objectType;
         private double percentScale;
 
-        private double rescaleFactorX;
-        private double rescaleFactorY;
-        private double rescaleFactorZ;
         private DispatcherTimer rescaleTimer;
         private double rotationX;
-
         private double rotationY;
-
         private double rotationZ;
 
-        private double scaleX;
         private Object3D selectedObject;
 
         public ObjectPropertiesViewModel()
@@ -88,9 +82,6 @@ namespace Barnacle.ViewModels
             CanScale = false;
             LockAspectRatio = false;
             SetAvailableColours();
-            rescaleTimer = new DispatcherTimer();
-            rescaleTimer.Interval = new TimeSpan(0, 0, 2);
-            rescaleTimer.Tick += RescaleTimer_Tick;
         }
 
         public List<AvailableColour> AvailableColours
@@ -951,19 +942,6 @@ namespace Barnacle.ViewModels
         private void RescaleSelectedObject(double d1, double d2, double d3)
         {
             selectedObject.ScaleMesh(d1, d2, d3);
-            selectedObject.CalcScale(false);
-            selectedObject.Remesh();
-            OnScaleUpdated(null);
-            NotificationManager.Notify("ScaleRefresh", selectedObject);
-            NotificationManager.Notify("RefreshAdorners", null);
-            Document.Dirty = true;
-        }
-
-        private void RescaleTimer_Tick(object sender, EventArgs e)
-        {
-            rescaleTimer.Stop();
-            CheckPoint();
-            selectedObject.ScaleMesh(rescaleFactorX, rescaleFactorY, rescaleFactorZ);
             selectedObject.CalcScale(false);
             selectedObject.Remesh();
             OnScaleUpdated(null);

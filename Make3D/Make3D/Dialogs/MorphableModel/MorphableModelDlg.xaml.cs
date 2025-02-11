@@ -44,7 +44,6 @@ namespace Barnacle.Dialogs
         private double modelLength;
         private double modelWidth;
         private double oldWarpFactor;
-        private bool regen;
         private DispatcherTimer regenTimer;
         private string shape1;
         private ObservableCollection<String> shape1Items;

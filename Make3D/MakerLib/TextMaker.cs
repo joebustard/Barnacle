@@ -375,7 +375,6 @@ namespace MakerLib
                 int y = 0;
                 while (y < imageHeight)
                 {
-                    bool add = false;
                     // find first black
                     while (y < imageHeight && wrb.GetPixel(x, y).R > 128)
                     {

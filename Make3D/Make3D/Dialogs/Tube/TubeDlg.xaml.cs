@@ -175,8 +175,11 @@ namespace Barnacle.Dialogs
         private void UpdateDisplay()
         {
             Viewer.Clear();
-            GenerateRing();
-            Viewer.Model = GetModel();
+            if (loaded)
+            {
+                GenerateRing();
+                Viewer.Model = GetModel();
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

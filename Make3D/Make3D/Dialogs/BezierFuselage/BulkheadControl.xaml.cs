@@ -47,6 +47,7 @@ Brushes.Yellow,
 Brushes.Green
 };
 
+        private readonly bool snapPoint;
         private BezierLine[] bzlines;
 
         private double cx;
@@ -57,8 +58,6 @@ Brushes.Green
 
         private double maxRadius;
 
-        private double maxRotation;
-
         private List<double> pointAngles;
 
         private List<double> pointDistance;
@@ -66,8 +65,6 @@ Brushes.Green
         private int selectedControlPoint;
 
         private int selectedPoint;
-
-        private bool snapPoint;
 
         public BulkheadControl()
         {
@@ -92,23 +89,49 @@ Brushes.Green
 
         public BezierLine[] BzLines
         {
-            get { return bzlines; }
+            get
+            {
+                return bzlines;
+            }
         }
 
-        public FuselageBulkhead FuselageBulkHead { get; set; }
-        public int IdNumber { get; set; }
-        public int NumberOfPoints { get; set; }
+        public FuselageBulkhead FuselageBulkHead
+        {
+            get; set;
+        }
+
+        public int IdNumber
+        {
+            get; set;
+        }
+
+        public int NumberOfPoints
+        {
+            get; set;
+        }
 
         public List<double> PointAngles
         {
-            get { return pointAngles; }
-            set { pointAngles = value; }
+            get
+            {
+                return pointAngles;
+            }
+            set
+            {
+                pointAngles = value;
+            }
         }
 
         public List<double> PointDistance
         {
-            get { return pointDistance; }
-            set { pointDistance = value; }
+            get
+            {
+                return pointDistance;
+            }
+            set
+            {
+                pointDistance = value;
+            }
         }
 
         public void GenerateDefaultPoints()

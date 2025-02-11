@@ -8,10 +8,10 @@ namespace sdflib
 {
     public class Sdf : Isdf
     {
-        private int rows;
         private int columns;
-        private int planes;
         private double[,,] distances;
+        private int planes;
+        private int rows;
 
         public Sdf()
         {
@@ -79,38 +79,11 @@ namespace sdflib
             return res;
         }
 
-        public void Set(int x, int y, int z, double v)
-        {
-            distances[y, x, z] = v;
-        }
-
         public void GetDimensions(ref int x, ref int y, ref int z)
         {
             x = columns;
             y = rows;
             z = planes;
-        }
-
-        public bool SetDimension(int x, int y, int z)
-        {
-            bool res = false;
-            try
-            {
-                if (x > 0 && y > 0 && z > 0)
-                {
-                    columns = x;
-                    rows = y;
-                    planes = z;
-                    distances = new double[rows, columns, planes];
-                }
-            }
-            catch (Exception e)
-
-            {
-                res = false;
-            }
-
-            return res;
         }
 
         public void Perform(Isdf sdf, int x, int y, int z, int opType, double strength)
@@ -140,10 +113,8 @@ namespace sdflib
                                         (x + ix >= 0 && x + ix < columns) &&
                                         (z + iz >= 0 && z + iz < planes))
                                     {
-
                                         if (opType == 0)
                                         {
-                                            
                                             distances[y + iy, x + ix, z + iz] = sdf_smin(distances[y + iy, x + ix, z + iz], sdf.Get(iy + ny / 2, ix + nx / 2, iz + nz / 2));
                                         }
                                         else
@@ -154,13 +125,11 @@ namespace sdflib
                                 }
                             }
                         }
-
                     }
                     break;
+
                 case 2:
                     {
-
-
                         double maxD = Math.Sqrt(lx * lx + ly * ly + lz * lz);
                         for (int ix = lx; ix < hx && (x + ix) < columns; ix++)
                         {
@@ -173,19 +142,46 @@ namespace sdflib
                                         (z + iz >= 0 && z + iz < planes))
                                     {
                                         double toold = Math.Sqrt(ix * ix + iy * iy + iz * iz);
-                                        double r = 1-(toold / maxD);
+                                        double r = 1 - (toold / maxD);
                                         //distances[y + iy, x + ix, z + iz] = distances[y + iy, x + ix, z + iz] * r; ;
                                     }
                                 }
                             }
-
-
                         }
                     }
                     break;
             }
         }
-        double sdf_smin(double a, double b, double k = 32)
+
+        public void Set(int x, int y, int z, double v)
+        {
+            distances[y, x, z] = v;
+        }
+
+        public bool SetDimension(int x, int y, int z)
+        {
+            bool res = false;
+            try
+            {
+                if (x > 0 && y > 0 && z > 0)
+                {
+                    columns = x;
+                    rows = y;
+                    planes = z;
+                    distances = new double[rows, columns, planes];
+                }
+            }
+            catch (Exception e)
+
+            {
+                res = false;
+                LoggerLib.Logger.LogLine($"sdf::SetDimension() throw exception {e.Message}");
+            }
+
+            return res;
+        }
+
+        private double sdf_smin(double a, double b, double k = 32)
         {
             double res = Math.Exp(-k * a) + Math.Exp(-k * b);
             return -Math.Log(Math.Max(0.0001, res)) / k;

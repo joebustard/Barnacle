@@ -12,12 +12,33 @@ namespace MakerLib.TextureUtils
 {
     public class TextureManager
     {
+        private static TextureManager instance = null;
+        private string loadedImageName;
+        private TextureCell outOfRangeCell;
         private SortedList<string, string> textureFiles;
         private int textureImageHeight;
         private int textureImageWidth;
         private TextureCell[,] textureMap;
         private System.Drawing.Bitmap workingImage;
-        private TextureCell outOfRangeCell;
+
+        private TextureManager()
+        {
+            textureFiles = new SortedList<string, string>();
+            outOfRangeCell = new TextureCell(0);
+        }
+
+        public enum MapMode
+        {
+            ClippedTile,
+            FittedTile,
+            ClippedSingle,
+            FittedSingle
+        }
+
+        public MapMode Mode
+        {
+            get; set;
+        }
 
         public double PatternHeight
         {
@@ -51,7 +72,10 @@ namespace MakerLib.TextureUtils
 
         public SortedList<string, string> TextureFiles
         {
-            get { return textureFiles; }
+            get
+            {
+                return textureFiles;
+            }
         }
 
         public List<string> TextureNames
@@ -63,7 +87,63 @@ namespace MakerLib.TextureUtils
             }
         }
 
-        private string loadedImageName;
+        public static TextureManager Instance()
+        {
+            if (instance == null)
+            {
+                instance = new TextureManager();
+            }
+            return instance;
+        }
+
+        public TextureCell GetCell(int tx, int ty)
+        {
+            TextureCell res = null;
+            if (workingImage != null)
+            {
+                switch (Mode)
+                {
+                    case MapMode.ClippedTile:
+                        {
+                            tx = tx % workingImage.Width;
+                            ty = ty % workingImage.Height;
+                            ty = workingImage.Height - ty - 1;
+                            res = textureMap[tx, ty];
+                        }
+                        break;
+
+                    case MapMode.FittedTile:
+                        {
+                            tx = tx % workingImage.Width;
+                            ty = ty % workingImage.Height;
+                            ty = workingImage.Height - ty - 1;
+                            res = textureMap[tx, ty];
+                        }
+                        break;
+
+                    case MapMode.ClippedSingle:
+                    case MapMode.FittedSingle: // Fitted relies on the caller changing the resolution
+                        {
+                            if ((tx < workingImage.Width) && (ty < workingImage.Height))
+                            {
+                                ty = workingImage.Height - ty - 1;
+                                res = textureMap[tx, ty];
+                            }
+                            else
+                            {
+                                res = outOfRangeCell;
+                            }
+                        }
+                        break;
+                }
+            }
+            return res;
+        }
+
+        public string GetTextureFolderName()
+        {
+            return System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\Barnacle\\Textures";
+        }
 
         public void LoadTextureImage(string selectedTexture)
         {
@@ -77,7 +157,7 @@ namespace MakerLib.TextureUtils
                         try
                         {
                             byte neighbour = 0;
-                            byte diff = 0;
+
                             workingImage = new System.Drawing.Bitmap(imagePath);
                             loadedImageName = selectedTexture;
                             textureImageWidth = workingImage.Width;
@@ -158,16 +238,6 @@ namespace MakerLib.TextureUtils
                                     }
                                 }
                             }
-                            /*
-                            System.Diagnostics.Debug.WriteLine("=======================================");
-                            for (int x = 0; x < workingImage.Width; x++)
-                            {
-                                for (int y = 0; y < workingImage.Height; y++)
-                                {
-                                    System.Diagnostics.Debug.WriteLine($"{x},{y} = {textureMap[x, y].Width} > {textureMap[x, y].NorthWall},{textureMap[x, y].SouthWall},{textureMap[x, y].EastWall},{textureMap[x, y].WestWall}");
-                                }
-                            }
-                            */
                         }
                         catch (Exception e)
                         {
@@ -176,77 +246,6 @@ namespace MakerLib.TextureUtils
                     }
                 }
             }
-        }
-
-        public enum MapMode
-        {
-            ClippedTile,
-            FittedTile,
-            ClippedSingle,
-            FittedSingle
-        }
-
-        public MapMode Mode { get; set; }
-
-        public TextureCell GetCell(int tx, int ty)
-        {
-            TextureCell res = null;
-            if (workingImage != null)
-            {
-                switch (Mode)
-                {
-                    case MapMode.ClippedTile:
-                        {
-                            tx = tx % workingImage.Width;
-                            ty = ty % workingImage.Height;
-                            ty = workingImage.Height - ty - 1;
-                            res = textureMap[tx, ty];
-                        }
-                        break;
-
-                    case MapMode.FittedTile:
-                        {
-                            tx = tx % workingImage.Width;
-                            ty = ty % workingImage.Height;
-                            ty = workingImage.Height - ty - 1;
-                            res = textureMap[tx, ty];
-                        }
-                        break;
-
-                    case MapMode.ClippedSingle:
-                    case MapMode.FittedSingle: // Fitted relies on the caller changing the resolution
-                        {
-                            if ((tx < workingImage.Width) && (ty < workingImage.Height))
-                            {
-                                ty = workingImage.Height - ty - 1;
-                                res = textureMap[tx, ty];
-                            }
-                            else
-                            {
-                                res = outOfRangeCell;
-                            }
-                        }
-                        break;
-                }
-            }
-            return res;
-        }
-
-        private TextureManager()
-        {
-            textureFiles = new SortedList<string, string>();
-            outOfRangeCell = new TextureCell(0);
-        }
-
-        private static TextureManager instance = null;
-
-        public static TextureManager Instance()
-        {
-            if (instance == null)
-            {
-                instance = new TextureManager();
-            }
-            return instance;
         }
 
         public void LoadTextureNames()
@@ -264,10 +263,7 @@ namespace MakerLib.TextureUtils
                 MessageBox.Show(ex.Message);
             }
         }
-        public string GetTextureFolderName()
-        {
-        return System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\Barnacle\\Textures";
-        }
+
         private void GetTexturesFromFolder(string appFolder)
         {
             if (Directory.Exists(appFolder))

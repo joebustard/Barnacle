@@ -24,7 +24,6 @@ namespace Barnacle.ViewModels
 {
     public static class RichTextBoxExtensions
     {
-        private static TextPointer oldposend = null;
         private static TextPointer oldposstart = null;
 
         public static int Find(this RichTextBox richTextBox, string text, int startIndex = 0)

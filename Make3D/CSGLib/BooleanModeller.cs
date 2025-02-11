@@ -70,39 +70,45 @@ namespace CSGLib
 
         private Solid resultObject;
 
-        public BooleanModeller(Solid solid1, Solid solid2)
+        public BooleanModeller(Solid solid1, Solid solid2, bool classifyFaces = true)
         {
             State = CSGState.Bad;
             //representation to apply boolean operations
             Object1 = new Part(solid1);
             Object2 = new Part(solid2);
-
-            //split the faces so that none of them intercepts each other
-            //Logger.Log("Split Faces ob1 (ob2)\r\n");
-            CSGState ps1 = Object1.SplitFaces(Object2, null, "");
-            CSGState ps2 = CSGState.Good;
-            CSGState ps3 = CSGState.Good;
-            CSGState ps4 = CSGState.Good;
-            if (ps1 == CSGState.Good)
+            if (classifyFaces)
             {
-                ps2 = Object2.SplitFaces(Object1, null, "");
-                if (ps2 == CSGState.Good)
+                //split the faces so that none of them intercepts each other
+                //Logger.Log("Split Faces ob1 (ob2)\r\n");
+                CSGState ps1 = Object1.SplitFaces(Object2, null, "");
+                CSGState ps2 = CSGState.Good;
+                CSGState ps3 = CSGState.Good;
+                CSGState ps4 = CSGState.Good;
+                if (ps1 == CSGState.Good)
                 {
-                    //classify faces as being inside or outside the other solid
-                    ps3 = Object1.ClassifyFaces(Object2, null, "");
-                    if (ps3 == CSGState.Good)
+                    ps2 = Object2.SplitFaces(Object1, null, "");
+                    if (ps2 == CSGState.Good)
                     {
-                        ps4 = Object2.ClassifyFaces(Object1, null, "");
+                        //classify faces as being inside or outside the other solid
+                        ps3 = Object1.ClassifyFaces(Object2, null, "");
+                        if (ps3 == CSGState.Good)
+                        {
+                            ps4 = Object2.ClassifyFaces(Object1, null, "");
+                        }
+                        State = CSGState.Good;
                     }
-                    State = CSGState.Good;
+                }
+                if (ps1 == CSGState.Interrupted ||
+                    ps2 == CSGState.Interrupted ||
+                    ps3 == CSGState.Interrupted ||
+                    ps4 == CSGState.Interrupted)
+                {
+                    State = CSGState.Interrupted;
                 }
             }
-            if (ps1 == CSGState.Interrupted ||
-                ps2 == CSGState.Interrupted ||
-                ps3 == CSGState.Interrupted ||
-                ps4 == CSGState.Interrupted)
+            else
             {
-                State = CSGState.Interrupted;
+                State = CSGState.Good;
             }
         }
 
@@ -119,7 +125,10 @@ namespace CSGLib
             ForceUnion
         }
 
-        public CSGState State { get; set; }
+        public CSGState State
+        {
+            get; set;
+        }
 
         public static void ReportProgress(string v1, int v2, IProgress<CSGGroupProgress> progress)
         {
@@ -347,8 +356,7 @@ namespace CSGLib
             {
                 rint.Add(i);
             }
-            return await Task.Run(() =>
-            {
+            return await Task.Run(() => {
                 BooleanModeller btmp = new BooleanModeller();
                 btmp.SetCancelationToken(csgCancelation.Token);
                 OpResult res;
@@ -393,11 +401,66 @@ namespace CSGLib
             return result;
         }
 
+        public Solid GetForceUnion()
+        {
+            Vertex min1;
+            Vertex max1;
+            Vertex min2;
+            Vertex max2;
+            Object1.octTree.Bounds(out min1, out max1);
+            Object2.octTree.Bounds(out min2, out max2);
+            double minx, miny, minz;
+            double maxx, maxy, maxz;
+            minx = Math.Min(min1.Position.X, min2.Position.X);
+            miny = Math.Min(min1.Position.Y, min2.Position.Y);
+            minz = Math.Min(min1.Position.Z, min2.Position.Z);
+
+            maxx = Math.Max(max1.Position.X, max2.Position.X);
+            maxy = Math.Max(max1.Position.Y, max2.Position.Y);
+            maxz = Math.Max(max1.Position.Z, max2.Position.Z);
+
+            Point3D min = new Point3D(minx, miny, minz);
+            Point3D max = new Point3D(maxx, maxy, maxz);
+
+            Solid result = new Solid();
+
+            Point3DCollection vertices = new Point3DCollection();
+            Int32Collection faces = new Int32Collection();
+            OctTreeLib.OctTree octree = new OctTreeLib.OctTree(vertices, min, max, 200);
+
+            for (int fi = 0; fi < Object1.NumFaces; fi++)
+            {
+                Face f = Object1.GetFace(fi);
+                Point3D pn = new Point3D(f.V1.Position.X, f.V1.Position.Y, f.V1.Position.Z);
+                int nf = octree.AddPoint(pn);
+                faces.Add(nf);
+                pn = new Point3D(f.V2.Position.X, f.V2.Position.Y, f.V2.Position.Z);
+                nf = octree.AddPoint(pn);
+                faces.Add(nf);
+                pn = new Point3D(f.V3.Position.X, f.V3.Position.Y, f.V3.Position.Z);
+                nf = octree.AddPoint(pn);
+                faces.Add(nf);
+            }
+            for (int fi = 0; fi < Object2.NumFaces; fi++)
+            {
+                Face f = Object2.GetFace(fi);
+                Point3D pn = new Point3D(f.V1.Position.X, f.V1.Position.Y, f.V1.Position.Z);
+                int nf = octree.AddPoint(pn);
+                faces.Add(nf);
+                pn = new Point3D(f.V2.Position.X, f.V2.Position.Y, f.V2.Position.Z);
+                nf = octree.AddPoint(pn);
+                faces.Add(nf);
+                pn = new Point3D(f.V3.Position.X, f.V3.Position.Y, f.V3.Position.Z);
+                nf = octree.AddPoint(pn);
+                faces.Add(nf);
+            }
+            return new Solid(vertices, faces, false);
+        }
+
         public Solid GetIntersection()
         {
-            //   Object2.InvertInsideFaces();
             Solid result = ComposeSolid(Status.INSIDE, Status.SAME, Status.INSIDE);
-            //Object2.InvertInsideFaces();
+
             return result;
         }
 

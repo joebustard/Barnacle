@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -63,10 +63,10 @@
     <Compile Include="ExtraPrimitives\StellateOctahedron.cs" />
     <Compile Include="ExtraPrimitives\UBeam.cs" />
     <Compile Include="ExtraPrimitives\XBar.cs" />
-  <Compile Include="ExtraPrimitives\CrossBlock.cs" />
-  <Compile Include="ExtraPrimitives\RightBracket.cs" />
-  <Compile Include="ExtraPrimitives\ScrewDriverBit.cs" />
-<!-- ExtraHere -->
+    <Compile Include="ExtraPrimitives\CrossBlock.cs" />
+    <Compile Include="ExtraPrimitives\RightBracket.cs" />
+    <Compile Include="ExtraPrimitives\ScrewDriverBit.cs" />
+    <!-- ExtraHere -->
     <Compile Include="Group3D.cs" />
     <Compile Include="IcoSphereCreator.cs" />
     <Compile Include="LineUtils.cs" />
@@ -93,6 +93,10 @@
     <ProjectReference Include="..\EditorParameterLib\EditorParameterLib.csproj">
       <Project>{5BD65286-F34E-45AE-9E8D-2E7A0DFF6D0D}</Project>
       <Name>EditorParameterLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OctTreeLib\OctTreeLib.csproj">
+      <Project>{0d9bb88e-b275-4e45-8ea9-aec204588a7c}</Project>
+      <Name>OctTreeLib</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

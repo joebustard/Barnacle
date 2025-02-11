@@ -59,7 +59,6 @@ namespace Barnacle.Dialogs
         private double sweep;
         private string texture;
         private double textureDepth;
-        private ObservableCollection<String> textureItems;
         private TextureManager textureManager;
         private double textureResolution;
         private double thickness;
@@ -606,7 +605,6 @@ namespace Barnacle.Dialogs
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-
             EditorParameters.Set("TubeHeight", TubeHeight.ToString());
             EditorParameters.Set("InnerRadius", InnerRadius.ToString());
             EditorParameters.Set("Thickness", Thickness.ToString());

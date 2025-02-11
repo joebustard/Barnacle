@@ -103,6 +103,9 @@
     <Compile Include="MorphableModel\Primitives\MorphableStar6.cs" />
     <Compile Include="MorphableModel\Primitives\MorphableStellateDoDec.cs" />
     <Compile Include="PGramMaker.cs" />
+    <Compile Include="PlaneCutter\EdgeProcessor.cs" />
+    <Compile Include="PlaneCutter\EdgeRecord.cs" />
+    <Compile Include="PlaneCutter\PlaneCutter.cs" />
     <Compile Include="PolyMaker.cs" />
     <Compile Include="SquaredStadiumMaker.cs" />
     <Compile Include="StadiumMaker.cs" />

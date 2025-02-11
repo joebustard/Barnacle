@@ -26,6 +26,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using OctTreeLib;
+using MakerLib.PlaneCutter;
 
 namespace Barnacle.Dialogs
 {
@@ -175,8 +176,7 @@ namespace Barnacle.Dialogs
 
         protected OctTree CreateOctree(Point3D minPoint, Point3D maxPoint)
         {
-            octTree = new OctTree(Vertices, minPoint, maxPoint, 200);
-            return octTree;
+           return new OctTree(Vertices, minPoint, maxPoint, 200);            
         }
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
@@ -276,196 +276,13 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private int AddVerticeOctTree(Point3D p)
-        {
-            return AddVerticeOctTree(p.X, p.Y, p.Z);
-        }
-
-        private int CrossingPoint(int a, int b)
-        {
-            double t;
-            double x0 = Vertices[a].X;
-            double y0 = Vertices[a].Y;
-            double z0 = Vertices[a].Z;
-            double x1 = Vertices[b].X;
-            double y1 = Vertices[b].Y;
-            double z1 = Vertices[b].Z;
-            t = (planeLevel - y0) / (y1 - y0);
-
-            double x = x0 + t * (x1 - x0);
-            double z = z0 + t * (z1 - z0);
-            int res = AddVerticeOctTree(x, planeLevel, z);
-            return res;
-        }
+     
 
         private void CutButton_Click(object sender, RoutedEventArgs e)
         {
             RestoreOriginal();
-            EdgeProcessor edgeProc = new EdgeProcessor();
-
-            Int32Collection newFaces = new Int32Collection();
-            for (int i = 0; i < Faces.Count; i += 3)
-            {
-                int a = Faces[i];
-                int b = Faces[i + 1];
-                int c = Faces[i + 2];
-
-                int upCount = 0;
-                bool aUp = false;
-                bool bUp = false;
-                bool cUp = false;
-                if (Vertices[a].Y > planeLevel)
-                {
-                    upCount++;
-                    aUp = true;
-                }
-                if (Vertices[b].Y > planeLevel)
-                {
-                    upCount++;
-                    bUp = true;
-                }
-                if (Vertices[c].Y > planeLevel)
-                {
-                    upCount++;
-                    cUp = true;
-                }
-
-                switch (upCount)
-                {
-                    case 0:
-                        {
-                            //all three points of trinagle are on or below the cut plane
-                        }
-                        break;
-
-                    case 1:
-                        {
-                            //one point of triangle is above the cut plane
-                            // clip it against the plane
-                            if (aUp)
-                            {
-                                MakeTri1(a, ref b, ref c);
-                                newFaces.Add(a);
-                                newFaces.Add(b);
-                                newFaces.Add(c);
-                                edgeProc.Add(b, c);
-                            }
-                            else if (bUp)
-                            {
-                                MakeTri1(b, ref c, ref a);
-                                newFaces.Add(b);
-                                newFaces.Add(c);
-                                newFaces.Add(a);
-                                edgeProc.Add(c, a);
-                            }
-                            else if (cUp)
-                            {
-                                MakeTri1(c, ref a, ref b);
-                                newFaces.Add(c);
-                                newFaces.Add(a);
-                                newFaces.Add(b);
-                                edgeProc.Add(a, b);
-                            }
-                        }
-                        break;
-
-                    case 2:
-                        {
-                            // two points are above the cut plane
-                            if (aUp && bUp)
-                            {
-                                int dp = CrossingPoint(b, c);
-                                int ep = CrossingPoint(a, c);
-                                newFaces.Add(a);
-                                newFaces.Add(b);
-                                newFaces.Add(dp);
-
-                                newFaces.Add(a);
-                                newFaces.Add(dp);
-                                newFaces.Add(ep);
-                                edgeProc.Add(dp, ep);
-                            }
-                            else if (bUp && cUp)
-                            {
-                                int dp = CrossingPoint(c, a);
-                                int ep = CrossingPoint(a, b);
-                                newFaces.Add(b);
-                                newFaces.Add(c);
-                                newFaces.Add(dp);
-
-                                newFaces.Add(b);
-                                newFaces.Add(dp);
-                                newFaces.Add(ep);
-                                edgeProc.Add(dp, ep);
-                            }
-                            else if (cUp && aUp)
-                            {
-                                int dp = CrossingPoint(a, b);
-                                int ep = CrossingPoint(b, c);
-                                newFaces.Add(a);
-                                newFaces.Add(dp);
-                                newFaces.Add(c);
-
-                                newFaces.Add(c);
-                                newFaces.Add(dp);
-                                newFaces.Add(ep);
-                                edgeProc.Add(dp, ep);
-                            }
-                        }
-                        break;
-
-                    case 3:
-                        {
-                            //all three points of triangle are above the cut plane
-                            // entire triangle should be taken as is
-                            newFaces.Add(a);
-                            newFaces.Add(b);
-                            newFaces.Add(c);
-                        }
-                        break;
-                }
-            }
-            bool moreLoops = true;
-            while (moreLoops)
-            {
-                moreLoops = false;
-                List<EdgeRecord> loop = edgeProc.MakeLoop();
-                if (loop.Count > 3)
-                {
-                    TriangulationPolygon ply = new TriangulationPolygon();
-                    List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
-                    foreach (EdgeRecord er in loop)
-                    {
-                        Point3D p = Vertices[er.Start];
-                        pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Z));
-                    }
-                    ply.Points = pf.ToArray();
-                    List<Triangle> tris = ply.Triangulate();
-                    foreach (Triangle t in tris)
-                    {
-                        int c0 = AddVerticeOctTree(t.Points[0].X, planeLevel, t.Points[0].Y);
-                        int c1 = AddVerticeOctTree(t.Points[1].X, planeLevel, t.Points[1].Y);
-                        int c2 = AddVerticeOctTree(t.Points[2].X, planeLevel, t.Points[2].Y);
-                        newFaces.Add(c0);
-                        newFaces.Add(c1);
-                        newFaces.Add(c2);
-                    }
-                }
-                if (loop.Count != 0 && edgeProc.EdgeRecords.Count > 0)
-                {
-                    moreLoops = true;
-                }
-            }
-
-            Point3DCollection allPoints = Vertices;
-            Vertices = new Point3DCollection();
-            ClearShape();
-            octTree = CreateOctree(originalBounds.Lower, originalBounds.Upper);
-            foreach (int j in newFaces)
-            {
-                int v = AddVerticeOctTree(allPoints[j]);
-                Faces.Add(v);
-            }
+            PlaneCutter cutter = new PlaneCutter(Vertices, Faces, planeLevel);
+            cutter.Cut();
 
             UpdateDisplay();
         }
@@ -474,32 +291,6 @@ namespace Barnacle.Dialogs
         {
         }
 
-        private void MakeTri1(int a, ref int b, ref int c)
-        {
-            double t;
-            double x0 = Vertices[a].X;
-            double y0 = Vertices[a].Y;
-            double z0 = Vertices[a].Z;
-            double x1 = Vertices[b].X;
-            double y1 = Vertices[b].Y;
-            double z1 = Vertices[b].Z;
-            t = (planeLevel - y0) / (y1 - y0);
-
-            double x = x0 + t * (x1 - x0);
-            double z = z0 + t * (z1 - z0);
-
-            b = AddVerticeOctTree(x, planeLevel, z);
-
-            x1 = Vertices[c].X;
-            y1 = Vertices[c].Y;
-            z1 = Vertices[c].Z;
-            t = (planeLevel - y0) / (y1 - y0);
-
-            x = x0 + t * (x1 - x0);
-            z = z0 + t * (z1 - z0);
-
-            c = AddVerticeOctTree(x, planeLevel, z);
-        }
 
         private void ResetDefaults(object sender, RoutedEventArgs e)
         {
@@ -546,7 +337,6 @@ namespace Barnacle.Dialogs
         {
             if (loaded)
             {
-                GenerateShape();
                 Redisplay();
             }
         }

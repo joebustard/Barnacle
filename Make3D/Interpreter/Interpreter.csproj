@@ -66,6 +66,7 @@
     <Compile Include="IntrinsicFunctions\Dim.cs" />
     <Compile Include="IntrinsicFunctions\RndNode.cs" />
     <Compile Include="SolidFunctions\InsertPartNode.cs" />
+    <Compile Include="SolidFunctions\IsSolidNode.cs" />
     <Compile Include="SolidFunctions\MakeBarrelNode.cs" />
     <Compile Include="SolidFunctions\MakeBoxNode.cs" />
     <Compile Include="SolidFunctions\MakeBrickTowerNode.cs" />
@@ -116,6 +117,7 @@
     <Compile Include="SolidFunctions\MakeWagonWheelNode.cs" />
     <Compile Include="SolidFunctions\UnionAllNode.cs" />
     <Compile Include="SolidFunctions\ValidSolidNode.cs" />
+    <Compile Include="SolidStatements\SolidHCut.cs" />
     <Compile Include="SolidStatements\SolidRMove.cs" />
     <Compile Include="SolidStatements\SolidAlignment.cs" />
     <Compile Include="SolidStatements\SolidColourNode.cs" />

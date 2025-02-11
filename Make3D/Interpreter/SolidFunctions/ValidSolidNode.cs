@@ -6,13 +6,12 @@ namespace ScriptLanguage
     {
         private string label = "ValidSolid";
 
-
         public ValidSolidNode()
         {
             parameterExpression = null;
         }
 
-        public ValidSolidNode(ExpressionNode ls) 
+        public ValidSolidNode(ExpressionNode ls)
         {
             this.parameterExpression = ls;
         }

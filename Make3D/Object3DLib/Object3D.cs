@@ -1268,11 +1268,7 @@ namespace Barnacle.Object3DLib
             float Azx = -sinb;
             float Azy = cosb * sinc;
             float Azz = cosb * cosc;
-            float nx = 0F;
-            float ny = 0F;
-            float nz = 0F;
 
-            // for (int i = 0; i < pnts.Count; i++)
             foreach (P3D cp in pnts)
             {
                 P3D rp = new P3D();
@@ -1281,18 +1277,8 @@ namespace Barnacle.Object3DLib
                 rp.Z = Azx * cp.X + Azy * cp.Y + Azz * cp.Z;
                 AdjustBounds(rp);
                 tmp.Add(rp);
-                /*
-            P3D cp = pnts[i];
-            nx = Axx * cp.X + Axy * cp.Y + Axz * cp.Z;
-            ny = Ayx * cp.X + Ayy * cp.Y + Ayz * cp.Z;
-            nz = Azx * cp.X + Azy * cp.Y + Azz * cp.Z;
-            cp.UpdatePosition(nx, ny, nz);
-            AdjustBounds(cp);
-            pnts[i] = cp;
-            */
             }
             return tmp;
-            //return pnts;
         }
 
         internal struct PrimTableEntry
@@ -1308,41 +1294,5 @@ namespace Barnacle.Object3DLib
                 Color = c;
             }
         }
-
-        /*
-        public void CreateTransformation()
-        {
-            transforms = new Transform3DGroup();
-            aar1 = new AxisAngleRotation3D(new Vector3D(1, 0, 0), 0);
-            rt1 = new RotateTransform3D(aar1);
-            aar2 = new AxisAngleRotation3D(new Vector3D(0, 1, 0), 0);
-            rt2 = new RotateTransform3D(aar2);
-            aar3 = new AxisAngleRotation3D(new Vector3D(0, 0, 1), 0);
-            rt3 = new RotateTransform3D(aar3);
-            transforms.Children.Add(rt1);
-            transforms.Children.Add(rt2);
-            transforms.Children.Add(rt3);
-            rotTransformation = transforms;
-        }
-        private Transform3DGroup transforms;
-        private RotateTransform3D rt1;
-        private RotateTransform3D rt2;
-        private RotateTransform3D rt3;
-        private AxisAngleRotation3D aar1;
-        private AxisAngleRotation3D aar2;
-        private AxisAngleRotation3D aar3;
-        public void RotateByTransform(Point3D RotateBy)
-        {
-            double r1 = DegreesToRad(RotateBy.X);
-            double r2 = DegreesToRad(RotateBy.Y);
-            double r3 = DegreesToRad(RotateBy.Z);
-            if (relativeObjectVertices != null)
-            {
-                aar1.Angle += RotateBy.X ;
-                aar2.Angle += RotateBy.Y ;
-                aar3.Angle += RotateBy.Z ;
-            }
-        }
-        */
     }
 }

@@ -32,6 +32,7 @@ namespace ScriptLanguage
                 "floor",
                 "function",
                 "for",
+                "hcut",
                 "if",
                 "include",
                 "int",
@@ -68,11 +69,13 @@ namespace ScriptLanguage
                 "degrees",
                 "difference",
                 "dim",
+                "forceunion",
                 "height",
                 "inputstring",
                 "insertpart",
                 "insertlibpart",
                 "intersection",
+                "issolid",
                 "len",
                 "length",
                 "make",
@@ -1671,6 +1674,25 @@ namespace ScriptLanguage
             return result;
         }
 
+        private ExpressionNode ParseForceUnionFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode leftSolid = ParseExpressionNode(parentName);
+            if (leftSolid != null)
+            {
+                if (CheckForComma())
+                {
+                    ExpressionNode rightSolid = ParseExpressionNode(parentName);
+                    if (rightSolid != null)
+                    {
+                        CSGNode mn = new CSGNode(leftSolid, rightSolid, "groupforceunion");
+                        exp = mn;
+                    }
+                }
+            }
+            return exp;
+        }
+
         private bool ParseForStatement(CompoundNode parentNode, string parentName)
         {
             bool result = false;
@@ -2106,6 +2128,12 @@ namespace ScriptLanguage
                     }
                     break;
 
+                case "hcut":
+                    {
+                        result = ParseHCutStatement(parentNode, parentName);
+                    }
+                    break;
+
                 case "move":
                     {
                         result = ParseMoveStatement(parentNode, parentName);
@@ -2499,6 +2527,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "forceunion":
+                            {
+                                exp = ParseForceUnionFunction(parentName);
+                            }
+                            break;
+
                         case "inputstring":
                             {
                                 exp = ParseInputStringFunction(parentName);
@@ -2520,6 +2554,12 @@ namespace ScriptLanguage
                         case "intersection":
                             {
                                 exp = ParseIntersectionFunction(parentName);
+                            }
+                            break;
+
+                        case "issolid":
+                            {
+                                exp = GetFunctionNode<IsSolidNode>(parentName);
                             }
                             break;
 
@@ -5565,6 +5605,15 @@ namespace ScriptLanguage
             bool result = false;
             string label = "SetName";
             SolidNameNode asn = new SolidNameNode();
+            result = ParseSolidStatement(parentNode, parentName, label, 2, asn);
+            return result;
+        }
+
+        private bool ParseHCutStatement(CompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+            string label = "Hcut";
+            SolidHCutNode asn = new SolidHCutNode();
             result = ParseSolidStatement(parentNode, parentName, label, 2, asn);
             return result;
         }

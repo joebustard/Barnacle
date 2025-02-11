@@ -31,26 +31,51 @@ namespace Barnacle.Object3DLib
         }
 
         public double Depth
-        { get { return Upper.Z - Lower.Z; } }
+        {
+            get
+            {
+                return Upper.Z - Lower.Z;
+            }
+        }
 
         public double Height
-        { get { return Upper.Y - Lower.Y; } }
+        {
+            get
+            {
+                return Upper.Y - Lower.Y;
+            }
+        }
 
         public Point3D Lower
         {
-            get { return lower; }
-            set { lower = value; }
+            get
+            {
+                return lower;
+            }
+            set
+            {
+                lower = value;
+            }
         }
 
         public Point3D Upper
         {
-            get { return upper; }
-            set { upper = value; }
+            get
+            {
+                return upper;
+            }
+            set
+            {
+                upper = value;
+            }
         }
 
         public double Width
         {
-            get { return Upper.X - Lower.X; }
+            get
+            {
+                return Upper.X - Lower.X;
+            }
         }
 
         public static Bounds3D operator +(Bounds3D a, Bounds3D b)
@@ -69,8 +94,11 @@ namespace Barnacle.Object3DLib
 
         public void Add(Bounds3D b)
         {
-            Adjust(b.Lower);
-            Adjust(b.Upper);
+            if (b != null)
+            {
+                Adjust(b.Lower);
+                Adjust(b.Upper);
+            }
         }
 
         public void Adjust(Point3D ap)
