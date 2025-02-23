@@ -46,6 +46,7 @@ namespace Barnacle.Dialogs
         private bool frontBody;
         private FuselageModel fuselageData;
         private bool loaded;
+        private bool modelUpToDate;
         private int numberOfDivisions;
         private int oldSelectedRibIndex = -1;
         private RibImageDetailsModel selectedRib;
@@ -513,6 +514,11 @@ namespace Barnacle.Dialogs
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
+            if (!modelUpToDate && MessageBox.Show("Ribs have changed but the fuselage model has not been regemerated. Regenerate before closing?", "Warning", System.Windows.MessageBoxButton.YesNo) == System.Windows.MessageBoxResult.Yes)
+            {
+                GenerateModel();
+            }
+
             if (dirty && MessageBox.Show("Data has changed. Save it before closing", "Warning", System.Windows.MessageBoxButton.YesNo) == System.Windows.MessageBoxResult.Yes)
             {
                 Save();
@@ -1022,6 +1028,7 @@ namespace Barnacle.Dialogs
         {
             ThreeDView.SetRibs(fuselageData.Ribs);
             CalculateMainRibSizes();
+            modelUpToDate = false;
         }
 
         private void SaveAs()
@@ -1175,6 +1182,7 @@ namespace Barnacle.Dialogs
             if (ModelIsVisible && loaded)
             {
                 GenerateModel();
+                modelUpToDate = true;
                 Viewer.Model = GetModel();
             }
         }

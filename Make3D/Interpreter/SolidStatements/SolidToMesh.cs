@@ -2,11 +2,11 @@
 
 namespace ScriptLanguage
 {
-    internal class SolidDeleteNode : SolidStatement
+    internal class SolidToMeshNode : SolidStatement
     {
-        public SolidDeleteNode()
+        public SolidToMeshNode()
         {
-            label = "Delete";
+            label = "GroupToMesh";
             expressions = new ExpressionCollection();
         }
 
@@ -31,7 +31,7 @@ namespace ScriptLanguage
                         {
                             if (Script.ResultArtefacts.ContainsKey(objectIndex))
                             {
-                                Script.ResultArtefacts.Remove(objectIndex);
+                                Script.ResultArtefacts[objectIndex] = Script.ResultArtefacts[objectIndex].ConvertToMesh();
                                 GC.Collect();
                             }
                         }

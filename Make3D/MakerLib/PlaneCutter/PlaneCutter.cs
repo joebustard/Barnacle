@@ -218,44 +218,6 @@ namespace MakerLib.PlaneCutter
                 }
             }
 
-            /*
-            Point3DCollection targetVertices = new Point3DCollection();
-            Int32Collection targetFaces = new Int32Collection();
-            OctTree targetOctree = CreateOctree(targetVertices, bounds.Lower, bounds.Upper);
-            foreach (int j in newFaces)
-            {
-                int v = targetOctree.AddPoint(workingVertices[j]);
-                targetFaces.Add(v);
-            }
-
-            originalVertices.Clear();
-            foreach (Point3D p in targetVertices)
-            {
-                originalVertices.Add(p);
-            }
-
-            */
-            /*
-            originalFaces.Clear();
-            foreach (int i in newFaces)
-            {
-                originalFaces.Add(i);
-            }
-            */
-            /*
-            originalVertices.Clear();
-            foreach (Point3D p in workingVertices)
-            {
-                originalVertices.Add(p);
-            }
-            originalFaces.Clear();
-            foreach (int i in newFaces)
-            {
-                originalFaces.Add(i);
-            }
-
-            */
-
 
             originalVertices.Clear();
             originalFaces.Clear();

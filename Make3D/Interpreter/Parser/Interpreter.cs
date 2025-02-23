@@ -32,10 +32,17 @@ namespace ScriptLanguage
                 "floor",
                 "function",
                 "for",
+                "grouptomesh",
                 "hcut",
                 "if",
                 "include",
                 "int",
+                "mirrorleft",
+                "mirrorright",
+                "mirrorup",
+                "mirrordown",
+                "mirrorfront",
+                "mirrorback",
                 "move",
                 "procedure",
                 "print",
@@ -2006,6 +2013,15 @@ namespace ScriptLanguage
             return exp;
         }
 
+        private bool ParseGroupToMeshStatement(CompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+            string label = "GroupToMesh";
+            SolidToMeshNode asn = new SolidToMeshNode();
+            result = ParseSolidStatement(parentNode, parentName, label, 1, asn);
+            return result;
+        }
+
         private bool ParseHandleStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
@@ -2028,6 +2044,15 @@ namespace ScriptLanguage
                     result = ParseSingleDeclaration(parentNode, parentName, ref token, tokenType, node, SymbolTable.SymbolType.handlevariable, "Handle");
                 }
             }
+            return result;
+        }
+
+        private bool ParseHCutStatement(CompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+            string label = "Hcut";
+            SolidHCutNode asn = new SolidHCutNode();
+            result = ParseSolidStatement(parentNode, parentName, label, 2, asn);
             return result;
         }
 
@@ -2068,7 +2093,6 @@ namespace ScriptLanguage
                 case "stackbelow":
                 case "stackfront":
                 case "stackbehind":
-
                     {
                         result = ParseStackStatement(parentNode, parentName, Identifier);
                     }
@@ -2128,9 +2152,26 @@ namespace ScriptLanguage
                     }
                     break;
 
+                case "grouptomesh":
+                    {
+                        result = ParseGroupToMeshStatement(parentNode, parentName);
+                    }
+                    break;
+
                 case "hcut":
                     {
                         result = ParseHCutStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "mirrorleft":
+                case "mirrorright":
+                case "mirrorup":
+                case "mirrordown":
+                case "mirrorfront":
+                case "mirrorback":
+                    {
+                        result = ParseMirrorStatement(parentNode, parentName, Identifier);
                     }
                     break;
 
@@ -4898,6 +4939,24 @@ namespace ScriptLanguage
             return exp;
         }
 
+        private bool ParseMirrorStatement(CompoundNode parentNode, String parentName, string identifier)
+        {
+            bool result = false;
+            SolidMirrorNode sal = new SolidMirrorNode();
+            switch (identifier)
+            {
+                case "mirrorleft": sal.Orientation = SolidMirrorNode.Alignment.Left; break;
+                case "mirrorright": sal.Orientation = SolidMirrorNode.Alignment.Right; break;
+                case "mirrorup": sal.Orientation = SolidMirrorNode.Alignment.Up; break;
+                case "mirrordown": sal.Orientation = SolidMirrorNode.Alignment.Down; break;
+                case "mirrorfront": sal.Orientation = SolidMirrorNode.Alignment.Front; break;
+                case "mirrorback": sal.Orientation = SolidMirrorNode.Alignment.Back; break;
+            }
+
+            result = ParseSolidStatement(parentNode, parentName, sal.label, 1, sal);
+            return result;
+        }
+
         private bool ParseMoveStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
@@ -5605,15 +5664,6 @@ namespace ScriptLanguage
             bool result = false;
             string label = "SetName";
             SolidNameNode asn = new SolidNameNode();
-            result = ParseSolidStatement(parentNode, parentName, label, 2, asn);
-            return result;
-        }
-
-        private bool ParseHCutStatement(CompoundNode parentNode, String parentName)
-        {
-            bool result = false;
-            string label = "Hcut";
-            SolidHCutNode asn = new SolidHCutNode();
             result = ParseSolidStatement(parentNode, parentName, label, 2, asn);
             return result;
         }

@@ -1,7 +1,7 @@
 ﻿v1.0.9
 ===========
 Added
-  Setlength(), setheight() and setwidth() to the standard limpet library
+  Added top/bottom camera buttons to objectviewer user control.
   Five more primitives, staircase, squiggle, cross block, right bracket and screw diver bit
   Two "Wedge" profiles added to path loft
   Cross grille with edge
@@ -11,6 +11,11 @@ Added
   Show number of vertices and faces on object properties page
   CSG function ForceUnion(Solid1,solid2) added to Limpet
   Horizontal Plane hcut statement added to Limpet
+  GroupToMesh added to Limpet
+  MakeCrossGrille to Limpet
+  MirrorFront, MirrorBack, MirrorLeft, MirrorRight,MirrorUp,MirrorDown added to limpet
+  Setlength(), setheight() and setwidth() to the standard limpet library
+  
 
 Fixed
   Slice was showing estimated time wrong if it was more than a day

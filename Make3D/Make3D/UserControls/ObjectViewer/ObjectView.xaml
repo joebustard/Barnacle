@@ -69,6 +69,8 @@
                     <ColumnDefinition Width="40" />
                     <ColumnDefinition Width="40" />
                     <ColumnDefinition Width="40" />
+                    <ColumnDefinition Width="40" />
+                    <ColumnDefinition Width="40" />
                 </Grid.ColumnDefinitions>
                 <CheckBox
                     Grid.Column="0"
@@ -116,6 +118,24 @@
                     ToolTip="Move the camera to the default right position and point it at the centre.">
                     <Image Source="/Barnacle;component/Images/Buttons/LeftEye.png" />
                 </Button>
+                <Button
+                    Grid.Column="6"
+                    MaxWidth="30"
+                    Click="Top_Click"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Move the camera to the default top position and point it at the centre.">
+                    <Image Source="/Barnacle;component/Images/Buttons/TopEye.png" />
+                </Button>
+
+                <Button
+                    Grid.Column="7"
+                    MaxWidth="30"
+                    Click="Bottom_Click"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Move the camera to the default bottom position and point it at the centre.">
+                    <Image Source="/Barnacle;component/Images/Buttons/BottomEye.png" />
+                </Button>
+
             </Grid>
         </Border>
     </Grid>

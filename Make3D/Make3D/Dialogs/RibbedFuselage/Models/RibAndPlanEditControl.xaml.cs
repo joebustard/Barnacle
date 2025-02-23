@@ -65,8 +65,6 @@ namespace Barnacle.Dialogs
 
         private bool isValid;
 
-        private bool lineShape;
-
         private bool loaded;
 
         private BitmapImage localImage;
@@ -275,7 +273,6 @@ namespace Barnacle.Dialogs
                 if (scale != value)
                 {
                     scale = value;
-                    // SetFlexiPathScale();
                     NotifyPropertyChanged();
                 }
             }
@@ -328,7 +325,7 @@ namespace Barnacle.Dialogs
                 {
                     selectedPoint = value;
                     NotifyPropertyChanged();
-                    // ClearPointSelections();
+
                     if (polyPoints != null)
                     {
                         if (selectedPoint >= 0 && selectedPoint < polyPoints.Count)
@@ -337,7 +334,6 @@ namespace Barnacle.Dialogs
                             polyPoints[selectedPoint].Visible = true;
                         }
                     }
-                    UpdateDisplay();
                 }
             }
         }
@@ -381,9 +377,8 @@ namespace Barnacle.Dialogs
             NumDivisions = 80;
             ProfilePoints = new List<PointF>();
             scale = 1;
-            // SetFlexiPathScale();
+
             selectedPoint = -1;
-            //SelectionMode = SelectionModeType.SelectSegmentAtPoint;
 
             isValid = false;
             DataContext = this;
@@ -569,10 +564,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public void UpdateDisplay()
-        {
-        }
-
         public void UpdateHeaderLabel()
         {
             Dirty = true;
@@ -632,8 +623,6 @@ namespace Barnacle.Dialogs
             XmlNode edgeNode = (XmlElement)ele.SelectSingleNode("Edge");
             string p = edgeNode.InnerText;
             FlexiControl.FromString(p);
-            loaded = false;
-            UpdateDisplay();
             loaded = true;
             NotifyPropertyChanged("Scale");
 
@@ -808,8 +797,6 @@ namespace Barnacle.Dialogs
             localImage.UriSource = fileUri;
 
             localImage.EndInit();
-
-            UpdateDisplay();
         }
 
         private void ShowWorkingImage()
@@ -821,10 +808,7 @@ namespace Barnacle.Dialogs
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            loaded = false;
-
             FlexiControl.AbsolutePaths = true;
-            UpdateDisplay();
             loaded = true;
         }
     }

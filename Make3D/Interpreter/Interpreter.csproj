@@ -118,6 +118,7 @@
     <Compile Include="SolidFunctions\UnionAllNode.cs" />
     <Compile Include="SolidFunctions\ValidSolidNode.cs" />
     <Compile Include="SolidStatements\SolidHCut.cs" />
+    <Compile Include="SolidStatements\SolidMirror.cs" />
     <Compile Include="SolidStatements\SolidRMove.cs" />
     <Compile Include="SolidStatements\SolidAlignment.cs" />
     <Compile Include="SolidStatements\SolidColourNode.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="SolidStatements\SolidRotate.cs" />
     <Compile Include="SolidStatements\SolidSize.cs" />
     <Compile Include="SolidStatements\SolidStatement.cs" />
+    <Compile Include="SolidStatements\SolidToMesh.cs" />
     <Compile Include="Statements\AssignOpNode.cs" />
     <Compile Include="Statements\AssignStructToArrayElementNode.cs" />
     <Compile Include="Statements\ArraySymbolForCall.cs" />

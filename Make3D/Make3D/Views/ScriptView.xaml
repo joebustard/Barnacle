@@ -6,6 +6,7 @@
     xmlns:Views="clr-namespace:Barnacle.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Barnacle"
+    xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="550"
     d:DesignWidth="800"
@@ -79,9 +80,8 @@
                         <UniformGrid
                             Grid.Row="0"
                             Grid.RowSpan="2"
-                            Grid.ColumnSpan="2"
-                            Width="700"
-                            Margin="47,0,47.4,74.8"
+                            Grid.ColumnSpan="2"                            
+                            Margin="0,0,0,74.8"
                             Columns="6"
                             Rows="1">
 
@@ -121,14 +121,15 @@
                                 Content="Close"
                                 IsEnabled="{Binding EnableRun}" />
 
-                            <StackPanel Width="150" Orientation="Horizontal">
+                            <StackPanel  Orientation="Horizontal">
                                 <TextBox
                                     x:Name="SearchBox"
-                                    Width="100"
+                                    Width="80"
                                     Margin="2,2,0,2"
                                     Text="{Binding SearchText}" />
                                 <Button
                                     x:Name="SearchBut"
+                                    
                                     Command="{Binding FindCommand}"
                                     Content="Find"
                                     IsEnabled="{Binding EnableRun}" />
@@ -149,6 +150,10 @@
                 </Grid>
             </TabItem>
             <TabItem Header="3D Output From Script" PreviewKeyDown="ScriptBox_PreviewKeyDown">
+                <u:ObjectView
+                    x:Name="Viewer" />
+
+                <!--
                 <Grid
                     KeyDown="UserControl_KeyDown"
                     KeyUp="UserControl_KeyUp"
@@ -199,6 +204,7 @@
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch" />
                 </Grid>
+                -->
             </TabItem>
         </TabControl>
     </Grid>

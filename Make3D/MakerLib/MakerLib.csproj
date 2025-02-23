@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="BicornMaker.cs" />
     <Compile Include="MakeCrossGrill.cs" />
+    <Compile Include="Mirror\Mirror.cs" />
     <Compile Include="ParameterLimits.cs" />
     <Compile Include="HollowPolyMaker.cs" />
     <Compile Include="LerpBox\LerpBox.cs" />
@@ -130,6 +131,10 @@
     <ProjectReference Include="..\EarClipperLib\EarClipperLib.csproj">
       <Project>{DEB59262-3D4D-46B1-9934-71AA91C92714}</Project>
       <Name>EarClipperLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FixLib\FixLib.csproj">
+      <Project>{8D134779-2F91-45C5-A145-3EB4BE6644A9}</Project>
+      <Name>FixLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\LineLib\LineLib.csproj">
       <Project>{8248F033-5DE9-46E4-BF7C-0B108F120577}</Project>

@@ -50,6 +50,7 @@ namespace Barnacle.Views
             NotificationManager.Subscribe("InsertIntoScript", InsertIntoScript);
         }
 
+        /*
         public void HitTest(object sender, System.Windows.Input.MouseButtonEventArgs args)
         {
             Point mouseposition = args.GetPosition(viewport3D1);
@@ -86,6 +87,7 @@ namespace Barnacle.Views
 
             return result;
         }
+        */
 
         private void CheckClicked(object sender, RoutedEventArgs e)
         {
@@ -126,14 +128,16 @@ namespace Barnacle.Views
             RefreshInterpreterSource();
         }
 
-        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            lastHitModel = null;
-            lastHitPoint = new Point3D(0, 0, 0);
-            HitTest(sender, e);
-            lastMousePos = e.GetPosition(this);
-            vm.MouseDown(lastMousePos, e);
-        }
+        /*
+                private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
+                {
+                    lastHitModel = null;
+                    lastHitPoint = new Point3D(0, 0, 0);
+                    HitTest(sender, e);
+                    lastMousePos = e.GetPosition(this);
+                    vm.MouseDown(lastMousePos, e);
+                }
+        */
 
         private void Grid_MouseMove(object sender, MouseEventArgs e)
         {
@@ -315,7 +319,7 @@ Procedure MyProc(  )
         {
             vm = DataContext as ScriptViewModel;
             ScriptBox.Width = ScriptGrid.ActualWidth;
-
+            vm.Viewer = Viewer;
             SetDisplayRtf();
             dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Interval = new TimeSpan(0, 1, 0);

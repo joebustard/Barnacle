@@ -49,6 +49,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
+using MakerLib.Mirror;
 
 namespace Barnacle.ViewModels
 {
@@ -2968,111 +2969,7 @@ namespace Barnacle.ViewModels
             if (confirmed)
             {
                 CheckPoint();
-                Bounds3D bnds = new Bounds3D();
-
-                foreach (P3D p in ob.RelativeObjectVertices)
-                {
-                    bnds.Adjust(new Point3D((double)p.X, (double)p.Y, (double)p.Z));
-                }
-                int numPoints = ob.RelativeObjectVertices.Count;
-                int numFaces = ob.TriangleIndices.Count;
-                bool addFaces = false;
-                switch (s.ToLower())
-                {
-                    case "left":
-                        {
-                            double ox = 2 * bnds.Lower.X - 0.1;
-                            for (int i = 0; i < numPoints; i++)
-                            {
-                                P3D op = ob.RelativeObjectVertices[i];
-                                P3D np = new P3D(ox - op.X, op.Y, op.Z);
-                                ob.RelativeObjectVertices.Add(np);
-                            }
-                            addFaces = true;
-                        }
-                        break;
-
-                    case "right":
-                        {
-                            double ox = bnds.Upper.X + bnds.Width + bnds.Lower.X;
-                            for (int i = 0; i < numPoints; i++)
-                            {
-                                P3D op = ob.RelativeObjectVertices[i];
-                                P3D np = new P3D(ox - op.X, op.Y, op.Z);
-                                ob.RelativeObjectVertices.Add(np);
-                            }
-                            addFaces = true;
-                        }
-                        break;
-
-                    case "front":
-                        {
-                            double oz = 2 * bnds.Upper.Z;
-                            for (int i = 0; i < numPoints; i++)
-                            {
-                                P3D op = ob.RelativeObjectVertices[i];
-                                P3D np = new P3D(op.X, op.Y, oz - op.Z);
-                                ob.RelativeObjectVertices.Add(np);
-                            }
-                            addFaces = true;
-                        }
-                        break;
-
-                    case "back":
-                        {
-                            double oz = 2 * bnds.Lower.Z;
-                            for (int i = 0; i < numPoints; i++)
-                            {
-                                P3D op = ob.RelativeObjectVertices[i];
-                                P3D np = new P3D(op.X, op.Y, oz - op.Z);
-                                ob.RelativeObjectVertices.Add(np);
-                            }
-                            addFaces = true;
-                        }
-                        break;
-
-                    case "up":
-                        {
-                            double oy = 2 * bnds.Upper.Y;
-                            for (int i = 0; i < numPoints; i++)
-                            {
-                                P3D op = ob.RelativeObjectVertices[i];
-                                P3D np = new P3D(op.X, oy - op.Y, op.Z);
-                                ob.RelativeObjectVertices.Add(np);
-                            }
-                            addFaces = true;
-                        }
-                        break;
-
-                    case "down":
-                        {
-                            double oy = 2 * bnds.Lower.Y;
-                            for (int i = 0; i < numPoints; i++)
-                            {
-                                P3D op = ob.RelativeObjectVertices[i];
-                                P3D np = new P3D(op.X, oy - op.Y, op.Z);
-                                ob.RelativeObjectVertices.Add(np);
-                            }
-                            addFaces = true;
-                        }
-                        break;
-                }
-                if (addFaces)
-                {
-                    for (int f = 0; f < numFaces; f += 3)
-                    {
-                        int v0 = ob.TriangleIndices[f] + numPoints;
-                        int v1 = ob.TriangleIndices[f + 1] + numPoints;
-                        int v2 = ob.TriangleIndices[f + 2] + numPoints;
-                        ob.TriangleIndices.Add(v0);
-                        ob.TriangleIndices.Add(v2);
-                        ob.TriangleIndices.Add(v1);
-                    }
-                }
-                RemoveDuplicateVertices(ob);
-                ob.Remesh();
-
-                ob.CalcScale(false);
+                Mirror.Reflect(ob,s);
                 allBounds += ob.AbsoluteBounds;
                 GeometryModel3D gm = GetMesh(ob);
                 RegenerateDisplayList();

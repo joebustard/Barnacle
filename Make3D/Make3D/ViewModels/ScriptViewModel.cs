@@ -31,6 +31,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using Barnacle.UserControls.ObjectViewer;
 
 namespace Barnacle.ViewModels
 {
@@ -121,15 +122,27 @@ program ""Script Name""
 
         public Point3D CameraPos
         {
-            get { return camera.CameraPos; }
-            set { NotifyPropertyChanged(); }
+            get
+            {
+                return camera.CameraPos;
+            }
+            set
+            {
+                NotifyPropertyChanged();
+            }
         }
 
-        public bool Dirty { get; set; }
+        public bool Dirty
+        {
+            get; set;
+        }
 
         public bool EnableRun
         {
-            get { return enableRun; }
+            get
+            {
+                return enableRun;
+            }
             set
             {
                 if (enableRun != value)
@@ -140,7 +153,10 @@ program ""Script Name""
             }
         }
 
-        public ICommand FindCommand { get; set; }
+        public ICommand FindCommand
+        {
+            get; set;
+        }
 
         public FlowDocument FlowDoc
         {
@@ -191,7 +207,10 @@ program ""Script Name""
             }
         }
 
-        public Canvas Overlay { get; internal set; }
+        public Canvas Overlay
+        {
+            get; internal set;
+        }
 
         public string ResultsText
         {
@@ -307,7 +326,15 @@ program ""Script Name""
             }
         }
 
-        internal String RawText { get; set; }
+        public ObjectView Viewer
+        {
+            get; set;
+        }
+
+        internal String RawText
+        {
+            get; set;
+        }
 
         public static void Refresh(System.Windows.UIElement uiElement)
         {
@@ -319,9 +346,10 @@ program ""Script Name""
             ResultsText = "";
             Refresh(resultsBox);
             content.Clear();
-            RegenerateDisplayList();
+            //RegenerateDisplayList();
+            Viewer?.MultiModels.Children.Clear();
         }
-
+        /*
         public void RegenerateDisplayList()
         {
             modelItems.Clear();
@@ -355,7 +383,7 @@ program ""Script Name""
 
             NotifyPropertyChanged("ModelItems");
         }
-
+        */
         public void SwitchTabs()
         {
             if (SelectedTabIndex == 0)
@@ -450,7 +478,9 @@ program ""Script Name""
                     MessageBox.Show(ex.Message);
                 }
             }
+
             content.Clear();
+            Viewer.MultiModels.Children.Clear();
             GC.Collect();
             script.SetPartsLibraryRoot(GetPartsLibraryPath());
             script.SetProjectPathRoot(Project.BaseFolder);
@@ -490,7 +520,12 @@ program ""Script Name""
             res.LogEntrys.Clear();
             GC.Collect();
             Refresh(resultsBox);
-            RegenerateDisplayList();
+            foreach (Object3D ob in content)
+            {
+                Viewer.MultiModels.Children.Add(GetMesh(ob));
+            }
+            Viewer.Redisplay();
+            //RegenerateDisplayList();
             EnableRun = true;
         }
 
@@ -724,25 +759,24 @@ program ""Script Name""
 
         private Task<RunRes> RunAsync(CancellationToken cancellationToken)
         {
-            return Task.Run(() =>
-                {
-                    RunRes result = new RunRes();
-                    result.Artefacts = new Dictionary<int, Object3D>();
-                    result.LogEntrys = new List<ScriptLanguage.LogEntry>();
-                    script.SetResultsContent(result.Artefacts);
-                    script.SetCancelationToken(cancellationToken);
-                    result.Status = script.Execute();
+            return Task.Run(() => {
+                RunRes result = new RunRes();
+                result.Artefacts = new Dictionary<int, Object3D>();
+                result.LogEntrys = new List<ScriptLanguage.LogEntry>();
+                script.SetResultsContent(result.Artefacts);
+                script.SetCancelationToken(cancellationToken);
+                result.Status = script.Execute();
 
-                    if (!cancellationToken.IsCancellationRequested)
+                if (!cancellationToken.IsCancellationRequested)
+                {
+                    foreach (ScriptLanguage.LogEntry le in ScriptLanguage.Log.Instance().LogEntrys)
                     {
-                        foreach (ScriptLanguage.LogEntry le in ScriptLanguage.Log.Instance().LogEntrys)
-                        {
-                            result.LogEntrys.Add(new ScriptLanguage.LogEntry(le.DateStamp, le.Text));
-                        }
+                        result.LogEntrys.Add(new ScriptLanguage.LogEntry(le.DateStamp, le.Text));
                     }
-                    ScriptLanguage.Log.Instance().Clear();
-                    return result;
-                });
+                }
+                ScriptLanguage.Log.Instance().Clear();
+                return result;
+            });
         }
 
         private void UpdateText(string s)
@@ -781,9 +815,20 @@ program ""Script Name""
 
         private struct RunRes
         {
-            public Dictionary<int, Object3D> Artefacts { get; set; }
-            public List<ScriptLanguage.LogEntry> LogEntrys { get; set; }
-            public bool Status { get; set; }
+            public Dictionary<int, Object3D> Artefacts
+            {
+                get; set;
+            }
+
+            public List<ScriptLanguage.LogEntry> LogEntrys
+            {
+                get; set;
+            }
+
+            public bool Status
+            {
+                get; set;
+            }
         }
     }
 }

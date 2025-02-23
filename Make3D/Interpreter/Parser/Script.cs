@@ -37,25 +37,33 @@ namespace ScriptLanguage
 
         public bool Execute()
         {
-            ExecutionStack.Instance().Clear();
-            ResultArtefacts.Clear();
-
-            nextObjectId = 0;
             bool result = false;
-            if (parseTree != null)
+            try
             {
-                ParseTreeNode.continueRunning = true;
-                result = parseTree.Execute();
-                //foreach (Object3D ob in ResultArtefacts)
-                foreach (Object3D ob in ResultArtefacts.Values)
+
+                ExecutionStack.Instance().Clear();
+                ResultArtefacts.Clear();
+
+                nextObjectId = 0;
+
+                if (parseTree != null)
                 {
-                    if (ob != null)
+                    ParseTreeNode.continueRunning = true;
+                    result = parseTree.Execute();            
+                    foreach (Object3D ob in ResultArtefacts.Values)
                     {
-                        ob.DeThread();
+                        if (ob != null)
+                        {
+                            ob.DeThread();
+                        }
                     }
                 }
+                GC.Collect();
             }
-            GC.Collect();
+            catch (Exception ex)
+            {
+                Log.Instance().AddEntry($"Exception:  {ex.Message} ");
+            }
             return result;
         }
 

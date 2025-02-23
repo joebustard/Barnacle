@@ -48,10 +48,16 @@ namespace Barnacle.UserControls.ObjectViewer
 
         private Vector3D lookDirection;
 
+        // used if only one model is to be displayed
         private GeometryModel3D model;
+
         private Model3DGroup modelContent;
 
+        // used if more that one model is to be displayed
+        private Model3DGroup multiModels;
+
         private Point oldMousePos;
+
         private PolarCamera polarCamera;
 
         private bool showAxies;
@@ -73,6 +79,7 @@ namespace Barnacle.UserControls.ObjectViewer
             showFloor = true;
             showAxies = true;
             modelContent = new Model3DGroup();
+            multiModels = new Model3DGroup();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -192,6 +199,14 @@ namespace Barnacle.UserControls.ObjectViewer
             }
         }
 
+        public Model3DGroup MultiModels
+        {
+            get
+            {
+                return multiModels;
+            }
+        }
+
         public bool ShowAxies
         {
             get
@@ -239,6 +254,11 @@ namespace Barnacle.UserControls.ObjectViewer
         public void Back_Click(object sender, RoutedEventArgs e)
         {
             BackCamera();
+        }
+
+        public void Bottom_Click(object sender, RoutedEventArgs e)
+        {
+            BottomCamera();
         }
 
         public void Busy()
@@ -309,6 +329,10 @@ namespace Barnacle.UserControls.ObjectViewer
                 {
                     modelContent.Children.Add(model);
                 }
+                foreach (GeometryModel3D gmm in multiModels.Children)
+                {
+                    modelContent.Children.Add(gmm);
+                }
                 NotifyPropertyChanged("ModelContent");
             }
         }
@@ -316,6 +340,11 @@ namespace Barnacle.UserControls.ObjectViewer
         public void Right_Click(object sender, RoutedEventArgs e)
         {
             RightCamera();
+        }
+
+        public void Top_Click(object sender, RoutedEventArgs e)
+        {
+            TopCamera();
         }
 
         public void UpdateCameraPos()
@@ -340,6 +369,14 @@ namespace Barnacle.UserControls.ObjectViewer
         {
             GetBounds(model);
             polarCamera.HomeBack();
+            SetDistanceToFit();
+            UpdateCameraPos();
+        }
+
+        private void BottomCamera()
+        {
+            GetBounds(model);
+            polarCamera.HomeBottom();
             SetDistanceToFit();
             UpdateCameraPos();
         }
@@ -392,6 +429,13 @@ namespace Barnacle.UserControls.ObjectViewer
                         {
                             HomeCamera();
                         }
+                    }
+                    break;
+
+                case Key.End:
+                    {
+                        handled = true;
+                        BackCamera();
                     }
                     break;
 
@@ -494,6 +538,14 @@ namespace Barnacle.UserControls.ObjectViewer
             {
                 polarCamera.DistanceToFit(l, h, 30);
             }
+        }
+
+        private void TopCamera()
+        {
+            GetBounds(model);
+            polarCamera.HomeTop();
+            SetDistanceToFit();
+            UpdateCameraPos();
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
