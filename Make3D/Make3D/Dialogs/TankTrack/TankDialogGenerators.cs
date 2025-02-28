@@ -24,7 +24,7 @@ using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {
-    public partial class TrackDialog : BaseModellerDialog
+    public partial class TankDialog2 : BaseModellerDialog
     {
         private System.Windows.Point[] m1LinkConnectorCoords =
     {
@@ -42,19 +42,6 @@ namespace Barnacle.Dialogs
          new System.Windows.Point(0.6,0.05),
      };
 
-        private System.Windows.Point[] m1OuterLinkConnectorCoords =
-      {
-         new System.Windows.Point(0.8,-0.05),
-         new System.Windows.Point(0.9,-0.7),
-         new System.Windows.Point(1.0,-0.7),
-        new System.Windows.Point(1.2,-0.05),
-         new System.Windows.Point(1.2,0.05),
-         new System.Windows.Point(1.0,0.7),
-
-         new System.Windows.Point(0.9,0.7),
-         new System.Windows.Point(0.8,0.05),
-     };
-
         private System.Windows.Point[] m1MainPolyCoords =
     {
          new System.Windows.Point(0.0,-0.05),
@@ -68,6 +55,19 @@ namespace Barnacle.Dialogs
          new System.Windows.Point(0.05,0.25),
          new System.Windows.Point(0.0,0.05),
         };
+
+        private System.Windows.Point[] m1OuterLinkConnectorCoords =
+              {
+         new System.Windows.Point(0.8,-0.05),
+         new System.Windows.Point(0.9,-0.7),
+         new System.Windows.Point(1.0,-0.7),
+        new System.Windows.Point(1.2,-0.05),
+         new System.Windows.Point(1.2,0.05),
+         new System.Windows.Point(1.0,0.7),
+
+         new System.Windows.Point(0.9,0.7),
+         new System.Windows.Point(0.8,0.05),
+     };
 
         internal void GenerateLinkPart(System.Windows.Point p1, System.Windows.Point p2, Point3DCollection vertices, Int32Collection faces, bool firstCall, double width, double thickness, Link link)
         {
@@ -504,12 +504,13 @@ namespace Barnacle.Dialogs
         private void GetLinkPartProfile(System.Windows.Point p1, System.Windows.Point p2, ref List<PointF> poly, System.Windows.Point[] shape, double size)
         {
             poly.Clear();
+
             for (int i = 0; i < shape.GetLength(0); i++)
             {
                 System.Windows.Point po = shape[i];
 
                 System.Windows.Point o1 = Perpendicular2(p1, p2, po.X, po.Y * size);
-                if (localImage == null)
+                if (PathEditor.LocalImage == null)
                 {
                     // flipping coordinates so have to reverse polygon too
                     o1.Y = -o1.Y;
@@ -684,7 +685,7 @@ namespace Barnacle.Dialogs
                 }
                 for (int i = 0; i < outerPolygon.Count; i++)
                 {
-                    if (localImage == null)
+                    if (PathEditor.LocalImage == null)
                     {
                         // flipping coordinates so have to reverse polygon too
                         otmp.Insert(0, new System.Windows.Point(outerPolygon[i].X, top - outerPolygon[i].Y));
@@ -705,7 +706,7 @@ namespace Barnacle.Dialogs
                 itmp.Clear();
                 for (int i = 0; i < innerPolygon.Count; i++)
                 {
-                    if (localImage == null)
+                    if (PathEditor.LocalImage == null)
                     {
                         // flipping coordinates so have to reverse polygon too
                         itmp.Insert(0, new System.Windows.Point(innerPolygon[i].X, top - innerPolygon[i].Y));
@@ -784,7 +785,7 @@ namespace Barnacle.Dialogs
                 }
                 for (int i = 0; i < outerPolygon.Count; i++)
                 {
-                    if (localImage == null)
+                    if (PathEditor.LocalImage == null)
                     {
                         // flipping coordinates so have to reverse polygon too
                         otmp.Insert(0, new System.Windows.Point(outerPolygon[i].X, top - outerPolygon[i].Y));
@@ -805,7 +806,7 @@ namespace Barnacle.Dialogs
                 itmp.Clear();
                 for (int i = 0; i < innerPolygon.Count; i++)
                 {
-                    if (localImage == null)
+                    if (PathEditor.LocalImage == null)
                     {
                         // flipping coordinates so have to reverse polygon too
                         itmp.Insert(0, new System.Windows.Point(innerPolygon[i].X, top - innerPolygon[i].Y));

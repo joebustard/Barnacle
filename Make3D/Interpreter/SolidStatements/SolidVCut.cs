@@ -20,11 +20,11 @@ using System;
 
 namespace ScriptLanguage
 {
-    internal class SolidHCutNode : SolidStatement
+    internal class SolidVCutNode : SolidStatement
     {
-        public SolidHCutNode()
+        public SolidVCutNode()
         {
-            label = "HCut";
+            label = "VCut";
             expressions = new ExpressionCollection();
         }
 
@@ -53,7 +53,7 @@ namespace ScriptLanguage
                                     PlaneCutter cutter = new PlaneCutter(
                                         Script.ResultArtefacts[objectIndex].AbsoluteObjectVertices,
                                         Script.ResultArtefacts[objectIndex].TriangleIndices, cutLevel);
-                                    cutter.SetHorizontal();
+                                    cutter.SetVertical();
                                     cutter.Cut();
 
                                     Script.ResultArtefacts[objectIndex].AbsoluteToRelative();

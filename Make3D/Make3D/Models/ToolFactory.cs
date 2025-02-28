@@ -227,7 +227,8 @@ namespace Barnacle.Models
                     break;
 
                 case "TankTrack":
-                    res = new TrackDialog();
+                    //res = new TrackDialog();
+                    res = new TankDialog2();
                     break;
 
                 case "Thread":

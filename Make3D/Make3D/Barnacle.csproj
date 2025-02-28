@@ -129,11 +129,17 @@
     <Compile Include="Dialogs\CrossGrille\CrossGrillDlg.xaml.cs" />
     <Compile Include="Dialogs\CurvedFunnel\CurvedFunnelDlg.xaml.cs" />
     <Compile Include="Dialogs\CutHPlane\CutHorizontalPlaneDlg.xaml.cs" />
+    <Compile Include="Dialogs\CutVPlane\CutVerticalPlaneDlg.xaml.cs">
+      <DependentUpon>CutVerticalPlaneDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\RibbedFuselage\Models\Dimension.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\ImageEdge.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\LetterMarker.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\RibAndPlanEditControl.xaml.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Views\RibManager.xaml.cs" />
+    <Compile Include="Dialogs\TankTrack\TankDialog2.xaml.cs">
+      <DependentUpon>TankDialog2.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Models\ObjectSplitterAndSeamer\EdgeProcessor.cs" />
     <Compile Include="Models\ObjectSplitterAndSeamer\EdgeRecord.cs" />
     <Compile Include="Dialogs\DecimatorSettings.xaml.cs">
@@ -268,9 +274,6 @@
     <Compile Include="Dialogs\Torus\TorusDialog.xaml.cs">
       <DependentUpon>TorusDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\TankTrack\TrackDialog.xaml.cs">
-      <DependentUpon>TrackDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Dialogs\TrapezoidDlg\TrapezoidDlg.xaml.cs">
       <DependentUpon>TrapezoidDlg.xaml</DependentUpon>
     </Compile>
@@ -301,14 +304,16 @@
     <Compile Include="Models\BufferedPolyline\Segment.cs" />
     <Compile Include="Models\CohenSutherland.cs" />
     <Compile Include="Models\GridData.cs" />
-    <Compile Include="Models\HorizontalPlane.cs" />
+    <Compile Include="Models\Planes\HorizontalPlane.cs" />
     <Compile Include="Models\MeshSubdivider.cs" />
     <Compile Include="Models\ObjectSplitterAndSeamer\ObjectSeamer.cs" />
     <Compile Include="Models\ObjectSplitterAndSeamer\ObjectSplitter.cs" />
+    <Compile Include="Models\Planes\Plane.cs" />
     <Compile Include="Models\Point3DExtensions.cs" />
     <Compile Include="Models\PrinterPlate.cs" />
     <Compile Include="Models\SDCard\SDCardUtils.cs" />
     <Compile Include="Models\VectorUtils.cs" />
+    <Compile Include="Models\Planes\VerticalPlane.cs" />
     <Compile Include="Models\WindowState\WindowState.cs" />
     <Compile Include="Models\ZipUtils.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\FuselageModel.cs" />
@@ -508,6 +513,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Dialogs\CutVPlane\CutVerticalPlaneDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\DecimatorSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -599,6 +608,10 @@
     <Page Include="Dialogs\SymbolFont\SymbolFontDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\TankTrack\TankDialog2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\TexturedTube\TexturedTubeDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -737,10 +750,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\Torus\TorusDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dialogs\TankTrack\TrackDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

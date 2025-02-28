@@ -130,6 +130,7 @@
     <Compile Include="SolidStatements\SolidSize.cs" />
     <Compile Include="SolidStatements\SolidStatement.cs" />
     <Compile Include="SolidStatements\SolidToMesh.cs" />
+    <Compile Include="SolidStatements\SolidVCut.cs" />
     <Compile Include="Statements\AssignOpNode.cs" />
     <Compile Include="Statements\AssignStructToArrayElementNode.cs" />
     <Compile Include="Statements\ArraySymbolForCall.cs" />

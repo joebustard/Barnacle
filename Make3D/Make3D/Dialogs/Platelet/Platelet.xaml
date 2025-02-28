@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Barnacle.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+
     xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
     Title="Platelet"
     Width="1000"

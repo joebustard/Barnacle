@@ -77,10 +77,10 @@ namespace Barnacle.Dialogs
 
             TrackTypes.Add("M1");
 
-            NoOfLinks = 50;
             trackPath = new List<System.Windows.Point>();
             outerPolygon = new List<System.Windows.Point>();
             innerPolygon = new List<System.Windows.Point>();
+            NoOfLinks = 50;
             Thickness = 6;
             TrackWidth = 10;
             SpudSize = 1;

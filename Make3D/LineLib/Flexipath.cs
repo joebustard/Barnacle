@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Net.Configuration;
 using System.Windows;
 
 namespace Barnacle.LineLib
@@ -1295,10 +1296,34 @@ namespace Barnacle.LineLib
 
         public void SetPointPos(int index, System.Windows.Point position)
         {
+            // if the path is a normal closed polygon one then it may have seperate start and
+            // ends points that are actually always meant to be coincident
+
             if (index >= 0 && index < flexiPoints.Count)
             {
+                int partner = -1;
+                if (closed && !openEndedPath && flexiPoints.Count > 2)
+                {
+                    if (flexiPoints[0].Compare(flexiPoints[flexiPoints.Count - 1]))
+                    {
+                        if (index == 0)
+                        {
+                            partner = flexiPoints.Count - 1;
+                        }
+                        else if (index == flexiPoints.Count - 1)
+                        {
+                            partner = 0;
+                        }
+                    }
+                }
+
                 flexiPoints[index].X = position.X;
                 flexiPoints[index].Y = position.Y;
+                if (partner != -1)
+                {
+                    flexiPoints[partner].X = position.X;
+                    flexiPoints[partner].Y = position.Y;
+                }
             }
         }
 

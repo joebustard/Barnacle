@@ -11,6 +11,7 @@ Added
   Show number of vertices and faces on object properties page
   CSG function ForceUnion(Solid1,solid2) added to Limpet
   Horizontal Plane hcut statement added to Limpet
+  Vertical Plane Cut added to editor
   GroupToMesh added to Limpet
   MakeCrossGrille to Limpet
   MirrorFront, MirrorBack, MirrorLeft, MirrorRight,MirrorUp,MirrorDown added to limpet

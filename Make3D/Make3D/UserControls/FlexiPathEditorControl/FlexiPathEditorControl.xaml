@@ -297,12 +297,25 @@
                     <CheckBox
                         Margin="8,0,2,0"
                         VerticalAlignment="Center"
+                        Content="Highlight Orthogonal Points"
                         IsChecked="{Binding ShowOrtho}"
-                        ToolTip="Show orthogononal guides and highlight orthogonal points" Content="Highlight Orthogonal Points" />
-                    <Button x:Name="SwapArcSize" Style="{StaticResource SmallButton}" Visibility="{Binding SwapArcVisible}" Margin="8,0,0,0" Command="{Binding SwapArcSegmentSizeCommand}" ToolTip="Toggle arc between small and large segment">
+                        ToolTip="Show orthogononal guides and highlight orthogonal points" />
+                    <Button
+                        x:Name="SwapArcSize"
+                        Margin="8,0,0,0"
+                        Command="{Binding SwapArcSegmentSizeCommand}"
+                        Style="{StaticResource SmallButton}"
+                        ToolTip="Toggle arc between small and large segment"
+                        Visibility="{Binding SwapArcVisible}">
                         <Image Source="/Barnacle;component/Images/Buttons/SwapArc.png" />
                     </Button>
-                    <Button x:Name="SwapArcDirection" Style="{StaticResource SmallButton}" Visibility="{Binding SwapArcVisible}" Margin="8,0,8,0" Command="{Binding SwapArcDirectionCommand}" ToolTip="Toggle arc between clockwise and anticlockwise">
+                    <Button
+                        x:Name="SwapArcDirection"
+                        Margin="8,0,8,0"
+                        Command="{Binding SwapArcDirectionCommand}"
+                        Style="{StaticResource SmallButton}"
+                        ToolTip="Toggle arc between clockwise and anticlockwise"
+                        Visibility="{Binding SwapArcVisible}">
                         <Image Source="/Barnacle;component/Images/Buttons/ToggleArcDirection.png" />
                     </Button>
 

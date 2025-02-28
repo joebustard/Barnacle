@@ -1,9 +1,12 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 namespace Barnacle.LineLib
 {
     public class FlexiPoint
     {
+        private const double tolerance = 0.0000001;
+
         public FlexiPoint(System.Windows.Point p)
         {
             X = p.X;
@@ -48,16 +51,50 @@ namespace Barnacle.LineLib
             ControlA
         }
 
-        public int Id { get; set; }
-        public PointMode Mode { get; set; }
-        public bool Selected { get; set; }
+        public int Id
+        {
+            get; set;
+        }
 
-        public bool Visible { get; set; }
+        public PointMode Mode
+        {
+            get; set;
+        }
+
+        public bool Selected
+        {
+            get; set;
+        }
+
+        public bool Visible
+        {
+            get; set;
+        }
 
         // public System.Windows.Point Point { get; set; }
-        public double X { get; set; }
+        public double X
+        {
+            get; set;
+        }
 
-        public double Y { get; set; }
+        public double Y
+        {
+            get; set;
+        }
+
+        public bool Compare(FlexiPoint b)
+        {
+            bool res = false;
+            if (b != null)
+            {
+                if (Math.Abs(X - b.X) < tolerance &&
+                 Math.Abs(Y - b.Y) < tolerance)
+                {
+                    res = true;
+                }
+            }
+            return res;
+        }
 
         public Point ToPoint()
         {

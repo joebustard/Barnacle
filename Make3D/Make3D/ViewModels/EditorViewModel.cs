@@ -1457,6 +1457,27 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private void CutVerticalPlane(Object3D ob)
+        {
+            CutVerticalPlaneDlg dlg = new CutVerticalPlaneDlg();
+            Point3DCollection p3col = new Point3DCollection();
+            PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, p3col);
+            dlg.OriginalVertices = p3col;
+            dlg.OriginalFaces = ob.TriangleIndices;
+
+            if (dlg.ShowDialog() == true)
+            {
+                PointUtils.PointCollectionToP3D(dlg.Vertices, ob.RelativeObjectVertices);
+                ob.TriangleIndices.Clear();
+                foreach (int i in dlg.Faces)
+                {
+                    ob.TriangleIndices.Add(i);
+                }
+                // RemoveDuplicateVertices(ob);
+                ob.Remesh();
+            }
+        }
+
         private void Decimate()
         {
             if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
@@ -2969,7 +2990,7 @@ namespace Barnacle.ViewModels
             if (confirmed)
             {
                 CheckPoint();
-                Mirror.Reflect(ob,s);
+                Mirror.Reflect(ob, s);
                 allBounds += ob.AbsoluteBounds;
                 GeometryModel3D gm = GetMesh(ob);
                 RegenerateDisplayList();
@@ -3505,6 +3526,11 @@ namespace Barnacle.ViewModels
                         case "H":
 
                             CutHorizontalPlane(ob);
+                            break;
+
+                        case "V":
+
+                            CutVerticalPlane(ob);
                             break;
 
                         default:

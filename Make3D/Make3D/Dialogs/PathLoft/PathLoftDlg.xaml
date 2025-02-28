@@ -63,13 +63,13 @@
                     Content="Profile" />
                 <ListBox
                     Name="ProfileNamesBox"
+                    Margin="8,0,0,0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Top"
                     BorderThickness="2"
-                    Margin="8,0,0,0"
                     ItemsSource="{Binding ProfileNames}"
-                    SelectionMode="Single"
-                    SelectedIndex="{Binding ProfileIndex}">
+                    SelectedIndex="{Binding ProfileIndex}"
+                    SelectionMode="Single">
                     <!--  changing default orientation  -->
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -80,19 +80,18 @@
                         <DataTemplate DataType="{x:Type local:NameOfProfile}">
                             <Border BorderThickness="4">
                                 <Image
-                                Width="30"
-                                Height="30"
-                                Margin="4,0,2,0"
-                                Source="{Binding Path=ImageUri}" Stretch="UniformToFill"
-                                ToolTip="{Binding Name}" />
+                                    Width="30"
+                                    Height="30"
+                                    Margin="4,0,2,0"
+                                    Source="{Binding Path=ImageUri}"
+                                    Stretch="UniformToFill"
+                                    ToolTip="{Binding Name}" />
                                 <Border.Style>
                                     <Style TargetType="Border">
                                         <Setter Property="Opacity" Value="0.25" />
                                         <Setter Property="BorderBrush" Value="AliceBlue" />
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Path=IsSelected,
-                                                           RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
-                                         Value="True">
+                                            <DataTrigger Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
                                                 <Setter Property="Opacity" Value="1" />
                                                 <Setter Property="BorderBrush" Value="DarkGreen" />
                                             </DataTrigger>

@@ -62,6 +62,7 @@ namespace ScriptLanguage
                 "stackbehind",
                 "string",
                 "struct",
+                "vcut",
                 "while",
                 "writeline",
             };
@@ -2268,6 +2269,12 @@ namespace ScriptLanguage
                 case "while":
                     {
                         result = ParseWhileStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "vcut":
+                    {
+                        result = ParseVCutStatement(parentNode, parentName);
                     }
                     break;
 
@@ -6686,6 +6693,15 @@ namespace ScriptLanguage
             }
 
             return exp;
+        }
+
+        private bool ParseVCutStatement(CompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+            string label = "Vcut";
+            SolidVCutNode asn = new SolidVCutNode();
+            result = ParseSolidStatement(parentNode, parentName, label, 2, asn);
+            return result;
         }
 
         private bool ParseWhileStatement(CompoundNode parentNode, String parentName)

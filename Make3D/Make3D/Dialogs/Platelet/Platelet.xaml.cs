@@ -1121,19 +1121,7 @@ namespace Barnacle.Dialogs
                     {
                         j = 0;
                     }
-                    /*
-                    int c0 = AddVerticeOctTree(outerPolygon[i].X, outerPolygon[i].Y, 0.0);
-                    int c1 = AddVerticeOctTree(innerPolygon[i].X, innerPolygon[i].Y, 0.0);
-                    int c2 = AddVerticeOctTree(innerPolygon[j].X, innerPolygon[j].Y, 0.0);
-                    int c3 = AddVerticeOctTree(outerPolygon[j].X, outerPolygon[j].Y, 0.0);
-                    Faces.Add(c0);
-                    Faces.Add(c1);
-                    Faces.Add(c2);
 
-                    Faces.Add(c0);
-                    Faces.Add(c2);
-                    Faces.Add(c3);
-                    */
                     int c0 = AddVerticeOctTree(outerPolygon[i].X, outerPolygon[i].Y, plateWidth);
                     int c1 = AddVerticeOctTree(innerPolygon[i].X, innerPolygon[i].Y, plateWidth);
                     int c2 = AddVerticeOctTree(innerPolygon[j].X, innerPolygon[j].Y, plateWidth);

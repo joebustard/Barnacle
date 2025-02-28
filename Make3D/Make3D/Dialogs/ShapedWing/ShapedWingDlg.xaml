@@ -108,8 +108,15 @@
                     Grid.Column="0" />
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
 
-                    <Label Grid.Column="0" VerticalAlignment="Center" Content="Divisions" Margin="4,0,0,0" />
-                    <TextBox Width="100" Margin="8,2,0,2" Text="{Binding NumDivisions}" />
+                    <Label
+                        Grid.Column="0"
+                        Margin="4,0,0,0"
+                        VerticalAlignment="Center"
+                        Content="Divisions" />
+                    <TextBox
+                        Width="100"
+                        Margin="8,2,0,2"
+                        Text="{Binding NumDivisions}" />
                     <TextBox
                         Margin="4,0,0,0"
                         VerticalContentAlignment="Center"
