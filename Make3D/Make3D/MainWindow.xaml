@@ -12,7 +12,7 @@
         xmlns:Views="clr-namespace:Barnacle.Views"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Width="900"
-        Height="550" Closing="Window_Closing">
+        Height="550" Closing="Window_Closing" Closed="Window_Closed">
     <Window.DataContext>
         <ViewModels:MainWindowViewModel />
     </Window.DataContext>

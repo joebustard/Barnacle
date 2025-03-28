@@ -20,49 +20,6 @@ using System.Collections.Generic;
 
 namespace asdflibrary
 {
-    public class XYZ
-    {
-        public double x;
-        public double y;
-        public double z;
-
-        public XYZ()
-        {
-            this.x = 0;
-            this.y = 0;
-            this.z = 0;
-        }
-
-        public XYZ(double x, double y, double z)
-        {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-    };
-
-    public class Triangle
-    {
-        public XYZ[] p;
-
-        public Triangle()
-        {
-            p = new XYZ[3];
-        }
-    };
-
-    public class GridCell
-    {
-        public XYZ[] p;
-        public double[] val;
-
-        public GridCell()
-        {
-            p = new XYZ[8];
-            val = new double[8];
-        }
-    }
-
     public class CubeMarcher
     {
         private int[] edgeTable ={
@@ -99,8 +56,10 @@ namespace asdflibrary
 0xf00, 0xe09, 0xd03, 0xc0a, 0xb06, 0xa0f, 0x905, 0x80c,
 0x70c, 0x605, 0x50f, 0x406, 0x30a, 0x203, 0x109, 0x0   };
 
+        private double tolerance;
+
         private int[,] triTable =
-        {
+                {
         { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 { 0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 { 0, 1, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
@@ -359,8 +318,9 @@ namespace asdflibrary
 { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
     };
 
-        public CubeMarcher()
+        public CubeMarcher(double t = 0.00001)
         {
+            tolerance = t;
         }
 
         /*
@@ -446,17 +406,17 @@ namespace asdflibrary
             double mu;
             XYZ p = new XYZ();
 
-            if (Math.Abs(isolevel - valp1) < 0.00001)
+            if (Math.Abs(isolevel - valp1) < tolerance)
             {
                 return (p1);
             }
 
-            if (Math.Abs(isolevel - valp2) < 0.00001)
+            if (Math.Abs(isolevel - valp2) < tolerance)
             {
                 return (p2);
             }
 
-            if (Math.Abs(valp1 - valp2) < 0.00001)
+            if (Math.Abs(valp1 - valp2) < tolerance)
             {
                 return (p1);
             }
@@ -469,4 +429,47 @@ namespace asdflibrary
             return (p);
         }
     }
+
+    public class GridCell
+    {
+        public XYZ[] p;
+        public double[] val;
+
+        public GridCell()
+        {
+            p = new XYZ[8];
+            val = new double[8];
+        }
+    }
+
+    public class Triangle
+    {
+        public XYZ[] p;
+
+        public Triangle()
+        {
+            p = new XYZ[3];
+        }
+    };
+
+    public class XYZ
+    {
+        public double x;
+        public double y;
+        public double z;
+
+        public XYZ()
+        {
+            this.x = 0;
+            this.y = 0;
+            this.z = 0;
+        }
+
+        public XYZ(double x, double y, double z)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+    };
 }

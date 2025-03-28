@@ -137,6 +137,30 @@
     <Compile Include="Dialogs\RibbedFuselage\Models\LetterMarker.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\RibAndPlanEditControl.xaml.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Views\RibManager.xaml.cs" />
+    <Compile Include="Dialogs\SdfModel\Operations\SdfIntersectionOp.cs" />
+    <Compile Include="Dialogs\SdfModel\Operations\SdfSmoothIntersectionOp.cs" />
+    <Compile Include="Dialogs\SdfModel\Operations\SdfSmoothSubtractionOp.cs" />
+    <Compile Include="Dialogs\SdfModel\Operations\SdfSmoothUnionOp.cs" />
+    <Compile Include="Dialogs\SdfModel\Operations\SdfSmoothXorOp.cs" />
+    <Compile Include="Dialogs\SdfModel\Operations\SdfSubtractionOp.cs" />
+    <Compile Include="Dialogs\SdfModel\Operations\SdfUnionOp.cs" />
+    <Compile Include="Dialogs\SdfModel\Operations\SdfXorOp.cs" />
+    <Compile Include="Dialogs\SdfModel\Primitives\Rotations.cs" />
+    <Compile Include="Dialogs\SdfModel\Primitives\SdfBox.cs" />
+    <Compile Include="Dialogs\SdfModel\Primitives\SdfCylinder.cs" />
+    <Compile Include="Dialogs\SdfModel\Primitives\SdfSphere.cs" />
+    <Compile Include="Dialogs\SdfModel\Primitives\sdfTorus.cs" />
+    <Compile Include="Dialogs\SdfModel\Primitives\SdfTriangle.cs" />
+    <Compile Include="Dialogs\SdfModel\SdfModelDlg.xaml.cs">
+      <DependentUpon>SdfModelDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\SdfModel\SdfModelMaker.cs" />
+    <Compile Include="Dialogs\SdfModel\Operations\SdfOperation.cs" />
+    <Compile Include="Dialogs\SdfModel\Primitives\SdfPrimitive.cs" />
+    <Compile Include="Dialogs\SdfModel\SdfStep.cs" />
+    <Compile Include="Dialogs\SdfModel\StepManager.cs" />
+    <Compile Include="Dialogs\SdfModel\StepRecord.cs" />
+    <Compile Include="Dialogs\SdfModel\Utils\Utils.cs" />
     <Compile Include="Dialogs\TankTrack\TankDialog2.xaml.cs">
       <DependentUpon>TankDialog2.xaml</DependentUpon>
     </Compile>
@@ -586,6 +610,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\RoundGrille\RoundGrilleDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\SdfModel\SdfModelDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

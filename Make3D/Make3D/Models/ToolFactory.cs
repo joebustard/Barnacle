@@ -158,6 +158,10 @@ namespace Barnacle.Models
                     res = new ReuleauxDlg();
                     break;
 
+                case "SdfModel":
+                    res = new SdfModelDlg();
+                    break;
+
                 case "ShapedBrickWall":
                     res = new ShapedBrickWallDlg();
                     break;

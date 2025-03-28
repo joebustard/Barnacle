@@ -48,16 +48,6 @@ namespace sdflib
             x = Math.Floor(x);
             y = Math.Floor(y);
             z = Math.Floor(z);
-            /*
-            double c000 = Get((int)x, (int)y, (int)z);
-            double c110 = Get((int)x + 1, (int)y, (int)z);
-            double c010 = Get((int)x, (int)y + 1, (int)z);
-            double c100 = Get((int)x + 1, (int)y + 1, (int)z);
-            double c001 = Get((int)x, (int)y, (int)z + 1);
-            double c111 = Get((int)x + 1, (int)y, (int)z + 1);
-            double c011 = Get((int)x, (int)y + 1, (int)z + 1);
-            double c101 = Get((int)x + 1, (int)y + 1, (int)z + 1);
-            */
 
             double c000 = Get((int)x, (int)y, (int)z);
             double c110 = Get((int)x + 1, (int)y + 1, (int)z);
