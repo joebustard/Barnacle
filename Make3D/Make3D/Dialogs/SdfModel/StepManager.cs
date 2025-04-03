@@ -269,29 +269,6 @@ namespace Barnacle.Dialogs.SdfModel
             }
         }
 
-        private SdfStep AddCubeStep(int x, int y, int z, int v4, int v5, int v6, SdfOperation operation)
-        {
-            SdfStep s = new SdfStep();
-            SdfBox sp = new SdfBox();
-            sp.Size = new Vector3D(v4, v5, v6);
-            sp.Position = new Point3D(x, y, z);
-            s.Primitive = sp;
-            s.Operation = operation;
-            return s;
-        }
-
-        private SdfStep AddSphereStep(double x, double y, double z, double r, SdfOperation operation)
-        {
-            SdfStep s = new SdfStep();
-            SdfSphere sp = new SdfSphere();
-            sp.Size = new Vector3D(2 * r, 2 * r, 2 * r);
-            sp.Position = new Point3D(x, y, z);
-            s.Primitive = sp;
-            s.Operation = operation;
-
-            return s;
-        }
-
         private SdfOperation GetStepOperation(string[] words, ref int i)
         {
             SdfOperation op = null;
