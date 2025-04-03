@@ -28,9 +28,9 @@ namespace Barnacle.Dialogs.SdfModel.Primitives
             {
                 p = Rotate(p);
             }
-            double x = Math.Max(p.X - Position.X - (Size.X / 2), Position.X - p.X - (Size.X / 2));
-            double y = Math.Max(p.Y - Position.Y - (Size.Y / 2), Position.Y - p.Y - (Size.Y / 2));
-            double z = Math.Max(p.Z - Position.Z - (Size.Z / 2), Position.Z - p.Z - (Size.Z / 2));
+            double x = Math.Max(p.X - (Size.X / 2), -p.X - (Size.X / 2));
+            double y = Math.Max(p.Y - (Size.Y / 2), -p.Y - (Size.Y / 2));
+            double z = Math.Max(p.Z - (Size.Z / 2), -p.Z - (Size.Z / 2));
 
             double d = x;
             d = Math.Max(d, y);

@@ -132,6 +132,7 @@ namespace Barnacle.Dialogs.SdfModel
 
         internal double Generate(Point3DCollection vertices, Int32Collection faces)
         {
+            LoggerLib.Logger.MarkStart("Sdf Model");
             // first find out how big the sdf field is by calculating the bounds of all the steps
             Bounds3D bounds = stepManager.GetBounds();
             bounds.Expand(new Point3D(3, 3, 3)); ;
@@ -140,27 +141,67 @@ namespace Barnacle.Dialogs.SdfModel
             List<asdflibrary.Triangle> triangles = new List<asdflibrary.Triangle>();
             CreateOctree(bounds.Lower,
                  bounds.Upper, vertices);
+            bool bufferPoints = false;
             for (float x = (float)bounds.Lower.X; x <= (float)bounds.Upper.X; x += (float)Resolution)
             {
                 for (float y = (float)bounds.Lower.Y; y <= (float)bounds.Upper.Y; y += (float)Resolution)
                 {
+                    bufferPoints = false;
                     for (float z = (float)bounds.Lower.Z; z <= (float)bounds.Upper.Z; z += (float)Resolution)
                     {
-                        gc.p[0] = new XYZ(x, y, z);
-
-                        gc.p[1] = new XYZ(x + Resolution, y, z);
-                        gc.p[2] = new XYZ(x + Resolution, y, z + Resolution);
-                        gc.p[3] = new XYZ(x, y, z + Resolution);
-                        gc.p[4] = new XYZ(x, y + Resolution, z);
-                        gc.p[5] = new XYZ(x + Resolution, y + Resolution, z);
-                        gc.p[6] = new XYZ(x + Resolution, y + Resolution, z + Resolution);
-                        gc.p[7] = new XYZ(x, y + Resolution, z + Resolution);
-
-                        for (int i = 0; i < 8; i++)
+                        if (bufferPoints)
                         {
-                            gc.val[i] = stepManager.GetSdfValue(new Point3D(gc.p[i].x,
-                                                                            gc.p[i].y,
-                                                                            gc.p[i].z));
+                            // bottom
+                            gc.p[0] = gc.p[3];
+                            gc.val[0] = gc.val[3];
+
+                            gc.p[1] = gc.p[2];
+                            gc.val[1] = gc.val[2];
+
+                            gc.p[2] = new XYZ(x + Resolution, y, z + Resolution);
+                            gc.p[3] = new XYZ(x, y, z + Resolution);
+
+                            gc.p[4] = gc.p[7];
+                            gc.val[4] = gc.val[7];
+                            gc.p[5] = gc.p[6];
+                            gc.val[5] = gc.val[6];
+                            gc.p[6] = new XYZ(x + Resolution, y + Resolution, z + Resolution);
+                            gc.p[7] = new XYZ(x, y + Resolution, z + Resolution);
+                            gc.val[2] = stepManager.GetSdfValue(new Point3D(gc.p[2].x,
+                                                                    gc.p[2].y,
+                                                                    gc.p[2].z));
+
+                            gc.val[3] = stepManager.GetSdfValue(new Point3D(gc.p[3].x,
+                                                                            gc.p[3].y,
+                                                                            gc.p[3].z));
+
+                            gc.val[6] = stepManager.GetSdfValue(new Point3D(gc.p[6].x,
+                                                                            gc.p[6].y,
+                                                                            gc.p[6].z));
+
+                            gc.val[7] = stepManager.GetSdfValue(new Point3D(gc.p[7].x,
+                                                                            gc.p[7].y,
+                                                                            gc.p[7].z));
+                        }
+                        else
+                        {
+                            // bottom
+                            gc.p[0] = new XYZ(x, y, z);
+                            gc.p[1] = new XYZ(x + Resolution, y, z);
+                            gc.p[2] = new XYZ(x + Resolution, y, z + Resolution);
+                            gc.p[3] = new XYZ(x, y, z + Resolution);
+
+                            // top
+                            gc.p[4] = new XYZ(x, y + Resolution, z);
+                            gc.p[5] = new XYZ(x + Resolution, y + Resolution, z);
+                            gc.p[6] = new XYZ(x + Resolution, y + Resolution, z + Resolution);
+                            gc.p[7] = new XYZ(x, y + Resolution, z + Resolution);
+                            for (int i = 0; i < 8; i++)
+                            {
+                                gc.val[i] = stepManager.GetSdfValue(new Point3D(gc.p[i].x,
+                                                                                gc.p[i].y,
+                                                                                gc.p[i].z));
+                            }
                         }
                         triangles.Clear();
 
@@ -175,9 +216,11 @@ namespace Barnacle.Dialogs.SdfModel
                             faces.Add(p1);
                             faces.Add(p2);
                         }
+                        bufferPoints = true;
                     }
                 }
             }
+            LoggerLib.Logger.MarkEnd("Sdf Model");
             return bounds.Upper.Y;
         }
 

@@ -359,6 +359,11 @@ namespace Barnacle.UserControls.ObjectViewer
             NotifyPropertyChanged("CameraPosition");
         }
 
+        internal void Refresh()
+        {
+            Redisplay();
+        }
+
         internal void SaveCamera()
         {
             string dataPath = PathManager.CommonAppDataFolder() + "\\" + cameraRecordFile;

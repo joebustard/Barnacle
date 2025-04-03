@@ -2732,53 +2732,6 @@ namespace Barnacle.ViewModels
             zoomPercent = 100;
         }
 
-        /*
-        private void ImportOneOfMany(string fpath)
-        {
-            string rootName = System.IO.Path.GetFileNameWithoutExtension(fpath);
-
-            string targetPath = BaseViewModel.Project.ProjectPathToAbsPath(rootName + ".txt");
-            if (!File.Exists(targetPath))
-            {
-                try
-                {
-                    Document localDoc = new Document();
-                    localDoc.ImportStl(fpath, BaseViewModel.Project.SharedProjectSettings.ImportAxisSwap);
-                    int numObs = 0;
-                    foreach (Object3D ob in localDoc.Content)
-                    {
-                        ob.Name = rootName;
-                        if (numObs > 0)
-                        {
-                            ob.Name += "_" + numObs.ToString();
-                        }
-                        ob.FlipInside();
-                        ob.MoveOriginToCentroid();
-                        ob.MoveToFloor();
-                        ob.MoveToCentre();
-                        numObs++;
-                    }
-                    localDoc.Save(targetPath);
-
-                    string fldr = System.IO.Path.GetDirectoryName(targetPath);
-                    BaseViewModel.Project.AddFileToFolder(fldr, rootName + ".txt");
-
-                    localDoc.Clear();
-                    localDoc = null;
-                    GC.Collect();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-            }
-            else
-            {
-                System.Windows.MessageBox.Show("File already exists: " + targetPath, "Error");
-            }
-        }
-        */
-
         private void LeftCamera()
         {
             ResetSelection();

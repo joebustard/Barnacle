@@ -55,6 +55,7 @@ namespace Barnacle.Dialogs.SdfModel.Operations
         {
             if (Primitive != null)
             {
+                xyZ = xyZ - new Vector3D(Primitive.Position.X, Primitive.Position.Y, Primitive.Position.Z);
                 return Primitive.GetSdfValue(xyZ);
             }
             else

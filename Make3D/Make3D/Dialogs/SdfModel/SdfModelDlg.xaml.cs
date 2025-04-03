@@ -16,6 +16,8 @@ using System.Data;
 using System.Windows.Controls;
 using System.Collections.Generic;
 using Barnacle.Dialogs.SdfModel.Primitives;
+using System.Windows.Forms;
+using System.Windows.Controls.Primitives;
 
 namespace Barnacle.Dialogs
 {
@@ -31,6 +33,7 @@ namespace Barnacle.Dialogs
         private double nextY;
         private DispatcherTimer regenTimer;
         private int selectedPrimitive;
+        private bool showCurrent = true;
         private string warningText;
 
         public SdfModelDlg()
@@ -69,6 +72,8 @@ namespace Barnacle.Dialogs
                 if (selectedPrimitive != value)
                 {
                     selectedPrimitive = value;
+
+                    SelectStep(selectedPrimitive);
                     NotifyPropertyChanged();
                 }
             }
@@ -107,8 +112,20 @@ namespace Barnacle.Dialogs
             //regenTimer.Start();
             if (loaded)
             {
+                Viewer.MultiModels.Children.Clear();
                 GenerateShape();
-                Viewer.Model = GetModel();
+                GeometryModel3D sdfModel = GetModel();
+                Model3DGroup group = new Model3DGroup();
+                Viewer.MultiModels.Children.Add(sdfModel);
+                if (selectedPrimitive != -1 && showCurrent)
+                {
+                    GeometryModel3D highlightModel = GenerateShapeForSelectedPrimitive();
+                    if (highlightModel != null)
+                    {
+                        Viewer.MultiModels.Children.Add(highlightModel);
+                    }
+                }
+                Viewer.Refresh();
             }
         }
 
@@ -147,6 +164,7 @@ namespace Barnacle.Dialogs
                 {
                     StepRecord sr = new StepRecord();
                     sr.Id = nextRecordId++;
+                    sr.OnStepsChanged = StepsChanged;
                     sr.PrimitiveType = words[i++];
                     Point3D pos = new Point3D(0, 0, 0);
                     try
@@ -291,9 +309,53 @@ namespace Barnacle.Dialogs
                 maker.AddStep(sp.PrimitiveType, sp.Position, sp.SizeX, sp.SizeY, sp.SizeZ, sp.RotX, sp.RotY, sp.RotZ, sp.OpType, sp.Blend, sp.Thickness);
             }
             nextY = maker.Generate(Vertices, Faces);
-            CentreVertices();
+            //CentreVertices();
             Viewer.NotBusy();
             EditingEnabled = true;
+        }
+
+        private GeometryModel3D GenerateShapeForSelectedPrimitive()
+        {
+            if (selectedPrimitive >= 0 && selectedPrimitive < StepRecords.Count && StepRecords[selectedPrimitive].Selected)
+            {
+                Point3DCollection verts = new Point3DCollection();
+                Int32Collection faces = new Int32Collection();
+                StepRecord sp = StepRecords[selectedPrimitive];
+                maker.ClearSteps();
+                maker.AddStep(sp.PrimitiveType, sp.Position, sp.SizeX * 1.1, sp.SizeY * 1.1, sp.SizeZ * 1.1, sp.RotX, sp.RotY, sp.RotZ, "null", sp.Blend, sp.Thickness);
+                maker.Generate(verts, faces);
+                return GetModel(verts, faces);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private GeometryModel3D GetModel(Point3DCollection vertices, Int32Collection faces)
+        {
+            MeshGeometry3D mesh = null;
+            GeometryModel3D gm = null;
+            Color meshColour = Color.FromArgb(200, 255, 0, 0);
+            if (vertices != null && vertices.Count >= 3 && faces != null && faces.Count >= 3)
+            {
+                mesh = new MeshGeometry3D();
+                mesh.Positions = vertices;
+                mesh.TriangleIndices = faces;
+                mesh.Normals = null;
+                gm = new GeometryModel3D();
+                gm.Geometry = mesh;
+
+                DiffuseMaterial mt = new DiffuseMaterial();
+                mt.Color = meshColour;
+                mt.Brush = new SolidColorBrush(meshColour);
+                gm.Material = mt;
+                DiffuseMaterial mtb = new DiffuseMaterial();
+                mtb.Color = Colors.CornflowerBlue;
+                mtb.Brush = new SolidColorBrush(Colors.Green);
+                gm.BackMaterial = mtb;
+            }
+            return gm;
         }
 
         private SdfOperation GetStepOperation(string[] words, ref int i)
@@ -361,6 +423,12 @@ namespace Barnacle.Dialogs
             return op;
         }
 
+        private void HideClick(object sender, RoutedEventArgs e)
+        {
+            showCurrent = !showCurrent;
+            UpdateDisplay();
+        }
+
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
@@ -425,7 +493,17 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Viewer.Model = GetModel();
+                GeometryModel3D sdfModel = GetModel();
+                Model3DGroup group = new Model3DGroup();
+                Viewer.MultiModels.Children.Add(sdfModel);
+                if (selectedPrimitive != -1)
+                {
+                    GeometryModel3D highlightModel = GenerateShapeForSelectedPrimitive();
+                    if (highlightModel != null)
+                    {
+                        Viewer.MultiModels.Children.Add(highlightModel);
+                    }
+                }
             }
         }
 
@@ -439,6 +517,7 @@ namespace Barnacle.Dialogs
         {
             StepRecords.Clear();
             nextRecordId = -1;
+            nextY = 0;
             AddBoxAtTop();
             UpdateDisplay();
         }
@@ -448,6 +527,19 @@ namespace Barnacle.Dialogs
             // save the parameters for the tool
             String s = GetStepsAsText();
             EditorParameters.Set("Steps", s);
+        }
+
+        private void SelectStep(int selectedPrimitive)
+        {
+            foreach (StepRecord record in StepRecords)
+            {
+                record.Selected = false;
+            }
+            if (selectedPrimitive >= 0 && selectedPrimitive < StepRecords.Count)
+            {
+                StepRecords[selectedPrimitive].Selected = true;
+            }
+            UpdateDisplay();
         }
 
         private void SetDefaults()

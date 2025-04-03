@@ -11,10 +11,12 @@ namespace Barnacle.Dialogs.SdfModel.Primitives
     internal class SdfSphere : SdfPrimitive
     {
         private double Radius = 10;
+        private Point3D Zero;
 
         public SdfSphere()
         {
             Position = new Point3D(0, 0, 0);
+            Zero = new Point3D(0, 0, 0);
         }
 
         public override String ToString()
@@ -31,7 +33,7 @@ namespace Barnacle.Dialogs.SdfModel.Primitives
 
         internal override double GetSdfValue(Point3D xyz)
         {
-            return BaseModellerDialog.Distance3D(Position, xyz) - Radius;
+            return BaseModellerDialog.Distance3D(Zero, xyz) - Radius;
         }
     }
 }

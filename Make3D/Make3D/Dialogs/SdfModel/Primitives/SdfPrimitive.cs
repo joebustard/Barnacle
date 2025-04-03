@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs.SdfModel
@@ -47,6 +48,12 @@ namespace Barnacle.Dialogs.SdfModel
             double l = Size.X / 2;
             double h = Size.Y / 2;
             double w = Size.Z / 2;
+            if (Rotation != null)
+            {
+                l = Size.X;
+                h = Size.Y;
+                w = Size.Z;
+            }
             bounds.Adjust(new Point3D(Position.X - l, Position.Y - h, Position.Z - w));
             bounds.Adjust(new Point3D(Position.X + l, Position.Y + h, Position.Z + w));
         }

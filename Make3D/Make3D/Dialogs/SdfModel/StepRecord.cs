@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
@@ -16,6 +17,8 @@ namespace Barnacle.Dialogs
     {
         public StepsChanged OnStepsChanged;
         private double blend;
+        private Int32Collection faces;
+        private Color meshColour;
         private string opType;
         private Point3D position;
         private string primitiveType;
@@ -24,8 +27,10 @@ namespace Barnacle.Dialogs
         private double rotX;
         private double rotY;
         private double rotZ;
+        private bool selected;
         private Visibility showBlend;
         private Visibility showRadius;
+        private Visibility showRot;
         private Visibility showSize;
         private Visibility showThickness;
         private Vector3D size;
@@ -33,6 +38,8 @@ namespace Barnacle.Dialogs
         private double sizeY;
         private double sizeZ;
         private double thickness;
+
+        private Point3DCollection vertices;
 
         public StepRecord()
         {
@@ -47,6 +54,7 @@ namespace Barnacle.Dialogs
             Thickness = 3;
             Radius = 10;
             ShowSize = Visibility.Visible;
+            ShowRot = Visibility.Visible;
             primTypes = new List<string>();
             primTypes.Add("Box");
             primTypes.Add("Cylinder");
@@ -62,6 +70,10 @@ namespace Barnacle.Dialogs
             OpTypes.Add("Smooth Subtraction");
             OpTypes.Add("Smooth Intersection");
             OnStepsChanged = null;
+            vertices = new Point3DCollection();
+            faces = new Int32Collection();
+            meshColour = Color.FromArgb(200, 255, 0, 0);
+            Selected = false;
         }
 
         public delegate void StepsChanged();
@@ -159,6 +171,7 @@ namespace Barnacle.Dialogs
                                 ShowSize = Visibility.Visible;
                                 ShowRadius = Visibility.Collapsed;
                                 ShowThickness = Visibility.Collapsed;
+                                ShowRot = Visibility.Visible;
                             }
                             break;
 
@@ -167,6 +180,7 @@ namespace Barnacle.Dialogs
                                 ShowSize = Visibility.Collapsed;
                                 ShowRadius = Visibility.Visible;
                                 ShowThickness = Visibility.Collapsed;
+                                ShowRot = Visibility.Collapsed;
                             }
                             break;
 
@@ -175,6 +189,7 @@ namespace Barnacle.Dialogs
                                 ShowSize = Visibility.Collapsed;
                                 ShowRadius = Visibility.Visible;
                                 ShowThickness = Visibility.Visible;
+                                ShowRot = Visibility.Visible;
                             }
                             break;
 
@@ -183,6 +198,16 @@ namespace Barnacle.Dialogs
                                 ShowSize = Visibility.Visible;
                                 ShowRadius = Visibility.Collapsed;
                                 ShowThickness = Visibility.Collapsed;
+                                ShowRot = Visibility.Visible;
+                            }
+                            break;
+
+                        case "Triangle":
+                            {
+                                ShowSize = Visibility.Visible;
+                                ShowRadius = Visibility.Collapsed;
+                                ShowThickness = Visibility.Collapsed;
+                                ShowRot = Visibility.Visible;
                             }
                             break;
                     }
@@ -278,6 +303,30 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public bool Selected
+        {
+            get
+            {
+                return selected;
+            }
+            set
+            {
+                if (selected != value)
+                {
+                    selected = value;
+                    if (selected)
+                    {
+                        GenerateModel();
+                    }
+                    else
+                    {
+                        vertices.Clear();
+                        faces.Clear();
+                    }
+                }
+            }
+        }
+
         public Visibility ShowBlend
         {
             get
@@ -305,6 +354,22 @@ namespace Barnacle.Dialogs
                 if (showRadius != value)
                 {
                     showRadius = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public Visibility ShowRot
+        {
+            get
+            {
+                return showRot;
+            }
+            set
+            {
+                if (showRot != value)
+                {
+                    showRot = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -410,6 +475,65 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public GeometryModel3D GenerateModel()
+        {
+            GeometryModel3D res = null;
+            bool flip = false;
+            vertices.Clear();
+            faces.Clear();
+            Vector3DCollection normals = new Vector3DCollection();
+            Point3DCollection points = new Point3DCollection();
+            switch (primitiveType.ToLower())
+            {
+                case "box":
+                    {
+                        Object3DLib.PrimitiveGenerator.GenerateCube(ref points, ref faces, ref normals);
+                    }
+                    break;
+
+                case "sphere":
+                    {
+                        Object3DLib.PrimitiveGenerator.GenerateSphere(ref points, ref faces, ref normals);
+                    }
+                    break;
+
+                case "torus":
+                    {
+                        Object3DLib.PrimitiveGenerator.GenerateTorus(ref points, ref faces, ref normals);
+                        flip = true;
+                    }
+                    break;
+
+                case "cylinder":
+                    {
+                        Object3DLib.PrimitiveGenerator.GenerateCylinder(ref points, ref faces, ref normals);
+                    }
+                    break;
+
+                case "triangle":
+                    {
+                        Object3DLib.PrimitiveGenerator.GenerateRoof(ref points, ref faces, ref normals);
+                        flip = true;
+                    }
+                    break;
+            }
+            foreach (Point3D p in points)
+            {
+                Point3D np;
+                if (flip)
+                {
+                    np = new Point3D((p.X * sizeX * 0.8) + Position.X, (p.Z * sizeY * 1.1) + Position.Y + SizeX / 2, (p.Y * sizeX * 1.1) + Position.Z);
+                }
+                else
+                {
+                    np = new Point3D((p.X * sizeX * 1.001) + Position.X, (p.Y * sizeY * 1.001) + Position.Y, (p.Z * sizeZ * 1.001) + Position.Z);
+                }
+                vertices.Add(np);
+            }
+            res = GetModel();
+            return res;
+        }
+
         public virtual void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             if (PropertyChanged != null)
@@ -446,6 +570,33 @@ namespace Barnacle.Dialogs
         internal void Move(int v2, int v3, int v4)
         {
             Position += new Vector3D(v2, v3, v4);
+        }
+
+        protected virtual GeometryModel3D GetModel()
+        {
+            MeshGeometry3D mesh = null;
+
+            GeometryModel3D gm = null;
+
+            if (Selected && vertices != null && vertices.Count >= 3 && faces != null && faces.Count >= 3)
+            {
+                mesh = new MeshGeometry3D();
+                mesh.Positions = vertices;
+                mesh.TriangleIndices = faces;
+                mesh.Normals = null;
+                gm = new GeometryModel3D();
+                gm.Geometry = mesh;
+
+                DiffuseMaterial mt = new DiffuseMaterial();
+                mt.Color = meshColour;
+                mt.Brush = new SolidColorBrush(meshColour);
+                gm.Material = mt;
+                DiffuseMaterial mtb = new DiffuseMaterial();
+                mtb.Color = Colors.CornflowerBlue;
+                mtb.Brush = new SolidColorBrush(Colors.Green);
+                gm.BackMaterial = mtb;
+            }
+            return gm;
         }
 
         private void PostChanges()

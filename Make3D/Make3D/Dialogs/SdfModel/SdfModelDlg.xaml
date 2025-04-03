@@ -65,7 +65,7 @@
                                         <ComboBox Width="150" ItemsSource="{Binding PrimTypes}"  SelectedItem="{Binding PrimitiveType}">
                                         </ComboBox>
 
-                                        <Label Content="Size" Margin="4,0,4,0" Width="50" Visibility="{Binding ShowSize}" />
+                                        <Label Content="Size" Margin="4,0,4,0" Visibility="{Binding ShowSize}" />
                                         <TextBox Text="{Binding SizeX}" Margin="4,0,4,0" Visibility="{Binding ShowSize}" MinWidth="30" />
                                         <TextBox Text="{Binding SizeY}" Margin="4,0,4,0" Visibility="{Binding ShowSize}" MinWidth="30" />
                                         <TextBox Text="{Binding SizeZ}" Margin="4,0,4,0" Visibility="{Binding ShowSize}" MinWidth="30" />
@@ -75,10 +75,10 @@
                                         <Label Content="Radius 2" Margin="4,0,4,0" Width="50" Visibility="{Binding ShowThickness}" />
                                         <TextBox Text="{Binding Thickness}" Margin="4,0,4,0" Visibility="{Binding ShowThickness}" MinWidth="30" />
 
-                                        <Label Content="Rot" Margin="4,0,4,0" Width="50" />
-                                        <TextBox Text="{Binding RotX}" Margin="4,0,4,0"  MinWidth="30" />
-                                        <TextBox Text="{Binding RotY}" Margin="4,0,4,0"  MinWidth="30" />
-                                        <TextBox Text="{Binding RotZ}" Margin="4,0,4,0"  MinWidth="30" />
+                                        <Label Content="Rot" Margin="4,0,4,0"  Visibility="{Binding ShowRot}" />
+                                        <TextBox Text="{Binding RotX}" Margin="4,0,4,0"  MinWidth="30"  Visibility="{Binding ShowRot}" />
+                                        <TextBox Text="{Binding RotY}" Margin="4,0,4,0"  MinWidth="30"  Visibility="{Binding ShowRot}" />
+                                        <TextBox Text="{Binding RotZ}" Margin="4,0,4,0"  MinWidth="30"  Visibility="{Binding ShowRot}" />
                                     </StackPanel>
                                     <StackPanel Grid.Row="1" Orientation="Horizontal">
                                         <ComboBox Width="150" ItemsSource="{Binding OpTypes}"  SelectedItem="{Binding OpType}">
@@ -94,6 +94,7 @@
 
                 <StackPanel Orientation="Horizontal" Grid.Row="2">
                     <Button Content="Add" Click="AddClick" />
+                    <Button Content="View/Hide" Click="HideClick" Margin="10,0,0,0" />
                 </StackPanel>
                 <StackPanel Grid.Row="3" Orientation="Horizontal">
                     <Button Content="Left" Command="{Binding MoveCommand}" CommandParameter="Left" />

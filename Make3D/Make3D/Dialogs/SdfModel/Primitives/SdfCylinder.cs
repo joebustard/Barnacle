@@ -23,7 +23,10 @@ namespace Barnacle.Dialogs.SdfModel.Primitives
 
         internal override double GetSdfValue(Point3D p)
         {
-            p = p - new Vector3D(Position.X, Position.Y, Position.Z);
+            if (Rotation != null)
+            {
+                p = Rotate(p);
+            }
             double r = Size.X / 2;
             double h = Size.Y;
             Vector2d v1 = new Vector2d(p.X, p.Z);
