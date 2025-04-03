@@ -1420,6 +1420,7 @@
     <Resource Include="Images\Buttons\ClockwiseArc.png" />
     <Resource Include="Images\Buttons\swaparc.png" />
     <Resource Include="Images\Buttons\ToggleArcDirection.png" />
+    <Resource Include="Images\Buttons\SdfModel.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

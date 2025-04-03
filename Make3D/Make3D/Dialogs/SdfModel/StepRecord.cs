@@ -33,6 +33,7 @@ namespace Barnacle.Dialogs
         private Visibility showRot;
         private Visibility showSize;
         private Visibility showThickness;
+        private Visibility showTriangle;
         private Vector3D size;
         private double sizeX;
         private double sizeY;
@@ -55,6 +56,7 @@ namespace Barnacle.Dialogs
             Radius = 10;
             ShowSize = Visibility.Visible;
             ShowRot = Visibility.Visible;
+            ShowTriangle = Visibility.Collapsed;
             primTypes = new List<string>();
             primTypes.Add("Box");
             primTypes.Add("Cylinder");
@@ -171,6 +173,7 @@ namespace Barnacle.Dialogs
                                 ShowSize = Visibility.Visible;
                                 ShowRadius = Visibility.Collapsed;
                                 ShowThickness = Visibility.Collapsed;
+                                ShowTriangle = Visibility.Collapsed;
                                 ShowRot = Visibility.Visible;
                             }
                             break;
@@ -181,6 +184,7 @@ namespace Barnacle.Dialogs
                                 ShowRadius = Visibility.Visible;
                                 ShowThickness = Visibility.Collapsed;
                                 ShowRot = Visibility.Collapsed;
+                                ShowTriangle = Visibility.Collapsed;
                             }
                             break;
 
@@ -190,6 +194,7 @@ namespace Barnacle.Dialogs
                                 ShowRadius = Visibility.Visible;
                                 ShowThickness = Visibility.Visible;
                                 ShowRot = Visibility.Visible;
+                                ShowTriangle = Visibility.Collapsed;
                             }
                             break;
 
@@ -199,15 +204,17 @@ namespace Barnacle.Dialogs
                                 ShowRadius = Visibility.Collapsed;
                                 ShowThickness = Visibility.Collapsed;
                                 ShowRot = Visibility.Visible;
+                                ShowTriangle = Visibility.Collapsed;
                             }
                             break;
 
-                        case "Triangle":
+                        case "triangle":
                             {
-                                ShowSize = Visibility.Visible;
+                                ShowSize = Visibility.Collapsed;
                                 ShowRadius = Visibility.Collapsed;
                                 ShowThickness = Visibility.Collapsed;
                                 ShowRot = Visibility.Visible;
+                                ShowTriangle = Visibility.Visible;
                             }
                             break;
                     }
@@ -393,6 +400,22 @@ namespace Barnacle.Dialogs
                 if (showThickness != value)
                 {
                     showThickness = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public Visibility ShowTriangle
+        {
+            get
+            {
+                return showTriangle;
+            }
+            set
+            {
+                if (showTriangle != value)
+                {
+                    showTriangle = value;
                     NotifyPropertyChanged();
                 }
             }
