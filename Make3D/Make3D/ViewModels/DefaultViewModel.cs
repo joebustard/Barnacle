@@ -1691,6 +1691,7 @@ namespace Barnacle.ViewModels
             parametricToolsToShow.Add(new ToolDef("Pie Slice", true, "Pie", "Create a pie slice"));
             parametricToolsToShow.Add(new ToolDef("Textured Tube", true, "TexturedTube", "Create a tube or disk with texture on the outside"));
             parametricToolsToShow.Add(new ToolDef("Box", true, "Box", "Create a hollow box"));
+            parametricToolsToShow.Add(new ToolDef("Tray", true, "Tray", "Create a tray with sloping sides"));
             SortMenu(parametricToolsToShow);
             NotifyPropertyChanged("ParametricToolsToShow");
         }

@@ -5,6 +5,7 @@ Added
   Five more primitives, staircase, squiggle, cross block, right bracket and screw diver bit
   Two "Wedge" profiles added to path loft
   Cross grille with edge
+  Tray with straight sides tool
   Setting for the minimum number of faces to be added for every primitive.
   First cut of arc support in flexipath control
   Key strokes + and - to scale selected object by percentage given in object properties window
@@ -16,6 +17,8 @@ Added
   MakeCrossGrille to Limpet
   MirrorFront, MirrorBack, MirrorLeft, MirrorRight,MirrorUp,MirrorDown added to limpet
   Setlength(), setheight() and setwidth() to the standard limpet library
+  Initial sdf modeller tool
+  Allow user to explicitly set the x,y position of a point on a flexipath by typing in its position.
   
 
 Fixed
@@ -27,6 +30,7 @@ Changed
   Replaced Spacetree in CutH tool by Octtree to deal with large vertex counts better 
   Split the import/export tab on the project settings into two seperate ones
   Improved the curve interpolation of the aircraft rib fuselage tool
+  Changed Min box side thicknesses to 0.1mm ( from 1mm)
 
 v1.0.8
 ===========

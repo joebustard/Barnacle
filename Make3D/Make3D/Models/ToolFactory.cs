@@ -162,6 +162,10 @@ namespace Barnacle.Models
                     res = new SdfModelDlg();
                     break;
 
+                case "Tray":
+                    res = new TrayDlg();
+                    break;
+
                 case "ShapedBrickWall":
                     res = new ShapedBrickWallDlg();
                     break;

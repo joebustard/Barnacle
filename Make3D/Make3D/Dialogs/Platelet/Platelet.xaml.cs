@@ -699,7 +699,7 @@ namespace Barnacle.Dialogs
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
-            SaveEditorParmeters();
+            SaveEditorParameters();
             DialogResult = true;
             this.SaveSizeAndLocation(true);
             Close();
@@ -1719,6 +1719,8 @@ namespace Barnacle.Dialogs
             ClippedSingle = EditorParameters.GetBoolean("ClippedSingle", false);
             FittedSingle = EditorParameters.GetBoolean("FittedSingle", false);
             BaseWidth = EditorParameters.GetDouble("BaseWidth", 2);
+            int v = EditorParameters.GetInt("ShowGrid", 1);
+            PathEditor.ShowGrid = (UserControls.GridSettings.GridStyle)v;
         }
 
         private void PathPointsChanged(List<System.Windows.Point> pnts)
@@ -1972,7 +1974,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void SaveEditorParmeters()
+        private void SaveEditorParameters()
         {
             EditorParameters.Set("ImagePath", PathEditor.ImagePath);
             EditorParameters.Set("NumPath", PathEditor.NumberOfPaths);
@@ -1997,6 +1999,7 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("ClippedSingle", ClippedSingle.ToString());
             EditorParameters.Set("FittedSingle", FittedSingle.ToString());
             EditorParameters.Set("BaseWidth", BaseWidth.ToString());
+            EditorParameters.Set("ShowGrid", ((int)(PathEditor.ShowGrid)).ToString());
         }
 
         private void SetShapeTab()

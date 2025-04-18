@@ -139,6 +139,9 @@ namespace Barnacle.Dialogs.SdfModel
                 {
                     sdfPrimitive.Position = s.Primitive.Position;
                     sdfPrimitive.Size = s.Primitive.Size;
+                    sdfPrimitive.RotX = s.Primitive.RotX;
+                    sdfPrimitive.RotY = s.Primitive.RotY;
+                    sdfPrimitive.RotZ = s.Primitive.RotZ;
                     s.Primitive = sdfPrimitive;
                 }
                 if (OnStepsChanged != null)
@@ -152,7 +155,7 @@ namespace Barnacle.Dialogs.SdfModel
         internal Bounds3D GetBounds()
         {
             Bounds3D bounds = new Bounds3D();
-            bounds.Zero();
+            //bounds.Zero();
             foreach (SdfStep step in Steps)
             {
                 step.AdjustBounds(bounds);

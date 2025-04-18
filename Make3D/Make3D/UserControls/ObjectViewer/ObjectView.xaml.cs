@@ -33,6 +33,7 @@ namespace Barnacle.UserControls.ObjectViewer
     /// </summary>
     public partial class ObjectView : UserControl, INotifyPropertyChanged
     {
+        public UserKeyHandler OnPreviewUserKey;
         private const string cameraRecordFile = "viewcamerapos.txt";
         private Axies axies;
 
@@ -81,6 +82,8 @@ namespace Barnacle.UserControls.ObjectViewer
             modelContent = new Model3DGroup();
             multiModels = new Model3DGroup();
         }
+
+        public delegate bool UserKeyHandler(Key key, bool shift, bool ctrl, bool alt);
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -486,7 +489,13 @@ namespace Barnacle.UserControls.ObjectViewer
                     }
                     break;
             }
-
+            if (!handled)
+            {
+                if (OnPreviewUserKey != null)
+                {
+                    handled = OnPreviewUserKey(key, shift, ctrl, alt);
+                }
+            }
             return handled;
         }
 

@@ -59,7 +59,7 @@ namespace Barnacle.Object3DLib
 
         internal static PrimTableEntry[] PrimitiveTable =
         {
-            new PrimTableEntry( "box",PrimitiveGenerator.GenerateCube,Colors.Pink),
+            new PrimTableEntry( "box",PrimitiveGenerator.GenerateCube, Colors.Pink),
             new PrimTableEntry( "boxcell",PrimitiveGenerator.GenerateCell4, Colors.DeepPink),
             new PrimTableEntry( "buttontop", PrimitiveGenerator.GenerateButtonTop, Colors.CornflowerBlue),
             new PrimTableEntry( "cap",PrimitiveGenerator.GenerateCap, Colors.LimeGreen),

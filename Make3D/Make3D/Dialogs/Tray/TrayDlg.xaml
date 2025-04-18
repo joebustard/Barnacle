@@ -1,0 +1,163 @@
+<local:BaseModellerDialog
+    x:Class="Barnacle.Dialogs.TrayDlg"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
+    Title=""
+    Width="1000"
+    Height="450"
+    Background="{StaticResource WindowBackBrush}"
+    Loaded="Window_Loaded"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+    <Grid VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="30" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="8*" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="10*" />
+            <ColumnDefinition Width="10" />
+        </Grid.ColumnDefinitions>
+        <Border
+            Grid.Row="0"
+            Grid.Column="1"
+            Style="{StaticResource ControlBorder}">
+            <Grid>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="TopLength" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding TopLength}"
+                        ToolTip="{Binding TopLengthToolTip}" />
+
+                    <Button
+                        Margin="8,0,0,0"
+                        Click="ResetDefaults"
+                        Content="Reset"
+                        ToolTip="Restore parameters to their defaults" />
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="TopWidth" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding TopWidth}"
+                        ToolTip="{Binding TopWidthToolTip}" />
+
+                </StackPanel>
+                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="BaseLength" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding BaseLength}"
+                        ToolTip="{Binding BaseLengthToolTip}" />
+
+                </StackPanel>
+                <StackPanel Grid.Row="4" Orientation="Horizontal">
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="BaseWidth" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding BaseWidth}"
+                        ToolTip="{Binding BaseWidthToolTip}" />
+
+                </StackPanel>
+                <StackPanel Grid.Row="5" Orientation="Horizontal">
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="TrayHeight" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding TrayHeight}"
+                        ToolTip="{Binding TrayHeightToolTip}" />
+
+                </StackPanel>
+                <StackPanel Grid.Row="6" Orientation="Horizontal">
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="WallThickness" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding WallThickness}"
+                        ToolTip="{Binding WallThicknessToolTip}" />
+
+                </StackPanel>
+                <StackPanel Grid.Row="7" Orientation="Horizontal" />
+                <StackPanel Grid.Row="8" Orientation="Horizontal" />
+                <StackPanel Grid.Row="9" Orientation="Horizontal">
+                    <Label
+                        VerticalAlignment="Center"
+                        Content="{Binding WarningText}"
+                        FontSize="18"
+                        Foreground="{StaticResource WarningColour}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+        <GridSplitter
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Grid.Column="2"
+            Style="{StaticResource GridSplitterStyle}" />
+        <u:ObjectView
+            x:Name="Viewer"
+            Grid.Row="0"
+            Grid.Column="3" />
+
+        <Grid Grid.Row="1" Grid.Column="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="80" />
+            </Grid.ColumnDefinitions>
+            <Button
+                Grid.Column="1"
+                Margin="2,2,2,2"
+                Click="Cancel_Click"
+                Content="Cancel" />
+            <Button
+                Grid.Column="2"
+                Margin="2,2,2,2"
+                Click="Ok_Click"
+                Content="Ok"
+                IsDefault="True" />
+        </Grid>
+    </Grid>
+</local:BaseModellerDialog>

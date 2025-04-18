@@ -65,6 +65,7 @@
     <Compile Include="Execution\Array.cs" />
     <Compile Include="IntrinsicFunctions\Dim.cs" />
     <Compile Include="IntrinsicFunctions\RndNode.cs" />
+    <Compile Include="Parser\ExtraParsingFunctions\ParseMakeTrayNode.cs" />
     <Compile Include="SolidFunctions\InsertPartNode.cs" />
     <Compile Include="SolidFunctions\IsSolidNode.cs" />
     <Compile Include="SolidFunctions\MakeBarrelNode.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="SolidFunctions\MakeBrickTowerNode.cs" />
     <Compile Include="SolidFunctions\MakeConstructionStripNode.cs" />
     <Compile Include="SolidFunctions\MakeCrossGrillNode.cs" />
+    <Compile Include="SolidFunctions\MakeDripTrayNode.cs" />
     <Compile Include="SolidFunctions\MakeImagePlaqueNode.cs" />
     <Compile Include="SolidFunctions\MakeObliqueEndCylinderNode.cs" />
     <Compile Include="SolidFunctions\MakePathLoftNode.cs" />

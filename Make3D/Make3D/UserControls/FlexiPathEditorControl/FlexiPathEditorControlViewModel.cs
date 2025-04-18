@@ -1331,85 +1331,87 @@ namespace Barnacle.UserControls
         internal bool MouseDown(MouseButtonEventArgs e, System.Windows.Point position)
         {
             bool updateRequired = false;
-            SwapArcVisible = Visibility.Hidden;
-
-            if (selectionMode == SelectionModeType.StartPoint)
+            if (e.LeftButton == MouseButtonState.Pressed)
             {
-                AddStartPointToPoly(position);
-                updateRequired = true;
-                e.Handled = true;
-            }
-            else if (selectionMode == SelectionModeType.AppendPoint)
-            {
-                PointsDirty = true;
-                AddAnotherPointToPoly(position);
-                e.Handled = true;
-                updateRequired = true;
+                SwapArcVisible = Visibility.Hidden;
 
-                if (ContinuousPointsNotify)
+                if (selectionMode == SelectionModeType.StartPoint)
                 {
-                    NotifyPropertyChanged("Points");
+                    AddStartPointToPoly(position);
+                    updateRequired = true;
+                    e.Handled = true;
                 }
-            }
-            else
-            {
-                try
+                else if (selectionMode == SelectionModeType.AppendPoint)
                 {
-                    if (selectedPoint >= 0)
+                    PointsDirty = true;
+                    AddAnotherPointToPoly(position);
+                    e.Handled = true;
+                    updateRequired = true;
+
+                    if (ContinuousPointsNotify)
                     {
-                        Points[selectedPoint].Selected = false;
+                        NotifyPropertyChanged("Points");
                     }
-                    SelectedPoint = -1;
-
-                    // do this test here because the othe modes only trigger ifn you click a line
-                    if (selectionMode == SelectionModeType.MovePath)
+                }
+                else
+                {
+                    try
                     {
-                        position = SnapPositionToMM(position);
-                        MoveWholePath(position);
-
-                        SelectionMode = SelectionModeType.DraggingPath;
-                        updateRequired = true;
-                        e.Handled = true;
-                    }
-                    else
-                    {
-                        // dont snap position when selecting points as they may have been positioned
-                        // between two grid points . just convert position to mm
-                        position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
-
-                        // find the closest point thats within search radius
-                        double rad = 3;
-                        double minDist = double.MaxValue;
-                        for (int i = 0; i < Points.Count; i++)
+                        if (selectedPoint >= 0)
                         {
-                            System.Windows.Point p = Points[i].ToPoint();
-                            double dist = Math.Sqrt(((position.X - p.X) * (position.X - p.X)) +
-                                                    ((position.Y - p.Y) * (position.Y - p.Y)));
-                            if (dist < minDist && dist < rad)
-                            {
-                                SelectedPoint = i;
-                                minDist = dist;
-                                e.Handled = true;
-                            }
+                            Points[selectedPoint].Selected = false;
                         }
-                        if (SelectedPoint != -1)
+                        SelectedPoint = -1;
+
+                        // do this test here because the othe modes only trigger ifn you click a line
+                        if (selectionMode == SelectionModeType.MovePath)
                         {
-                            Points[SelectedPoint].Selected = true;
-                            moving = true;
+                            position = SnapPositionToMM(position);
+                            MoveWholePath(position);
+
+                            SelectionMode = SelectionModeType.DraggingPath;
                             updateRequired = true;
-                            if (Points[SelectedPoint].Mode == FlexiPoint.PointMode.ControlA)
+                            e.Handled = true;
+                        }
+                        else
+                        {
+                            // dont snap position when selecting points as they may have been positioned
+                            // between two grid points . just convert position to mm
+                            position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
+
+                            // find the closest point thats within search radius
+                            double rad = 3;
+                            double minDist = double.MaxValue;
+                            for (int i = 0; i < Points.Count; i++)
                             {
-                                SwapArcVisible = Visibility.Visible;
+                                System.Windows.Point p = Points[i].ToPoint();
+                                double dist = Math.Sqrt(((position.X - p.X) * (position.X - p.X)) +
+                                                        ((position.Y - p.Y) * (position.Y - p.Y)));
+                                if (dist < minDist && dist < rad)
+                                {
+                                    SelectedPoint = i;
+                                    minDist = dist;
+                                    e.Handled = true;
+                                }
+                            }
+                            if (SelectedPoint != -1)
+                            {
+                                Points[SelectedPoint].Selected = true;
+                                moving = true;
+                                updateRequired = true;
+                                if (Points[SelectedPoint].Mode == FlexiPoint.PointMode.ControlA)
+                                {
+                                    SwapArcVisible = Visibility.Visible;
+                                }
                             }
                         }
                     }
-                }
-                catch (Exception ex)
-                {
-                    LoggerLib.Logger.LogLine(ex.Message);
+                    catch (Exception ex)
+                    {
+                        LoggerLib.Logger.LogLine(ex.Message);
+                    }
                 }
             }
-
             return updateRequired;
         }
 

@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using Barnacle.Dialogs.SdfModel.Primitives;
 using System.Windows.Forms;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 
 namespace Barnacle.Dialogs
 {
@@ -54,6 +55,7 @@ namespace Barnacle.Dialogs
             selectedPrimitive = -1;
             nextRecordId = -1;
             nextY = 0;
+            Viewer.OnPreviewUserKey = PreviewViewerKey;
         }
 
         public ICommand MoveCommand
@@ -143,11 +145,11 @@ namespace Barnacle.Dialogs
             return s;
         }
 
-        internal void MoveObject(int v1, int v2, int v3, int v4)
+        internal void MoveObject(int index, double x, double y, double z)
         {
-            if (v1 >= 0 && v1 < StepRecords.Count)
+            if (index >= 0 && index < StepRecords.Count)
             {
-                StepRecords[v1].Move(v2, v3, v4);
+                StepRecords[index].Move(x, y, z);
                 UpdateDisplay();
             }
         }
@@ -267,26 +269,26 @@ namespace Barnacle.Dialogs
         {
             AsyncGeneratorResult res = new AsyncGeneratorResult();
             /*
-                Point3DCollection v1 = new Point3DCollection();
+                Point3DCollection index = new Point3DCollection();
                 Int32Collection i1 = new Int32Collection();
                 SdfModelMaker maker = new SdfModelMaker();
                 maker.SetValues(
                     );
-                maker.Generate(v1, i1);
+                maker.Generate(index, i1);
 
                 // extract the vertices and indices to thread safe arrays
                 // while still in the async function
-                res.points = new Point3D[v1.Count];
-                for (int i = 0; i < v1.Count; i++)
+                res.points = new Point3D[index.Count];
+                for (int i = 0; i < index.Count; i++)
                 {
-                    res.points[i] = new Point3D(v1[i].X, v1[i].Y, v1[i].Z);
+                    res.points[i] = new Point3D(index[i].X, index[i].Y, index[i].Z);
                 }
                 res.indices = new int[i1.Count];
                 for (int i = 0; i < i1.Count; i++)
                 {
                     res.indices[i] = i1[i];
                 }
-                v1.Clear();
+                index.Clear();
                 i1.Clear();
                 */
             return (res);
@@ -486,6 +488,103 @@ namespace Barnacle.Dialogs
 
                 UpdateDisplay();
             }
+        }
+
+        private bool PreviewViewerKey(Key key, bool shift, bool ctrl, bool alt)
+        {
+            bool handled = false;
+            double dist = 1;
+            if (shift)
+            {
+                dist = 0.1;
+            }
+            switch (key)
+            {
+                case Key.Up:
+                    {
+                        if (ctrl)
+                        {
+                            MoveObject(selectedPrimitive, 0, 0, -dist);
+                        }
+                        else
+                        {
+                            MoveObject(selectedPrimitive, 0, dist, 0);
+                        }
+                        handled = true;
+                    }
+                    break;
+
+                case Key.Down:
+                    {
+                        if (ctrl)
+                        {
+                            MoveObject(selectedPrimitive, 0, 0, dist);
+                        }
+                        else
+                        {
+                            MoveObject(selectedPrimitive, 0, -dist, 0);
+                        }
+                        handled = true;
+                    }
+                    break;
+
+                case Key.Left:
+                    {
+                        MoveObject(selectedPrimitive, -dist, 0, 0);
+                        handled = true;
+                    }
+                    break;
+
+                case Key.Right:
+                    {
+                        MoveObject(selectedPrimitive, dist, 0, 0);
+                        handled = true;
+                    }
+                    break;
+                    /*
+                                    case Key.F:
+                                        {
+                                            if (selectedPrimitive != -1)
+                                            {
+                                                switch (StepRecords[selectedPrimitive].PrimitiveType.ToLower())
+                                                {
+                                                    case "box":
+                                                        {
+                                                        }
+                                                        break;
+
+                                                    case "sphere":
+                                                        {
+                                                            Point3D p = StepRecords[selectedPrimitive].Position;
+                                                            p.Y = StepRecords[selectedPrimitive].Radius;
+                                                            StepRecords[selectedPrimitive].Position = p;
+                                                        }
+                                                        break;
+
+                                                    case "torus":
+                                                        {
+                                                        }
+                                                        break;
+
+                                                    case "triangle":
+                                                        {
+                                                        }
+                                                        break;
+
+                                                    case "cylinder":
+                                                        {
+                                                        }
+                                                        break;
+                                                }
+                                                UpdateDisplay();
+                                            }
+                                            handled = true;
+                                        }
+                                        break;
+                                        */
+            }
+
+            return handled;
         }
 
         private void Regenerate()

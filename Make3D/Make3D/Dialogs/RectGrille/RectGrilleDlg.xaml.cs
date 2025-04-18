@@ -36,14 +36,14 @@ namespace Barnacle.Dialogs
         private const double maxhorizontalBarThickness = 100;
         private const double maxverticalBars = 100;
         private const double maxverticalBarThickness = 100;
-        private const double minedgeThickness = 1;
+        private const double minedgeThickness = 0.1;
         private const double mingrillHeight = 5;
         private const double mingrillLength = 5;
-        private const double mingrillWidth = 1;
+        private const double mingrillWidth = 0.1;
         private const double minhorizontalBars = 0;
-        private const double minhorizontalBarThickness = 1;
+        private const double minhorizontalBarThickness = 0.1;
         private const double minverticalBars = 0;
-        private const double minverticalBarThickness = 1;
+        private const double minverticalBarThickness = 0.1;
         private double edgeThickness;
         private double grillHeight;
         private double grillLength;

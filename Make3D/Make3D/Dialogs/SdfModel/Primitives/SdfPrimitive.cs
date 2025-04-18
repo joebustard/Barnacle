@@ -26,6 +26,21 @@ namespace Barnacle.Dialogs.SdfModel
             set;
         }
 
+        public double RotX
+        {
+            get; set;
+        }
+
+        public double RotY
+        {
+            get; set;
+        }
+
+        public double RotZ
+        {
+            get; set;
+        }
+
         public Vector3D Size
         {
             get;
@@ -54,8 +69,11 @@ namespace Barnacle.Dialogs.SdfModel
                 h = Size.Y;
                 w = Size.Z;
             }
+            //            else
+            //{
             bounds.Adjust(new Point3D(Position.X - l, Position.Y - h, Position.Z - w));
             bounds.Adjust(new Point3D(Position.X + l, Position.Y + h, Position.Z + w));
+            //            }
         }
 
         internal virtual double GetSdfValue(Point3D xyZ)
@@ -84,6 +102,45 @@ namespace Barnacle.Dialogs.SdfModel
             s += Size.Y.ToString() + ",";
             s += Size.Z.ToString();
             return s;
+        }
+
+        protected Point3D RotatePoint(double r1, double r2, double r3, Point3D cp)
+        {
+            Point3D tmp = new Point3D();
+            r1 = DegToRad(r1);
+            r2 = DegToRad(r2);
+            r2 = DegToRad(r3);
+            float cosa = (float)Math.Cos(r2);
+            float sina = (float)Math.Sin(r2);
+
+            float cosb = (float)Math.Cos(r1);
+            float sinb = (float)Math.Sin(r1);
+
+            float cosc = (float)Math.Cos(r3);
+            float sinc = (float)Math.Sin(r3);
+
+            float Axx = cosa * cosb;
+            float Axy = cosa * sinb * sinc - sina * cosc;
+            float Axz = cosa * sinb * cosc + sina * sinc;
+
+            float Ayx = sina * cosb;
+            float Ayy = sina * sinb * sinc + cosa * cosc;
+            float Ayz = sina * sinb * cosc - cosa * sinc;
+
+            float Azx = -sinb;
+            float Azy = cosb * sinc;
+            float Azz = cosb * cosc;
+
+            tmp.X = Axx * cp.X + Axy * cp.Y + Axz * cp.Z;
+            tmp.Y = Ayx * cp.X + Ayy * cp.Y + Ayz * cp.Z;
+            tmp.Z = Azx * cp.X + Azy * cp.Y + Azz * cp.Z;
+
+            return tmp;
+        }
+
+        private double DegToRad(double v)
+        {
+            return (v * Math.PI / 180.0);
         }
     }
 }

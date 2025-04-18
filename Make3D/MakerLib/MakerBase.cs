@@ -54,6 +54,13 @@ namespace MakerLib
             Faces.Add(c2);
         }
 
+        public void AddInverseFace(int c0, int c1, int c2)
+        {
+            Faces.Add(c0);
+            Faces.Add(c2);
+            Faces.Add(c1);
+        }
+
         public int AddVerticeOctTree(Point3D v)
         {
             int res = -1;

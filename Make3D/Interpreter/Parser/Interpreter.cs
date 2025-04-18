@@ -2,7 +2,7 @@ using System;
 
 namespace ScriptLanguage
 {
-    public class Interpreter
+    public partial class Interpreter
     {
         private String[] functionNames;
         private String[] keywords;
@@ -122,6 +122,7 @@ namespace ScriptLanguage
                 "maketext",
                 "maketiledroof",
                 "maketorus",
+                "maketray",
                 "maketexturedtube",
                 "maketrapezoid",
                 "maketrickle",
@@ -2830,6 +2831,12 @@ namespace ScriptLanguage
                         case "maketorus":
                             {
                                 exp = ParseMakeTorusFunction(parentName);
+                            }
+                            break;
+
+                        case "maketray":
+                            {
+                                exp = ParseMakeTrayFunction(parentName);
                             }
                             break;
 

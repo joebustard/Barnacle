@@ -15,11 +15,14 @@
 // *                                                                         *
 // *************************************************************************
 
+using Barnacle.Dialogs.PointCoordinateEntry;
 using Barnacle.LineLib;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+
+//using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -385,7 +388,12 @@ namespace Barnacle.UserControls
         {
             get
             {
-                return showGrid;
+                if (vm != null)
+                {
+                    return vm.ShowGrid;
+                }
+                else
+                    return showGrid;
             }
 
             set
@@ -733,7 +741,7 @@ namespace Barnacle.UserControls
                     {
                         if (vm.Points[i].Mode == FlexiPoint.PointMode.Data)
                         {
-                            p = MakeEllipse(rad, br, p);
+                            p = MakeEllipse(rad, br, p, i);
                         }
                         if (vm.Points[i].Mode == FlexiPoint.PointMode.Control1 ||
                             vm.Points[i].Mode == FlexiPoint.PointMode.ControlA ||
@@ -760,7 +768,7 @@ namespace Barnacle.UserControls
                     {
                         br = System.Windows.Media.Brushes.Red;
                         var p = vm.Points[0].ToPoint();
-                        MakeEllipse(8, br, p);
+                        MakeEllipse(8, br, p, 0);
                     }
                 }
                 // now draw any control connectors
@@ -845,6 +853,37 @@ namespace Barnacle.UserControls
                 ln.MouseRightButtonDown += Ln_MouseRightButtonDown;
                 ln.MouseUp += MainCanvas_MouseUp;
                 MainCanvas.Children.Add(ln);
+            }
+        }
+
+        private void EditPointPosition(object sender, RoutedEventArgs e)
+        {
+            MenuItem it = sender as MenuItem;
+            if (it != null)
+            {
+                Ellipse el = it.Tag as Ellipse;
+                if (el != null)
+                {
+                    int pointIndex = (int)el.Tag;
+                    if (pointIndex >= 0 && pointIndex < vm.Points.Count)
+                    {
+                        var p = vm.Points[pointIndex];
+                        PointCoordinateEntry dlg = new PointCoordinateEntry();
+
+                        dlg.XValue = p.X;
+                        dlg.YValue = p.Y;
+                        if (dlg.ShowDialog() == true)
+                        {
+                            vm.Points[pointIndex].X = dlg.XValue;
+                            vm.Points[pointIndex].Y = dlg.YValue;
+                            vm.PointsDirty = true;
+
+                            UpdateDisplay();
+                            NotifyUserActive();
+                            NotifyPathPointsChanged();
+                        }
+                    }
+                }
             }
         }
 
@@ -1015,7 +1054,7 @@ namespace Barnacle.UserControls
             UpdateDisplay();
         }
 
-        private System.Windows.Point MakeEllipse(double rad, System.Windows.Media.Brush br, System.Windows.Point p)
+        private System.Windows.Point MakeEllipse(double rad, System.Windows.Media.Brush br, System.Windows.Point p, int pointIndex)
         {
             Ellipse el = new Ellipse();
 
@@ -1029,7 +1068,8 @@ namespace Barnacle.UserControls
             el.MouseMove += MainCanvas_MouseMove;
             el.MouseUp += MainCanvas_MouseUp;
             el.ToolTip = $"{p.X.ToString("F2")},{p.Y.ToString("F2")}";
-            // el.ContextMenu = PointMenu(el);
+            el.Tag = pointIndex;
+            el.ContextMenu = PointMenu(el);
             MainCanvas.Children.Add(el);
             return p;
         }
@@ -1116,6 +1156,17 @@ namespace Barnacle.UserControls
             {
                 OnFlexiUserActive();
             }
+        }
+
+        private ContextMenu PointMenu(Ellipse el)
+        {
+            ContextMenu cm = new ContextMenu();
+            cm.Tag = el;
+            MenuItem menuItem = new MenuItem() { Header = "Edit" };
+            menuItem.Click += EditPointPosition;
+            menuItem.Tag = el;
+            cm.Items.Add(menuItem);
+            return cm;
         }
 
         private void SetSelectionModeBorderColours()

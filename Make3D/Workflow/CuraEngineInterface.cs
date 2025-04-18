@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using static Workflow.CuraDefinition;
@@ -358,8 +359,20 @@ exit 0
                                       tmpFile,
                                       logPath);
 
-                    res.Result = await DoSlice(gcodePath, tmpCmdFile, tmpFile);
-
+                    int timeout = 1000 * 60 * 5;
+                    var task = DoSlice(gcodePath, tmpCmdFile, tmpFile);
+                    if (await Task.WhenAny(task, Task.Delay(timeout)) == task)
+                    {
+                        // Task completed within timeout.
+                        // Consider that the task may have faulted or been canceled.
+                        // We re-await the task so that any exceptions/cancellation is rethrown.
+                        res.Result = await task;
+                        //res.Result = await DoSlice(gcodePath, tmpCmdFile, tmpFile);
+                    }
+                    else
+                    {
+                        res.Result = false;
+                    }
                     if (File.Exists(tmpCmdFile))
                     {
                         File.Delete(tmpCmdFile);

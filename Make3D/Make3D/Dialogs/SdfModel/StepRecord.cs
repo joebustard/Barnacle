@@ -522,9 +522,9 @@ namespace Barnacle.Dialogs
             return s;
         }
 
-        internal void Move(int v2, int v3, int v4)
+        internal void Move(double x, double y, double z)
         {
-            Position += new Vector3D(v2, v3, v4);
+            Position += new Vector3D(x, y, z);
         }
 
         private void PostChanges()

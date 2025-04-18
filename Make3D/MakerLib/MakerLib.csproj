@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="BicornMaker.cs" />
     <Compile Include="MakeCrossGrill.cs" />
+    <Compile Include="MakeTray.cs" />
     <Compile Include="Mirror\Mirror.cs" />
     <Compile Include="ParameterLimits.cs" />
     <Compile Include="HollowPolyMaker.cs" />

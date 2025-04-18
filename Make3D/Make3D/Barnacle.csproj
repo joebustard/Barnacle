@@ -132,6 +132,10 @@
     <Compile Include="Dialogs\CutVPlane\CutVerticalPlaneDlg.xaml.cs">
       <DependentUpon>CutVerticalPlaneDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\Tray\TrayDlg.xaml.cs" />
+    <Compile Include="Dialogs\PointCoordinateEntry\PointCoordinateEntry.xaml.cs">
+      <DependentUpon>PointCoordinateEntry.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\RibbedFuselage\Models\Dimension.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\ImageEdge.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\LetterMarker.cs" />
@@ -545,6 +549,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Dialogs\Tray\TrayDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Dialogs\ImagePlaque\ImagePlaqueDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -576,6 +584,10 @@
     <Page Include="Dialogs\Pill\PillDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\PointCoordinateEntry\PointCoordinateEntry.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\RectGrille\RectGrilleDlg.xaml">
       <Generator>MSBuild:Compile</Generator>

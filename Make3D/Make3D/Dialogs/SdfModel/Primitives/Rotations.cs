@@ -50,7 +50,6 @@ namespace Barnacle.Dialogs.SdfModel.Primitives
                     }
                 }
             }
-
             return product;
         }
 
