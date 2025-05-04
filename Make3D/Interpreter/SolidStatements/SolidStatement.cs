@@ -6,12 +6,39 @@ namespace ScriptLanguage
     {
         public ExpressionCollection expressions;
         public string label;
+
         public int ExpressionCount
-        { get { return expressions.Count(); } }
+        {
+            get
+            {
+                return expressions.Count();
+            }
+        }
 
         public void AddExpression(ExpressionNode exp)
         {
             expressions.InsertAtStart(exp);
+        }
+
+        public bool CheckSolidExists(string label, string expr, int objectIndex)
+        {
+            bool res = false;
+            if (Script.ResultArtefacts.ContainsKey(objectIndex))
+            {
+                if (Script.ResultArtefacts[objectIndex] != null)
+                {
+                    res = true;
+                }
+                else
+                {
+                    ReportStatement($"Run Time Error : {label} (5) solid name incorrect {expr} index = {objectIndex} is null. Has it been deleted?");
+                }
+            }
+            else
+            {
+                ReportStatement($"Run Time Error : {label} (5) solid name incorrect {expr} index = {objectIndex} doesn't exist");
+            }
+            return res;
         }
 
         public override String ToRichText()

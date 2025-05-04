@@ -102,6 +102,7 @@
                 ToolTip="Add a cap object">
                 <Image Source="/Barnacle;component/Images/Buttons/Cap.png" />
             </Button>
+
             <Button
                 Command="{Binding AddCommand}"
                 CommandParameter="Polygon"
@@ -347,6 +348,15 @@
                 Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a Screw Driver Bit">
                 <Image Source="/Barnacle;component/Images/Buttons/Screwdriverbit.png" />
+            </Button>
+
+            <Button
+                Command="{Binding AddCommand}"
+                CommandParameter="Pie"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource PrimitiveImageButton}"
+                ToolTip="Add a Pie Slice">
+                <Image Source="/Barnacle;component/Images/Buttons/PieSlice.png" />
             </Button>
         </UniformGrid>
     </Grid>

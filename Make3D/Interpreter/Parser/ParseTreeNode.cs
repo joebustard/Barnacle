@@ -5,17 +5,20 @@ namespace ScriptLanguage
 {
     public class ParseTreeNode
     {
+        public static bool continueRunning;
         public bool HighLight;
         protected ParseTreeNode Child;
-        public static bool continueRunning;
-
-        public static CancellationToken CancellationToken { get; internal set; }
 
         // Instance constructor
         public ParseTreeNode()
         {
             Child = null;
             HighLight = false;
+        }
+
+        public static CancellationToken CancellationToken
+        {
+            get; internal set;
         }
 
         public virtual bool Execute()
@@ -100,6 +103,10 @@ namespace ScriptLanguage
 
                         result = true;
                     }
+                    else
+                    {
+                        Log.Instance().AddEntry($"PullDouble : Failed, top of stack was {sti.MyType.ToString()}");
+                    }
                 }
             }
             return result;
@@ -126,6 +133,10 @@ namespace ScriptLanguage
 
                         result = true;
                     }
+                    else
+                    {
+                        Log.Instance().AddEntry($"PullInt : Failed, top of stack was {sti.MyType.ToString()}");
+                    }
                 }
             }
             return result;
@@ -143,6 +154,13 @@ namespace ScriptLanguage
                     a = sti.SolidValue;
                     result = true;
                 }
+                else
+                {
+                    Log.Instance().AddEntry($"PullSolid : Failed, top of stack was {sti.MyType.ToString()}");
+                }
+            }
+            else
+            {
             }
             return result;
         }
@@ -158,6 +176,10 @@ namespace ScriptLanguage
                 {
                     a = sti.StringValue;
                     result = true;
+                }
+                else
+                {
+                    Log.Instance().AddEntry($"PullString : Failed, top of stack was {sti.MyType.ToString()}");
                 }
             }
             return result;

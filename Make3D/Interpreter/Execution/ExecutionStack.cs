@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using static CSGLib.BooleanModeller;
 
 namespace ScriptLanguage
 {
@@ -90,6 +91,20 @@ namespace ScriptLanguage
         internal void Clear()
         {
             StackItems.Clear();
+        }
+
+        internal void LogStackTop()
+        {
+            if (StackItems.Count > 0)
+            {
+                int iStackIndex = StackItems.Count - 1;
+                StackItem si = StackItems[iStackIndex];
+                Log.Instance().AddEntry($"{ si.MyType.ToString()} {si.IntValue} {si.StringValue} {si.BooleanValue} {si.DoubleValue} {si.SolidValue}");
+            }
+            else
+            {
+                Log.Instance().AddEntry($"Stack Empty");
+            }
         }
 
         internal bool PullSymbol(Symbol symbol)

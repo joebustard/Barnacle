@@ -39,13 +39,17 @@ namespace ScriptLanguage
 
                         int id = Script.NextObjectId;
                         Script.ResultArtefacts[id] = clone;
-                        ExecutionStack.Instance().PushSolid(id); 
+                        ExecutionStack.Instance().PushSolid(id);
                         result = true;
                     }
                     else
                     {
-                        Log.Instance().AddEntry("Run Time Error: Copy source not found");
+                        Log.Instance().AddEntry($"Run Time Error: Copy source not found {ls}");
                     }
+                }
+                else
+                {
+                    Log.Instance().AddEntry($"Run Time Error : Copy solid name incorrect {solid.ToString()}");
                 }
             }
             catch (Exception ex)

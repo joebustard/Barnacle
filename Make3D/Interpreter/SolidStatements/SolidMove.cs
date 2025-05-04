@@ -14,46 +14,55 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
+            bool more = false;
             try
             {
                 if (expressions != null)
                 {
-                    result = expressions.Execute();
-                    if (result)
+                    more = expressions.Execute();
+                    if (more)
                     {
                         int objectIndex;
                         if (!PullSolid(out objectIndex))
                         {
-                            ReportStatement();
-                            Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");
+                            ReportStatement($"Run Time Error : {label} (1) solid name incorrect {expressions.Get(0).ToString()}");
                         }
                         else
                         {
-                            if (Script.ResultArtefacts.ContainsKey(objectIndex))
+                            if (CheckSolidExists(label, expressions.Get(0).ToString(), objectIndex))
                             {
                                 double xr;
                                 double yr;
                                 double zr;
 
-                                result = PullDouble(out xr);
-                                if (result)
+                                more = PullDouble(out xr);
+                                if (more)
                                 {
-                                    result = PullDouble(out yr);
-                                    if (result)
+                                    more = PullDouble(out yr);
+                                    if (more)
                                     {
-                                        result = PullDouble(out zr);
-                                        if (result)
+                                        more = PullDouble(out zr);
+                                        if (more)
                                         {
                                             Point3D pos = new Point3D(xr, yr, zr);
                                             Script.ResultArtefacts[objectIndex].Position = pos;
                                             Script.ResultArtefacts[objectIndex].Remesh();
+                                            result = true;
+                                        }
+                                        else
+                                        {
+                                            ReportStatement($"Run Time Error : {label} (2) z incorrect {expressions.Get(1).ToString()}");
                                         }
                                     }
+                                    else
+                                    {
+                                        ReportStatement($"Run Time Error : {label} (3) y incorrect {expressions.Get(2).ToString()}");
+                                    }
                                 }
-                            }
-                            else
-                            {
-                                Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");
+                                else
+                                {
+                                    ReportStatement($"Run Time Error : {label} (4) x incorrect {expressions.Get(3).ToString()}");
+                                }
                             }
                         }
                     }
@@ -61,7 +70,7 @@ namespace ScriptLanguage
             }
             catch (Exception ex)
             {
-                Log.Instance().AddEntry($"{label} : {ex.Message}");
+                ReportStatement($"{label} : {ex.Message}");
             }
             return result;
         }

@@ -29,7 +29,7 @@ namespace ScriptLanguage
                         }
                         else
                         {
-                            if (Script.ResultArtefacts.ContainsKey(objectIndex))
+                            if (CheckSolidExists(label, expressions.Get(0).ToString(), objectIndex))
                             {
                                 double xr;
                                 double yr;
@@ -61,10 +61,6 @@ namespace ScriptLanguage
                                         }
                                     }
                                 }
-                            }
-                            else
-                            {
-                                Log.Instance().AddEntry($"Run Time Error : {label} unknown solid");
                             }
                         }
                     }

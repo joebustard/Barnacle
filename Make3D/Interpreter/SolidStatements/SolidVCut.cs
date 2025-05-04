@@ -40,12 +40,11 @@ namespace ScriptLanguage
                         int objectIndex;
                         if (!PullSolid(out objectIndex))
                         {
-                            ReportStatement();
-                            Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");
+                            ReportStatement($"Run Time Error : {label} solid name incorrect");
                         }
                         else
                         {
-                            if (Script.ResultArtefacts.ContainsKey(objectIndex))
+                            if (CheckSolidExists(label, expressions.Get(0).ToString(), objectIndex))
                             {
                                 double cutLevel;
                                 if (PullDouble(out cutLevel))
@@ -63,12 +62,8 @@ namespace ScriptLanguage
                                 }
                                 else
                                 {
-                                    Log.Instance().AddEntry($"Run Time Error : {label} unknown name");
+                                    ReportStatement($"Run Time Error : {label} unknown name");
                                 }
-                            }
-                            else
-                            {
-                                Log.Instance().AddEntry($"Run Time Error : {label} unknown solid");
                             }
                         }
                     }
@@ -76,7 +71,7 @@ namespace ScriptLanguage
             }
             catch (Exception ex)
             {
-                Log.Instance().AddEntry($"{label}: {ex.Message}");
+                ReportStatement($"{label}: {ex.Message}");
             }
             return result;
         }

@@ -21,10 +21,21 @@ namespace ScriptLanguage
             parseTree = null;
 
             ResultArtefacts = new Dictionary<int, Object3D>();
+            nextObjectId = 0;
         }
 
         public static int NextObjectId
-        { get { return nextObjectId++; } set { nextObjectId = value; } }
+        {
+            get
+            {
+                System.Diagnostics.Debug.WriteLine($"nextObjectid = {nextObjectId}");
+                return nextObjectId++;
+            }
+            set
+            {
+                nextObjectId = value;
+            }
+        }
 
         // This is used a generic way of returning objects or data created when the script is
         // run.
@@ -40,16 +51,15 @@ namespace ScriptLanguage
             bool result = false;
             try
             {
-
                 ExecutionStack.Instance().Clear();
                 ResultArtefacts.Clear();
 
-                nextObjectId = 0;
+                NextObjectId = 0;
 
                 if (parseTree != null)
                 {
                     ParseTreeNode.continueRunning = true;
-                    result = parseTree.Execute();            
+                    result = parseTree.Execute();
                     foreach (Object3D ob in ResultArtefacts.Values)
                     {
                         if (ob != null)

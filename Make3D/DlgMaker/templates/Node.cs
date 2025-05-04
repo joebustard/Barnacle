@@ -1,7 +1,7 @@
 ﻿using Barnacle.Object3DLib;
 using MakerLib;
 using System;
-
+using System.Reflection.Emit;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -9,6 +9,7 @@ namespace ScriptLanguage
 {
     internal class Make//TOOLNAMENode : ExpressionNode
     {
+        private static string label = "Make//TOOLNAME";
         //NODEFIELDS
 
         public Make//TOOLNAMENode
@@ -21,6 +22,11 @@ namespace ScriptLanguage
 
         public Make//TOOLNAMENode
                 (ExpressionCollection coll)
+        {
+            //COPYCOLLFIELDS
+        }
+
+        public override void SetExpressions(ExpressionCollection coll)
         {
             //COPYCOLLFIELDS
         }
@@ -65,7 +71,7 @@ namespace ScriptLanguage
                 }
                 else
                 {
-                    Log.Instance().AddEntry("Make//TOOLNAME : Illegal value");
+                    Log.Instance().AddEntry($"{label} : Illegal value");
                 }
             }
 
@@ -78,7 +84,7 @@ namespace ScriptLanguage
         ///
         public override String ToRichText()
         {
-            String result = RichTextFormatter.KeyWord("Make//TOOLNAME") + "( ";
+            String result = RichTextFormatter.KeyWord($"{label}") + "( ";
             //EXPRESSIONTORICHTEXT
             result += " )";
             return result;
@@ -86,7 +92,7 @@ namespace ScriptLanguage
 
         public override String ToString()
         {
-            String result = "Make//TOOLNAME( ";
+            String result = $"{label}( ";
             //EXPRESSIONTOSTRING
             result += " )";
             return result;
@@ -100,11 +106,11 @@ namespace ScriptLanguage
                 ParamLimit pl = maker.GetLimits(paramName);
                 if (pl != null)
                 {
-                    Log.Instance().AddEntry($"Make//TOOLNAME : {paramName} value {val} out of range ({pl.Low}..{pl.High}");
+                    Log.Instance().AddEntry($"{Label} : {paramName} value {val} out of range ({pl.Low}..{pl.High}");
                 }
                 else
                 {
-                    Log.Instance().AddEntry($"Make//TOOLNAME : Can't check parameter {paramName}");
+                    Log.Instance().AddEntry($"{Label} : Can't check parameter {paramName}");
                 }
             }
 

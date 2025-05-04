@@ -99,6 +99,7 @@ namespace Barnacle.Object3DLib
              new PrimTableEntry( "crossblock", PrimitiveGenerator.GenerateCrossBlock,Colors.MediumAquamarine),
              new PrimTableEntry( "rightbracket", PrimitiveGenerator.GenerateRightBracket,Colors.Plum),
              new PrimTableEntry( "screwdriverbit", PrimitiveGenerator.GenerateScrewDriverBit,Colors.Teal),
+             new PrimTableEntry( "pie", PrimitiveGenerator.GeneratePie,Colors.SpringGreen),
             //Next_Primitive_Table_Entry
         };
 

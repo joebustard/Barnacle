@@ -17,20 +17,38 @@ namespace ScriptLanguage
 
         public ExpressionNode ExpressionNode
         {
-            get { return _ExpressionNode; }
-            set { _ExpressionNode = value; }
+            get
+            {
+                return _ExpressionNode;
+            }
+            set
+            {
+                _ExpressionNode = value;
+            }
         }
 
         public String ExternalName
         {
-            get { return _ExternalName; }
-            set { _ExternalName = value; }
+            get
+            {
+                return _ExternalName;
+            }
+            set
+            {
+                _ExternalName = value;
+            }
         }
 
         public String VariableName
         {
-            get { return _VariableName; }
-            set { _VariableName = value; }
+            get
+            {
+                return _VariableName;
+            }
+            set
+            {
+                _VariableName = value;
+            }
         }
 
         /// Execute this node
@@ -81,7 +99,9 @@ namespace ScriptLanguage
         private bool AssignTopOfStackToVar(string VariableName)
         {
             bool result = false;
+            //  Log.Instance().AddEntry( $"AssignTopOfStackToVar {VariableName}");
             StackItem sti = ExecutionStack.Instance().Pull();
+            //    Log.Instance().AddEntry($"AssignTopOfStackToVar {sti.MyType.ToString()}");
             if (sti != null)
             {
                 switch (sti.MyType)
@@ -108,6 +128,7 @@ namespace ScriptLanguage
                                     if (sym != null)
                                     {
                                         sym.SolidValue = (int)sti.IntValue;
+                                        Log.Instance().AddEntry($" {VariableName} is set to {(int)sti.IntValue}");
                                         result = true;
                                     }
                                     else
@@ -171,8 +192,7 @@ namespace ScriptLanguage
                             }
                             else
                             {
-                                ReportStatement();
-                                Log.Instance().AddEntry($"Run Time Error : Type mismatch in assignment. Variable {VariableName} is not a string.");
+                                ReportStatement($"Run Time Error : Type mismatch in assignment. Variable {VariableName} is not a string.");
                             }
                         }
                         break;
@@ -187,8 +207,7 @@ namespace ScriptLanguage
                             }
                             else
                             {
-                                ReportStatement();
-                                Log.Instance().AddEntry($"Run Time Error : Type mismatch in assignment. Variable {VariableName} is not a handle.");
+                                ReportStatement($"Run Time Error : Type mismatch in assignment. Variable {VariableName} is not a handle.");
                             }
                         }
                         break;
@@ -199,12 +218,17 @@ namespace ScriptLanguage
                             if (sym != null)
                             {
                                 sym.SolidValue = sti.SolidValue;
+                                if (sti.SolidValue == 53)
+                                {
+                                    bool stophere = true;
+                                }
+                                //    Log.Instance().AddEntry($" {VariableName} is set to {(int)sti.SolidValue}");
+                                //                                sym.Dump();
                                 result = true;
                             }
                             else
                             {
-                                ReportStatement();
-                                Log.Instance().AddEntry($"Run Time Error : Type mismatch in assignment. Variable {VariableName} is not a solid.");
+                                ReportStatement($"Run Time Error : Type mismatch in assignment. Variable {VariableName} is not a solid.");
                             }
                         }
                         break;

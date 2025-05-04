@@ -15,16 +15,35 @@ namespace ScriptLanguage
             _SearchExpression = null;
         }
 
+        public IndexNode
+             (ExpressionCollection coll)
+        {
+            this._Expression = coll.Get(0);
+            this._SearchExpression = coll.Get(1);
+        }
+
         public ExpressionNode Expression
         {
-            get { return _Expression; }
-            set { _Expression = value; }
+            get
+            {
+                return _Expression;
+            }
+            set
+            {
+                _Expression = value;
+            }
         }
 
         public ExpressionNode SearchExpression
         {
-            get { return _SearchExpression; }
-            set { _SearchExpression = value; }
+            get
+            {
+                return _SearchExpression;
+            }
+            set
+            {
+                _SearchExpression = value;
+            }
         }
 
         /// Execute this node

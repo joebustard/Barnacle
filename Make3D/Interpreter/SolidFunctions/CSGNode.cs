@@ -38,6 +38,7 @@ namespace ScriptLanguage
                 if (EvalExpression(leftSolid, ref ls, "LeftSolid", Id()) &&
                     EvalExpression(rightSolid, ref rs, "RightSolid", Id()))
                 {
+                    //  Log.Instance().AddEntry(Id() + $"{PrimType} on {ls} and {rs}");
                     if (Script.ResultArtefacts.ContainsKey(ls))
                     {
                         if (Script.ResultArtefacts.ContainsKey(rs))
@@ -47,12 +48,13 @@ namespace ScriptLanguage
                             if (leftie != null && rightie != null)
                             {
                                 leftie.CalcScale(false);
-
                                 rightie.CalcScale(false);
+
                                 Group3D grp = new Group3D();
                                 grp.Name = leftie.Name;
                                 grp.Description = leftie.Description;
                                 grp.LeftObject = leftie;
+
                                 if (PrimType == "groupcut")
                                 {
                                     grp.RightObject = rightie.Clone();
@@ -65,19 +67,23 @@ namespace ScriptLanguage
                                     grp.RightObject = rightie;
                                     grp.PrimType = PrimType;
                                 }
+
                                 if (grp.Init())
                                 {
                                     grp.CalcScale(false);
                                     grp.Remesh();
                                     int id = Script.NextObjectId;
+                                    //    Log.Instance().AddEntry($"id={id}");
                                     Script.ResultArtefacts[id] = grp;
                                     ExecutionStack.Instance().PushSolid(id);
+                                    //   ExecutionStack.Instance().LogStackTop();
                                     leftie.Remesh();
                                     rightie.Remesh();
+
                                     result = true;
                                     // invalidate the two source objects
-                                    Script.ResultArtefacts.Remove(ls);
-                                    Script.ResultArtefacts.Remove(rs);
+                                    Script.ResultArtefacts[ls] = null;
+                                    Script.ResultArtefacts[rs] = null;
                                 }
                                 else
                                 {

@@ -65,6 +65,7 @@
     <Compile Include="Execution\Array.cs" />
     <Compile Include="IntrinsicFunctions\Dim.cs" />
     <Compile Include="IntrinsicFunctions\RndNode.cs" />
+    <Compile Include="Parser\ExtraParsingFunctions\ParseGeneralStatement.cs" />
     <Compile Include="Parser\ExtraParsingFunctions\ParseMakeTrayNode.cs" />
     <Compile Include="SolidFunctions\InsertPartNode.cs" />
     <Compile Include="SolidFunctions\IsSolidNode.cs" />
@@ -119,6 +120,8 @@
     <Compile Include="SolidFunctions\MakeWagonWheelNode.cs" />
     <Compile Include="SolidFunctions\UnionAllNode.cs" />
     <Compile Include="SolidFunctions\ValidSolidNode.cs" />
+    <Compile Include="SolidStatements\SaveSolidsNode.cs" />
+    <Compile Include="SolidStatements\SolidFlip.cs" />
     <Compile Include="SolidStatements\SolidHCut.cs" />
     <Compile Include="SolidStatements\SolidMirror.cs" />
     <Compile Include="SolidStatements\SolidRMove.cs" />
@@ -253,7 +256,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Dialogs\" />
-    <Folder Include="Libs\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CSGLib\CSGLib.csproj">
@@ -280,6 +282,9 @@
       <Project>{5f92b002-b820-4a56-a2b1-482c252ba8be}</Project>
       <Name>Object3DLib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Libs\limplib.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

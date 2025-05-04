@@ -15,50 +15,54 @@
 // *                                                                         *
 // *************************************************************************
 
-using Barnacle.Object3DLib;
-using MakerLib.Mirror;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
 {
-    internal class SolidMirrorNode : SolidStatement
+    internal class SolidFlipNode : SolidStatement
     {
-        private Alignment orientation;
+        private Directions direction;
 
-        public SolidMirrorNode()
+        public SolidFlipNode()
         {
+            label = "FlipHorizontal";
+            Direction = Directions.H;
             expressions = new ExpressionCollection();
-            orientation = Alignment.Left;
-            GenerateLabel();
         }
 
-        public enum Alignment
+        public enum Directions
         {
-            Left,
-            Right,
-            Front,
-            Back,
-            Up,
-            Down
-        };
+            H, V, D
+        }
 
-        public Alignment Orientation
+        public Directions Direction
         {
-            get
-            {
-                return orientation;
-            }
             set
             {
-                if (orientation != value)
+                direction = value;
+                switch (direction)
                 {
-                    orientation = value;
-                    GenerateLabel();
+                    case Directions.H:
+                        {
+                            label = "FlipHorizontal";
+                        }
+                        break;
+
+                    case Directions.V:
+                        {
+                            label = "FlipVertical";
+                        }
+                        break;
+
+                    case Directions.D:
+                        {
+                            label = "FlipDistal";
+                        }
+                        break;
                 }
             }
         }
@@ -83,18 +87,28 @@ namespace ScriptLanguage
                         {
                             if (CheckSolidExists(label, expressions.Get(0).ToString(), objectIndex))
                             {
-                                Object3D ob = Script.ResultArtefacts[objectIndex];
-                                string direction = "left";
-                                switch (orientation)
+                                switch (direction)
                                 {
-                                    case Alignment.Left: direction = "left"; break;
-                                    case Alignment.Right: direction = "right"; break;
-                                    case Alignment.Up: direction = "up"; break;
-                                    case Alignment.Down: direction = "down"; break;
-                                    case Alignment.Front: direction = "front"; break;
-                                    case Alignment.Back: direction = "back"; break;
+                                    case Directions.H:
+                                        {
+                                            Script.ResultArtefacts[objectIndex].FlipX();
+                                        }
+                                        break;
+
+                                    case Directions.V:
+                                        {
+                                            Script.ResultArtefacts[objectIndex].FlipY();
+                                        }
+                                        break;
+
+                                    case Directions.D:
+                                        {
+                                            Script.ResultArtefacts[objectIndex].FlipZ();
+                                        }
+                                        break;
                                 }
-                                Mirror.Reflect(ob, direction);
+                                Script.ResultArtefacts[objectIndex].FlipInside();
+                                GC.Collect();
                                 result = true;
                             }
                         }
@@ -103,23 +117,10 @@ namespace ScriptLanguage
             }
             catch (Exception ex)
             {
+                ReportStatement($"{label} : {ex.Message}");
                 result = false;
-                ReportStatement($" {label} : {ex.Message}");
             }
             return result;
-        }
-
-        private void GenerateLabel()
-        {
-            switch (orientation)
-            {
-                case Alignment.Left: label = "MirrorLeft"; break;
-                case Alignment.Right: label = "MirrorRight"; break;
-                case Alignment.Up: label = "MirrorUp"; break;
-                case Alignment.Down: label = "MirrorDown"; break;
-                case Alignment.Front: label = "MirrorFront"; break;
-                case Alignment.Back: label = "MirrorBack"; break;
-            }
         }
     }
 }

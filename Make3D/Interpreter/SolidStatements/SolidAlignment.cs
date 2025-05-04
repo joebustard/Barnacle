@@ -70,31 +70,31 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
+            bool more = false;
             try
             {
                 if (expressions != null)
                 {
-                    result = expressions.Execute();
-                    if (result)
+                    more = expressions.Execute();
+                    if (more)
                     {
                         int leftobjectIndex;
                         if (!PullSolid(out leftobjectIndex))
                         {
-                            Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");
+                            ReportStatement($"Run Time Error : {label} solid name incorrect {expressions.Get(1).ToString()}");
                         }
                         else
                         {
-                            if (Script.ResultArtefacts.ContainsKey(leftobjectIndex))
+                            if (Script.ResultArtefacts.ContainsKey(leftobjectIndex) && Script.ResultArtefacts[leftobjectIndex] != null)
                             {
                                 int rightobjectIndex;
                                 if (!PullSolid(out rightobjectIndex))
                                 {
-                                    ReportStatement();
-                                    Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");
+                                    ReportStatement($"Run Time Error : {label} solid name incorrect  {expressions.Get(0).ToString()}");
                                 }
                                 else
                                 {
-                                    if (Script.ResultArtefacts.ContainsKey(rightobjectIndex))
+                                    if (Script.ResultArtefacts.ContainsKey(rightobjectIndex) && Script.ResultArtefacts[rightobjectIndex] != null)
                                     {
                                         Bounds3D bns = new Bounds3D(Script.ResultArtefacts[leftobjectIndex].AbsoluteBounds);
                                         double midX = bns.MidPoint().X;
@@ -113,6 +113,7 @@ namespace ScriptLanguage
                                                         dAbsX = ob.Position.X - (ob.AbsoluteBounds.Lower.X - bns.Lower.X);
                                                         ob.Position = new Point3D(dAbsX, ob.Position.Y, ob.Position.Z);
                                                         ob.Remesh();
+                                                        result = true;
                                                     }
                                                     break;
 
@@ -121,6 +122,7 @@ namespace ScriptLanguage
                                                         dAbsX = ob.Position.X + (bns.Upper.X - ob.AbsoluteBounds.Upper.X);
                                                         ob.Position = new Point3D(dAbsX, ob.Position.Y, ob.Position.Z);
                                                         ob.Remesh();
+                                                        result = true;
                                                     }
                                                     break;
 
@@ -129,6 +131,7 @@ namespace ScriptLanguage
                                                         dAbsY = ob.Position.Y + (bns.Upper.Y - ob.AbsoluteBounds.Upper.Y);
                                                         ob.Position = new Point3D(ob.Position.X, dAbsY, ob.Position.Z);
                                                         ob.Remesh();
+                                                        result = true;
                                                     }
                                                     break;
 
@@ -137,6 +140,7 @@ namespace ScriptLanguage
                                                         dAbsY = ob.Position.Y - (ob.AbsoluteBounds.Lower.Y - bns.Lower.Y);
                                                         ob.Position = new Point3D(ob.Position.X, dAbsY, ob.Position.Z);
                                                         ob.Remesh();
+                                                        result = true;
                                                     }
                                                     break;
 
@@ -145,6 +149,7 @@ namespace ScriptLanguage
                                                         dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.Lower.Z - bns.Lower.Z);
                                                         ob.Position = new Point3D(ob.Position.X, ob.Position.Y, dAbsZ);
                                                         ob.Remesh();
+                                                        result = true;
                                                     }
                                                     break;
 
@@ -153,6 +158,7 @@ namespace ScriptLanguage
                                                         dAbsZ = ob.Position.Z + (bns.Upper.Z - ob.AbsoluteBounds.Upper.Z);
                                                         ob.Position = new Point3D(ob.Position.X, ob.Position.Y, dAbsZ);
                                                         ob.Remesh();
+                                                        result = true;
                                                     }
                                                     break;
 
@@ -162,6 +168,7 @@ namespace ScriptLanguage
                                                         dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.MidPoint().Z - bns.MidPoint().Z);
                                                         ob.Position = new Point3D(dAbsX, ob.Position.Y, dAbsZ);
                                                         ob.Remesh();
+                                                        result = true;
                                                     }
                                                     break;
                                             }
@@ -178,6 +185,7 @@ namespace ScriptLanguage
                                                         ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
                                                         ob.Remesh();
                                                         bns.Add(ob.AbsoluteBounds);
+                                                        result = true;
                                                     }
                                                     break;
 
@@ -189,6 +197,7 @@ namespace ScriptLanguage
                                                         ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
                                                         ob.Remesh();
                                                         bns.Add(ob.AbsoluteBounds);
+                                                        result = true;
                                                     }
                                                     break;
 
@@ -200,6 +209,7 @@ namespace ScriptLanguage
                                                         ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
                                                         ob.Remesh();
                                                         bns.Add(ob.AbsoluteBounds);
+                                                        result = true;
                                                     }
                                                     break;
 
@@ -211,6 +221,7 @@ namespace ScriptLanguage
                                                         ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
                                                         ob.Remesh();
                                                         bns.Add(ob.AbsoluteBounds);
+                                                        result = true;
                                                     }
                                                     break;
 
@@ -222,6 +233,7 @@ namespace ScriptLanguage
                                                         ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
                                                         ob.Remesh();
                                                         bns.Add(ob.AbsoluteBounds);
+                                                        result = true;
                                                     }
                                                     break;
 
@@ -234,16 +246,21 @@ namespace ScriptLanguage
                                                         ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
                                                         ob.Remesh();
                                                         bns.Add(ob.AbsoluteBounds);
+                                                        result = true;
                                                     }
                                                     break;
                                             }
                                         }
                                     }
+                                    else
+                                    {
+                                        ReportStatement($"Run Time Error : {label} unknown solid {rightobjectIndex}");
+                                    }
                                 }
                             }
                             else
                             {
-                                Log.Instance().AddEntry($"Run Time Error : {label} unknown solid");
+                                ReportStatement($"Run Time Error : {label} unknown solid {expressions.Get(1).ToString()}");
                             }
                         }
                     }

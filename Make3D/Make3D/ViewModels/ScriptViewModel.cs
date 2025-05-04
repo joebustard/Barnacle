@@ -349,6 +349,7 @@ program ""Script Name""
             //RegenerateDisplayList();
             Viewer?.MultiModels.Children.Clear();
         }
+
         /*
         public void RegenerateDisplayList()
         {
@@ -384,6 +385,7 @@ program ""Script Name""
             NotifyPropertyChanged("ModelItems");
         }
         */
+
         public void SwitchTabs()
         {
             if (SelectedTabIndex == 0)
@@ -466,6 +468,7 @@ program ""Script Name""
         internal async void RunScript()
         {
             EnableRun = false;
+            DateTime start = DateTime.Now;
             if (filePath != "" && Project.SharedProjectSettings.AutoSaveScript == true)
             {
                 try
@@ -500,7 +503,8 @@ program ""Script Name""
                 alllog += le.DateStamp + " " + le.Text + "\r\n";
             }
             UpdateText(alllog);
-
+            DateTime finished = DateTime.Now;
+            TimeSpan duration = finished - start;
             if (res.Status)
             {
                 foreach (Object3D ob in res.Artefacts.Values)
@@ -510,11 +514,11 @@ program ""Script Name""
                         content.Add(ob.Clone(true));
                     }
                 }
-                Logging.Log.Instance().AddEntry("Complete");
+                Logging.Log.Instance().AddEntry($"Complete ({duration.Hours}:{duration.Minutes}:{duration.Seconds})");
             }
             else
             {
-                Logging.Log.Instance().AddEntry("Failed");
+                Logging.Log.Instance().AddEntry($"Failed ({duration.Hours}:{duration.Minutes}:{duration.Seconds})");
             }
             res.Artefacts.Clear();
             res.LogEntrys.Clear();

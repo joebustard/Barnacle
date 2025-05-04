@@ -28,7 +28,7 @@ namespace Barnacle.Dialogs
     public partial class ObliqueEndCylinderDlg : BaseModellerDialog, INotifyPropertyChanged
     {
         private const double maxcutHeight = 200;
-        private const double maxcutPoints = 10;
+        private const double maxcutPoints = 20;
         private const double maxcutStyle = 3;
         private const double maxmainHeight = 200;
         private const double maxradius = 200;

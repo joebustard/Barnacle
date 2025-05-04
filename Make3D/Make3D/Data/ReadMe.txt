@@ -19,10 +19,15 @@ Added
   Setlength(), setheight() and setwidth() to the standard limpet library
   Initial sdf modeller tool
   Allow user to explicitly set the x,y position of a point on a flexipath by typing in its position.
+  Added extra colour definitions to the stanard limpet library
+  Added circular paste funtion to the limpet  library
+  Added SaveSolids statement to Limpet
+  Added Flipdistal, fliphorizontal and flipvertical to limpet
   
 
 Fixed
   Slice was showing estimated time wrong if it was more than a day
+  Index()  function not working
 
 Changed
   Platelet width from int to double to allow fractions of millimetres

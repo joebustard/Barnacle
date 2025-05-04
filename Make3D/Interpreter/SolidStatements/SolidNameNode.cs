@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace ScriptLanguage
 {
@@ -16,33 +17,31 @@ namespace ScriptLanguage
             try
             {
                 if (expressions != null)
-                {                    
+                {
                     if (expressions.Execute())
                     {
                         int objectIndex;
                         if (!PullSolid(out objectIndex))
                         {
-                            ReportStatement();
-                            Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");                    
+                            ReportStatement($"Run Time Error : {label} solid name incorrect");
                         }
                         else
                         {
-                            if (Script.ResultArtefacts.ContainsKey(objectIndex))
+                            if (CheckSolidExists(label, expressions.Get(0).ToString(), objectIndex))
                             {
-                                string name;                              
+                                string name;
                                 if (PullString(out name))
                                 {
-                                    Script.ResultArtefacts[objectIndex].Name = name;
-                                    result = true;
+                                    if (Script.ResultArtefacts.Keys.Contains(objectIndex) && Script.ResultArtefacts[objectIndex] != null)
+                                    {
+                                        Script.ResultArtefacts[objectIndex].Name = name;
+                                        result = true;
+                                    }
                                 }
                                 else
                                 {
-                                    Log.Instance().AddEntry($"Run Time Error : {label} unknown name");
-                                }                                
-                            }
-                            else
-                            {
-                                Log.Instance().AddEntry($"Run Time Error : {label} unknown solid");
+                                    ReportStatement($"Run Time Error : {label} expected name ");
+                                }
                             }
                         }
                     }

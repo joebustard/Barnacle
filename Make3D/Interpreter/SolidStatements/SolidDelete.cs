@@ -15,6 +15,7 @@ namespace ScriptLanguage
             bool result = false;
             try
             {
+                // SymbolTable.Instance().Dump();
                 if (expressions != null)
                 {
                     result = expressions.Execute();
@@ -23,15 +24,14 @@ namespace ScriptLanguage
                         int objectIndex;
                         if (!PullSolid(out objectIndex))
                         {
-                            ReportStatement();
-                            Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");
+                            ReportStatement($"Run Time Error : {label} solid name incorrect {expressions.Get(0).ToString()}");
                             result = false;
                         }
                         else
                         {
-                            if (Script.ResultArtefacts.ContainsKey(objectIndex))
+                            if (CheckSolidExists(label, expressions.Get(0).ToString(), objectIndex))
                             {
-                                Script.ResultArtefacts.Remove(objectIndex);
+                                Script.ResultArtefacts[objectIndex] = null;
                                 GC.Collect();
                             }
                         }
@@ -40,7 +40,7 @@ namespace ScriptLanguage
             }
             catch (Exception ex)
             {
-                Log.Instance().AddEntry($"{label} : {ex.Message}");
+                ReportStatement($"{label} : {ex.Message}");
                 result = false;
             }
             return result;

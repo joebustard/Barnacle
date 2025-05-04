@@ -1,3 +1,4 @@
+using ScriptLanguage.SolidStatements;
 using System;
 
 namespace ScriptLanguage
@@ -29,6 +30,9 @@ namespace ScriptLanguage
                 "double",
                 "else",
                 "exit",
+                "flipdistal",
+                "fliphorizontal",
+                "flipvertical",
                 "floor",
                 "function",
                 "for",
@@ -51,6 +55,7 @@ namespace ScriptLanguage
                 "return",
                 "rmove",
                 "run",
+                "savesolids",
                 "setcolour",
                 "setname",
                 "solid",
@@ -79,6 +84,7 @@ namespace ScriptLanguage
                 "dim",
                 "forceunion",
                 "height",
+                "index",
                 "inputstring",
                 "insertpart",
                 "insertlibpart",
@@ -1674,6 +1680,36 @@ namespace ScriptLanguage
             return GetFunctionNode<FileExistsNode>(parentName);
         }
 
+        private bool ParseFlipDistalStatement(CompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+            string label = "FlipDistal";
+            SolidFlipNode asn = new SolidFlipNode();
+            asn.Direction = SolidFlipNode.Directions.D;
+            result = ParseSolidStatement(parentNode, parentName, label, 1, asn);
+            return result;
+        }
+
+        private bool ParseFlipHorizontalStatement(CompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+            string label = "FlipHorizontal";
+            SolidFlipNode asn = new SolidFlipNode();
+            asn.Direction = SolidFlipNode.Directions.H;
+            result = ParseSolidStatement(parentNode, parentName, label, 1, asn);
+            return result;
+        }
+
+        private bool ParseFlipVerticalStatement(CompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+            string label = "FlipVertical";
+            SolidFlipNode asn = new SolidFlipNode();
+            asn.Direction = SolidFlipNode.Directions.V;
+            result = ParseSolidStatement(parentNode, parentName, label, 1, asn);
+            return result;
+        }
+
         private bool ParseFloorStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
@@ -2130,6 +2166,24 @@ namespace ScriptLanguage
                     }
                     break;
 
+                case "flipdistal":
+                    {
+                        result = ParseFlipDistalStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "fliphorizontal":
+                    {
+                        result = ParseFlipHorizontalStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "flipvertical":
+                    {
+                        result = ParseFlipVerticalStatement(parentNode, parentName);
+                    }
+                    break;
+
                 case "floor":
                     {
                         result = ParseFloorStatement(parentNode, parentName);
@@ -2204,6 +2258,12 @@ namespace ScriptLanguage
                 case "rotate":
                     {
                         result = ParseRotateStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "savesolids":
+                    {
+                        result = ParseSaveSolidsStatement(parentNode, parentName);
                     }
                     break;
 
@@ -2423,6 +2483,47 @@ namespace ScriptLanguage
             return result;
         }
 
+        private ExpressionNode ParseIndexFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "Index";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 2;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                IndexNode mn = new IndexNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
+
         private ExpressionNode ParseInputStringFunction(String parentName)
         {
             ExpressionNode exp = null;
@@ -2585,6 +2686,12 @@ namespace ScriptLanguage
                         case "inputstring":
                             {
                                 exp = ParseInputStringFunction(parentName);
+                            }
+                            break;
+
+                        case "index":
+                            {
+                                exp = ParseIndexFunction(parentName);
                             }
                             break;
 
@@ -5661,6 +5768,15 @@ namespace ScriptLanguage
             string label = "Rotate";
             SolidRotateNode asn = new SolidRotateNode();
             result = ParseSolidStatement(parentNode, parentName, label, 4, asn);
+            return result;
+        }
+
+        private bool ParseSaveSolidsStatement(CompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+            string label = "SaveSolids";
+            SaveSolidsNode asn = new SaveSolidsNode();
+            result = ParseSolidStatement(parentNode, parentName, label, 1, asn);
             return result;
         }
 

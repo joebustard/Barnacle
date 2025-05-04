@@ -1,40 +1,12 @@
-﻿private ExpressionNode ParseMakeTOOLNAMEFunction(string parentName)
+﻿using System;
+
+namespace ScriptLanguage
 {
-    ExpressionNode exp = null;
-    String label = "MakeTOOLNAME";
-    String commaError = $"{label} expected ,";
-    bool parsed = true;
-    ExpressionCollection coll = new ExpressionCollection();
-    int exprCount =//PARAMCOUNT;
-
-    for (int i = 0; i < exprCount && parsed; i++)
+    public partial class Interpreter
     {
-        ExpressionNode paramExp = ParseExpressionNode(parentName);
-        if (paramExp != null)
+        private ExpressionNode ParseMakeTOOLNAMEFunction(string parentName)
         {
-            if (i < exprCount - 1)
-            {
-                if (CheckForComma() == false)
-                {
-                    ReportSyntaxError(commaError);
-                    parsed = false;
-                }
-            }
-            coll.Add(paramExp);
-        }
-        else
-        {
-            String expError = $"{label} error parsing parameter expression number {i + 1} ";
-            ReportSyntaxError(expError);
-            parsed = false;
+            return ParseGeneral(parentName, new MakeTOOLNAMENode(), //PARAMCOUNT, "MakeTOOLNAME");
         }
     }
-    if (parsed && coll.Count() == exprCount)
-    {
-        MakeTOOLNAMENode mn = new MakeTOOLNAMENode(coll);
-        mn.IsInLibrary = tokeniser.InIncludeFile();
-        exp = mn;
-    }
-
-    return exp;
 }

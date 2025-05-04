@@ -24,12 +24,11 @@ namespace ScriptLanguage
                         int objectIndex;
                         if (!PullSolid(out objectIndex))
                         {
-                            ReportStatement();
-                            Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");
+                            ReportStatement($"Run Time Error : {label} solid name incorrect {expressions.Get(0).ToString()}");
                         }
                         else
                         {
-                            if (Script.ResultArtefacts.ContainsKey(objectIndex))
+                            if (Script.ResultArtefacts.ContainsKey(objectIndex) && Script.ResultArtefacts[objectIndex] != null)
                             {
                                 double xr;
                                 double yr;
@@ -48,12 +47,24 @@ namespace ScriptLanguage
                                             Script.ResultArtefacts[objectIndex].Rotate(rot);
                                             Script.ResultArtefacts[objectIndex].Remesh();
                                         }
+                                        else
+                                        {
+                                            ReportStatement($"Run Time Error : {label} z incorrect {expressions.Get(3).ToString()}");
+                                        }
                                     }
+                                    else
+                                    {
+                                        ReportStatement($"Run Time Error : {label} y incorrect {expressions.Get(2).ToString()}");
+                                    }
+                                }
+                                else
+                                {
+                                    ReportStatement($"Run Time Error : {label} x incorrect {expressions.Get(1).ToString()}");
                                 }
                             }
                             else
                             {
-                                Log.Instance().AddEntry($"Run Time Error : {label} unknown solid");
+                                ReportStatement($"Run Time Error : {label} unknown solid index {objectIndex}");
                             }
                         }
                     }
@@ -61,7 +72,7 @@ namespace ScriptLanguage
             }
             catch (Exception ex)
             {
-                Log.Instance().AddEntry($"{label} : {ex.Message}");
+                ReportStatement($"{label} : {ex.Message}");
             }
             return result;
         }

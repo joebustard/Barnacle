@@ -14,40 +14,41 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
+            bool more = false;
             try
             {
                 if (expressions != null)
                 {
-                    result = expressions.Execute();
-                    if (result)
+                    more = expressions.Execute();
+                    if (more)
                     {
                         int objectIndex;
                         if (!PullSolid(out objectIndex))
                         {
-                            ReportStatement();
-                            Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");
+                            ReportStatement($"Run Time Error : {label} solid name incorrect");
                         }
                         else
                         {
-                            if (Script.ResultArtefacts.ContainsKey(objectIndex))
+                            if (CheckSolidExists(label, expressions.Get(0).ToString(), objectIndex))
                             {
                                 byte A;
                                 byte R;
                                 byte G;
                                 byte B;
-                                result = PullByte(out A);
-                                if (result)
+                                more = PullByte(out A);
+                                if (more)
                                 {
-                                    result = PullByte(out R);
-                                    if (result)
+                                    more = PullByte(out R);
+                                    if (more)
                                     {
-                                        result = PullByte(out G);
-                                        if (result)
+                                        more = PullByte(out G);
+                                        if (more)
                                         {
-                                            result = PullByte(out B);
-                                            if (result)
+                                            more = PullByte(out B);
+                                            if (more)
                                             {
                                                 Script.ResultArtefacts[objectIndex].Color = Color.FromArgb(A, R, G, B);
+                                                result = true;
                                             }
                                         }
                                     }
@@ -59,7 +60,7 @@ namespace ScriptLanguage
             }
             catch (Exception ex)
             {
-                Log.Instance().AddEntry($"{label} : {ex.Message}");
+                ReportStatement($"{label} : {ex.Message}");
             }
             return result;
         }

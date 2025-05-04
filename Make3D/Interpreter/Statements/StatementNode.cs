@@ -14,11 +14,20 @@ namespace ScriptLanguage
 
         public bool IsInLibrary
         {
-            get { return isInLibrary; }
-            set { isInLibrary = value; }
+            get
+            {
+                return isInLibrary;
+            }
+            set
+            {
+                isInLibrary = value;
+            }
         }
 
-        public CompoundNode ParentCompound { get; internal set; }
+        public CompoundNode ParentCompound
+        {
+            get; internal set;
+        }
 
         /// Execute this node
         /// returning false terminates the application
@@ -31,6 +40,15 @@ namespace ScriptLanguage
         /// Returns a String representation of this node that can be used for
         /// Pretty Printing
 
+        public void ReportStatement(string s = "")
+        {
+            if (s != "")
+            {
+                Log.Instance().AddEntry(s);
+            }
+            Log.Instance().AddEntry($"{this.ToString()}");
+        }
+
         public override String ToRichText()
         {
             String result = "";
@@ -41,11 +59,6 @@ namespace ScriptLanguage
         {
             String result = "";
             return result;
-        }
-
-        public void ReportStatement()
-        {
-            Log.Instance().AddEntry($"{this.ToString()}");
         }
     }
 }

@@ -13,26 +13,26 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
+            bool more = false;
             try
             {
                 if (expressions != null)
                 {
-                    result = expressions.Execute();
-                    if (result)
+                    more = expressions.Execute();
+                    if (more)
                     {
                         int objectIndex;
                         if (!PullSolid(out objectIndex))
                         {
-                            ReportStatement();
-                            Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");
-                            result = false;
+                            ReportStatement($"Run Time Error : {label} solid name incorrect");
                         }
                         else
                         {
-                            if (Script.ResultArtefacts.ContainsKey(objectIndex))
+                            if (CheckSolidExists(label, expressions.Get(0).ToString(), objectIndex))
                             {
                                 Script.ResultArtefacts[objectIndex] = Script.ResultArtefacts[objectIndex].ConvertToMesh();
                                 GC.Collect();
+                                result = true;
                             }
                         }
                     }
@@ -40,7 +40,7 @@ namespace ScriptLanguage
             }
             catch (Exception ex)
             {
-                Log.Instance().AddEntry($"{label} : {ex.Message}");
+                ReportStatement($"{label} : {ex.Message}");
                 result = false;
             }
             return result;

@@ -23,15 +23,145 @@
    int b;
  }
 
- Colour Black;
- Colour White;
- Colour Red;
- Colour Blue;
- Colour Yellow;
- Colour Green;
- Colour Gray;
- Colour Brown;
- Colour Purple;
+Colour AliceBlue	;
+Colour AntiqueWhite	;
+Colour Aqua	;
+Colour Aquamarine;	
+Colour Azure	;
+Colour Beige	;
+Colour Bisque	;
+Colour Black	;
+Colour BlanchedAlmond	;
+Colour Blue	;
+Colour BlueViolet	;
+Colour Brown	;
+Colour BurlyWood;	
+Colour CadetBlue;	
+Colour Chartreuse;	
+Colour Chocolate;	
+Colour Coral	;
+Colour CornflowerBlue	;
+Colour Cornsilk	;
+Colour Crimson	;
+Colour Cyan	;
+Colour DarkBlue	;
+Colour DarkCyan	;
+Colour DarkGoldenrod	;
+Colour DarkGray	;
+Colour DarkGreen;	
+Colour DarkKhaki;	
+Colour DarkMagenta	;
+Colour DarkOliveGreen	;
+Colour DarkOrange	;
+Colour DarkOrchid	;
+Colour DarkRed	;
+Colour DarkSalmon	;
+Colour DarkSeaGreen	;
+Colour DarkSlateBlue	;
+Colour DarkSlateGray	;
+Colour DarkTurquoise	;
+Colour DarkViolet	;
+Colour DeepPink	;
+Colour DeepSkyBlue	;
+Colour DimGray	;
+Colour DodgerBlue	;
+Colour Firebrick	;
+Colour FloralWhite	;
+Colour ForestGreen	;
+Colour Fuchsia	;
+Colour Gainsboro;	
+Colour GhostWhite	;
+Colour Gold	;
+Colour Goldenrod;	
+Colour Gray	;
+Colour Green	;
+Colour GreenYellow	;
+Colour Honeydew	;
+Colour HotPink	;
+Colour IndianRed;	
+Colour Indigo	;
+Colour Ivory	;
+Colour Khaki	;
+Colour Lavender	;
+Colour LavenderBlush	;
+Colour LawnGreen	;
+Colour LemonChiffon	;
+Colour LightBlue	;
+Colour LightCoral	;
+Colour LightCyan	;
+Colour LightGoldenrod;
+Colour LightGray	;
+Colour LightGreen	;
+Colour LightPink	;
+Colour LightSalmon	;
+Colour LightSeaGreen	;
+Colour LightSkyBlue	;
+Colour LightSlateGray	;
+Colour LightSteelBlue	;
+Colour LightYellow	;
+Colour Lime	;
+Colour LimeGreen	;
+Colour Linen	;
+Colour Magenta	;
+Colour Maroon	;
+Colour MediumAquamarine	;
+Colour MediumBlue	;
+Colour MediumOrchid	;
+Colour MediumPurple	;
+Colour MediumSeaGreen	;
+Colour MediumSlateBlue	;
+Colour MediumSpringGreen;	
+Colour MediumTurquoise	;
+Colour MediumVioletRed	;
+Colour MidnightBlue	;
+Colour MintCream	;
+Colour MistyRose	;
+Colour Moccasin	;
+Colour NavajoWhite	;
+Colour Navy	;
+Colour OldLace	;
+Colour Olive	;
+Colour OliveDrab;	
+Colour Orange	;
+Colour OrangeRed;	
+Colour Orchid	;
+Colour PaleGoldenrod	;
+Colour PaleGreen	;
+Colour PaleTurquoise	;
+Colour PaleVioletRed	;
+Colour PapayaWhip	;
+Colour PeachPuff	;
+Colour Peru	;
+Colour Pink	;
+Colour Plum	;
+Colour PowderBlue	;
+Colour Purple	;
+Colour Red	;
+Colour RosyBrown	;
+Colour RoyalBlue	;
+Colour SaddleBrown	;
+Colour Salmon	;
+Colour SandyBrown;	
+Colour SeaGreen	;
+Colour SeaShell	;
+Colour Sienna	;
+Colour Silver	;
+Colour SkyBlue	;
+Colour SlateBlue;	
+Colour SlateGray	;
+Colour Snow	;
+Colour SpringGreen	;
+Colour SteelBlue	;
+Colour Teal	;
+Colour Thistle	;
+Colour Tomato	;
+Colour Turquoise	;
+Colour Violet	;
+Colour Wheat	;
+Colour White	;
+Colour WhiteSmoke	;
+Colour Yellow	;
+Colour YellowGreen	;
 
     Function Colour Argb( Int  a, Int  r, Int  g, Int  b ) 
     {
@@ -48,20 +178,151 @@
    Vertex v;
    v.X = 0.0;
    v.Y = 0.0;
-   v.Z= 0.0;
+   v.Z = 0.0;
  }
 
  procedure SetDefaultColours()
  {
-   Red = Argb(255,255,0,0);
-   Black = Argb(255,0,0,0);
-   White = Argb(255,255,255,255);
-   Blue = Argb(255,0,0,255);
-   Green = Argb(255,0,255,0);
-   Yellow = Argb(255,255,240,0);
-   Gray = Argb(255,128,128,128);
-   Brown = Argb(255,219,41,41);
-   Purple = Argb(255,178,0,255);
+   aliceblue = Argb( 255, 240, 248, 255)  ;
+   antiquewhite = Argb( 255, 250, 235, 215)  ;
+   aqua = Argb( 255, 0, 255, 255)  ;
+   aquamarine = Argb( 255, 127, 255, 212)  ;
+   azure = Argb( 255, 240, 255, 255)  ;
+   beige = Argb( 255, 245, 245, 220)  ;
+   bisque = Argb( 255, 255, 228, 196)  ;
+   black = Argb( 255, 0, 0, 0)  ;
+   blanchedalmond = Argb( 255, 255, 235, 205)  ;
+   blue = Argb( 255, 0, 0, 255)  ;
+   blueviolet = Argb( 255, 138, 43, 226)  ;
+   brown = Argb( 255, 165, 42, 42)  ;
+   burlywood = Argb( 255, 222, 184, 135)  ;
+   cadetblue = Argb( 255, 95, 158, 160)  ;
+   chartreuse = Argb( 255, 127, 255, 0)  ;
+   chocolate = Argb( 255, 210, 105, 30)  ;
+   coral = Argb( 255, 255, 127, 80)  ;
+   cornflowerblue = Argb( 255, 100, 149, 237)  ;
+   cornsilk = Argb( 255, 255, 248, 220)  ;
+   crimson = Argb( 255, 220, 20, 60)  ;
+   cyan = Argb( 255, 0, 255, 255)  ;
+   darkblue = Argb( 255, 0, 0, 139)  ;
+   darkcyan = Argb( 255, 0, 139, 139)  ;
+   darkgoldenrod = Argb( 255, 184, 134, 11)  ;
+   darkgray = Argb( 255, 169, 169, 169)  ;
+   darkgreen = Argb( 255, 0, 100, 0)  ;
+   darkkhaki = Argb( 255, 189, 183, 107)  ;
+   darkmagenta = Argb( 255, 139, 0, 139)  ;
+   darkolivegreen = Argb( 255, 85, 107, 47)  ;
+   darkorange = Argb( 255, 255, 140, 0)  ;
+   darkorchid = Argb( 255, 153, 50, 204)  ;
+   darkred = Argb( 255, 139, 0, 0)  ;
+   darksalmon = Argb( 255, 233, 150, 122)  ;
+   darkseagreen = Argb( 255, 143, 188, 143)  ;
+   darkslateblue = Argb( 255, 72, 61, 139)  ;
+   darkslategray = Argb( 255, 47, 79, 79)  ;
+   darkturquoise = Argb( 255, 0, 206, 209)  ;
+   darkviolet = Argb( 255, 148, 0, 211)  ;
+   deeppink = Argb( 255, 255, 20, 147)  ;
+   deepskyblue = Argb( 255, 0, 191, 255)  ;
+   dimgray = Argb( 255, 105, 105, 105)  ;
+   dodgerblue = Argb( 255, 30, 144, 255)  ;
+   firebrick = Argb( 255, 178, 34, 34)  ;
+   floralwhite = Argb( 255, 255, 250, 240)  ;
+   forestgreen = Argb( 255, 34, 139, 34)  ;
+   fuchsia = Argb( 255, 255, 0, 255)  ;
+   gainsboro = Argb( 255, 220, 220, 220)  ;
+   ghostwhite = Argb( 255, 248, 248, 255)  ;
+   gold = Argb( 255, 255, 215, 0)  ;
+   goldenrod = Argb( 255, 218, 82, 0)  ;
+   gray = Argb( 255, 128, 128, 128)  ;
+   green = Argb( 255, 0, 128, 0)  ;
+   greenyellow = Argb( 255, 173, 255, 47)  ;
+   honeydew = Argb( 255, 240, 255, 240)  ;
+   hotpink = Argb( 255, 255, 105, 180)  ;
+   indianred = Argb( 255, 205, 92, 92)  ;
+   indigo = Argb( 255, 75, 0, 130)  ;
+   ivory = Argb( 255, 255, 255, 240)  ;
+   khaki = Argb( 255, 240, 230, 140)  ;
+   lavender = Argb( 255, 230, 230, 250)  ;
+   lavenderblush = Argb( 255, 255, 240, 245)  ;
+   lawngreen = Argb( 255, 124, 252, 0)  ;
+   lemonchiffon = Argb( 255, 255, 250, 205)  ;
+   lightblue = Argb( 255, 173, 216, 230)  ;
+   lightcoral = Argb( 255, 240, 128, 128)  ;
+   lightcyan = Argb( 255, 224, 255, 255)  ;
+   lightgoldenrod = Argb( 255, 250, 250, 210)  ;
+   lightgray = Argb( 255, 211, 211, 211)  ;
+   lightgreen = Argb( 255, 144, 238, 144)  ;
+   lightpink = Argb( 255, 255, 182, 193)  ;
+   lightsalmon = Argb( 255, 255, 160, 122)  ;
+   lightseagreen = Argb( 255, 32, 178, 170)  ;
+   lightskyblue = Argb( 255, 135, 206, 250)  ;
+   lightslategray = Argb( 255, 119, 136, 153)  ;
+   lightsteelblue = Argb( 255, 176, 196, 222)  ;
+   lightyellow = Argb( 255, 255, 255, 224)  ;
+   lime = Argb( 255, 0, 255, 0)  ;
+   limegreen = Argb( 255, 50, 205, 50)  ;
+   linen = Argb( 255, 250, 240, 230)  ;
+   magenta = Argb( 255, 255, 0, 255)  ;
+   maroon = Argb( 255, 128, 0, 0)  ;
+   mediumaquamarine = Argb( 255, 102, 205, 170)  ;
+   mediumblue = Argb( 255, 0, 0, 205)  ;
+   mediumorchid = Argb( 255, 186, 85, 211)  ;
+   mediumpurple = Argb( 255, 147, 112, 219)  ;
+   mediumseagreen = Argb( 255, 60, 179, 113)  ;
+   mediumslateblue = Argb( 255, 123, 104, 238)  ;
+   mediumspringgreen = Argb( 255, 0, 250, 154)  ;
+   mediumturquoise = Argb( 255, 72, 209, 204)  ;
+   mediumvioletred = Argb( 255, 199, 21, 133)  ;
+   midnightblue = Argb( 255, 25, 25, 112)  ;
+   mintcream = Argb( 255, 245, 255, 250)  ;
+   mistyrose = Argb( 255, 255, 228, 225)  ;
+   moccasin = Argb( 255, 255, 228, 181)  ;
+   navajowhite = Argb( 255, 255, 222, 173)  ;
+   navy = Argb( 255, 0, 0, 128)  ;
+   oldlace = Argb( 255, 253, 245, 230)  ;
+   olive = Argb( 255, 128, 128, 0)  ;
+   olivedrab = Argb( 255, 107, 142, 35)  ;
+   orange = Argb( 255, 255, 165, 0)  ;
+   orangered = Argb( 255, 255, 69, 0)  ;
+   orchid = Argb( 255, 218, 112, 214)  ;
+   palegoldenrod = Argb( 255, 238, 232, 170)  ;
+   palegreen = Argb( 255, 152, 251, 152)  ;
+   paleturquoise = Argb( 255, 175, 238, 238)  ;
+   palevioletred = Argb( 255, 219, 112, 147)  ;
+   papayawhip = Argb( 255, 255, 239, 213)  ;
+   peachpuff = Argb( 255, 255, 218, 185)  ;
+   peru = Argb( 255, 205, 133, 63)  ;
+   pink = Argb( 255, 255, 192, 203)  ;
+   plum = Argb( 255, 221, 160, 221)  ;
+   powderblue = Argb( 255, 176, 224, 230)  ;
+   purple = Argb( 255, 128, 0, 128)  ;
+   red = Argb( 255, 255, 0, 0)  ;
+   rosybrown = Argb( 255, 188, 143, 143)  ;
+   royalblue = Argb( 255, 65, 105, 225)  ;
+   saddlebrown = Argb( 255, 139, 69, 19)  ;
+   salmon = Argb( 255, 250, 128, 114)  ;
+   sandybrown = Argb( 255, 244, 164, 96)  ;
+   seagreen = Argb( 255, 46, 139, 87)  ;
+   seashell = Argb( 255, 255, 245, 238)  ;
+   sienna = Argb( 255, 160, 82, 45)  ;
+   silver = Argb( 255, 192, 192, 192)  ;
+   skyblue = Argb( 255, 135, 206, 235)  ;
+   slateblue = Argb( 255, 106, 90, 205)  ;
+   slategray = Argb( 255, 112, 128, 144)  ;
+   snow = Argb( 255, 255, 250, 250)  ;
+   springgreen = Argb( 255, 0, 255, 127)  ;
+   steelblue = Argb( 255, 70, 130, 180)  ;
+   teal = Argb( 255, 0, 128, 128)  ;
+   thistle = Argb( 255, 216, 191, 216)  ;
+   tomato = Argb( 255, 255, 99, 71)  ;
+   turquoise = Argb( 255, 64, 224, 208)  ;
+   violet = Argb( 255, 238, 130, 238)  ;
+   wheat = Argb( 255, 245, 222, 179)  ;
+   white = Argb( 255, 255, 255, 255)  ;
+   whitesmoke = Argb( 255, 245, 245, 245)  ;
+   yellow = Argb( 255, 255, 255, 0)  ;
+   yellowgreen = Argb( 255, 154, 205, 50)  ;
+
  }
 
 procedure ColourSolid(Solid sl, Colour cl)
@@ -219,6 +480,44 @@ function solid ClipRight( solid sl, double l)
        Resize item, oldl, oldh, newwidth ;
    }
 
+   // Name       : Circularpaste
+   // Does       : Copies the given object and pastes multiple copies in a circle around the x,y,z   
+   // Parameters : The solid to copy
+   //              the x,y,z of the centre of the circle
+   //              the number of copies
+   //              the radius of the circle
+   // Returns    : A single solid that combines all the copies
+   Function Solid Circularpaste( Solid  s1, Double  x, Double  y, Double  z, Int  copies, Double  radius )
+   {
+       Solid whole ;
+       Solid tmp ;
+       Int i ;
+       Double theta = 0 ;
+       Double delta = ( 2 * 3.1415962 ) / copies ;
+       For i = 1 To  copies 
+       {
+           tmp = Copy ( s1 ) ;
+           
+           Double px = radius * Sin ( theta ) + x ;
+           Double py = y ;
+           Double pz = radius * Cos( theta ) + z ;
+           Move tmp, px, py, pz ;
+           Rotate tmp, 0, Degrees( theta ), 0 ;
+           theta = theta + delta ;
+           If ( i == 1 ) 
+           {
+               whole = tmp ;
+           }
+           Else 
+           {
+               whole = Forceunion ( whole, tmp ) ;
+           
+               GroupToMesh whole ;
+           }
+
+       }
+       Return whole ;
+   }
 
  procedure InitialiseLimpLib()
  {

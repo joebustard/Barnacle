@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using static CSGLib.BooleanModeller;
 
 namespace ScriptLanguage
 {
@@ -99,6 +100,16 @@ namespace ScriptLanguage
         public void Clear()
         {
             Symbols.Clear();
+        }
+
+        public void Dump()
+        {
+            System.Diagnostics.Debug.WriteLine("");
+            System.Diagnostics.Debug.WriteLine("Symbol Table Dump");
+            foreach (Symbol sym in Symbols)
+            {
+                sym.Dump();
+            }
         }
 
         public ArraySymbol FindArraySymbol(string strName)

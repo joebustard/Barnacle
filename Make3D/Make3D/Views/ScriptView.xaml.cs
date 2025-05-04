@@ -124,8 +124,10 @@ namespace Barnacle.Views
         private void DispatcherTimer_Tick(object sender, EventArgs e)
         {
             dispatcherTimer.Stop();
-
-            RefreshInterpreterSource();
+            if (vm.EnableRun)
+            {
+                //  RefreshInterpreterSource();
+            }
         }
 
         /*

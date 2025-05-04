@@ -1,4 +1,5 @@
 using System;
+using System.Dynamic;
 
 namespace ScriptLanguage
 {
@@ -19,12 +20,19 @@ namespace ScriptLanguage
 
         public bool IsInLibrary
         {
-            get { return isInLibrary; }
-            set { isInLibrary = value; }
+            get
+            {
+                return isInLibrary;
+            }
+            set
+            {
+                isInLibrary = value;
+            }
         }
 
         public virtual bool EvalExpression(ExpressionNode exp, ref int x, string v, string id = "")
         {
+            //  Log.Instance().AddEntry($"evalexpression : {exp.ToString()}, {v} , {id}");
             bool result = exp.Execute();
             if (result)
             {
@@ -163,6 +171,10 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             return true;
+        }
+
+        public virtual void SetExpressions(ExpressionCollection coll)
+        {
         }
 
         /// Returns a String representation of this node that can be used for

@@ -20,22 +20,20 @@ namespace ScriptLanguage
                     result = expressions.Execute();
                     if (result)
                     {
+                        result = false;
                         int objectIndex;
                         if (!PullSolid(out objectIndex))
                         {
                             ReportStatement();
-                            Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");
+                            ReportStatement($"Run Time Error : {label} solid name incorrect {expressions.Get(0).ToString()}");
                         }
                         else
                         {
-                            if (Script.ResultArtefacts.ContainsKey(objectIndex))
+                            if (CheckSolidExists(label, expressions.Get(0).ToString(), objectIndex))
                             {
                                 Script.ResultArtefacts[objectIndex].MoveToFloor();
                                 Script.ResultArtefacts[objectIndex].Remesh();
-                            }
-                            else
-                            {
-                                Log.Instance().AddEntry($"Run Time Error : {label} unknown solid");
+                                result = true;
                             }
                         }
                     }
@@ -43,7 +41,7 @@ namespace ScriptLanguage
             }
             catch (Exception ex)
             {
-                Log.Instance().AddEntry($"{label}: {ex.Message}");
+                ReportStatement($"{label}: {ex.Message}");
             }
             return result;
         }
