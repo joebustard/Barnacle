@@ -519,6 +519,21 @@ function solid ClipRight( solid sl, double l)
        Return whole ;
    }
 
+   // Name          : Insertandplace
+   // Does          :  Insert a part and set its position and rotation  
+   // Parameters    : The source file
+   //               The part name
+   //               the x,y,z to place it at
+   //               the rotx,roty,rotz values in degrees
+   // returns       : the solid
+   Function Solid Insertandplace( String  file, String  part, Double  x, Double  y, Double  z, Double  rx, Double  ry, Double  rz )
+   {
+       Solid sld = InsertPart( file, part ) ;
+       Move sld, x, y, z ;
+       Rotate sld, rx, ry, rz ;
+       Return sld ;
+   }
+
  procedure InitialiseLimpLib()
  {
    SetDefaultColours();

@@ -68,6 +68,7 @@ namespace ScriptLanguage.SolidStatements
                                     {
                                         Write(fName);
                                         result = true;
+                                        Script.RanSaveParts = true;
                                     }
                                     catch (Exception ex)
                                     {

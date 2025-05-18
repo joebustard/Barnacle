@@ -28,44 +28,44 @@
                         <RowDefinition Height="126" />
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0">
-                        <Border MaxHeight="500" Style="{StaticResource ControlBorder}">
-                            <RichTextBox
+
+                        <RichTextBox
                                 x:Name="ScriptBox"
                                 MaxHeight="500"
                                 HorizontalAlignment="Stretch"
+
                                 Block.LineHeight="2"
                                 FontSize="32"
                                 IsEnabled="{Binding EnableRun}"
                                 PreviewKeyDown="ScriptBox_PreviewKeyDown"
                                 TextChanged="ScriptBox_TextChanged"
                                 VerticalScrollBarVisibility="Visible">
-                                <RichTextBox.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Command="ApplicationCommands.Cut" Header="Cut" />
-                                        <MenuItem Command="ApplicationCommands.Copy" Header="Copy" />
-                                        <MenuItem Command="ApplicationCommands.Paste" Header="Paste" />
-                                        <Separator />
-                                        <MenuItem
+                            <RichTextBox.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Command="ApplicationCommands.Cut" Header="Cut" />
+                                    <MenuItem Command="ApplicationCommands.Copy" Header="Copy" />
+                                    <MenuItem Command="ApplicationCommands.Paste" Header="Paste" />
+                                    <Separator />
+                                    <MenuItem
                                             Command="{Binding ScriptCommand}"
                                             CommandParameter="InsSolidFunc"
                                             Header="Insert Solid Func" />
-                                        <MenuItem
+                                    <MenuItem
                                             Command="{Binding ScriptCommand}"
                                             CommandParameter="BlankProcedure"
                                             Header="Insert Blank Procedure" />
-                                        <MenuItem
+                                    <MenuItem
                                             Command="{Binding ScriptCommand}"
                                             CommandParameter="Procedure"
                                             Header="Insert Procedure With Parameters" />
 
-                                        <MenuItem
+                                    <MenuItem
                                             Command="{Binding ScriptCommand}"
                                             CommandParameter="FuncHead"
                                             Header="Insert Func Header" />
-                                    </ContextMenu>
-                                </RichTextBox.ContextMenu>
-                            </RichTextBox>
-                        </Border>
+                                </ContextMenu>
+                            </RichTextBox.ContextMenu>
+                        </RichTextBox>
                     </Grid>
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
@@ -80,7 +80,7 @@
                         <UniformGrid
                             Grid.Row="0"
                             Grid.RowSpan="2"
-                            Grid.ColumnSpan="2"                            
+                            Grid.ColumnSpan="2"
                             Margin="0,0,0,74.8"
                             Columns="6"
                             Rows="1">
@@ -129,7 +129,7 @@
                                     Text="{Binding SearchText}" />
                                 <Button
                                     x:Name="SearchBut"
-                                    
+
                                     Command="{Binding FindCommand}"
                                     Content="Find"
                                     IsEnabled="{Binding EnableRun}" />

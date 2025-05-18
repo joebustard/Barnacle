@@ -594,7 +594,7 @@ program ""Script Name""
             }
             BaseViewModel.ScriptResults = null;
             BaseViewModel.ScriptClearBed = false;
-            if (content.Count > 0)
+            if (content.Count > 0 && !Script.RanSaveParts)
             {
                 MessageBoxResult res = MessageBox.Show("Objects have been created. Do you want to save them in the model?", "Warning", MessageBoxButton.YesNo);
                 if (res == MessageBoxResult.Yes)

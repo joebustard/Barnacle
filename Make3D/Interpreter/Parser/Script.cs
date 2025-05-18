@@ -37,6 +37,12 @@ namespace ScriptLanguage
             }
         }
 
+        public static bool RanSaveParts
+        {
+            get;
+            set;
+        }
+
         // This is used a generic way of returning objects or data created when the script is
         // run.
         //public static List<Object3D> ResultArtefacts
@@ -53,6 +59,7 @@ namespace ScriptLanguage
             {
                 ExecutionStack.Instance().Clear();
                 ResultArtefacts.Clear();
+                RanSaveParts = false;
 
                 NextObjectId = 0;
 
