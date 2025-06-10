@@ -137,6 +137,9 @@ namespace ScriptLanguage
                 "makecurvedfunnel",
                 "now",
                 "pcname",
+                "posx",
+                "posy",
+                "posz",
                 "rad",
                 "rnd",
                 "replaceall",
@@ -2038,6 +2041,19 @@ namespace ScriptLanguage
             return result;
         }
 
+        private ExpressionNode ParseGetSolidPosFunction(string parentName, string prim)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode leftSolid = ParseExpressionNode(parentName);
+            if (leftSolid != null)
+            {
+                GetSolidPosNode mn = new GetSolidPosNode(leftSolid, prim);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+            return exp;
+        }
+
         private ExpressionNode ParseGetSolidSizeFunction(string parentName, string prim)
         {
             ExpressionNode exp = null;
@@ -3090,6 +3106,14 @@ namespace ScriptLanguage
                         case "height":
                             {
                                 exp = ParseGetSolidSizeFunction(parentName, functionName);
+                            }
+                            break;
+
+                        case "posx":
+                        case "posy":
+                        case "posz":
+                            {
+                                exp = ParseGetSolidPosFunction(parentName, functionName);
                             }
                             break;
                     }

@@ -21,8 +21,9 @@ Added
   Allow user to explicitly set the x,y position of a point on a flexipath by typing in its position.
   Added extra colour definitions to the stanard limpet library
   Added circular paste funtion to the limpet  library
-  Added SaveSolids statement to Limpet
+  Added SaveSolids statement to Limpet. If run then the reminder to save solids when the script editor closes is supressed
   Added Flipdistal, fliphorizontal and flipvertical to limpet
+  Added posx(),posy(),posz() to limpet
   
 
 Fixed
