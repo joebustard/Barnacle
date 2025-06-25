@@ -4344,7 +4344,7 @@ namespace Barnacle.ViewModels
             {
                 if (Document.Dirty)
                 {
-                    if (MessageBox.Show("Save current document first?", "Warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    if (MessageBox.Show("SaveAsTemplate current document first?", "Warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
                         if (Document.FilePath != "")
                         {

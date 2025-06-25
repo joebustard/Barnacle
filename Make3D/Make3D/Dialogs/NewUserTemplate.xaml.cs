@@ -20,46 +20,65 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
-namespace FileUtils
+namespace Barnacle.Dialogs
 {
-    public class PathManager
+    /// <summary>
+    /// Interaction logic for NewUserTemplate.xaml
+    /// </summary>
+    public partial class NewUserTemplate : Window
     {
-        public static string ApplicationDataFolder()
+        private String templateDescription;
+        private String templateName;
+
+        public NewUserTemplate()
         {
-            return System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Barnacle");
+            InitializeComponent();
+            DataContext = this;
         }
 
-        public static string CommonAppDataFolder()
+        public String TemplateDescription
         {
-            return System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Barnacle");
+            get
+            {
+                return templateDescription;
+            }
+            set
+            {
+                templateDescription = value;
+            }
         }
 
-        public static string LibraryFolder()
+        public String TemplateName
         {
-            string pth = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Barnacle");
-            pth += "//Library";
-            return pth;
+            get
+            {
+                return templateName;
+            }
+            set
+            {
+                templateName = value;
+            }
         }
 
-        public static string PrinterProfileFolder()
+        private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            folder += "\\Barnacle\\PrinterProfiles";
-            return folder;
+            DialogResult = false;
+            Close();
         }
 
-        public static string UserPresetsPath()
+        private void OK_Click(object sender, RoutedEventArgs e)
         {
-            string pth = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\Barnacle";
-            return pth;
-        }
-
-        public static string UserTemplatesFolder()
-        {
-            string pth = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Barnacle");
-            pth += "//UserTemplates";
-            return pth;
+            DialogResult = true;
+            Close();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileUtils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
@@ -17,8 +18,15 @@ namespace TemplateLib
             TemplateDefinitionExtension = ".def";
         }
 
-        public string ProjectTarget { get; set; }
-        public string SolutionPath { get; set; }
+        public string ProjectTarget
+        {
+            get; set;
+        }
+
+        public string SolutionPath
+        {
+            get; set;
+        }
 
         public string TemplateDefinitionExtension
         {
@@ -42,7 +50,10 @@ namespace TemplateLib
             }
         }
 
-        public string TemplateDefinitionPath { get; set; }
+        public string TemplateDefinitionPath
+        {
+            get; set;
+        }
 
         public void AddSubstitution(string v1, string v2)
         {
@@ -93,13 +104,7 @@ namespace TemplateLib
                 }
                 foreach (ProjectTemplateFolder fld in def.Folders)
                 {
-                    fld.Substitutions = def.Substitutions;
-                    string p = System.IO.Path.Combine(pth, fld.Name);
-                    if (!Directory.Exists(p))
-                    {
-                        Directory.CreateDirectory(p);
-                    }
-                    fld.CreateFiles(p);
+                    fld.CreateFilesAndFolders(pth, def.Substitutions);
                 }
 
                 CreateSolution(projName, pth, def);
@@ -127,18 +132,47 @@ namespace TemplateLib
             }
         }
 
+        public void ScanForUserTemplates()
+        {
+            string templateDefinitionPath = PathManager.UserTemplatesFolder();
+            if (templateDefinitionPath != String.Empty)
+            {
+                if (Directory.Exists(templateDefinitionPath))
+                {
+                    if (TemplateDefinitionExtension != String.Empty)
+                    {
+                        string[] files = Directory.GetFiles(templateDefinitionPath, "*" + TemplateDefinitionExtension);
+                        foreach (string f in files)
+                        {
+                            LoadDefinition(f);
+                        }
+                    }
+                }
+            }
+        }
+
         private void CreateSolution(string projName, string pth, ProjectTemplateDefinition def)
         {
             XmlDocument solutionDoc = new XmlDocument();
             solutionDoc.XmlResolver = null;
             XmlElement root = solutionDoc.CreateElement("Project");
             root.SetAttribute("ProjectName", projName);
-            root.SetAttribute("Open", "\\"+projName+"\\"+def.InitialFile);
+            root.SetAttribute("Open", "\\" + projName + "\\" + def.InitialFile);
             root.SetAttribute("Created", DateTime.Now.ToString());
             solutionDoc.AppendChild(root);
             foreach (ProjectTemplateFolder fld in def.Folders)
             {
-                fld.CreateSolutionEntry(solutionDoc, root);
+                if (fld.Name != ".")
+                {
+                    XmlElement fldel = solutionDoc.CreateElement("Folder");
+
+                    fld.CreateSolutionEntry(solutionDoc, fldel);
+                    root.AppendChild(fldel);
+                }
+                else
+                {
+                    fld.CreateSolutionEntry(solutionDoc, root);
+                }
             }
             XmlElement desEle = solutionDoc.CreateElement("Description");
             desEle.InnerText = def.Description;

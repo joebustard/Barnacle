@@ -579,7 +579,7 @@ program ""Script Name""
         {
             if (Dirty == true && filePath != "")
             {
-                MessageBoxResult res = MessageBox.Show("Script changed." + System.Environment.NewLine + "Save changes before closing?", "Warning", MessageBoxButton.YesNo);
+                MessageBoxResult res = MessageBox.Show("Script changed." + System.Environment.NewLine + "SaveAsTemplate changes before closing?", "Warning", MessageBoxButton.YesNo);
                 if (res == MessageBoxResult.Yes)
                 {
                     try

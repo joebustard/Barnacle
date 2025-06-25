@@ -654,7 +654,7 @@ namespace Barnacle.Models
 
                 if (FileName == "")
                 {
-                    MessageBox.Show("Save the document first. So there is an export name");
+                    MessageBox.Show("SaveAsTemplate the document first. So there is an export name");
                 }
                 else
                 {
@@ -713,7 +713,7 @@ namespace Barnacle.Models
 
                 if (FileName == "")
                 {
-                    MessageBox.Show("Save the document first. So there is an export name");
+                    MessageBox.Show("SaveAsTemplate the document first. So there is an export name");
                 }
                 else
                 {

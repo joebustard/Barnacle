@@ -47,6 +47,7 @@ namespace Barnacle.ViewModels
             templator = new ProjectTemplator();
             templator.TemplateDefinitionPath = AppDomain.CurrentDomain.BaseDirectory + "templates";
             templator.ScanForTemplates();
+            templator.ScanForUserTemplates();
             templateNames = new List<string>();
             for (int i = 0; i < templator.NumberOfTemplates(); i++)
             {
@@ -64,9 +65,15 @@ namespace Barnacle.ViewModels
             OKEnabled = false;
         }
 
-        public ICommand BackCommand { get; set; }
+        public ICommand BackCommand
+        {
+            get; set;
+        }
 
-        public ICommand CreateCommand { get; set; }
+        public ICommand CreateCommand
+        {
+            get; set;
+        }
 
         public bool OKEnabled
         {

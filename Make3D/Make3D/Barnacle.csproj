@@ -132,6 +132,9 @@
     <Compile Include="Dialogs\CutVPlane\CutVerticalPlaneDlg.xaml.cs">
       <DependentUpon>CutVerticalPlaneDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\NewUserTemplate.xaml.cs">
+      <DependentUpon>NewUserTemplate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\Tray\TrayDlg.xaml.cs" />
     <Compile Include="Dialogs\PointCoordinateEntry\PointCoordinateEntry.xaml.cs">
       <DependentUpon>PointCoordinateEntry.xaml</DependentUpon>
@@ -546,6 +549,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\DecimatorSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\NewUserTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

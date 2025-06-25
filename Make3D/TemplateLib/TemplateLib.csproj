@@ -49,5 +49,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TemplateSubstitution.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FileUtils\FileUtils.csproj">
+      <Project>{6EE47C70-2F51-490A-B50C-97FBAD59A0E7}</Project>
+      <Name>FileUtils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VisualSolutionExplorerLib\VisualSolutionExplorerLib.csproj">
+      <Project>{a5705ae8-b1aa-445c-8790-294e6b95e401}</Project>
+      <Name>VisualSolutionExplorerLib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

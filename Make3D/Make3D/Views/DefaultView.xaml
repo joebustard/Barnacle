@@ -157,6 +157,7 @@
                         ImageSource="/images/buttons/AddPage.png"
                         IsEnabled="{Binding EditingActive}"
                         ToolTip="Create a  new project" />
+
                     <Custom:RibbonApplicationMenuItem
                         x:Name="OpenProjectMenu"
                         Command="{Binding OpenProjectCommand}"
@@ -164,6 +165,14 @@
                         ImageSource="/images/buttons/age.png"
                         IsEnabled="{Binding EditingActive}"
                         ToolTip="Open an existing project" />
+
+                    <Custom:RibbonApplicationMenuItem
+                        x:Name="SaveTemplateMenu"
+                        Command="{Binding SaveTemplateCommand}"
+                        Header="Save As Template"
+                        ImageSource="/images/buttons/age.png"
+                        IsEnabled="{Binding EditingActive}"
+                        ToolTip="Save current project structure as a template" />
                     <Custom:RibbonSeparator />
                     <Custom:RibbonApplicationMenuItem
                         x:Name="ZipProjectMenu"

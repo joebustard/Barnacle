@@ -1,41 +1,15 @@
-﻿using System;
+﻿using FileUtils;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 
 namespace TemplateLib
 {
     public class ProjectTemplateDefinition
     {
-        internal String Name { get; set; }
-        internal String Description { get; set; }
-        internal String InitialFile { get; set; }
-        internal List<ProjectTemplateFolder> folders;
-
-        internal List<ProjectTemplateFolder> Folders
-        {
-            get { return folders; }
-            set
-            {
-                if (value != folders)
-                {
-                    folders = value;
-                }
-            }
-        }
-
+        public List<ProjectTemplateFolder> folders;
         private List<TemplateSubstitution> substitutions;
-
-        internal List<TemplateSubstitution> Substitutions
-        {
-            get { return substitutions; }
-            set
-            {
-                if (substitutions != value)
-                {
-                    substitutions = value;
-                }
-            }
-        }
 
         public ProjectTemplateDefinition()
         {
@@ -46,7 +20,52 @@ namespace TemplateLib
             substitutions = new List<TemplateSubstitution>();
         }
 
-        internal void Load(XmlDocument doc, XmlNode nd)
+        public String Description
+        {
+            get; set;
+        }
+
+        public List<ProjectTemplateFolder> Folders
+        {
+            get
+            {
+                return folders;
+            }
+            set
+            {
+                if (value != folders)
+                {
+                    folders = value;
+                }
+            }
+        }
+
+        public String InitialFile
+        {
+            get; set;
+        }
+
+        public String Name
+        {
+            get; set;
+        }
+
+        public List<TemplateSubstitution> Substitutions
+        {
+            get
+            {
+                return substitutions;
+            }
+            set
+            {
+                if (substitutions != value)
+                {
+                    substitutions = value;
+                }
+            }
+        }
+
+        public void Load(XmlDocument doc, XmlNode nd)
         {
             XmlElement ele = nd as XmlElement;
             if (ele != null)
@@ -70,30 +89,9 @@ namespace TemplateLib
             foreach (XmlNode fl in flds)
             {
                 XmlElement fel = fl as XmlElement;
-                if (fel != null && fel.HasAttribute("Name"))
-                {
-                    String folderName = fel.GetAttribute("Name");
-                    if (folderName != String.Empty)
-                    {
-                        ProjectTemplateFolder nf = new ProjectTemplateFolder();
-                        nf.Name = folderName;
-                        Folders.Add(nf);
-                        // add ALL attributes to the folders attribute dictionary
-                        XmlAttributeCollection atrs = fel.Attributes;
-                        foreach (XmlAttribute a in atrs)
-                        {
-                            nf.Attributes[a.Name] = a.Value;
-                        }
-
-                        XmlNodeList fileNodes = fel.SelectNodes("File");
-                        foreach (XmlNode filn in fileNodes)
-                        {
-                            ProjectTemplateFile pf = new ProjectTemplateFile();
-                            pf.Load(doc, filn);
-                            nf.Files.Add(pf);
-                        }
-                    }
-                }
+                ProjectTemplateFolder nf = new ProjectTemplateFolder();
+                nf.Load(doc, fel);
+                Folders.Add(nf);
             }
 
             XmlNodeList subs = ele.SelectNodes("Replace");
@@ -117,6 +115,44 @@ namespace TemplateLib
                     }
                 }
             }
+        }
+
+        public void SaveAsTemplate()
+        {
+            // user templates are always saved in the same folder.
+            // if it doesn't exist create it.
+            string dir = PathManager.UserTemplatesFolder();
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+            string templatefileName = Name.Trim().Replace(" ", "_");
+            templatefileName = Path.Combine(dir, templatefileName + ".def");
+            XmlDocument doc = new XmlDocument();
+            doc.XmlResolver = null;
+            XmlElement docNode = doc.CreateElement("Defs");
+            doc.AppendChild(docNode);
+
+            XmlElement dnode = doc.CreateElement("ProjectDefinition");
+            dnode.SetAttribute("Name", Name);
+            docNode.AppendChild(dnode);
+
+            XmlElement descnode = doc.CreateElement("Description");
+            descnode.InnerText = Description;
+            dnode.AppendChild(descnode);
+
+            XmlElement inifilenode = doc.CreateElement("InitialFile");
+            inifilenode.InnerText = InitialFile;
+            dnode.AppendChild(inifilenode);
+
+            foreach (ProjectTemplateFolder nf in folders)
+            {
+                XmlElement foldernode = doc.CreateElement("Folder");
+                dnode.AppendChild(foldernode);
+                nf.SaveAsTemplate(foldernode, doc);
+            }
+
+            doc.Save(templatefileName);
         }
     }
 }

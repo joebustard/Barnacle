@@ -20,10 +20,12 @@ using Barnacle.Models;
 using Barnacle.Models.Mru;
 using Barnacle.Object3DLib;
 using Barnacle.ViewModel.BuildPlates;
+using FileUtils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -32,6 +34,8 @@ using System.Windows.Controls.Ribbon;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using TemplateLib;
+using VisualSolutionExplorer;
 
 namespace Barnacle.ViewModels
 {
@@ -156,7 +160,7 @@ namespace Barnacle.ViewModels
             ViewCommand = new RelayCommand(OnView);
             MeshSubdivideCommand = new RelayCommand(OnMeshSubdivide);
             AboutCommand = new RelayCommand(OnAbout);
-
+            SaveTemplateCommand = new RelayCommand(OnSaveTemplate);
             ExitCommand = new RelayCommand(OnExit);
             ZipProjectCommand = new RelayCommand(OnZipProject);
             Caption = BaseViewModel.Document.Caption;
@@ -945,6 +949,11 @@ namespace Barnacle.ViewModels
             get; set;
         }
 
+        public RelayCommand SaveTemplateCommand
+        {
+            get; set;
+        }
+
         public RelayCommand ScreenShotCommand
         {
             get; private set;
@@ -1498,6 +1507,15 @@ namespace Barnacle.ViewModels
             {
                 currentViewName = v;
                 OnView(v);
+            }
+        }
+
+        private void AddProjectFoldersToTemplate(ProjectTemplateDefinition ptd, List<ProjectFolder> projectFolders, string projectName)
+        {
+            foreach (ProjectFolder folder in projectFolders)
+            {
+                ProjectTemplateFolder ptfolder = new ProjectTemplateFolder(folder, projectName);
+                ptd.Folders.Add(ptfolder);
             }
         }
 
@@ -2119,6 +2137,27 @@ namespace Barnacle.ViewModels
             Caption = BaseViewModel.Document.Caption;
         }
 
+        private void OnSaveTemplate(object obj)
+        {
+            NewUserTemplate dlg = new NewUserTemplate();
+            dlg.TemplateDescription = "A user project template based on the structure of the " + Project.ProjectName + " project";
+            dlg.TemplateName = Project.ProjectName.Trim() + "_Template";
+            if (dlg.ShowDialog() == true)
+            {
+                string prjName = dlg.TemplateName;
+                if (ValidProjectName(ref prjName))
+                {
+                    ProjectTemplateDefinition ptd = new ProjectTemplateDefinition();
+                    ptd.Name = dlg.TemplateName;
+                    ptd.Description = dlg.TemplateDescription;
+                    ptd.InitialFile = Project.FirstFile;
+                    AddProjectFoldersToTemplate(ptd, Project.ProjectFolders, Project.ProjectName);
+
+                    ptd.SaveAsTemplate();
+                }
+            }
+        }
+
         private void OnScreenShot(object obj)
         {
             NotificationManager.Notify("ScreenShot", null);
@@ -2373,6 +2412,19 @@ namespace Barnacle.ViewModels
         {
             RecentlyUsedManager.UpdateRecentFiles(fileName);
             CollectionViewSource.GetDefaultView(RecentFilesList).Refresh();
+        }
+
+        private bool ValidProjectName(ref string prjName)
+        {
+            bool valid = false;
+            prjName = prjName.Trim();
+            if (!String.IsNullOrEmpty(prjName) &&
+                 prjName.IndexOfAny(Path.GetInvalidFileNameChars()) < 0 &&
+                !File.Exists(Path.Combine(PathManager.UserTemplatesFolder(), prjName + ".def")))
+            {
+                valid = true;
+            }
+            return valid;
         }
     }
 }

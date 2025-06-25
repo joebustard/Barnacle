@@ -643,7 +643,7 @@ namespace Barnacle.Dialogs
                     StartEnabled = false;
                 });
 
-                // Properties.Settings.Default.LastImportFolder = ImportPath; Properties.Settings.Default.Save();
+                // Properties.Settings.Default.LastImportFolder = ImportPath; Properties.Settings.Default.SaveAsTemplate();
                 ResultsText = "";
                 List<string> files = ZipUtils.ListFilesInZip(importZipPath, ".stl");
                 double prog = 0;

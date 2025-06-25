@@ -120,7 +120,7 @@ namespace Barnacle.Views
 
         private void CheckExit(object sender)
         {
-            MessageBoxResult res = MessageBox.Show("Document has changed. Save before exiting?", "Warning", MessageBoxButton.YesNoCancel);
+            MessageBoxResult res = MessageBox.Show("Document has changed. SaveAsTemplate before exiting?", "Warning", MessageBoxButton.YesNoCancel);
             if (res == MessageBoxResult.Yes)
             {
                 SaveFile(sender);
@@ -139,7 +139,7 @@ namespace Barnacle.Views
         {
             if (BaseViewModel.Document.Dirty)
             {
-                MessageBoxResult res = MessageBox.Show("Document has changed. Save first?", "Warning", MessageBoxButton.YesNoCancel);
+                MessageBoxResult res = MessageBox.Show("Document has changed. SaveAsTemplate first?", "Warning", MessageBoxButton.YesNoCancel);
                 if (res == MessageBoxResult.Yes)
                 {
                     SaveFile(sender);

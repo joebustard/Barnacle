@@ -43,6 +43,10 @@ namespace Barnacle.Dialogs
         private bool removeHoles;
         private string resultsText;
 
+        private CancellationToken token;
+
+        private CancellationTokenSource tokenSource;
+
         public AutoFixDlg()
         {
             InitializeComponent();
@@ -58,7 +62,10 @@ namespace Barnacle.Dialogs
 
         public bool CanClose
         {
-            get { return canClose; }
+            get
+            {
+                return canClose;
+            }
 
             set
             {
@@ -70,23 +77,12 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public bool CanStop
-        {
-            get { return canStop; }
-
-            set
-            {
-                if (canStop != value)
-                {
-                    canStop = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
         public bool CanFix
         {
-            get { return canFix; }
+            get
+            {
+                return canFix;
+            }
 
             set
             {
@@ -98,9 +94,29 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public bool CanStop
+        {
+            get
+            {
+                return canStop;
+            }
+
+            set
+            {
+                if (canStop != value)
+                {
+                    canStop = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public bool RemoveDuplicates
         {
-            get { return removeDuplicates; }
+            get
+            {
+                return removeDuplicates;
+            }
 
             set
             {
@@ -114,7 +130,10 @@ namespace Barnacle.Dialogs
 
         public bool RemoveHoles
         {
-            get { return removeHoles; }
+            get
+            {
+                return removeHoles;
+            }
 
             set
             {
@@ -128,7 +147,10 @@ namespace Barnacle.Dialogs
 
         public string ResultsText
         {
-            get { return resultsText; }
+            get
+            {
+                return resultsText;
+            }
 
             set
             {
@@ -152,8 +174,7 @@ namespace Barnacle.Dialogs
         {
             Application.Current.Dispatcher.BeginInvoke(
                 DispatcherPriority.Background,
-                new Action(() =>
-                {
+                new Action(() => {
                     ResultsText += s;
                     if (crlf)
                     {
@@ -194,8 +215,7 @@ namespace Barnacle.Dialogs
         {
             Application.Current.Dispatcher.BeginInvoke(
                 DispatcherPriority.Background,
-                new Action(() =>
-                {
+                new Action(() => {
                     ResultsText = "";
                 }));
         }
@@ -251,9 +271,6 @@ namespace Barnacle.Dialogs
                 }
             }
         }
-
-        private CancellationTokenSource tokenSource;
-        private CancellationToken token;
 
         private async void StartClicked(object sender, RoutedEventArgs e)
         {

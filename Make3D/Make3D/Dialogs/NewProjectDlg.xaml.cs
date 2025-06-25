@@ -149,6 +149,7 @@ namespace Barnacle.Dialogs
             templator = new ProjectTemplator();
             templator.TemplateDefinitionPath = AppDomain.CurrentDomain.BaseDirectory + "templates";
             templator.ScanForTemplates();
+            templator.ScanForUserTemplates();
             TemplateBox.Items.Clear();
             for (int i = 0; i < templator.NumberOfTemplates(); i++)
             {

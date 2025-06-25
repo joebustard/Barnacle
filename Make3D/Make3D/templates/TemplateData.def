@@ -15,16 +15,16 @@
     </Description>
     <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
       <File Name="Untitled.txt" Source="templates/blankmodel1_35.txt" />
+      <Folder Name="Backup" AddSubs="True" AddFiles="False" Explorer="True" Clean="False" Export="False" />
+      <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
+      <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
+      <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
+      <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt" Run="True" Edit="True"/>
+      <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
+        <File Name="BillOfMaterials.xlsx" Source="templates/BillOfMaterials.xlsx" />
+      </Folder>
     </Folder>
-    <Folder Name="Backup" AddSubs="True" AddFiles="False" Explorer="True" Clean="False" Export="False" />
-    <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
-    <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
-    <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
-    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt" Run="True" Edit="True">
-    </Folder>
-    <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
-      <File Name="BillOfMaterials.xlsx" Source="templates/BillOfMaterials.xlsx" />
-    </Folder>
+
     <InitialFile>
       Untitled.txt
     </InitialFile>
@@ -62,27 +62,28 @@
       <File Name="Track.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Turret.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Weapons.txt" Source="templates/blankmodel1_35.txt" />
+      <Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
+        <File Name="BogieAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="EngineAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="HullAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="LeftRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RightRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="TurretAssembly.txt" Source="templates/Tank/TurretAssembly1_35.txt" />
+        <File Name="WholeTankAssembly.txt" Source="templates/Tank/WholeTankAssembly1_35.txt" />
+     </Folder>
+     <Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" />
+     <Folder Name="Docs" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True" AutoLoad="True">
+       <File Name="BillOfMaterials.xlsx" Source="templates/Tank/tankbom.xlsx" />
+       <File Name="BuildInstructions.docx" Source="templates/Tank/TankBuildInstructions.docx" />
+     </Folder>
+     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
+     <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
+     <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
+     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
+       <File Name="GlobalDefinitions.txt" Source="templates/Tank/TankGlobals.txt" />
+     </Folder>
     </Folder>
-    <Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
-      <File Name="BogieAssembly.txt" Source="templates/blankmodel1_35.txt" />
-      <File Name="EngineAssembly.txt" Source="templates/blankmodel1_35.txt" />
-      <File Name="HullAssembly.txt" Source="templates/blankmodel1_35.txt" />
-      <File Name="LeftRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
-      <File Name="RightRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
-      <File Name="TurretAssembly.txt" Source="templates/Tank/TurretAssembly1_35.txt" />
-      <File Name="WholeTankAssembly.txt" Source="templates/Tank/WholeTankAssembly1_35.txt" />
-    </Folder>
-    <Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" />
-    <Folder Name="Docs" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True" AutoLoad="True">
-      <File Name="BillOfMaterials.xlsx" Source="templates/Tank/tankbom.xlsx" />
-      <File Name="BuildInstructions.docx" Source="templates/Tank/TankBuildInstructions.docx" />
-    </Folder>
-    <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
-    <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
-    <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
-    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
-      <File Name="GlobalDefinitions.txt" Source="templates/Tank/TankGlobals.txt" />
-    </Folder>
+    
     <InitialFile>
       Hull.txt
     </InitialFile>
@@ -115,8 +116,7 @@
       <File Name="Turret.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Weapons.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Wheels.txt" Source="templates/blankmodel1_35.txt" />
-    </Folder>
-    <Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
+<Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
       <File Name="BodyAssembly.txt" Source="templates/bodyassembly1_35.txt" />
       <File Name="TurretAssembly.txt" Source="templates/TurretAssembly1_35.txt" />
       <File Name="ChassisAssembly.txt" Source="templates/ChassisAssembly1_35.txt" />
@@ -133,6 +133,8 @@
     <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
     </Folder>
+    </Folder>
+    
     <InitialFile>
       Body.txt
     </InitialFile>
@@ -161,8 +163,7 @@
       <File Name="Tail.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="DoorsAndHatches.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Details.txt" Source="templates/blankmodel1_35.txt" />
-    </Folder>
-    <Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
+<Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
       <File Name="EngineAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="FuselageAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="UnderCarriageAssembly.txt" Source="templates/blankmodel1_35.txt" />
@@ -181,6 +182,8 @@
     <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Scripts" Run="True" Edit="True" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
     </Folder>
+    </Folder>
+    
     <InitialFile>
       Fuselage.txt
     </InitialFile>
@@ -189,7 +192,7 @@
   <!--   Model Building Template -->
   <ProjectDefinition Name="Model Building">
     <Description>
-      Creates a basic folder structure with empty model files for a simple model railway building .
+      Creates a basic folder structure with empty model files for a simple model railway building.
       You can add as many more models as you like.
       The folders are
       /assemblies,   A place to store assembly models
@@ -209,8 +212,7 @@
       <File Name="RoofRidge.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Chimneys.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Guttering.txt" Source="templates/blankmodel1_35.txt" />
-    </Folder>
-    <Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
+  <Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
       <File Name="AssembledBuilding.txt" Source="templates/blankmodel1_35.txt" />
     </Folder>
     <Folder Name="Backup" AddSubs="True" AddFiles="False" Explorer="True" Clean="False" Export="False" />
@@ -222,6 +224,8 @@
     <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
       <File Name="BillOfMaterials.xlsx" Source="templates/BillOfMaterials.xlsx" />
     </Folder>
+    </Folder>
+  
     <InitialFile>
       FrontWall.txt
     </InitialFile>

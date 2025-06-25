@@ -4,12 +4,8 @@ using System.Xml;
 
 namespace TemplateLib
 {
-    internal class ProjectTemplateFile
+    public class ProjectTemplateFile
     {
-        public String Name { get; set; }
-        public String Source { get; set; }
-        public Dictionary<string, string> Attributes { get; set; }
-
         public ProjectTemplateFile()
         {
             Name = String.Empty;
@@ -17,7 +13,22 @@ namespace TemplateLib
             Attributes = new Dictionary<string, string>();
         }
 
-        internal void Load(XmlDocument doc, XmlNode nd)
+        public Dictionary<string, string> Attributes
+        {
+            get; set;
+        }
+
+        public String Name
+        {
+            get; set;
+        }
+
+        public String Source
+        {
+            get; set;
+        }
+
+        public void Load(XmlDocument doc, XmlNode nd)
         {
             XmlElement ele = nd as XmlElement;
             if (ele != null)
