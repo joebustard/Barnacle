@@ -20,6 +20,7 @@ using MakerLib.TextureUtils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -249,6 +250,13 @@ namespace Barnacle.Dialogs
                     UpdateDisplay();
                 }
             }
+        }
+
+        protected override void Ok_Click(object sender, RoutedEventArgs e)
+        {
+            SaveEditorParameters();
+            DialogResult = true;
+            Close();
         }
 
         private void BaseModellerDialog_Loaded(object sender, RoutedEventArgs e)

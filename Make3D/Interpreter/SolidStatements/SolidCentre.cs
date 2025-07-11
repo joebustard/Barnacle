@@ -1,0 +1,49 @@
+﻿using System;
+
+namespace ScriptLanguage
+{
+    internal class SolidCentreNode : SolidStatement
+    {
+        public SolidCentreNode()
+        {
+            label = "Centre";
+            expressions = new ExpressionCollection();
+        }
+
+        public override bool Execute()
+        {
+            bool result = false;
+            try
+            {
+                if (expressions != null)
+                {
+                    result = expressions.Execute();
+                    if (result)
+                    {
+                        result = false;
+                        int objectIndex;
+                        if (!PullSolid(out objectIndex))
+                        {
+                            ReportStatement();
+                            ReportStatement($"Run Time Error : {label} solid name incorrect {expressions.Get(0).ToString()}");
+                        }
+                        else
+                        {
+                            if (CheckSolidExists(label, expressions.Get(0).ToString(), objectIndex))
+                            {
+                                Script.ResultArtefacts[objectIndex].MoveToCentre();
+                                Script.ResultArtefacts[objectIndex].Remesh();
+                                result = true;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ReportStatement($"{label}: {ex.Message}");
+            }
+            return result;
+        }
+    }
+}

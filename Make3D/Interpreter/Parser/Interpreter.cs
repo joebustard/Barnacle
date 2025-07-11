@@ -25,6 +25,7 @@ namespace ScriptLanguage
                 "aligncentre",
                 "break",
                 "bool",
+                "centre",
                 "delete",
                 "do",
                 "double",
@@ -1171,6 +1172,15 @@ namespace ScriptLanguage
             return result;
         }
 
+        private bool ParseCentreStatement(CompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+            string label = "Centre";
+            SolidCentreNode asn = new SolidCentreNode();
+            result = ParseSolidStatement(parentNode, parentName, label, 1, asn);
+            return result;
+        }
+
         private bool ParseChainScriptStatement(CompoundNode parentNode, string parentName)
         {
             bool result = false;
@@ -2161,6 +2171,12 @@ namespace ScriptLanguage
                 case "bool":
                     {
                         result = ParseBoolStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "centre":
+                    {
+                        result = ParseCentreStatement(parentNode, parentName);
                     }
                     break;
 

@@ -122,6 +122,7 @@
     <Compile Include="SolidFunctions\UnionAllNode.cs" />
     <Compile Include="SolidFunctions\ValidSolidNode.cs" />
     <Compile Include="SolidStatements\SaveSolidsNode.cs" />
+    <Compile Include="SolidStatements\SolidCentre.cs" />
     <Compile Include="SolidStatements\SolidFlip.cs" />
     <Compile Include="SolidStatements\SolidHCut.cs" />
     <Compile Include="SolidStatements\SolidMirror.cs" />

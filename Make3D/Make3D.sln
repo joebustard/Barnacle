@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barnacle", "Make3D\Barnacle.csproj", "{2F327EA0-F3C2-455E-A057-CE718CFD4E5D}"
 EndProject
@@ -79,6 +79,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileUtils", "FileUtils\FileUtils.csproj", "{6EE47C70-2F51-490A-B50C-97FBAD59A0E7}"
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetUp2022", "SetUp2022\SetUp2022.vdproj", "{3ED5BB7F-B16C-4942-A4BD-AF1B6215C039}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptMaker", "Utilities\ScriptMaker\ScriptMaker.csproj", "{4E9DDE8C-DAB0-469C-A2A2-DB5E27F15E68}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -218,12 +222,19 @@ Global
 		{6EE47C70-2F51-490A-B50C-97FBAD59A0E7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3ED5BB7F-B16C-4942-A4BD-AF1B6215C039}.Debug|Any CPU.ActiveCfg = Debug
 		{3ED5BB7F-B16C-4942-A4BD-AF1B6215C039}.Release|Any CPU.ActiveCfg = Release
+		{4E9DDE8C-DAB0-469C-A2A2-DB5E27F15E68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E9DDE8C-DAB0-469C-A2A2-DB5E27F15E68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E9DDE8C-DAB0-469C-A2A2-DB5E27F15E68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E9DDE8C-DAB0-469C-A2A2-DB5E27F15E68}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8DDF64C0-825D-432D-936A-3F663E028B34} = {323F3CC6-E104-45FD-A151-3F9F4AFE3310}
+		{40834B69-0308-43CE-B36A-10B66E3C932D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{CCF3FC58-3E07-4CED-AE3B-AAC8E0A38B31} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{4E9DDE8C-DAB0-469C-A2A2-DB5E27F15E68} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9DC34FB4-3688-4F70-9473-343F51F6D500}
