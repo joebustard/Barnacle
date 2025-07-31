@@ -91,7 +91,7 @@ namespace Barnacle.Views
                     BaseViewModel.Project.SharedProjectSettings.ImportObjAxisSwap = vm.ImportObjSwapAxis;
                     BaseViewModel.Project.SharedProjectSettings.ImportOffAxisSwap = vm.ImportOffSwapAxis;
 
-                    BaseViewModel.Project.SharedProjectSettings.FloorAllOnExport = vm.FloorAlOnExport;
+                    BaseViewModel.Project.SharedProjectSettings.FloorAllOnExport = vm.FloorAllOnExport;
                     BaseViewModel.Project.SharedProjectSettings.VersionExport = vm.VersionExport;
                     BaseViewModel.Project.SharedProjectSettings.SetOriginToCentroid = vm.SetOriginToCentroid;
                     BaseViewModel.Project.SharedProjectSettings.ClearPreviousVersionsOnExport = vm.ClearPreviousVersionsOnExport;
@@ -105,7 +105,9 @@ namespace Barnacle.Views
                     Properties.Settings.Default.RepeatHoleFixes = vm.RepeatHoleFixes;
                     Properties.Settings.Default.AutoSaveOn = vm.AutoSaveChanges;
                     Properties.Settings.Default.MinPrimVertices = vm.MinVerticesForPrimitives;
+                    Properties.Settings.Default.UserTankTrackLinks = vm.UserTankTrackLinksFolder;
                     NotificationManager.IdleMode = Properties.Settings.Default.AutoSaveOn;
+
                     Properties.Settings.Default.Save();
                 }
                 catch (Exception)
@@ -113,6 +115,25 @@ namespace Barnacle.Views
                 }
             }
             Close();
+        }
+
+        private void PickUserTankTracks(object sender, RoutedEventArgs e)
+        {
+            SettingsViewModel vm = DataContext as SettingsViewModel;
+            FolderBrowserDialog dlg = new FolderBrowserDialog();
+            if (vm.UserTankTrackLinksFolder != "")
+            {
+                string pth = System.IO.Path.GetDirectoryName(vm.UserTankTrackLinksFolder);
+                if (pth != "" && System.IO.Directory.Exists(pth))
+                {
+                    dlg.SelectedPath = pth;
+                }
+            }
+
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                vm.UserTankTrackLinksFolder = dlg.SelectedPath;
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

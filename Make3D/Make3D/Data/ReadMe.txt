@@ -25,6 +25,7 @@ Added
   Added Flipdistal, fliphorizontal and flipvertical to limpet
   Added posx(),posy(),posz() to limpet
   First cut of save project as template
+  Added "T" key to make selected object transparent temporarily (to see the parts behind it)
   
 
 Fixed

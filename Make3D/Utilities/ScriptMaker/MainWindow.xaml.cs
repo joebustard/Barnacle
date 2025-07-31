@@ -17,6 +17,7 @@
 
 using Microsoft.Win32;
 using System.ComponentModel;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -145,6 +146,38 @@ program ""Assembler script""
                             modelObjects.Add(obj);
                         }
                     }
+                    else if (ndname == "refobj" || ndname == "refgroupobj")
+                    {
+                        Object3D robj = new Object3D();
+                        robj.Name = (nd as XmlElement).GetAttribute("Name");
+                        XmlNode rpnode = nd.SelectSingleNode("Position");
+                        if (rpnode != null)
+                        {
+                            robj.X = Convert.ToDouble((rpnode as XmlElement).GetAttribute("X"));
+                            robj.Y = Convert.ToDouble((rpnode as XmlElement).GetAttribute("Y"));
+                            robj.Z = Convert.ToDouble((rpnode as XmlElement).GetAttribute("Z"));
+                        }
+
+                        XmlNode rotpnode = nd.SelectSingleNode("Rotation");
+                        if (rpnode != null)
+                        {
+                            robj.RX = Convert.ToDouble((rpnode as XmlElement).GetAttribute("X"));
+                            robj.RY = Convert.ToDouble((rpnode as XmlElement).GetAttribute("Y"));
+                            robj.RZ = Convert.ToDouble((rpnode as XmlElement).GetAttribute("Z"));
+                        }
+
+                        XmlNode refnode = nd.SelectSingleNode("Reference");
+                        if (refnode != null)
+                        {
+                            String fname = (refnode as XmlElement).GetAttribute("Path");
+                            String part = (refnode as XmlElement).GetAttribute("SourceObject");
+
+                            robj.Path = fname;
+                            robj.Part = part;
+                        }
+
+                        modelObjects.Add(robj);
+                    }
                 }
             }
             catch (Exception ex)
@@ -171,27 +204,36 @@ program ""Assembler script""
         {
             string script = scriptSrc;
             string positions = "";
-            string solids = "    // Solids";
+            string solids = "    // Solids\n";
             string inserts = $"    // Insert the parts\n    string src = \"{modelFileName}\";\n";
             string union = "    // Joint all the parts together\n";
             bool first = true;
             foreach (Object3D obj in modelObjects)
             {
                 positions += $"    // {obj.Name} \n";
-                positions += $"    double {obj.Name}_X = {obj.X} ;\n";
-                positions += $"    double {obj.Name}_Y = {obj.Y} ;\n";
-                positions += $"    double {obj.Name}_Z = {obj.Z} ;\n";
+                positions += $"    double {obj.Name}_X = {obj.X:F4} ;\n";
+                positions += $"    double {obj.Name}_Y = {obj.Y:F4} ;\n";
+                positions += $"    double {obj.Name}_Z = {obj.Z:F4} ;\n";
 
-                positions += $"    double {obj.Name}_RX = {obj.RX} ;\n";
-                positions += $"    double {obj.Name}_RY = {obj.RY} ;\n";
-                positions += $"    double {obj.Name}_RZ = {obj.RZ} ;\n";
+                positions += $"    double {obj.Name}_RX = {obj.RX:F4} ;\n";
 
+                positions += $"    double {obj.Name}_RY = {obj.RY:F4} ;\n";
+
+                positions += $"    double {obj.Name}_RZ = {obj.RZ:F4} ;\n";
                 solids += $"    Solid {obj.Name} ;\n";
+                if (!String.IsNullOrEmpty(obj.Path))
 
-                inserts += $"    {obj.Name} = InsertAndPlace(src,\"{obj.Name}\",{obj.Name}_X,{obj.Name}_Y,{obj.Name}_Z,{obj.Name}_RX,{obj.Name}_RY,{obj.Name}_RZ);\n";
+                {
+                    inserts += $"    {obj.Name} = InsertAndPlace(\"{obj.Path}\",\"{obj.Part}\",{obj.Name}_X,{obj.Name}_Y,{obj.Name}_Z,{obj.Name}_RX,{obj.Name}_RY,{obj.Name}_RZ);\n";
+                }
+                else
+                {
+                    inserts += $"    {obj.Name} = InsertAndPlace(src,\"{obj.Name}\",{obj.Name}_X,{obj.Name}_Y,{obj.Name}_Z,{obj.Name}_RX,{obj.Name}_RY,{obj.Name}_RZ);\n";
+                }
+
                 if (first)
                 {
-                    union += $"    Solid whole = Copy(\"{obj.Name}\");\n";
+                    union += $"    Solid whole = Copy({obj.Name});\n";
                 }
                 else
                 {
@@ -236,6 +278,8 @@ program ""Assembler script""
         public struct Object3D
         {
             public string Name;
+            public string Part;
+            public String Path;
             public double RX;
             public double RY;
             public double RZ;

@@ -425,8 +425,9 @@ namespace Barnacle.Object3DLib
             return res;
         }
 
-        public override void Read(XmlNode nd, bool reportMissing = true)
+        public override bool Read(XmlNode nd, bool reportMissing = true)
         {
+            bool ok = true;
             XmlElement ele = nd as XmlElement;
             Name = ele.GetAttribute("Name");
             Description = ele.GetAttribute("Description");
@@ -513,6 +514,8 @@ namespace Barnacle.Object3DLib
             Scale = sc;
             RelativeToAbsolute();
             SetMesh();
+
+            return ok;
         }
 
         public override void ReadBinary(BinaryReader reader)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Barnacle.EditorParameterLib;
+using System;
 using System.IO;
 using System.Windows.Forms;
 using System.Windows.Media.Media3D;
@@ -21,11 +22,59 @@ namespace Barnacle.Object3DLib
             set;
         }
 
-        public bool RefValid { get; set; }
+        public bool RefValid
+        {
+            get; set;
+        }
 
         public void BaseRead(XmlNode nd)
         {
             base.Read(nd);
+        }
+
+        public override Object3D Clone(bool useIndices = false)
+        {
+            ReferenceGroup3D res = new ReferenceGroup3D();
+            res.Reference.Path = this.Reference.Path;
+            res.Reference.TimeStamp = this.Reference.TimeStamp;
+            res.Reference.SourceObject = this.Reference.SourceObject;
+            res.Name = this.Name;
+            res.Description = this.Description;
+            res.primType = this.primType;
+            res.scale = new Scale3D(this.scale.X, this.scale.Y, this.scale.Z);
+
+            res.Color = this.Color;
+            res.Exportable = this.Exportable;
+            res.LockAspectRatio = this.LockAspectRatio;
+
+            foreach (P3D p in this.RelativeObjectVertices)
+            {
+                P3D p3d = new P3D();
+                p3d.X = p.X;
+                p3d.Y = p.Y;
+                p3d.Z = p.Z;
+                res.RelativeObjectVertices.Add(p3d);
+            }
+            // THIS IS A HACK TO GET aroubd an async issue.
+            if (useIndices)
+            {
+                foreach (int i in this.Indices)
+                {
+                    res.TriangleIndices.Add(i);
+                }
+            }
+            else
+            {
+                foreach (int i in this.TriangleIndices)
+                {
+                    res.TriangleIndices.Add(i);
+                }
+            }
+
+            res.position = new Point3D(this.position.X, this.position.Y, this.position.Z);
+            res.Rotation = new Point3D(this.rotation.X, this.rotation.Y, this.rotation.Z);
+            res.Remesh();
+            return res;
         }
 
         public override bool IsSizable()
@@ -33,7 +82,7 @@ namespace Barnacle.Object3DLib
             return false;
         }
 
-        public override void Read(XmlNode nd, bool reportMissing = true)
+        public override bool Read(XmlNode nd, bool reportMissing = true)
         {
             RefValid = false;
 
@@ -47,9 +96,10 @@ namespace Barnacle.Object3DLib
                 string rs = (refo as XmlElement).GetAttribute("Timestamp");
                 DateTime tm = DateTime.Parse(rs);
                 Reference.TimeStamp = tm;
+                Reference.SourceObject = (refo as XmlElement).GetAttribute("SourceObject");
 
                 // read in the definition of the object from the source file, not this file
-                XmlElement src = FindExternalModel(Name, Reference.Path);
+                XmlElement src = FindExternalModel(Reference.SourceObject, Reference.Path);
                 if (src == null)
                 {
                     if (reportMissing)
@@ -83,6 +133,7 @@ namespace Barnacle.Object3DLib
                     }
                 }
             }
+            return RefValid;
         }
 
         public override void ReadBinary(BinaryReader reader)
@@ -128,6 +179,7 @@ namespace Barnacle.Object3DLib
             XmlElement refele = doc.CreateElement("Reference");
             refele.SetAttribute("Path", Reference.Path);
             refele.SetAttribute("Timestamp", Reference.TimeStamp.ToString());
+            refele.SetAttribute("SourceObject", Reference.SourceObject);
             ele.AppendChild(refele);
             return ele;
         }

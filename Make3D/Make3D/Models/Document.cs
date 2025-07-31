@@ -300,6 +300,11 @@ namespace Barnacle.Models
             }
 
             ProjectSettings.AutoSaveOn = Properties.Settings.Default.AutoSaveOn;
+
+            if (Properties.Settings.Default.UserTankTrackLinks != null)
+            {
+                ProjectSettings.UserTankTrackLinksPath = Properties.Settings.Default.UserTankTrackLinks;
+            }
         }
 
         public virtual void Read(string file, bool clearFirst, bool reportMissing = true)
@@ -372,45 +377,20 @@ namespace Barnacle.Models
                     if (ndname == "refobj")
                     {
                         ReferenceObject3D obj = new ReferenceObject3D();
-                        obj.Read(nd, reportMissing);
-
-                        obj.SetMesh();
-                        // so we should have already read the referenced files by now
-                        // meaning there should already be a referenced object which matches.
-                        // if there is then update its position to whatever this object says
-                        bool found = false;
-                        foreach (Object3D old in Content)
+                        if (obj.Read(nd, reportMissing))
                         {
-                            if (old is ReferenceObject3D)
-                            {
-                                if (old.Name == obj.Name && (old as ReferenceObject3D).Reference.Path == obj.Reference.Path)
-                                {
-                                    found = true;
-                                    old.Position = obj.Position;
-                                    old.Rotation = obj.Rotation;
-                                    break;
-                                }
-                            }
+                            obj.SetMesh();
+                            Content.Add(obj);
                         }
-                        if (!found)
+                        else
                         {
-                            // might have been converted into a group
-                            ReferenceGroup3D grp = new ReferenceGroup3D();
-                            grp.Read(nd, reportMissing);
-
-                            grp.SetMesh();
-                            foreach (Object3D old in Content)
+                            // the source object may have benn changed to a group
+                            // so try it as a refgroup
+                            ReferenceGroup3D gobj = new ReferenceGroup3D();
+                            if (gobj.Read(nd, reportMissing))
                             {
-                                if (old is ReferenceGroup3D)
-                                {
-                                    if (old.Name == obj.Name && (old as ReferenceGroup3D).Reference.Path == obj.Reference.Path)
-                                    {
-                                        found = true;
-                                        old.Position = obj.Position;
-                                        old.Rotation = obj.Rotation;
-                                        break;
-                                    }
-                                }
+                                gobj.SetMesh();
+                                Content.Add(gobj);
                             }
                         }
                     }
@@ -427,22 +407,19 @@ namespace Barnacle.Models
                     }
                     if (ndname == "refgroupobj")
                     {
-                        ReferenceGroup3D obj = new ReferenceGroup3D();
-                        obj.Read(nd, reportMissing);
-
-                        obj.SetMesh();
-
-                        foreach (Object3D old in Content)
+                        ReferenceGroup3D gobj = new ReferenceGroup3D();
+                        if (gobj.Read(nd, reportMissing))
                         {
-                            if (old is ReferenceGroup3D)
+                            gobj.SetMesh();
+                            Content.Add(gobj);
+                        }
+                        else
+                        {
+                            ReferenceObject3D obj = new ReferenceObject3D();
+                            if (obj.Read(nd, reportMissing))
                             {
-                                if (old.Name == obj.Name && (old as ReferenceGroup3D).Reference.Path == obj.Reference.Path)
-                                {
-                                    old.Position = obj.Position;
-                                    old.Rotation = obj.Rotation;
-                                    old.Remesh();
-                                    break;
-                                }
+                                obj.SetMesh();
+                                Content.Add(obj);
                             }
                         }
                     }
@@ -484,6 +461,7 @@ namespace Barnacle.Models
             {
                 ProjectSettings.SlicerPath = Properties.Settings.Default.SlicerPath;
             }
+
             // Properties.Settings.Default.SDCardLabel = ProjectSettings.SDCardName;
             Properties.Settings.Default.Save();
         }
@@ -654,7 +632,7 @@ namespace Barnacle.Models
 
                 if (FileName == "")
                 {
-                    MessageBox.Show("SaveAsTemplate the document first. So there is an export name");
+                    MessageBox.Show("Save the document first. So there is an export name");
                 }
                 else
                 {
@@ -713,7 +691,7 @@ namespace Barnacle.Models
 
                 if (FileName == "")
                 {
-                    MessageBox.Show("SaveAsTemplate the document first. So there is an export name");
+                    MessageBox.Show("Save the document first. So there is an export name");
                 }
                 else
                 {
@@ -1065,14 +1043,21 @@ namespace Barnacle.Models
             Dirty = false;
         }
 
+        /// <summary>
+        /// Open an external file and create a referenced object for
+        /// each of the objects in this external file.
+        /// </summary>
+        /// <param name="fileName"></param>
         internal void ReferenceFile(string fileName)
         {
             LoadReferencedFile(fileName);
             Dirty = true;
+            /* Not needed any more
             if (!referencedFiles.Contains(fileName))
             {
                 referencedFiles.Add(fileName);
             }
+            */
         }
 
         internal void RenameCurrent(string old, string renamed)
@@ -1139,16 +1124,20 @@ namespace Barnacle.Models
                     doc.XmlResolver = null;
                     doc.Load(fileName);
                     XmlNode docNode = doc.SelectSingleNode("Document");
+                    // go through all the objects in the refereneced doc.
+                    // Looking for any exportable ones that aren't currently in the doc we are editing
                     XmlNodeList nodes = docNode.ChildNodes;
+
                     foreach (XmlNode nd in nodes)
                     {
                         if (nd.Name == "obj")
                         {
                             ReferenceObject3D obj = new ReferenceObject3D();
 
-                            obj.Reference.Path = fileName;
-                            obj.Reference.TimeStamp = timeStamp;
                             obj.BaseRead(nd);
+                            obj.Reference.Path = fileName;
+                            obj.Reference.SourceObject = obj.Name;
+                            obj.Reference.TimeStamp = timeStamp;
                             obj.SetMesh();
                             if (!ReferencedObjectInContent(obj.Name, fileName) && !(double.IsNegativeInfinity(obj.Position.X)))
                             {
@@ -1163,9 +1152,10 @@ namespace Barnacle.Models
                         {
                             ReferenceGroup3D obj = new ReferenceGroup3D();
 
+                            obj.BaseRead(nd);
                             obj.Reference.Path = fileName;
                             obj.Reference.TimeStamp = timeStamp;
-                            obj.BaseRead(nd);
+                            obj.Reference.SourceObject = obj.Name;
                             obj.SetMesh();
                             if (!ReferencedObjectInContent(obj.Name, fileName) && !(double.IsNegativeInfinity(obj.Position.X)))
                             {
@@ -1328,7 +1318,7 @@ namespace Barnacle.Models
                     if (obj is ReferenceObject3D)
                     {
                         rf = (obj as ReferenceObject3D).Reference;
-                        if (rf.Path == pth)
+                        if (rf.Path == pth && rf.SourceObject == name)
                         {
                             found = true;
                             break;
@@ -1338,7 +1328,7 @@ namespace Barnacle.Models
                     if (obj is ReferenceGroup3D)
                     {
                         rf = (obj as ReferenceGroup3D).Reference;
-                        if (rf.Path == pth)
+                        if (rf.Path == pth && rf.SourceObject == name)
                         {
                             found = true;
                             break;

@@ -1377,6 +1377,7 @@ namespace Barnacle.Dialogs
         {
             public int[] indices;
             public Point3D[] points;
+            public bool Success;
         }
     }
 }

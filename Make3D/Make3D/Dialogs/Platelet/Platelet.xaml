@@ -6,7 +6,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Barnacle.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-
     xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
     Title="Platelet"
     Width="1000"
@@ -48,10 +47,11 @@
                     <TabItem Header="Solid">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*" MaxWidth="120" />
+                                <ColumnDefinition Width="13*" MaxWidth="120" />
+                                <ColumnDefinition Width="7*" />
                                 <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="24*" />
+                                <ColumnDefinition Width="24*" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="1*" />
@@ -62,18 +62,17 @@
                                 <RowDefinition Height="1*" />
                             </Grid.RowDefinitions>
                             <Label
-                                Grid.Row="0"
                                 Grid.Column="0"
                                 VerticalAlignment="Center"
-                                Content="Width" />
+                                Content="Width" Grid.ColumnSpan="2" />
                             <TextBox
                                 Grid.Row="0"
-                                Grid.Column="1"
+                                Grid.Column="2"
                                 Width="50"
                                 Margin="0,2,0,0"
                                 HorizontalAlignment="Left"
                                 VerticalContentAlignment="Center"
-                                Text="{Binding PlateWidth, UpdateSourceTrigger=PropertyChanged}" />
+                                Text="{Binding PlateWidth}" />
                         </Grid>
                     </TabItem>
                     <TabItem Header="Hollow">
@@ -104,7 +103,7 @@
                                 Margin="0,2,0,0"
                                 HorizontalAlignment="Left"
                                 VerticalContentAlignment="Center"
-                                Text="{Binding PlateWidth, UpdateSourceTrigger=PropertyChanged}" />
+                                Text="{Binding PlateWidth}" />
 
                             <Label
                                 Grid.Row="1"
@@ -122,7 +121,7 @@
                                 Margin="0,2,0,0"
                                 HorizontalAlignment="Left"
                                 VerticalContentAlignment="Center"
-                                Text="{Binding WallWidth, UpdateSourceTrigger=PropertyChanged}"
+                                Text="{Binding WallWidth}"
                                 Visibility="{Binding ShowWidth}" />
                         </Grid>
                     </TabItem>
@@ -157,7 +156,7 @@
                                 Margin="0,2,0,0"
                                 HorizontalAlignment="Left"
                                 VerticalContentAlignment="Center"
-                                Text="{Binding PlateWidth, UpdateSourceTrigger=PropertyChanged}" />
+                                Text="{Binding PlateWidth}" />
                             <Label
                                 Grid.Row="1"
                                 Grid.Column="0"

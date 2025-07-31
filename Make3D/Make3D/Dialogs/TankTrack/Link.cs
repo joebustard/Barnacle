@@ -15,6 +15,7 @@
 // *                                                                         *
 // *************************************************************************
 
+using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
 
@@ -25,15 +26,33 @@ namespace Barnacle.Dialogs
         public Link()
         {
             Name = "";
-            Parts = new List<LinkPart>();
+
+            SourceModel = new Object3D();
         }
 
-        public String Name { get; set; }
-        public List<LinkPart> Parts { get; set; }
-
-        public void Add(LinkPart s)
+        public String Name
         {
-            Parts.Add(s);
+            get; set;
+        }
+
+        public Object3D ScaledModel
+        {
+            get; set;
+        }
+
+        public Object3D SourceModel
+        {
+            get; set;
+        }
+
+        internal void SetLinkSize(double linkLength, double linkHeight, double linkWidth)
+        {
+            if (SourceModel != null)
+            {
+                ScaledModel = SourceModel.Clone();
+                // source model is 1x1x1
+                ScaledModel.ScaleMesh(linkLength, linkHeight, linkWidth);
+            }
         }
     }
 }

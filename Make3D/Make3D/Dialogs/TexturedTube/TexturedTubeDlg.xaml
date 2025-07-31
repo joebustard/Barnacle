@@ -29,7 +29,8 @@
         <Border
             Grid.Row="0"
             Grid.Column="1"
-            Style="{StaticResource ControlBorder}" IsEnabled="{Binding EditingEnabled}">
+            IsEnabled="{Binding EditingEnabled}"
+            Style="{StaticResource ControlBorder}">
             <Grid>
 
                 <Grid.RowDefinitions>

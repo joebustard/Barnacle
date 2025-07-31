@@ -50,9 +50,9 @@ namespace Barnacle.Dialogs
         private int noOfLinks;
         private List<System.Windows.Point> outerPolygon;
         private Visibility showGuideSize;
-        private double spudSize;
-        private double thickness;
+        private double trackOverlap;
         private List<System.Windows.Point> trackPath;
+        private double trackThickness;
         private ObservableCollection<String> trackTypes;
         private double trackWidth = 10;
 
@@ -61,24 +61,27 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             DataContext = this;
             loaded = false;
+            ToolName = "TankTrack";
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
             PathEditor.AbsolutePaths = true;
             PathEditor.DefaultImagePath = DefaultImagePath;
-
+            PathEditor.ToolName = ToolName;
             PathEditor.HasPresets = true;
+            PathEditor.IncludeCommonPresets = false;
             PathEditor.SupportsHoles = false;
-            ToolName = "TankTrack";
+
             DataContext = this;
             NoOfLinks = 50;
-            Thickness = 6;
+            TrackThickness = 6;
             TrackWidth = 10;
-            SpudSize = 1;
+            LinkOverlap = 0;
             GuideSize = 1;
 
             TrackTypes = new ObservableCollection<string>();
-            TrackTypes.Add("Simple");
+            TrackTypes.Add("None");
+            //TrackTypes.Add("Simple");
 
-            TrackTypes.Add("M1");
+            //TrackTypes.Add("M1");
             externalLinks = new ExternalLinks();
             bool containsBasic = false;
             foreach (Link ln in externalLinks.Links)
@@ -117,6 +120,27 @@ namespace Barnacle.Dialogs
                     NotifyPropertyChanged();
                     UpdateTrack();
                     UpdateDisplay();
+                }
+            }
+        }
+
+        public double LinkOverlap
+        {
+            get
+            {
+                return trackOverlap;
+            }
+            set
+            {
+                if (trackOverlap != value)
+                {
+                    if (value >= 0 && value <= 100)
+                    {
+                        trackOverlap = value;
+                        NotifyPropertyChanged();
+                        UpdateTrack();
+                        UpdateDisplay();
+                    }
                 }
             }
         }
@@ -182,35 +206,17 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public double SpudSize
+        public double TrackThickness
         {
             get
             {
-                return spudSize;
+                return trackThickness;
             }
             set
             {
-                if (spudSize != value)
+                if (trackThickness != value)
                 {
-                    spudSize = value;
-                    NotifyPropertyChanged();
-                    UpdateTrack();
-                    UpdateDisplay();
-                }
-            }
-        }
-
-        public double Thickness
-        {
-            get
-            {
-                return thickness;
-            }
-            set
-            {
-                if (thickness != value)
-                {
-                    thickness = value;
+                    trackThickness = value;
                     NotifyPropertyChanged();
                     UpdateTrack();
                     UpdateDisplay();
@@ -263,6 +269,10 @@ namespace Barnacle.Dialogs
         {
             loaded = false;
             LoadEditorParameters();
+            if (SelectedTrackType != null && SelectedTrackType == "")
+            {
+                SelectedTrackType = "Basic";
+            }
             loaded = true;
         }
 
@@ -284,29 +294,29 @@ namespace Barnacle.Dialogs
         {
             facs.Clear();
             verts.Clear();
-            bool firstCall = true;
-            double top = double.MinValue;
-            for (int i = 0; i < trackPath.Count; i++)
+            if (trackPath.Count > 0)
             {
-                if (trackPath[i].Y > top)
+                double top = double.MinValue;
+                for (int i = 0; i < trackPath.Count; i++)
                 {
-                    top = trackPath[i].Y;
+                    if (trackPath[i].Y > top)
+                    {
+                        top = trackPath[i].Y;
+                    }
                 }
-            }
-            for (int i = 0; i < trackPath.Count; i++)
-            {
-                int j = i + 1;
-                if (j >= trackPath.Count)
+                for (int i = 0; i < trackPath.Count - 1; i++)
                 {
-                    j = 0;
+                    int j = i + 1;
+                    if (j >= trackPath.Count)
+                    {
+                        j = 0;
+                    }
+
+                    System.Windows.Point p1 = new System.Windows.Point(trackPath[i].X, top - trackPath[i].Y);
+                    System.Windows.Point p2 = new System.Windows.Point(trackPath[j].X, top - trackPath[j].Y);
+
+                    GenerateLinkPart(p1, p2, verts, facs, trackWidth, trackThickness, ln);
                 }
-
-                System.Windows.Point p1 = new System.Windows.Point(trackPath[i].X, top - trackPath[i].Y);
-                System.Windows.Point p2 = new System.Windows.Point(trackPath[j].X, top - trackPath[j].Y);
-
-                GenerateLinkPart(p1, p2, verts, facs, firstCall, trackWidth, thickness, ln);
-
-                firstCall = false;
             }
         }
 
@@ -341,42 +351,49 @@ namespace Barnacle.Dialogs
             result.Vertices = verts;
             result.Faces = facs;
 
-            if (trackPath != null && SelectedTrackType != null)
+            if (trackPath != null && trackPath.Count > 2 && SelectedTrackType != null && SelectedTrackType != "None")
             {
+                if (externalLinks != null)
+                {
+                    double linkLength = Math.Sqrt((trackPath[1].X - trackPath[2].X) * (trackPath[1].X - trackPath[2].X) +
+                                                  (trackPath[1].Y - trackPath[2].Y) * (trackPath[1].Y - trackPath[2].Y));
+
+                    linkLength += (linkLength / 100.0 * LinkOverlap);
+                    foreach (Link ln in externalLinks.Links)
+                    {
+                        if (ln.Name == SelectedTrackType)
+                        {
+                            ln.SetLinkSize(linkLength, TrackThickness, TrackWidth);
+                            GenerateTrackFomLink(ln, verts, facs);
+                            CentreVertices(verts, facs);
+                            break;
+                        }
+                    }
+                }
+                /*
                 switch (SelectedTrackType)
                 {
-                    case "Simple":
-                        GenerateSimpleTrack(0, verts, facs);
-                        GenerateFaces(verts, facs);
-                        break;
+                        case "Simple":
+                            GenerateSimpleTrack(0, verts, facs);
+                            GenerateFaces(verts, facs);
+                            break;
 
-                    case "Simple 2":
-                        GenerateSimpleTrack(1, verts, facs);
-                        GenerateFaces(verts, facs);
-                        break;
+                        case "Simple 2":
+                            GenerateSimpleTrack(1, verts, facs);
+                            GenerateFaces(verts, facs);
+                            break;
 
-                    case "M1":
-                        GenerateM1Track(verts, facs);
-                        CentreVertices(verts, facs);
-                        break;
+                        case "M1":
+                            GenerateM1Track(verts, facs);
+                            CentreVertices(verts, facs);
+                            break;
 
                     default:
                         {
-                            if (externalLinks != null)
-                            {
-                                foreach (Link ln in externalLinks.Links)
-                                {
-                                    if (ln.Name == SelectedTrackType)
-                                    {
-                                        GenerateTrackFomLink(ln, verts, facs);
-                                        CentreVertices(verts, facs);
-                                        break;
-                                    }
-                                }
-                            }
                         }
                         break;
                 }
+                */
             }
 
             return result;
@@ -426,9 +443,9 @@ namespace Barnacle.Dialogs
             }
             NoOfLinks = EditorParameters.GetInt("NoOfLinks", 50);
             SelectedTrackType = EditorParameters.Get("TrackType");
-            Thickness = EditorParameters.GetDouble("Thickness", 2);
-            SpudSize = EditorParameters.GetDouble("SpudSize", 1);
-            GuideSize = EditorParameters.GetDouble("GuideSize", 1);
+            TrackThickness = EditorParameters.GetDouble("TrackThickness", 2);
+            LinkOverlap = EditorParameters.GetDouble("LinkOverlap", 1);
+
             TrackWidth = EditorParameters.GetDouble("TrackWidth", 10);
         }
 
@@ -465,8 +482,8 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("Path", s);
             EditorParameters.Set("NoOfLinks", NoOfLinks.ToString());
             EditorParameters.Set("TrackType", SelectedTrackType);
-            EditorParameters.Set("Thickness", Thickness.ToString());
-            EditorParameters.Set("SpudSize", SpudSize.ToString());
+            EditorParameters.Set("TrackThickness", TrackThickness.ToString());
+            EditorParameters.Set("LinkOverlap", LinkOverlap.ToString());
             EditorParameters.Set("GuideSize", GuideSize.ToString());
             EditorParameters.Set("TrackWidth", TrackWidth.ToString());
         }
@@ -493,8 +510,11 @@ namespace Barnacle.Dialogs
 
         private void UpdateTrack()
         {
-            GenerateTrackPath();
-            GenerateTrack();
+            if (loaded)
+            {
+                GenerateTrackPath();
+                GenerateTrack();
+            }
         }
 
         private struct Genresult

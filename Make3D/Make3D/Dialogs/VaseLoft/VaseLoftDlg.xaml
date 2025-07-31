@@ -5,8 +5,8 @@
     xmlns:ctrls="clr-namespace:Barnacle.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Barnacle.Dialogs"
-     xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
     Title=""
     Width="1000"
     Height="550"
@@ -47,14 +47,18 @@
                     <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
 
-                <u:ObjectView x:Name="Viewer" Grid.Column="3" Grid.Row="0" />
+                <u:ObjectView
+                    x:Name="Viewer"
+                    Grid.Row="0"
+                    Grid.Column="3" />
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
                     <CheckBox
                         Margin="2,0,16,0"
                         VerticalAlignment="Center"
                         Content="Open"
-                        IsChecked="{Binding IsHollow}" ToolTip="If checked, the first segment of the path will be ignored and an open object created" />
+                        IsChecked="{Binding IsHollow}"
+                        ToolTip="If checked, the first segment of the path will be ignored and an open object created" />
                     <Label
                         Margin="4,0,0,0"
                         VerticalAlignment="Center"

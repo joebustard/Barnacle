@@ -51,6 +51,7 @@ namespace Barnacle.ViewModels
         private bool setOriginToCentroid;
         private string slicerPath;
         private bool swapAxis;
+        private string userTankTrackLinksFolder;
         private bool versionExport;
 
         public SettingsViewModel()
@@ -68,7 +69,7 @@ namespace Barnacle.ViewModels
             ImportSwapStlAxis = Project.SharedProjectSettings.ImportStlAxisSwap;
             ImportObjSwapAxis = Project.SharedProjectSettings.ImportObjAxisSwap;
             ImportOffSwapAxis = Project.SharedProjectSettings.ImportOffAxisSwap;
-            FloorAlOnExport = Project.SharedProjectSettings.FloorAllOnExport;
+            FloorAllOnExport = Project.SharedProjectSettings.FloorAllOnExport;
             VersionExport = Project.SharedProjectSettings.VersionExport;
             ClearPreviousVersionsOnExport = Project.SharedProjectSettings.ClearPreviousVersionsOnExport;
             IgnoreEmpty = !Project.SharedProjectSettings.ExportEmptyFiles;
@@ -82,6 +83,7 @@ namespace Barnacle.ViewModels
             PlaceNewAtMarker = Project.SharedProjectSettings.PlaceNewAtMarker;
             AutoSaveChanges = Properties.Settings.Default.AutoSaveOn;
             MinVerticesForPrimitives = Properties.Settings.Default.MinPrimVertices;
+            UserTankTrackLinksFolder = Properties.Settings.Default.UserTankTrackLinks;
         }
 
         public bool AutoSaveChanges
@@ -196,7 +198,7 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public bool FloorAlOnExport
+        public bool FloorAllOnExport
         {
             get
             {
@@ -483,6 +485,23 @@ namespace Barnacle.ViewModels
                 if (swapAxis != value)
                 {
                     swapAxis = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public string UserTankTrackLinksFolder
+        {
+            get
+            {
+                return userTankTrackLinksFolder;
+            }
+
+            set
+            {
+                if (value != userTankTrackLinksFolder)
+                {
+                    userTankTrackLinksFolder = value;
                     NotifyPropertyChanged();
                 }
             }

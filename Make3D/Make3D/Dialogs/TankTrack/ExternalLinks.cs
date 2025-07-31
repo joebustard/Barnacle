@@ -15,6 +15,8 @@
 // *                                                                         *
 // *************************************************************************
 
+using Barnacle.Models;
+using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,72 +30,43 @@ namespace Barnacle.Dialogs
         public ExternalLinks()
         {
             Links = new List<Link>();
-            String appPath = AppDomain.CurrentDomain.BaseDirectory + "Data\\Links\\";
-            string[] files = Directory.GetFiles(appPath, "*.*");
+            AddNewLinks(AppDomain.CurrentDomain.BaseDirectory + "Data\\TankTrackLinks\\");
+            String userPath = Properties.Settings.Default.UserTankTrackLinks;
+            if (!String.IsNullOrEmpty(userPath))
+            {
+                if (Directory.Exists(userPath))
+                {
+                    AddNewLinks(userPath);
+                }
+            }
+        }
+
+        public List<Link> Links
+        {
+            get; set;
+        }
+
+        private void AddNewLinks(String folderPath)
+        {
+            string[] files = Directory.GetFiles(folderPath, "*.txt");
             foreach (string fn in files)
             {
                 try
                 {
-                    XmlDocument doc = new XmlDocument();
-                    doc.XmlResolver = null; // security
+                    Document doc = new Document();
                     doc.Load(fn);
-                    XmlNode allLinks = doc.SelectSingleNode("Links");
-                    if (allLinks != null)
+                    foreach (Object3D ob in doc.Content)
                     {
-                        XmlNodeList xl = allLinks.SelectNodes("Link");
-                        foreach (XmlNode nd in xl)
+                        if (!FoundLink(ob.Name) && ob.Exportable)
                         {
-                            XmlElement ele = nd as XmlElement;
-                            if (ele.HasAttribute("Name"))
-                            {
-                                String lname = ele.GetAttribute("Name");
-                                Link link = new Link();
-                                link.Name = lname;
-                                XmlNodeList parts = ele.SelectNodes("Part");
-                                foreach (XmlNode partnd in parts)
-                                {
-                                    XmlElement partel = partnd as XmlElement;
-                                    if (partel.HasAttribute("Name"))
-                                    {
-                                        String pname = partel.GetAttribute("Name");
-                                        if (partel.HasAttribute("X"))
-                                        {
-                                            String px = partel.GetAttribute("X");
-                                            if (partel.HasAttribute("Y"))
-                                            {
-                                                String py = partel.GetAttribute("Y");
-                                                if (partel.HasAttribute("Z"))
-                                                {
-                                                    String pz = partel.GetAttribute("Z");
-                                                    if (partel.HasAttribute("W"))
-                                                    {
-                                                        String pw = partel.GetAttribute("W");
-                                                        string text = partel.InnerText;
-                                                        text = text.Replace("\n", " ");
-                                                        text = text.Replace("\r", " ");
-                                                        text = text.Replace("  ", " ");
-                                                        try
-                                                        {
-                                                            LinkPart lp = new LinkPart();
-                                                            lp.Name = pname;
-                                                            lp.X = Convert.ToDouble(px);
-                                                            lp.Y = Convert.ToDouble(py);
-                                                            lp.Z = Convert.ToDouble(pz);
-                                                            lp.W = Convert.ToDouble(pw);
-                                                            lp.PathText = text;
-                                                            link.Add(lp);
-                                                        }
-                                                        catch
-                                                        {
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                Links.Add(link);
-                            }
+                            Link lnk = new Link();
+                            lnk.Name = ob.Name;
+                            lnk.SourceModel = ob;
+                            ob.Remesh();
+                            ob.CalcScale();
+                            ob.ScaleMesh(1 / ob.Scale.X, 1 / ob.Scale.Y, 1 / ob.Scale.Z);
+                            ob.CalcScale();
+                            Links.Add(lnk);
                         }
                     }
                 }
@@ -104,6 +77,18 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public List<Link> Links { get; set; }
+        private bool FoundLink(string name)
+        {
+            bool res = false;
+            foreach (Link lnk in Links)
+            {
+                if (lnk.Name == name)
+                {
+                    res = true;
+                    break;
+                }
+            }
+            return res;
+        }
     }
 }

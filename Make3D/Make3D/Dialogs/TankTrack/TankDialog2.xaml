@@ -95,7 +95,21 @@
         MinWidth="50"
         HorizontalAlignment="Stretch"
         VerticalAlignment="Center"
-        Text="{Binding Thickness}" />
+        Text="{Binding TrackThickness}" />
+                    </StackPanel>
+
+                    <StackPanel
+Grid.Row="4"
+Margin="10,0,0,0"
+Orientation="Horizontal">
+                        <Label Width="80" VerticalAlignment="Center">
+                            Overlap %
+                        </Label>
+                        <TextBox
+    MinWidth="50"
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Center"
+    Text="{Binding LinkOverlap}" />
                     </StackPanel>
                 </Grid>
             </Border>

@@ -695,8 +695,9 @@ namespace Barnacle.Object3DLib
             Position = new Point3D(Position.X, Position.Y - minY, Position.Z);
         }
 
-        public virtual void Read(XmlNode nd, bool reportMissing = true)
+        public virtual bool Read(XmlNode nd, bool reportMissing = true)
         {
+            bool ok = true;
             XmlElement ele = nd as XmlElement;
             Name = ele.GetAttribute("Name");
             Description = ele.GetAttribute("Description");
@@ -774,6 +775,7 @@ namespace Barnacle.Object3DLib
                 RelativeToAbsolute();
                 SetMesh();
             }
+            return ok;
         }
 
         public virtual void ReadBinary(BinaryReader reader)

@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Barnacle.Dialogs"
-     xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
     Title="Turbo Fan"
     Width="1000"
     Height="550"
@@ -50,22 +50,24 @@
                     Grid.Row="1"
                     Margin="10,0,0,0"
                     Orientation="Horizontal">
-                    <Label Width="100" Content="No. of Blades">
-                    </Label>
+                    <Label Width="100" Content="No. of Blades" />
                     <Slider
                         Width="200"
                         Maximum="100"
                         Minimum="4"
                         Value="{Binding NumberOfBlades}" />
                     <TextBox Width="50" Text="{Binding NumberOfBlades}" />
-                    <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameters to their defaults" Click="ResetDefaults" />
+                    <Button
+                        Margin="8,0,0,0"
+                        Click="ResetDefaults"
+                        Content="Reset"
+                        ToolTip="Restore parameters to their defaults" />
                 </StackPanel>
                 <StackPanel
                     Grid.Row="2"
                     Margin="10,0,0,0"
                     Orientation="Horizontal">
-                    <Label Width="100" Content="Blade Overlap">
-                    </Label>
+                    <Label Width="100" Content="Blade Overlap" />
                     <Slider
                         Width="200"
                         Maximum="99"
@@ -77,8 +79,7 @@
                     Grid.Row="3"
                     Margin="10,0,0,0"
                     Orientation="Horizontal">
-                    <Label Width="100" Content="Blade Length">
-                    </Label>
+                    <Label Width="100" Content="Blade Length" />
                     <Slider
                         Width="200"
                         Maximum="100"
@@ -90,8 +91,7 @@
                     Grid.Row="4"
                     Margin="10,0,0,0"
                     Orientation="Horizontal">
-                    <Label Width="100" Content="Blade Pitch">
-                    </Label>
+                    <Label Width="100" Content="Blade Pitch" />
                     <Slider
                         Width="200"
                         Maximum="90"
@@ -103,8 +103,7 @@
                     Grid.Row="5"
                     Margin="10,0,0,0"
                     Orientation="Horizontal">
-                    <Label Width="100" Content=" Blade Thickness">
-                    </Label>
+                    <Label Width="100" Content=" Blade Thickness" />
                     <Slider
                         Width="200"
                         Maximum="5"
@@ -116,8 +115,7 @@
                     Grid.Row="6"
                     Margin="10,0,0,0"
                     Orientation="Horizontal">
-                    <Label Width="100" Content="Hub Radius">
-                    </Label>
+                    <Label Width="100" Content="Hub Radius" />
                     <Slider
                         Width="200"
                         Maximum="100"
@@ -129,34 +127,34 @@
                     Grid.Row="7"
                     Margin="10,0,0,0"
                     Orientation="Horizontal">
-                    <Label Width="100" Content="Blade Alignment">
-                    </Label>
+                    <Label Width="100" Content="Blade Alignment" />
                     <RadioButton
                         VerticalAlignment="Center"
+                        Content="Anti - clockwise"
                         GroupName="BladeAlignGroup"
-                        IsChecked="{Binding Anticlockwise}" Content="Anti - clockwise">
-                    </RadioButton>
+                        IsChecked="{Binding Anticlockwise}" />
                     <RadioButton
                         Margin="8,0,0,0"
                         VerticalAlignment="Center"
+                        Content="Clockwise"
                         GroupName="BladeAlignGroup"
-                        IsChecked="{Binding Clockwise}" Content="Clockwise">
-                    </RadioButton>
+                        IsChecked="{Binding Clockwise}" />
                 </StackPanel>
                 <StackPanel
                     Grid.Row="9"
                     Margin="10,0,0,0"
                     Orientation="Horizontal">
-                    <Label Width="90" ToolTip="Include a solid disk behind the blades" Content="Backing Disk">
-                    </Label>
+                    <Label
+                        Width="90"
+                        Content="Backing Disk"
+                        ToolTip="Include a solid disk behind the blades" />
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding SupportDisk}" />
                 </StackPanel>
                 <StackPanel
                     Grid.Row="10"
                     Margin="10,0,0,0"
                     Orientation="Horizontal">
-                    <Label Width="90" Content="Disk Thickness">
-                    </Label>
+                    <Label Width="90" Content="Disk Thickness" />
                     <Slider
                         Width="200"
                         LargeChange="1"
@@ -169,8 +167,7 @@
                     Grid.Row="11"
                     Margin="10,0,0,0"
                     Orientation="Horizontal">
-                    <Label Width="90" Content="Disk Offset">
-                    </Label>
+                    <Label Width="90" Content="Disk Offset" />
                     <Slider
                         Width="200"
                         LargeChange="0.1"
@@ -186,7 +183,10 @@
             Grid.Row="0"
             Grid.Column="2"
             Style="{StaticResource GridSplitterStyle}" />
-        <u:ObjectView x:Name="Viewer" Grid.Column="3" Grid.Row="0" />
+        <u:ObjectView
+            x:Name="Viewer"
+            Grid.Row="0"
+            Grid.Column="3" />
         <Grid Grid.Row="1" Grid.Column="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />

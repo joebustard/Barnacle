@@ -5,8 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Barnacle.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
     xmlns:uc="clr-namespace:Barnacle.UserControls"
-     xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
     Title="Wing"
     Width="1000"
     Height="550"
@@ -215,7 +215,10 @@
             Grid.Row="0"
             Grid.Column="2"
             Style="{StaticResource GridSplitterStyle}" />
-        <u:ObjectView x:Name="Viewer" Grid.Column="3" Grid.Row="0" />
+        <u:ObjectView
+            x:Name="Viewer"
+            Grid.Row="0"
+            Grid.Column="3" />
 
         <Grid Grid.Row="2" Grid.ColumnSpan="4">
             <Grid.ColumnDefinitions>

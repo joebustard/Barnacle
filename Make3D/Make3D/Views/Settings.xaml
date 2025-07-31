@@ -9,7 +9,7 @@
     xmlns:uc="clr-namespace:Barnacle.UserControls"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     Title="Project Settings"
-    Width="600"
+    Width="700"
     Height="500"
     Background="{StaticResource WindowBackBrush}"
     Loaded="Window_Loaded"
@@ -39,9 +39,12 @@
             <TabItem Header="Project">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="12*" />
-                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="28*" />
+                        <ColumnDefinition Width="84*" />
+                        <ColumnDefinition Width="37*" />
+                        <ColumnDefinition Width="50*" />
+                        <ColumnDefinition Width="398*" />
+                        <ColumnDefinition Width="28*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*" />
@@ -57,7 +60,7 @@
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
-                    <Grid Grid.Row="0" Grid.Column="1">
+                    <Grid Grid.Row="0" Grid.ColumnSpan="5" Margin="28,0,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
@@ -71,15 +74,11 @@
                     </Grid>
                     <TextBox
                         x:Name="DescriptionBox"
-                        Grid.Row="1"
-                        Grid.RowSpan="2"
-                        Grid.Column="1"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
+                        Grid.RowSpan="4"
                         AcceptsReturn="True"
-                        Text="{Binding Description}" />
+                        Text="{Binding Description}" Grid.ColumnSpan="5" Margin="28,32,0,32" />
 
-                    <Grid Grid.Row="5" Grid.Column="1">
+                    <Grid Grid.Row="4" Grid.ColumnSpan="5" Margin="28,32,0,0" Grid.RowSpan="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="2*" />
@@ -117,13 +116,12 @@
                             Text="{Binding SlicerPath}"
                             ToolTip="The folder containing Cura. If present integrated slicing will be enabled." />
                     </Grid>
-                    <Grid Grid.Row="6" Grid.Column="1">
+                    <Grid Grid.Row="5" Grid.ColumnSpan="5" Margin="28,32,0,32" Grid.RowSpan="3">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
@@ -133,7 +131,7 @@
                             Content="SD Card" />
                         <TextBox
                             Grid.Column="1"
-                            Grid.ColumnSpan="5"
+                            Grid.ColumnSpan="4"
                             Margin="2,2,2,2"
                             Text="{Binding SDCardName}"
                             ToolTip="The label of the SDCard that is used with the 3D Printer. If set Barnacle will enable some extra functions when this SD card is detected." />
@@ -145,7 +143,7 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="12*" />
+                        <ColumnDefinition Width="20*" />
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -171,8 +169,11 @@
                             VerticalAlignment="Center"
                             Content="Min Vertices for primitives" />
 
-                        <TextBox  Margin="8,2,0,0" Width="80" Text="{Binding MinVerticesForPrimitives}"
-                        ToolTip="The minimum number of vertices to create when adding a primitive. 0 means ignore." />
+                        <TextBox
+                            Width="80"
+                            Margin="8,2,0,0"
+                            Text="{Binding MinVerticesForPrimitives}"
+                            ToolTip="The minimum number of vertices to create when adding a primitive. 0 means ignore." />
                     </StackPanel>
 
                     <StackPanel
@@ -185,7 +186,10 @@
                             VerticalAlignment="Center"
                             Content="Tool Model Colour" />
 
-                        <uc:ColourPicker x:Name="ColourOfNewObject" Margin="8,0,0,0" Width="150" />
+                        <uc:ColourPicker
+                            x:Name="ColourOfNewObject"
+                            Width="150"
+                            Margin="8,0,0,0" />
                     </StackPanel>
                     <CheckBox
                         Grid.Row="2"
@@ -218,6 +222,18 @@
                         Content="Auto Save Changes"
                         IsChecked="{Binding AutoSaveChanges}"
                         ToolTip="Automatically save any edits if the program has been idle for a while" />
+                    <Grid Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="4*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" VerticalAlignment="Center" Content="User Tank Track Links Folder" />
+                        <TextBox Grid.Column="1" Grid.ColumnSpan="3" Margin="0,2,0,2" Text="{Binding UserTankTrackLinksFolder}" ToolTip="The user project folder conatining the users own tack track link models" />
+
+                        <Button Grid.Column="4" Content="..."   FontSize="22" Width="60" Margin="2,2,2,2"
+ Style="{StaticResource SmallButton}" Click="PickUserTankTracks" />
+                    </Grid>
                 </Grid>
             </TabItem>
 
@@ -242,37 +258,45 @@
                         <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
                     <CheckBox
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                VerticalContentAlignment="Center"
-                                Content="Swap Y-Z of STL files"
-                                IsChecked="{Binding ImportSwapStlAxis}" Margin="2,0,2,0" ToolTip=" Barnacle assumes Y is vertical,Z is distal. Some other applications assume Z is vertical." />
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Margin="2,0,2,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Content="Swap Y-Z of STL files"
+                        IsChecked="{Binding ImportSwapStlAxis}"
+                        ToolTip=" Barnacle assumes Y is vertical,Z is distal. Some other applications assume Z is vertical." />
                     <CheckBox
-                                Grid.Row="0"
-                                Grid.Column="2"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                VerticalContentAlignment="Center"
-                                Content="Set origin to Centroid."
-                                IsChecked="{Binding SetOriginToCentroid}" Margin="2,0,2,0" ToolTip="Automatically adjust vertices so the objects origin is as close to the objects centre as possible" />
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        Margin="2,0,2,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Content="Set origin to Centroid."
+                        IsChecked="{Binding SetOriginToCentroid}"
+                        ToolTip="Automatically adjust vertices so the objects origin is as close to the objects centre as possible" />
                     <CheckBox
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                VerticalContentAlignment="Center"
-                                Content="Swap Y-Z of OBJ files"
-                                IsChecked="{Binding ImportObjSwapAxis}" Margin="2,0,2,0" ToolTip=" Barnacle assumes Y is vertical,Z is distal. Some other applications assume Z is vertical." />
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="2,0,2,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Content="Swap Y-Z of OBJ files"
+                        IsChecked="{Binding ImportObjSwapAxis}"
+                        ToolTip=" Barnacle assumes Y is vertical,Z is distal. Some other applications assume Z is vertical." />
                     <CheckBox
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                VerticalContentAlignment="Center"
-                                Content="Swap Y-Z of OFF files"
-                                IsChecked="{Binding ImportOffSwapAxis}" Margin="2,0,2,0" ToolTip=" Barnacle assumes Y is vertical,Z is distal. Some other applications assume Z is vertical." />
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Margin="2,0,2,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Content="Swap Y-Z of OFF files"
+                        IsChecked="{Binding ImportOffSwapAxis}"
+                        ToolTip=" Barnacle assumes Y is vertical,Z is distal. Some other applications assume Z is vertical." />
                 </Grid>
             </TabItem>
 
@@ -291,7 +315,12 @@
                         <RowDefinition Height="5*" />
                         <RowDefinition Height="5*" />
                     </Grid.RowDefinitions>
-                    <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="0.4,0.2,37.2,28.4" Grid.RowSpan="2">
+                    <Grid
+                        Grid.Row="1"
+                        Grid.RowSpan="2"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="3"
+                        Margin="0.4,0.2,37.2,28.4">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
@@ -326,10 +355,13 @@
                     </Grid>
                     <GroupBox
                         Grid.Row="2"
+                        Grid.RowSpan="2"
                         Grid.Column="1"
+                        Grid.ColumnSpan="3"
+                        Margin="0.4,28.4,37.2,0.4"
                         Padding="8,8,8,8"
                         BorderThickness="3"
-                        Header="On Export" Grid.ColumnSpan="3" Margin="0.4,28.4,37.2,0.4" Grid.RowSpan="2">
+                        Header="On Export">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="1*" />
@@ -360,7 +392,7 @@
                                 VerticalAlignment="Center"
                                 VerticalContentAlignment="Center"
                                 Content="Floor All"
-                                IsChecked="{Binding FloorAll}" />
+                                IsChecked="{Binding FloorAllOnExport}" />
                             <CheckBox
                                 Grid.Row="1"
                                 Grid.Column="1"

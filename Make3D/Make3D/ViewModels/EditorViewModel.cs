@@ -96,6 +96,7 @@ namespace Barnacle.ViewModels
         private DispatcherTimer regenTimer;
         private List<Object3D> selectedItems;
         private Adorner selectedObjectAdorner;
+        private bool selectionTransparent;
         private bool showAdorners;
         private bool showAxies;
         private bool showBuildPlate;
@@ -482,12 +483,22 @@ namespace Barnacle.ViewModels
                 {
                     totalFaces += ob.TotalFaces;
                     totalVertices += ob.RelativeObjectVertices.Count;
+                    // if the selection is supposed to be transparent then
+                    // dont add objects that are part of the selection
+                    bool showCurrent = true;
+                    if (selectionTransparent && selectedItems.Count > 0 && selectedItems.Contains(ob))
+                    {
+                        showCurrent = false;
+                    }
 
-                    GeometryModel3D gm = GetMesh(ob);
-                    modelItems.Add(gm);
+                    if (showCurrent)
+                    {
+                        GeometryModel3D gm = GetMesh(ob);
+                        modelItems.Add(gm);
+                    }
                     allBounds += ob.AbsoluteBounds;
                 }
-                if (showAdorners)
+                if (showAdorners && !selectionTransparent)
                 {
                     if (selectedObjectAdorner != null)
                     {
@@ -572,6 +583,13 @@ namespace Barnacle.ViewModels
                 case Key.H:
                     {
                         showAdorners = true;
+                        RegenerateDisplayList();
+                    }
+                    break;
+
+                case Key.T:
+                    {
+                        selectionTransparent = false;
                         RegenerateDisplayList();
                     }
                     break;
@@ -2571,6 +2589,13 @@ namespace Barnacle.ViewModels
                         }
                         break;
 
+                    case Key.T:
+                        {
+                            handled = true;
+                            selectionTransparent = true;
+                        }
+                        break;
+
                     case Key.V:
                         {
                             handled = true;
@@ -3779,7 +3804,7 @@ namespace Barnacle.ViewModels
 
                 case "obj":
                     {
-                        dlg.Filter = "Object Model Files (*.obj) | *.obj";
+                        dlg.Filter = "Object SourceModel Files (*.obj) | *.obj";
                         if (dlg.ShowDialog() == true)
                         {
                             if (File.Exists(dlg.FileName))
@@ -4344,7 +4369,7 @@ namespace Barnacle.ViewModels
             {
                 if (Document.Dirty)
                 {
-                    if (MessageBox.Show("SaveAsTemplate current document first?", "Warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    if (MessageBox.Show("Save current document first?", "Warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
                         if (Document.FilePath != "")
                         {

@@ -25,7 +25,7 @@ namespace VisualSolutionExplorer
             ExportEmptyFiles = false;
             AutoSaveScript = true;
             DefaultObjectColour = Colors.DarkGray;
-            SlicerPath = @"";
+
             PlaceNewAtMarker = true;
         }
 
@@ -134,6 +134,11 @@ namespace VisualSolutionExplorer
             get; set;
         }
 
+        public String UserTankTrackLinksPath
+        {
+            get; set;
+        }
+
         public bool VersionExport
         {
             get; set;
@@ -166,10 +171,6 @@ namespace VisualSolutionExplorer
             ImportObjAxisSwap = GetBool(ele, "ImportObjAxisSwap", ImportObjAxisSwap);
             ImportOffAxisSwap = GetBool(ele, "ImportOffAxisSwap", ImportOffAxisSwap);
             FloorAllOnExport = GetBool(ele, "FloorAllOnExport", FloorAllOnExport);
-            if (ele.HasAttribute("SlicerPath"))
-            {
-                SlicerPath = ele.GetAttribute("SlicerPath");
-            }
 
             if (ele.HasAttribute("PlaceNewAtMarker"))
             {
