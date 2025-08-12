@@ -50,6 +50,7 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using MakerLib.Mirror;
+using Barnacle.Dialogs.RenameSelection;
 
 namespace Barnacle.ViewModels
 {
@@ -2474,6 +2475,10 @@ namespace Barnacle.ViewModels
                             {
                                 SelectAll();
                             }
+                            else if (shift)
+                            {
+                                DeselectAll();
+                            }
                         }
                         break;
 
@@ -4654,6 +4659,24 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private void RenameSelection()
+        {
+            if (selectedItems.Count > 1)
+            {
+                RenameSelectionDlg dlg = new RenameSelectionDlg();
+                dlg.Items = Document.Content;
+                dlg.Selections = selectedItems;
+                if (dlg.ShowDialog() == true)
+                {
+                    NotificationManager.Notify("ObjectNamesChanged", null);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Requires more than one object in the selection");
+            }
+        }
+
         private void Reorigin(Object3D ob)
         {
             ReoriginDlg dlg = new ReoriginDlg();
@@ -4891,6 +4914,11 @@ namespace Barnacle.ViewModels
             if (s == "last")
             {
                 SelectLast();
+            }
+            else
+            if (s == "rename")
+            {
+                RenameSelection();
             }
         }
 

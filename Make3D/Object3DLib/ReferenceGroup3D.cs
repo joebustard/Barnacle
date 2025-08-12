@@ -87,7 +87,6 @@ namespace Barnacle.Object3DLib
             RefValid = false;
 
             XmlElement ele = nd as XmlElement;
-            Name = ele.GetAttribute("Name");
 
             XmlNode refo = nd.SelectSingleNode("Reference");
             if (refo != null)
@@ -133,6 +132,7 @@ namespace Barnacle.Object3DLib
                     }
                 }
             }
+            Name = ele.GetAttribute("Name");
             return RefValid;
         }
 

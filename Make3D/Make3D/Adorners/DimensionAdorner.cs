@@ -64,7 +64,10 @@ namespace Barnacle.Models.Adorners
 
         public Point3D EndPoint
         {
-            get { return endPoint; }
+            get
+            {
+                return endPoint;
+            }
         }
 
         public Object3D StartObject
@@ -74,11 +77,21 @@ namespace Barnacle.Models.Adorners
 
         public Point3D StartPoint
         {
-            get { return startPoint; }
+            get
+            {
+                return startPoint;
+            }
         }
 
-        public bool TwoPoints { get; set; }
-        internal PolarCamera Camera { get; set; }
+        public bool TwoPoints
+        {
+            get; set;
+        }
+
+        internal PolarCamera Camera
+        {
+            get; set;
+        }
 
         public override void AdornObject(Object3D obj)
         {
@@ -174,9 +187,9 @@ namespace Barnacle.Models.Adorners
 
         private void OnCameraMoved(object param)
         {
-            PositionLabel();
             if (line != null)
             {
+                PositionLabel();
                 Point point1 = CameraUtils.Convert3DPoint(startPoint, ViewPort);
                 Point point2 = CameraUtils.Convert3DPoint(endPoint, ViewPort);
                 line.X1 = point1.X;

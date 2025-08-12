@@ -26,6 +26,7 @@ Added
   Added posx(),posy(),posz() to limpet
   First cut of save project as template
   Added "T" key to make selected object transparent temporarily (to see the parts behind it)
+  Added Shift+A to deselect all
   
 
 Fixed
@@ -39,6 +40,7 @@ Changed
   Split the import/export tab on the project settings into two seperate ones
   Improved the curve interpolation of the aircraft rib fuselage tool
   Changed Min box side thicknesses to 0.1mm ( from 1mm)
+  Tank Track Tool accepts user defined track links
 
 v1.0.8
 ===========

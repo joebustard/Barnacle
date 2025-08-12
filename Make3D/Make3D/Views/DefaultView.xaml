@@ -275,6 +275,7 @@
                         Label="All"
                         SmallImageSource="/Barnacle;component/Images/Buttons/SelectAll.png"
                         ToolTip="Ctrl+A Select All" />
+
                     <Custom:RibbonButton
                         x:Name="SelectNoneButton"
                         HorizontalAlignment="Stretch"
@@ -284,7 +285,18 @@
                         IsEnabled="{Binding EditingActive}"
                         Label="Clear"
                         SmallImageSource="/Barnacle;component/Images/Buttons/SelectClear.png"
-                        ToolTip="Clear selection" />
+                        ToolTip="Clear selection Shift + A" />
+
+                    <Custom:RibbonButton
+    x:Name="RenameSelectionButton"
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Top"
+    Command="{Binding SelectCommand}"
+    CommandParameter="Rename"
+    IsEnabled="{Binding EditingActive}"
+    Label="Rename"
+    SmallImageSource="/Barnacle;component/Images/Buttons/SelectClear.png"
+    ToolTip="Rename All Selected Items" />
 
                     <ComboBox
                         x:Name="SelectObjectNames"

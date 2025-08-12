@@ -16,9 +16,11 @@
 // *************************************************************************
 
 using Microsoft.Win32;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.Eventing.Reader;
 using System.IO;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
@@ -43,6 +45,7 @@ namespace ScriptMaker
         private String modelFileName;
 
         private List<Object3D> modelObjects;
+        private string outputAssembly;
         private string outputFileName;
 
         private String scriptName;
@@ -56,15 +59,21 @@ program ""Assembler script""
 }
 ";
 
+        private Dictionary<string, string> sourcePaths;
+
         public MainWindow()
         {
             InitializeComponent();
 
             AllScriptNames = new List<string>();
             AllScriptNames.Add("Assembler");
+            AllScriptNames.Add("Assembler With Union");
+            AllScriptNames.Add("Block Per Part");
+            AllScriptNames.Add("Block Per Part With Union");
             DataContext = this;
             outputFileName = @"C:\tmp\scriptout.txt";
             modelObjects = new List<Object3D>();
+            sourcePaths = new Dictionary<string, string>();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -95,6 +104,22 @@ program ""Assembler script""
             }
         }
 
+        public string OutputAssembly
+        {
+            get
+            {
+                return outputAssembly;
+            }
+            set
+            {
+                if (value != outputAssembly)
+                {
+                    outputAssembly = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public String ScriptName
         {
             get
@@ -120,6 +145,7 @@ program ""Assembler script""
         {
             try
             {
+                sourcePaths.Clear();
                 modelObjects.Clear();
                 XmlDocument doc = new XmlDocument();
                 doc.XmlResolver = null;
@@ -159,11 +185,11 @@ program ""Assembler script""
                         }
 
                         XmlNode rotpnode = nd.SelectSingleNode("Rotation");
-                        if (rpnode != null)
+                        if (rotpnode != null)
                         {
-                            robj.RX = Convert.ToDouble((rpnode as XmlElement).GetAttribute("X"));
-                            robj.RY = Convert.ToDouble((rpnode as XmlElement).GetAttribute("Y"));
-                            robj.RZ = Convert.ToDouble((rpnode as XmlElement).GetAttribute("Z"));
+                            robj.RX = Convert.ToDouble((rotpnode as XmlElement).GetAttribute("X"));
+                            robj.RY = Convert.ToDouble((rotpnode as XmlElement).GetAttribute("Y"));
+                            robj.RZ = Convert.ToDouble((rotpnode as XmlElement).GetAttribute("Z"));
                         }
 
                         XmlNode refnode = nd.SelectSingleNode("Reference");
@@ -173,6 +199,17 @@ program ""Assembler script""
                             String part = (refnode as XmlElement).GetAttribute("SourceObject");
 
                             robj.Path = fname;
+                            if (sourcePaths.Keys.Count == 0)
+                            {
+                                sourcePaths[fname] = "src";
+                            }
+                            else
+                            {
+                                if (!sourcePaths.ContainsKey(fname))
+                                {
+                                    sourcePaths[fname] = "src" + sourcePaths.Keys.Count.ToString();
+                                }
+                            }
                             robj.Part = part;
                         }
 
@@ -200,20 +237,37 @@ program ""Assembler script""
             Application.Current.Shutdown();
         }
 
-        private void ExportAssembler(string outputFileName)
+        private void ExportAssembler(string outputFileName, bool withUnion = false)
         {
             string script = scriptSrc;
+            string sources = "// sources\n";
+
             string positions = "";
             string solids = "    // Solids\n";
             string inserts = $"    // Insert the parts\n    string src = \"{modelFileName}\";\n";
-            string union = "    // Joint all the parts together\n";
+            string union = "";
+            string saveit = "";
             bool first = true;
+            Dictionary<string, string> Xs = new Dictionary<string, string>();
+            Dictionary<string, string> Ys = new Dictionary<string, string>();
+            Dictionary<string, string> Zs = new Dictionary<string, string>();
+            foreach (string k in sourcePaths.Keys)
+            {
+                sources += "string " + sourcePaths[k] + " = \"" + k + "\";\n";
+            }
+
             foreach (Object3D obj in modelObjects)
             {
+                string nx = obj.Name + "_X";
+                string ny = obj.Name + "_Y";
+                string nz = obj.Name + "_Z";
                 positions += $"    // {obj.Name} \n";
-                positions += $"    double {obj.Name}_X = {obj.X:F4} ;\n";
-                positions += $"    double {obj.Name}_Y = {obj.Y:F4} ;\n";
-                positions += $"    double {obj.Name}_Z = {obj.Z:F4} ;\n";
+                positions += $"    double {nx} = {LookUpValue(Xs, nx, obj.X)} ;\n";
+                positions += $"    double {ny} = {LookUpValue(Ys, ny, obj.Y)} ;\n";
+                positions += $"    double {nz} = {LookUpValue(Zs, nz, obj.Z)} ;\n";
+
+                //positions += $"    double {ny} = {obj.Y:F4} ;\n";
+                //positions += $"    double {nz} = {obj.Z:F4} ;\n";
 
                 positions += $"    double {obj.Name}_RX = {obj.RX:F4} ;\n";
 
@@ -224,24 +278,95 @@ program ""Assembler script""
                 if (!String.IsNullOrEmpty(obj.Path))
 
                 {
-                    inserts += $"    {obj.Name} = InsertAndPlace(\"{obj.Path}\",\"{obj.Part}\",{obj.Name}_X,{obj.Name}_Y,{obj.Name}_Z,{obj.Name}_RX,{obj.Name}_RY,{obj.Name}_RZ);\n";
+                    inserts += $"    {obj.Name} = InsertAndPlace({sourcePaths[obj.Path]},\"{obj.Part}\",{obj.Name}_X,{obj.Name}_Y,{obj.Name}_Z,Degrees({obj.Name}_RX),Degrees({obj.Name}_RY),Degrees({obj.Name}_RZ));\n";
                 }
                 else
                 {
-                    inserts += $"    {obj.Name} = InsertAndPlace(src,\"{obj.Name}\",{obj.Name}_X,{obj.Name}_Y,{obj.Name}_Z,{obj.Name}_RX,{obj.Name}_RY,{obj.Name}_RZ);\n";
+                    inserts += $"    {obj.Name} = InsertAndPlace(src,\"{sourcePaths[obj.Name]}\",{obj.Name}_X,{obj.Name}_Y,{obj.Name}_Z,Degrees({obj.Name}_RX),Degrees({obj.Name}_RY),Degrees({obj.Name}_RZ));\n";
                 }
-
-                if (first)
+                if (withUnion)
                 {
-                    union += $"    Solid whole = Copy({obj.Name});\n";
+                    if (first)
+                    {
+                        union = "    // Joint all the parts together\n";
+                        union += $"    Solid whole = Copy({obj.Name});\n";
+                    }
+                    else
+                    {
+                        union += $"    whole = ForceUnion(whole,{obj.Name});\n";
+                    }
+                    first = false;
                 }
-                else
-                {
-                    union += $"    whole = ForceUnion(whole,{obj.Name});\n";
-                }
-                first = false;
             }
-            script = script.Replace("<SCRIPTBODY>", positions + solids + inserts + union);
+            if (outputAssembly != "")
+            {
+                saveit = $"SaveSolids \"{outputAssembly}\";\n";
+            }
+            script = script.Replace("<SCRIPTBODY>", sources + positions + solids + inserts + union + saveit);
+            File.WriteAllText(outputFileName, script);
+            MessageBox.Show("Exported to " + outputFileName);
+        }
+
+        private void ExportBlockPerPart(string outputFileName, bool withUnion = false)
+        {
+            string script = scriptSrc;
+            string body = "// sources\n";
+
+            bool first = true;
+            Dictionary<string, string> Xs = new Dictionary<string, string>();
+            Dictionary<string, string> Ys = new Dictionary<string, string>();
+            Dictionary<string, string> Zs = new Dictionary<string, string>();
+            foreach (string k in sourcePaths.Keys)
+            {
+                body += "string " + sourcePaths[k] + " = \"" + k + "\";\n";
+            }
+            foreach (Object3D obj in modelObjects)
+            {
+                string nx = obj.Name + "_X";
+                string ny = obj.Name + "_Y";
+                string nz = obj.Name + "_Z";
+                body += $"    // {obj.Name} \n";
+                body += $"    Solid {obj.Name} ;\n";
+                body += $"    double {nx} = {LookUpValue(Xs, nx, obj.X)} ;\n";
+                body += $"    double {ny} = {LookUpValue(Ys, ny, obj.Y)} ;\n";
+                body += $"    double {nz} = {LookUpValue(Zs, nz, obj.Z)} ;\n";
+
+                //positions += $"    double {ny} = {obj.Y:F4} ;\n";
+                //positions += $"    double {nz} = {obj.Z:F4} ;\n";
+
+                body += $"    double {obj.Name}_RX = {obj.RX:F4} ;\n";
+
+                body += $"    double {obj.Name}_RY = {obj.RY:F4} ;\n";
+
+                body += $"    double {obj.Name}_RZ = {obj.RZ:F4} ;\n";
+
+                if (!String.IsNullOrEmpty(obj.Path))
+
+                {
+                    body += $"    {obj.Name} = InsertAndPlace({sourcePaths[obj.Path]},\"{obj.Part}\",{obj.Name}_X,{obj.Name}_Y,{obj.Name}_Z,Degrees({obj.Name}_RX),Degrees({obj.Name}_RY),Degrees({obj.Name}_RZ));\n";
+                }
+                else
+                {
+                    body += $"    {obj.Name} = InsertAndPlace(src,\"{sourcePaths[obj.Name]}\",{obj.Name}_X,{obj.Name}_Y,{obj.Name}_Z,Degrees({obj.Name}_RX),Degrees({obj.Name}_RY),Degrees({obj.Name}_RZ));\n";
+                }
+                if (withUnion)
+                {
+                    if (first)
+                    {
+                        body += $"    Solid whole = Copy({obj.Name});\n";
+                    }
+                    else
+                    {
+                        body += $"    whole = ForceUnion(whole,{obj.Name});\n";
+                    }
+                    first = false;
+                }
+            }
+            if (outputAssembly != "")
+            {
+                body += $"SaveSolids \"{outputAssembly}\";\n";
+            }
+            script = script.Replace("<SCRIPTBODY>", body);
             File.WriteAllText(outputFileName, script);
             MessageBox.Show("Exported to " + outputFileName);
         }
@@ -263,6 +388,24 @@ program ""Assembler script""
                                 }
                                 break;
 
+                            case "assembler with union ":
+                                {
+                                    ExportAssembler(outputFileName, true);
+                                }
+                                break;
+
+                            case "block per part":
+                                {
+                                    ExportBlockPerPart(outputFileName);
+                                }
+                                break;
+
+                            case "block per part with union":
+                                {
+                                    ExportBlockPerPart(outputFileName, true);
+                                }
+                                break;
+
                             default:
                                 break;
                         }
@@ -273,6 +416,26 @@ program ""Assembler script""
                     MessageBox.Show("No such Model File");
                 }
             }
+        }
+
+        private string LookUpValue(Dictionary<string, string> xs, string nk, double x)
+        {
+            string res = x.ToString("F4");
+            bool found = false;
+            foreach (string k in xs.Keys)
+            {
+                if (xs[k] == res)
+                {
+                    res = k;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                xs[nk] = res;
+            }
+            return res;
         }
 
         public struct Object3D

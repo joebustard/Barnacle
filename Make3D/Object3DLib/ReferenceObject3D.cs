@@ -105,7 +105,6 @@ namespace Barnacle.Object3DLib
         {
             RefValid = false;
             XmlElement ele = nd as XmlElement;
-            Name = ele.GetAttribute("Name");
 
             XmlNode refo = nd.SelectSingleNode("Reference");
             if (refo != null)
@@ -152,11 +151,13 @@ namespace Barnacle.Object3DLib
                     }
                 }
             }
+            Name = ele.GetAttribute("Name");
             return RefValid;
         }
 
         public override void ReadBinary(BinaryReader reader)
         {
+            base.ReadBinary(reader);
             Name = reader.ReadString();
             double x, y, z;
             x = reader.ReadDouble();
@@ -175,6 +176,7 @@ namespace Barnacle.Object3DLib
             int minute = reader.ReadInt32();
             int second = reader.ReadInt32();
             Reference.TimeStamp = new DateTime(year, month, day, hour, minute, second);
+            Reference.SourceObject = reader.ReadString();
         }
 
         public override XmlElement Write(XmlDocument doc, XmlElement docNode)
@@ -205,6 +207,10 @@ namespace Barnacle.Object3DLib
         public override void WriteBinary(BinaryWriter writer)
         {
             writer.Write((byte)2); // need a tag of some sort for deserialisation
+
+            // necessary so we can usw binary writes for undo
+            base.WriteBinary(writer);
+
             writer.Write(Name);
 
             writer.Write(Position.X);
@@ -216,6 +222,7 @@ namespace Barnacle.Object3DLib
             writer.Write(rotation.Z);
 
             writer.Write(Reference.Path);
+
             writer.Write(Reference.TimeStamp.Year);
             writer.Write(Reference.TimeStamp.Month);
             writer.Write(Reference.TimeStamp.Day);

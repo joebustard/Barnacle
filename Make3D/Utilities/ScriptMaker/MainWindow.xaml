@@ -17,20 +17,25 @@
             <RowDefinition Height="10" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Label VerticalAlignment="Center" Content="Model File" Margin="0,0,8,0" FontSize="18
-            " />
-            <TextBox Text="{Binding ModelFileName}" Width="400" Margin="0,2,8,0" FontSize="18" />
-            <Button Width="80" Content="..." Margin="0,2,8,0" Click="BrowseClicked" />
+            <Label VerticalAlignment="Center" Content="Model File"  FontSize="18
+            "  Width="120" />
+            <TextBox Text="{Binding ModelFileName}" Width="400"  FontSize="18" />
+            <Button Width="80" Content="..." Margin="8,0,0,0" Click="BrowseClicked" />
         </StackPanel>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal">
-            <Label VerticalAlignment="Center" Content="Script Type" Margin="0,2,8,0" FontSize="18
-     " />
-            <ComboBox SelectedItem="{Binding ScriptName}" ItemsSource="{Binding AllScriptNames}"  Width="400" Margin="0,2,8,0" FontSize="18" />
+            <Label VerticalAlignment="Center" Content="Script Type"  FontSize="18
+     " Width="120" />
+            <ComboBox SelectedItem="{Binding ScriptName}" ItemsSource="{Binding AllScriptNames}"  Width="400"  FontSize="18" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="5" HorizontalAlignment="Right">
             <Button Width="80" Content="Generate" Margin="0,0,8,0" Click="ExportClick" />
             <Button Width="80" Content="Exit" Margin="0,0,4,0" Click="ExitClicked" />
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="3">
+            <Label VerticalAlignment="Center"  FontSize="18" Content="Generate"  Width="120" />
+            <TextBox Width="480" Text="{Binding OutputAssembly}" />
         </StackPanel>
     </Grid>
 </Window>
