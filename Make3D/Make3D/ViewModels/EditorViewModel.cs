@@ -16,6 +16,7 @@
 **************************************************************************/
 
 using Barnacle.Dialogs;
+using Barnacle.Dialogs.RenameSelection;
 using Barnacle.Dialogs.Slice;
 using Barnacle.EditorParameterLib;
 using Barnacle.Models;
@@ -28,6 +29,7 @@ using FileUtils;
 using FixLib;
 using HalfEdgeLib;
 using HoleLibrary;
+using MakerLib.Mirror;
 using ManifoldLib;
 using MeshDecimator;
 using Microsoft.Win32;
@@ -45,12 +47,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+
+//using System.Windows.Forms;
+
+//using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
-using MakerLib.Mirror;
-using Barnacle.Dialogs.RenameSelection;
 
 namespace Barnacle.ViewModels
 {
@@ -189,7 +193,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "NewFile", OnOpenFile);
             NotificationManager.Subscribe("Editor", "NewProject", OnOpenFile);
             NotificationManager.Subscribe("Editor", "BendAngle", OnBendAngle);
-
+            NotificationManager.Subscribe("Editor", "Drop", OnDrop);
             ReportCameraPosition();
 
             selectedItems = new List<Object3D>();
@@ -709,6 +713,7 @@ namespace Barnacle.ViewModels
                     }
                 }
                 RegenerateDisplayList();
+                UpdateLookAt();
                 ShowToolForCurrentSelection();
                 NotifyPropertyChanged("ModelItems");
             }
@@ -748,6 +753,52 @@ namespace Barnacle.ViewModels
             mtb.Brush = new SolidColorBrush(Colors.Black);
             gm.BackMaterial = mtb;
             return gm;
+        }
+
+        private static double ObjectGapAbove(ref double maxMove, ref double baseDistance, Vector3D rayDirection, Vector3D v0, Vector3D v1, Vector3D v2, Vector3D v3, Vector3D v4, Vector3D v5, Vector3D rayOrigin)
+        {
+            double obDistance;
+            if (PrintPlacementLib.Utils.RayTriangleIntersect(rayOrigin, rayDirection,
+                                                              v0, v1, v2, out obDistance))
+            {
+                if (PrintPlacementLib.Utils.RayTriangleIntersect(rayOrigin, rayDirection,
+                                 v3, v4, v5, out baseDistance))
+                {
+                    if (obDistance >= baseDistance)
+                    {
+                        double canMove = obDistance - baseDistance;
+                        if (maxMove > canMove)
+                        {
+                            maxMove = canMove;
+                        }
+                    }
+                }
+            }
+
+            return obDistance;
+        }
+
+        private static double ObjectGapUnder(ref double maxMove, ref double baseDistance, Vector3D rayDirection, Vector3D v0, Vector3D v1, Vector3D v2, Vector3D v3, Vector3D v4, Vector3D v5, Vector3D rayOrigin)
+        {
+            double obDistance;
+            if (PrintPlacementLib.Utils.RayTriangleIntersect(rayOrigin, rayDirection,
+                                                              v0, v1, v2, out obDistance))
+            {
+                if (PrintPlacementLib.Utils.RayTriangleIntersect(rayOrigin, rayDirection,
+                                 v3, v4, v5, out baseDistance))
+                {
+                    if (obDistance >= baseDistance)
+                    {
+                        double canMove = obDistance - baseDistance;
+                        if (maxMove > canMove)
+                        {
+                            maxMove = canMove;
+                        }
+                    }
+                }
+            }
+
+            return obDistance;
         }
 
         private static MeshDecimator.Mesh ObjectMeshToDecimatorMesh(Object3D ob)
@@ -1006,6 +1057,15 @@ namespace Barnacle.ViewModels
             CameraScrollDelta = new Point3D(-1, 1, 0);
             LookToCenter();
             zoomPercent = 100;
+        }
+
+        private Vector3D BaryCentric(Vector3D v0, Vector3D v1, Vector3D v2, double u, double v, double w)
+        {
+            Vector3D res = new Vector3D();
+            res.X = (u * v0.X) + (v * v1.X) + (w * v2.X);
+            res.Y = (u * v0.Y) + (v * v1.Y) + (w * v2.Y);
+            res.Z = (u * v0.Z) + (v * v1.Z) + (w * v2.Z);
+            return res;
         }
 
         private void BendObjectInHalf(Object3D ob, string ori, double angleDegrees, bool fold = false)
@@ -1630,6 +1690,194 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private void DropFromAbove(Object3D baseOb, Bounds3D bns, List<Bounds2D> baseTriBounds, Object3D ob)
+        {
+            double maxMove = double.MaxValue;
+            // Move the object above the base one
+            Point3D originalPos = ob.Position;
+            double dAbsY = ob.Position.Y - (ob.AbsoluteBounds.Lower.Y - bns.Upper.Y) + 10.0;
+
+            ob.Position = new Point3D(ob.Position.X, dAbsY, ob.Position.Z);
+            ob.Remesh();
+
+            List<Bounds2D> movBounds = new List<Bounds2D>();
+            GetTriangleBounds2D(ob, movBounds);
+
+            for (int movIndex = 0; movIndex < movBounds.Count; movIndex++)
+            {
+                for (int baseIndex = 0; baseIndex < baseTriBounds.Count; baseIndex++)
+                {
+                    Bounds2D overlap = baseTriBounds[baseIndex].Overlap(movBounds[movIndex]);
+                    if (overlap != null)
+                    {
+                        // so tri angle movIndex is above triangle baseIndex in the area given by overlap
+                        // Shoot a ray up from each corner of the over lap
+                        // WE expect the ray should hit both tri angles at at least three of the corners of the overlap
+                        double obDistance = 0;
+                        double baseDistance = 0;
+                        Vector3D rayDirection = new Vector3D(0, 1, 0);
+                        double rayY = 0;
+                        rayY = Math.Min(rayY, ob.AbsoluteBounds.Lower.Y - 10);
+                        rayY = Math.Min(rayY, baseOb.AbsoluteBounds.Lower.Y - 10);
+                        int faceIndex = movIndex * 3;
+                        int f0 = ob.TriangleIndices[faceIndex];
+                        int f1 = ob.TriangleIndices[faceIndex + 1];
+                        int f2 = ob.TriangleIndices[faceIndex + 2];
+
+                        Vector3D v0 = new Vector3D(ob.AbsoluteObjectVertices[f0].X, ob.AbsoluteObjectVertices[f0].Y, ob.AbsoluteObjectVertices[f0].Z);
+                        Vector3D v1 = new Vector3D(ob.AbsoluteObjectVertices[f1].X, ob.AbsoluteObjectVertices[f1].Y, ob.AbsoluteObjectVertices[f1].Z);
+                        Vector3D v2 = new Vector3D(ob.AbsoluteObjectVertices[f2].X, ob.AbsoluteObjectVertices[f2].Y, ob.AbsoluteObjectVertices[f2].Z);
+
+                        faceIndex = baseIndex * 3;
+                        int f3 = baseOb.TriangleIndices[faceIndex];
+                        int f4 = baseOb.TriangleIndices[faceIndex + 1];
+                        int f5 = baseOb.TriangleIndices[faceIndex + 2];
+
+                        Vector3D v3 = new Vector3D(baseOb.AbsoluteObjectVertices[f3].X, baseOb.AbsoluteObjectVertices[f3].Y, baseOb.AbsoluteObjectVertices[f3].Z);
+                        Vector3D v4 = new Vector3D(baseOb.AbsoluteObjectVertices[f4].X, baseOb.AbsoluteObjectVertices[f4].Y, baseOb.AbsoluteObjectVertices[f4].Z);
+                        Vector3D v5 = new Vector3D(baseOb.AbsoluteObjectVertices[f5].X, baseOb.AbsoluteObjectVertices[f5].Y, baseOb.AbsoluteObjectVertices[f5].Z);
+
+                        // pass ray through triangle corners
+                        Vector3D rayOrigin = new Vector3D(v0.X, rayY, v0.Z);
+                        ObjectGapAbove(ref maxMove, ref baseDistance, rayDirection, v0, v1, v2, v3, v4, v5, rayOrigin);
+                        rayOrigin = new Vector3D(v1.X, rayY, v1.Z);
+                        ObjectGapAbove(ref maxMove, ref baseDistance, rayDirection, v0, v1, v2, v3, v4, v5, rayOrigin);
+                        rayOrigin = new Vector3D(v2.X, rayY, v2.Z);
+                        ObjectGapAbove(ref maxMove, ref baseDistance, rayDirection, v0, v1, v2, v3, v4, v5, rayOrigin);
+
+                        // pass ray through barycentre
+                        Vector3D bc = BaryCentric(v0, v1, v2, 0.333333, 0.333333, 0.333333);
+                        rayOrigin = new Vector3D(bc.X, rayY, bc.Z);
+                        ObjectGapAbove(ref maxMove, ref baseDistance, rayDirection, v0, v1, v2, v3, v4, v5, rayOrigin);
+
+                        // pass ray through three other sample points
+                        bc = BaryCentric(v0, v1, v2, 0.2, 0.4, 0.4);
+                        rayOrigin = new Vector3D(bc.X, rayY, bc.Z);
+                        ObjectGapAbove(ref maxMove, ref baseDistance, rayDirection, v0, v1, v2, v3, v4, v5, rayOrigin);
+
+                        bc = BaryCentric(v0, v1, v2, 0.4, 0.2, 0.4);
+                        rayOrigin = new Vector3D(bc.X, rayY, bc.Z);
+                        ObjectGapAbove(ref maxMove, ref baseDistance, rayDirection, v0, v1, v2, v3, v4, v5, rayOrigin);
+
+                        bc = BaryCentric(v0, v1, v2, 0.4, 0.4, 0.2);
+                        rayOrigin = new Vector3D(bc.X, rayY, bc.Z);
+                        ObjectGapAbove(ref maxMove, ref baseDistance, rayDirection, v0, v1, v2, v3, v4, v5, rayOrigin);
+                    }
+                }
+            }
+
+            if (maxMove < double.MaxValue)
+            {
+                ob.Position = new Point3D(ob.Position.X, ob.Position.Y - maxMove - 0.1, ob.Position.Z);
+                ob.Remesh();
+            }
+            else
+            {
+                // Cant drop so put back in place
+                ob.Position = originalPos;
+                ob.Remesh();
+            }
+        }
+
+        private void DropFromBelow(Object3D baseOb, Bounds3D bns, List<Bounds2D> baseTriBounds, Object3D ob)
+        {
+            double maxMove = double.MaxValue;
+            Point3D originalPos = ob.Position;
+            // Move the object below the base one
+
+            double dAbsY = ob.Position.Y + (bns.Lower.Y - ob.AbsoluteBounds.Upper.Y) - 10.0;
+
+            ob.Position = new Point3D(ob.Position.X, dAbsY, ob.Position.Z);
+            ob.Remesh();
+
+            List<Bounds2D> movBounds = new List<Bounds2D>();
+            GetTriangleBounds2D(ob, movBounds);
+
+            for (int movIndex = 0; movIndex < movBounds.Count; movIndex++)
+            {
+                for (int baseIndex = 0; baseIndex < baseTriBounds.Count; baseIndex++)
+                {
+                    Bounds2D overlap = baseTriBounds[baseIndex].Overlap(movBounds[movIndex]);
+                    if (overlap != null)
+                    {
+                        // so tri angle movIndex is above triangle baseIndex in the area given by overlap
+                        // Shoot a ray up from each corner of the over lap
+                        // WE expect the ray should hit both tri angles at at least three of the corners of the overlap
+                        double obDistance = 0;
+                        double baseDistance = 0;
+                        double rayY = ob.AbsoluteBounds.Upper.Y + 10;
+                        rayY = Math.Max(rayY, baseOb.AbsoluteBounds.Upper.Y + 10);
+                        Vector3D rayDirection = new Vector3D(0, -1, 0);
+                        int faceIndex = movIndex * 3;
+                        int f0 = ob.TriangleIndices[faceIndex];
+                        int f1 = ob.TriangleIndices[faceIndex + 1];
+                        int f2 = ob.TriangleIndices[faceIndex + 2];
+
+                        Vector3D v0 = new Vector3D(ob.AbsoluteObjectVertices[f0].X, ob.AbsoluteObjectVertices[f0].Y, ob.AbsoluteObjectVertices[f0].Z);
+                        Vector3D v1 = new Vector3D(ob.AbsoluteObjectVertices[f1].X, ob.AbsoluteObjectVertices[f1].Y, ob.AbsoluteObjectVertices[f1].Z);
+                        Vector3D v2 = new Vector3D(ob.AbsoluteObjectVertices[f2].X, ob.AbsoluteObjectVertices[f2].Y, ob.AbsoluteObjectVertices[f2].Z);
+
+                        faceIndex = baseIndex * 3;
+                        int f3 = baseOb.TriangleIndices[faceIndex];
+                        int f4 = baseOb.TriangleIndices[faceIndex + 1];
+                        int f5 = baseOb.TriangleIndices[faceIndex + 2];
+
+                        Vector3D v3 = new Vector3D(baseOb.AbsoluteObjectVertices[f3].X, baseOb.AbsoluteObjectVertices[f3].Y, baseOb.AbsoluteObjectVertices[f3].Z);
+                        Vector3D v4 = new Vector3D(baseOb.AbsoluteObjectVertices[f4].X, baseOb.AbsoluteObjectVertices[f4].Y, baseOb.AbsoluteObjectVertices[f4].Z);
+                        Vector3D v5 = new Vector3D(baseOb.AbsoluteObjectVertices[f5].X, baseOb.AbsoluteObjectVertices[f5].Y, baseOb.AbsoluteObjectVertices[f5].Z);
+
+                        Vector3D rayOrigin = new Vector3D(v0.X, rayY, v0.Z);
+                        obDistance = ObjectGapUnder(ref maxMove, ref baseDistance, rayDirection, v0, v1, v2, v3, v4, v5, rayOrigin);
+                        rayOrigin = new Vector3D(v1.X, rayY, v1.Z);
+                        obDistance = ObjectGapUnder(ref maxMove, ref baseDistance, rayDirection, v0, v1, v2, v3, v4, v5, rayOrigin);
+                        rayOrigin = new Vector3D(v2.X, rayY, v2.Z);
+                        obDistance = ObjectGapUnder(ref maxMove, ref baseDistance, rayDirection, v0, v1, v2, v3, v4, v5, rayOrigin);
+                    }
+                }
+            }
+
+            if (maxMove < double.MaxValue)
+            {
+                ob.Position = new Point3D(ob.Position.X, ob.Position.Y + maxMove + 0.1, ob.Position.Z);
+                ob.Remesh();
+            }
+            else
+            {
+                // Cant drop so put back in place
+                ob.Position = originalPos;
+                ob.Remesh();
+            }
+        }
+
+        private void DropItems(string dir)
+        {
+            CheckPoint();
+            Object3D baseOb = selectedObjectAdorner.SelectedObjects[0];
+            Bounds3D bns = new Bounds3D(baseOb.AbsoluteBounds);
+
+            List<Bounds2D> baseTriBounds = new List<Bounds2D>();
+            GetTriangleBounds2D(baseOb, baseTriBounds);
+
+            for (int i = 1; i < selectedItems.Count; i++)
+            {
+                Object3D ob = selectedItems[i];
+                switch (dir.ToLower())
+                {
+                    case "above":
+                        {
+                            DropFromAbove(baseOb, bns, baseTriBounds, ob);
+                        }
+                        break;
+
+                    case "below":
+                        {
+                            DropFromBelow(baseOb, bns, baseTriBounds, ob);
+                        }
+                        break;
+                }
+            }
+        }
+
         private void EnableTool(Object3D ob)
         {
             if (ob != null)
@@ -2018,6 +2266,24 @@ namespace Barnacle.ViewModels
                     break;
             }
             return res;
+        }
+
+        private void GetTriangleBounds2D(Object3D object3D, List<Bounds2D> bounds)
+        {
+            bounds.Clear();
+            int i = 0;
+            while (i + 2 < object3D.TriangleIndices.Count)
+            {
+                Bounds2D bounds2D = new Bounds2D();
+
+                for (int j = 0; j < 3; j++)
+                {
+                    int f = object3D.TriangleIndices[i + j];
+                    bounds2D.Adjust(object3D.AbsoluteObjectVertices[f].X, object3D.AbsoluteObjectVertices[f].Z);
+                }
+                bounds.Add(bounds2D);
+                i += 3;
+            }
         }
 
         private bool GroupToMesh()
@@ -3652,6 +3918,19 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private void OnDrop(object param)
+        {
+            string dir = param.ToString();
+            if (selectedItems.Count < 2)
+            {
+                MessageBox.Show("Drop requires two objects");
+            }
+            else
+            {
+                DropItems(dir);
+            }
+        }
+
         private void OnExport(object param)
         {
             string s = param as string;
@@ -4663,6 +4942,7 @@ namespace Barnacle.ViewModels
         {
             if (selectedItems.Count > 1)
             {
+                CheckPoint();
                 RenameSelectionDlg dlg = new RenameSelectionDlg();
                 dlg.Items = Document.Content;
                 dlg.Selections = selectedItems;
@@ -4971,6 +5251,7 @@ namespace Barnacle.ViewModels
                 }
             }
             UpdateSelectionDisplay();
+            UpdateLookAt();
         }
 
         private bool SelectionContainsReferences()
@@ -5014,6 +5295,7 @@ namespace Barnacle.ViewModels
                 EnableTool(ob);
             }
             UpdateSelectionDisplay();
+            UpdateLookAt();
         }
 
         private void SelectNext()
@@ -5070,6 +5352,7 @@ namespace Barnacle.ViewModels
                     EnableTool(nxt);
                 }
                 UpdateSelectionDisplay();
+                UpdateLookAt();
             }
         }
 
@@ -5095,6 +5378,7 @@ namespace Barnacle.ViewModels
 
             EnableTool(ob);
             UpdateSelectionDisplay();
+            UpdateLookAt();
         }
 
         private void SelectObjectByName(object param)
@@ -5142,6 +5426,7 @@ namespace Barnacle.ViewModels
                     }
                 }
                 UpdateSelectionDisplay();
+                UpdateLookAt();
             }
         }
 
@@ -5198,6 +5483,7 @@ namespace Barnacle.ViewModels
                     EnableTool(nxt);
                 }
                 UpdateSelectionDisplay();
+                UpdateLookAt();
             }
         }
 
@@ -5515,6 +5801,17 @@ namespace Barnacle.ViewModels
                     selectedObjectAdorner.Clear();
                     RegenerateDisplayList();
                     NotificationManager.Notify("ObjectNamesChanged", null);
+                }
+            }
+        }
+
+        private void UpdateLookAt()
+        {
+            if (cameraMode == CameraModes.CameraMoveLookObject)
+            {
+                if (selectedItems.Count == 1)
+                {
+                    LookAtObject();
                 }
             }
         }

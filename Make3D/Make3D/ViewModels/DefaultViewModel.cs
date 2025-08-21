@@ -110,6 +110,7 @@ namespace Barnacle.ViewModels
             CloneInPlaceCommand = new RelayCommand(OnCloneInPlace);
             CircularPasteCommand = new RelayCommand(OnCircularPaste);
             CutCommand = new RelayCommand(OnCut);
+            DropCommand = new RelayCommand(OnDrop);
             FixHolesCommand = new RelayCommand(OnFixHoles);
             InsertCommand = new RelayCommand(OnInsert);
             ManifoldCommand = new RelayCommand(OnManifoldTest);
@@ -472,6 +473,11 @@ namespace Barnacle.ViewModels
                     NotifyPropertyChanged();
                 }
             }
+        }
+
+        public ICommand DropCommand
+        {
+            get; set;
         }
 
         public ICommand DupVertexCommand
@@ -1929,6 +1935,12 @@ namespace Barnacle.ViewModels
 
         private void OnDoNothing(object obj)
         {
+        }
+
+        private void OnDrop(object obj)
+        {
+            String param = obj.ToString();
+            NotificationManager.Notify("Drop", param);
         }
 
         private void OnDupVertex(object obj)

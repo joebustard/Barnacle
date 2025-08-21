@@ -288,15 +288,15 @@
                         ToolTip="Clear selection Shift + A" />
 
                     <Custom:RibbonButton
-    x:Name="RenameSelectionButton"
-    HorizontalAlignment="Stretch"
-    VerticalAlignment="Top"
-    Command="{Binding SelectCommand}"
-    CommandParameter="Rename"
-    IsEnabled="{Binding EditingActive}"
-    Label="Rename"
-    SmallImageSource="/Barnacle;component/Images/Buttons/SelectClear.png"
-    ToolTip="Rename All Selected Items" />
+                        x:Name="RenameSelectionButton"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top"
+                        Command="{Binding SelectCommand}"
+                        CommandParameter="Rename"
+                        IsEnabled="{Binding EditingActive}"
+                        Label="Rename"
+                        SmallImageSource="/Barnacle;component/Images/Buttons/SelectClear.png"
+                        ToolTip="Rename All Selected Items" />
 
                     <ComboBox
                         x:Name="SelectObjectNames"
@@ -367,8 +367,8 @@
                         SmallImageSource="/Barnacle;component/Images/Buttons/settings.png" />
                     <Custom:RibbonMenuButton
                         x:Name="Import"
-                        Label="Import"
                         IsEnabled="{Binding EditingActive}"
+                        Label="Import"
                         SmallImageSource="/Barnacle;component/Images/Buttons/Import.png">
                         <Custom:RibbonMenuItem
                             x:Name="ImportOBJ"
@@ -408,8 +408,8 @@
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton
                         x:Name="Export"
-                        Label="Export"
                         IsEnabled="{Binding EditingActive}"
+                        Label="Export"
                         SmallImageSource="/Barnacle;component/Images/Buttons/export.png">
                         <Custom:RibbonMenuItem
                             x:Name="AllModels"
@@ -494,9 +494,9 @@
                     <Custom:RibbonButton
                         x:Name="Autofix"
                         HorizontalAlignment="Stretch"
-                        IsEnabled="{Binding EditingActive}"
                         VerticalAlignment="Top"
                         Command="{Binding AutoFixCommand}"
+                        IsEnabled="{Binding EditingActive}"
                         Label="AutoFix"
                         SmallImageSource="/Barnacle;component/Images/Buttons/AutoFix.png"
                         ToolTip="Remove duplicate vertices, unreferenced vertices from all models in all files in the project." />
@@ -552,61 +552,61 @@
                             x:Name="LeftAlignment"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
-                            IsEnabled="{Binding EditingActive}"
                             Command="{Binding AlignCommand}"
                             CommandParameter="Left"
                             Header="Left"
                             ImageSource="/Barnacle;component/Images/Buttons/AlignLeft.png"
+                            IsEnabled="{Binding EditingActive}"
                             ToolTip="Align objects so their left edges match the first selected." />
                         <Custom:RibbonMenuItem
                             x:Name="RightAlignment"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
-                            IsEnabled="{Binding EditingActive}"
                             Command="{Binding AlignCommand}"
                             CommandParameter="Right"
                             Header="Right"
                             ImageSource="/Barnacle;component/Images/Buttons/AlignRight.png"
+                            IsEnabled="{Binding EditingActive}"
                             ToolTip="Align objects so their right edges match the first selected." />
                         <Custom:RibbonMenuItem
                             x:Name="TopAlignment"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
-                            IsEnabled="{Binding EditingActive}"
                             Command="{Binding AlignCommand}"
                             CommandParameter="Top"
                             Header="Top"
                             ImageSource="/Barnacle;component/Images/Buttons/AlignTop.png"
+                            IsEnabled="{Binding EditingActive}"
                             ToolTip="Align objects so their top edges match the first selected." />
                         <Custom:RibbonMenuItem
                             x:Name="BottomAlignment"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
-                            IsEnabled="{Binding EditingActive}"
                             Command="{Binding AlignCommand}"
                             CommandParameter="Bottom"
                             Header="Bottom"
                             ImageSource="/Barnacle;component/Images/Buttons/AlignBottom.png"
+                            IsEnabled="{Binding EditingActive}"
                             ToolTip="Align objects so their bottom edges match the first selected." />
                         <Custom:RibbonMenuItem
                             x:Name="FrontAlignment"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
-                            IsEnabled="{Binding EditingActive}"
                             Command="{Binding AlignCommand}"
                             CommandParameter="Front"
                             Header="Front"
                             ImageSource="/Barnacle;component/Images/Buttons/AlignFront.png"
+                            IsEnabled="{Binding EditingActive}"
                             ToolTip="Align objects so their front edges match the first selected." />
                         <Custom:RibbonMenuItem
                             x:Name="BackAlignment"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
-                            IsEnabled="{Binding EditingActive}"
                             Command="{Binding AlignCommand}"
                             CommandParameter="Back"
                             Header="Back"
                             ImageSource="/Barnacle;component/Images/Buttons/AlignBack.png"
+                            IsEnabled="{Binding EditingActive}"
                             ToolTip="Align objects so their back edges match the first selected." />
                         <Custom:RibbonMenuItem
                             x:Name="CentersAlignment"
@@ -615,14 +615,14 @@
                             Command="{Binding AlignCommand}"
                             CommandParameter="Centres"
                             Header="Centres"
-                            IsEnabled="{Binding EditingActive}"
                             ImageSource="/Barnacle;component/Images/Buttons/Centres.png"
+                            IsEnabled="{Binding EditingActive}"
                             ToolTip="Align objects so their centres match the first selected." />
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton
                         x:Name="MidwayAlignment"
-                        Label="Midway"
                         IsEnabled="{Binding EditingActive}"
+                        Label="Midway"
                         SmallImageSource="/Barnacle;component/Images/Buttons/Align.png">
                         <Custom:RibbonMenuItem
                             x:Name="MidwayLeftRightAlignment"
@@ -655,8 +655,8 @@
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton
                         x:Name="Stack"
-                        Label="Stack"
                         IsEnabled="{Binding EditingActive}"
+                        Label="Stack"
                         SmallImageSource="/Barnacle;component/Images/Buttons/Stack.png">
                         <Custom:RibbonMenuItem
                             x:Name="StackLeftAlignment"
@@ -713,10 +713,36 @@
                             ImageSource="/Barnacle;component/Images/Buttons/StackBack.png"
                             ToolTip="Align objects so they are all centered and stacked to the rear of the first selected." />
                     </Custom:RibbonMenuButton>
+
+                    <Custom:RibbonMenuButton
+                        x:Name="DropButton"
+                        IsEnabled="{Binding EditingActive}"
+                        Label="Drop"
+                        SmallImageSource="/Barnacle;component/Images/Buttons/Distribution.png">
+                        <Custom:RibbonMenuItem
+                            x:Name="VerticalDropButton"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding DropCommand}"
+                            CommandParameter="Above"
+                            Header="Above"
+                            ImageSource="/Barnacle;component/Images/Buttons/Arrange.png"
+                            ToolTip="Drop the selected items from above" />
+                        <Custom:RibbonMenuItem
+                            x:Name="BelowDropButton"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding DropCommand}"
+                            CommandParameter="Below"
+                            Header="Below"
+                            ImageSource="/Barnacle;component/Images/Buttons/Arrange.png"
+                            ToolTip="Drop the selected items from below" />
+                    </Custom:RibbonMenuButton>
+
                     <Custom:RibbonMenuButton
                         x:Name="Distibution"
-                        Label="Distribution"
                         IsEnabled="{Binding EditingActive}"
+                        Label="Distribution"
                         SmallImageSource="/Barnacle;component/Images/Buttons/Distribution.png">
                         <!--
                         <Custom:RibbonButton Command="{Binding DistributeCommand}"
@@ -815,8 +841,8 @@
 
                     <Custom:RibbonMenuButton
                         x:Name="Size"
-                        Label="Size"
                         IsEnabled="{Binding EditingActive}"
+                        Label="Size"
                         SmallImageSource="/Barnacle;component/Images/Buttons/Size.png">
                         <Custom:RibbonMenuItem
                             x:Name="SameLength"
@@ -857,8 +883,8 @@
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton
                         x:Name="GroupButton"
-                        Label="Group"
                         IsEnabled="{Binding EditingActive}"
+                        Label="Group"
                         SmallImageSource="/Barnacle;component/Images/Buttons/group.png">
                         <Custom:RibbonMenuItem
                             x:Name="GroupUnion"
@@ -935,8 +961,8 @@
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton
                         x:Name="Split"
-                        Label="Split"
                         IsEnabled="{Binding EditingActive}"
+                        Label="Split"
                         SmallImageSource="/Barnacle;component/Images/Buttons/split.png">
                         <Custom:RibbonMenuItem
                             x:Name="SplitX"
@@ -968,7 +994,8 @@
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton
                         x:Name="Bend"
-                        Label="Bend" SmallImageSource="/Barnacle;component/Images/Buttons/Bend.png">
+                        Label="Bend"
+                        SmallImageSource="/Barnacle;component/Images/Buttons/Bend.png">
                         <Custom:RibbonMenuItem
                             x:Name="BendX"
                             Header="X"
@@ -1293,15 +1320,15 @@
                             ToolTip="Cut all faces below a horizontal plane." />
 
                         <Custom:RibbonMenuItem
-    x:Name="MeshCutVButton"
-    HorizontalAlignment="Stretch"
-    VerticalAlignment="Top"
-    Command="{Binding MeshCutCommand}"
-    CommandParameter="V"
-    Header="Cut V Plane"
-    ImageSource="/Barnacle;component/Images/Buttons/CutHPlane.png"
-    IsEnabled="{Binding MeshEditEnabled}"
-    ToolTip="Cut all faces to left of a vertical plane." />
+                            x:Name="MeshCutVButton"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding MeshCutCommand}"
+                            CommandParameter="V"
+                            Header="Cut V Plane"
+                            ImageSource="/Barnacle;component/Images/Buttons/CutHPlane.png"
+                            IsEnabled="{Binding MeshEditEnabled}"
+                            ToolTip="Cut all faces to left of a vertical plane." />
 
                         <Custom:RibbonMenuItem
                             x:Name="MeshSubdivideButton"

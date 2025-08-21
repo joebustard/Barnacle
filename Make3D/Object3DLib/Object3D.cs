@@ -55,6 +55,7 @@ namespace Barnacle.Object3DLib
 
     public class Object3D
     {
+        public Object Decorator;
         public Point3D rotation;
 
         internal static PrimTableEntry[] PrimitiveTable =
@@ -145,6 +146,7 @@ namespace Barnacle.Object3DLib
                 Description = "";
                 rotTransformation = null;
                 LockAspectRatio = false;
+                Decorator = null;
             }
             catch (Exception ex)
             {

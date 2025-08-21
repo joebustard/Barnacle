@@ -11,7 +11,7 @@
             <RowDefinition Height="10" />
             <RowDefinition Height="40" />
             <RowDefinition Height="40" />
-            <RowDefinition Height="40" />
+            <RowDefinition Height="80" />
             <RowDefinition />
             <RowDefinition Height="25" />
             <RowDefinition Height="10" />
@@ -34,8 +34,13 @@
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Grid.Row="3">
-            <Label VerticalAlignment="Center"  FontSize="18" Content="Generate"  Width="120" />
-            <TextBox Width="480" Text="{Binding OutputAssembly}" />
+            <Label VerticalAlignment="Center"   FontSize="18"  Width="120" Height="78">
+                <Label.Content>
+                    <AccessText TextWrapping="Wrap"  Text="Output Model File Name" />
+                </Label.Content>
+            </Label>
+
+            <TextBox Width="480" Text="{Binding OutputAssembly}" Height="30" />
         </StackPanel>
     </Grid>
 </Window>
