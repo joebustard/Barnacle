@@ -14,24 +14,31 @@ Added
   Horizontal Plane hcut statement added to Limpet
   Vertical Plane Cut added to editor
   GroupToMesh added to Limpet
-  MakeCrossGrille to Limpet
+  MakeCrossGrille() added to Limpet
   MirrorFront, MirrorBack, MirrorLeft, MirrorRight,MirrorUp,MirrorDown added to limpet
   Setlength(), setheight() and setwidth() to the standard limpet library
   Initial sdf modeller tool
   Allow user to explicitly set the x,y position of a point on a flexipath by typing in its position.
   Added extra colour definitions to the stanard limpet library
-  Added circular paste funtion to the limpet  library
+  Added circular paste function to the limpet  library
   Added SaveSolids statement to Limpet. If run then the reminder to save solids when the script editor closes is supressed
-  Added Flipdistal, fliphorizontal and flipvertical to limpet
+  Added Flipdistal(), Fliphorizontal() and Flipvertical() to limpet
+  Added Centre solid to Limpet
   Added posx(),posy(),posz() to limpet
   First cut of save project as template
   Added "T" key to make selected object transparent temporarily (to see the parts behind it)
   Added Shift+A to deselect all
+  Added Drop from above or below as position tool
+  Added Rename all selected items in a sequence.
+  Added Gray Scale image option to ImagePlaque tool
+  Executable will take two parameters on the command line. One is the full path of the project file (the .bmf), the other is a script file. 
+      The project is loaded, script run and then exe exits
   
 
 Fixed
   Slice was showing estimated time wrong if it was more than a day
   Index()  function not working
+  Small issue when user selects a different object when camera is in point at object mode 
 
 Changed
   Platelet width from int to double to allow fractions of millimetres
@@ -41,6 +48,7 @@ Changed
   Improved the curve interpolation of the aircraft rib fuselage tool
   Changed Min box side thicknesses to 0.1mm ( from 1mm)
   Tank Track Tool accepts user defined track links
+  Changed referece mechanism to allow copies and clones of referenced objects
 
 v1.0.8
 ===========

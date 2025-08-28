@@ -73,19 +73,25 @@
                 <StackPanel Grid.Row="3" Orientation="Horizontal">
                     <Label Width="100" VerticalAlignment="Center">Length</Label>
                     <TextBox
+                        Width="80"
                         Margin="8,0,0,0"
                         VerticalAlignment="Center"
                         Text="{Binding SolidLength}" />
+                    <CheckBox
+                        Margin="16,0,0,0"
+                        VerticalAlignment="Center"
+                        Content="Gray Scale"
+                        IsChecked="{Binding IsGrayScale}" />
                 </StackPanel>
-                <StackPanel Grid.Row="4" Orientation="Horizontal">
+                <StackPanel Grid.Row="4" Orientation="Horizontal" Visibility="{Binding RunLengthVisibility}">
                     <CheckBox
                         VerticalAlignment="Center"
                         Content="Limit RunLengths To"
-                        IsChecked="{Binding LimitRunLengths}" />
+                        IsChecked="{Binding LimitRunLengths}" Visibility="{Binding RunLengthVisibility}" />
                     <TextBox
                         Margin="8,0,0,0"
                         VerticalAlignment="Center"
-                        Text="{Binding MaxRunLength}" />
+                        Text="{Binding MaxRunLength}" Visibility="{Binding RunLengthVisibility}" />
                 </StackPanel>
                 <StackPanel Grid.Row="5" Orientation="Horizontal">
                     <Label

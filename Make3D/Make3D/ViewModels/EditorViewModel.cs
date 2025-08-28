@@ -1783,8 +1783,8 @@ namespace Barnacle.ViewModels
         {
             double maxMove = double.MaxValue;
             Point3D originalPos = ob.Position;
-            // Move the object below the base one
 
+            // Move the object below the base one
             double dAbsY = ob.Position.Y + (bns.Lower.Y - ob.AbsoluteBounds.Upper.Y) - 10.0;
 
             ob.Position = new Point3D(ob.Position.X, dAbsY, ob.Position.Z);

@@ -35,6 +35,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("NewProjectBack", NewProjectBack);
             NotificationManager.Subscribe("ShowEditor", ShowEditor);
             NotificationManager.Subscribe("StartWithOldProject", StartWithOldProject);
+            NotificationManager.Subscribe("StartWithOldProjectNoLoad", StartWithOldProjectNoLoad);
         }
 
         public string Caption
@@ -98,6 +99,14 @@ namespace Barnacle.ViewModels
             RecentlyUsedManager.UpdateRecentFiles(projPath);
             NotificationManager.Notify("ShowEditor", null);
             NotificationManager.Notify("ReloadProject", projPath);
+        }
+
+        private void StartWithOldProjectNoLoad(object param)
+        {
+            string projPath = param.ToString();
+            RecentlyUsedManager.UpdateRecentFiles(projPath);
+            NotificationManager.Notify("ShowEditor", null);
+            NotificationManager.Notify("ReloadProjectDontLoadLastFile", projPath);
         }
     }
 }

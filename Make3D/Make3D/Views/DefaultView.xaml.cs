@@ -52,12 +52,14 @@ namespace Barnacle.Views
             NotificationManager.Subscribe("ProjectChanged", ProjectChanged);
             NotificationManager.Subscribe("OpenProject", OpenProject);
             NotificationManager.Subscribe("ReloadProject", ReloadProject);
+            NotificationManager.Subscribe("ReloadProjectDontLoadLastFile", ReloadProject);
             NotificationManager.Subscribe("ExportRefresh", RefreshAfterExport);
             NotificationManager.Subscribe("ImportRefresh", RefreshAfterImport);
             NotificationManager.Subscribe("ScriptEditorClosed", ScriptEditorClosed);
             NotificationManager.Subscribe("SolutionPanel", ChangeSolutionPanelVisibility);
             NotificationManager.Subscribe("ObjectSelected", SelectedObjectChanged);
             NotificationManager.Subscribe("SwitchToObjectProperties", SwitchToObjectProperties);
+            NotificationManager.Subscribe("AutoRunScript", AutoRunScript);
             vm = DataContext as DefaultViewModel;
         }
 
@@ -102,6 +104,32 @@ namespace Barnacle.Views
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void AutoRunScript(object param)
+        {
+            string fName = param.ToString();
+            string p = BaseViewModel.Project.BaseFolder;
+            p = p + "\\" + fName;
+
+            // Check its a script
+            string ext = System.IO.Path.GetExtension(p);
+            ext = ext.ToLower();
+
+            // Is it a limpet script file
+            // if so change view and load it
+            if (ext == ".lmp")
+            {
+                // run the script without gathering any solids into a document
+                // because we don't have a document to use
+                if (RunScript(p, false))
+                {
+                }
+                else
+                {
+                    MessageBox.Show($"Failed : ${p}");
+                }
             }
         }
 
@@ -204,12 +232,12 @@ namespace Barnacle.Views
             }
         }
 
-        private void LoadNamedProject(string projName)
+        private void LoadNamedProject(string projName, bool loadLastFile = true)
         {
             BaseViewModel.Project.Open(projName);
             SolutionExplorer.ResetSolutionTree();
             SolutionExplorer.ProjectChanged(BaseViewModel.Project);
-            if (BaseViewModel.Project.FirstFile != "")
+            if (BaseViewModel.Project.FirstFile != "" && loadLastFile)
             {
                 LoadFileLastOpenedInProject();
             }
@@ -338,7 +366,13 @@ namespace Barnacle.Views
             LoadNamedProject(projName);
         }
 
-        private bool RunScript(string fileName)
+        private void ReloadProjectDontLoadLastFile(object param)
+        {
+            string projName = param.ToString();
+            LoadNamedProject(projName, false);
+        }
+
+        private bool RunScript(string fileName, bool saveSolids = true)
         {
             Dictionary<int, Object3D> content = new Dictionary<int, Object3D>();
             bool result = false;
@@ -361,12 +395,15 @@ namespace Barnacle.Views
                     }
                     else
                     {
-                        foreach (Object3D obj in content.Values)
+                        if (saveSolids)
                         {
-                            BaseViewModel.Document.Content.Add(obj);
+                            foreach (Object3D obj in content.Values)
+                            {
+                                BaseViewModel.Document.Content.Add(obj);
+                            }
+                            content.Clear();
+                            GC.Collect();
                         }
-                        content.Clear();
-                        GC.Collect();
                         result = true;
                     }
                 }
@@ -374,6 +411,10 @@ namespace Barnacle.Views
                 {
                     MessageBox.Show("Script failed to load");
                 }
+            }
+            else
+            {
+                MessageBox.Show($"Script failed to load {fileName}");
             }
             return result;
         }

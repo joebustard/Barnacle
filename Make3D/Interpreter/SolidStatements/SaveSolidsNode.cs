@@ -67,6 +67,8 @@ namespace ScriptLanguage.SolidStatements
                                     try
                                     {
                                         Write(fName);
+                                        // touch the file time stamp so external tools know file has been updated
+                                        System.IO.File.SetCreationTime(fName, System.DateTime.Now);
                                         result = true;
                                         Script.RanSaveParts = true;
                                     }

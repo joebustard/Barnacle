@@ -35,12 +35,14 @@ namespace Barnacle.Dialogs
         private const double maxplagueThickness = 100;
         private const double minplagueThickness = 0.5;
         private FormatConvertedBitmap grayBitmapSource;
+        private bool isGrayScale;
         private bool limitRunLengths;
         private bool loaded;
         private int maxRunLength;
         private double plagueThickness;
         private ImageSource plaqueImage;
         private string plaqueImagePath;
+        private Visibility runLengthVisibility;
         private double solidLength;
         private string warningText;
 
@@ -51,6 +53,31 @@ namespace Barnacle.Dialogs
             ToolName = "ImagePlaque";
 
             loaded = false;
+        }
+
+        public bool IsGrayScale
+        {
+            get
+            {
+                return isGrayScale;
+            }
+            set
+            {
+                if (isGrayScale != value)
+                {
+                    isGrayScale = value;
+                    NotifyPropertyChanged();
+                    if (isGrayScale)
+                    {
+                        RunLengthVisibility = Visibility.Hidden;
+                    }
+                    else
+                    {
+                        RunLengthVisibility = Visibility.Visible;
+                    }
+                    UpdateDisplay();
+                }
+            }
         }
 
         public bool LimitRunLengths
@@ -162,6 +189,22 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public Visibility RunLengthVisibility
+        {
+            get
+            {
+                return runLengthVisibility;
+            }
+            set
+            {
+                if (runLengthVisibility != value)
+                {
+                    runLengthVisibility = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public double SolidLength
         {
             get
@@ -240,11 +283,18 @@ namespace Barnacle.Dialogs
         private AsyncGeneratorResult GenerateAsync()
         {
             AsyncGeneratorResult res = new AsyncGeneratorResult();
-            ImagePlaqueMaker maker = new ImagePlaqueMaker(plagueThickness, plaqueImagePath, limitRunLengths, maxRunLength, solidLength);
             Point3DCollection v1 = new Point3DCollection();
             Int32Collection i1 = new Int32Collection();
-            maker.Generate(v1, i1);
-
+            if (isGrayScale)
+            {
+                GrayScaleImagePlaqueMaker maker = new GrayScaleImagePlaqueMaker(plagueThickness, plaqueImagePath, solidLength);
+                maker.Generate(v1, i1);
+            }
+            else
+            {
+                ImagePlaqueMaker maker = new ImagePlaqueMaker(plagueThickness, plaqueImagePath, limitRunLengths, maxRunLength, solidLength);
+                maker.Generate(v1, i1);
+            }
             // extract the vertices and indices to thread safe arrays
             // while still in the async function
             res.points = new Point3D[v1.Count];
@@ -287,6 +337,7 @@ namespace Barnacle.Dialogs
             LimitRunLengths = EditorParameters.GetBoolean("LimitRunLengths", true);
             MaxRunLength = EditorParameters.GetInt("MaxRunLength", 1);
             SolidLength = EditorParameters.GetDouble("SolidLength", 25);
+            IsGrayScale = EditorParameters.GetBoolean("GrayScale", false);
         }
 
         private void LoadImageAndConvertToGrayScale(String fileName)
@@ -330,6 +381,7 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("LimitRunLengths", LimitRunLengths.ToString());
             EditorParameters.Set("MaxRunLength", MaxRunLength.ToString());
             EditorParameters.Set("SolidLength", SolidLength.ToString());
+            EditorParameters.Set("GrayScale", IsGrayScale.ToString());
         }
 
         private void SetDefaults()
@@ -339,6 +391,7 @@ namespace Barnacle.Dialogs
             PlaqueImagePath = "";
             LimitRunLengths = false;
             MaxRunLength = 1;
+            IsGrayScale = false;
             loaded = true;
         }
 

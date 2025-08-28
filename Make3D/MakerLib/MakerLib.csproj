@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BicornMaker.cs" />
+    <Compile Include="GrayScaleImagePlaqueMaker.cs" />
     <Compile Include="MakeCrossGrill.cs" />
     <Compile Include="MakeTray.cs" />
     <Compile Include="Mirror\Mirror.cs" />

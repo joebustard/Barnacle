@@ -24,6 +24,7 @@ using System.Windows.Input;
 using Barnacle.Models;
 using Barnacle.Models.BufferedPolyline;
 using System.Collections.Generic;
+using System.Windows.Threading;
 
 namespace Barnacle
 {
@@ -32,11 +33,30 @@ namespace Barnacle
     /// </summary>
     public partial class MainWindow : Window
     {
+        private DispatcherTimer autoRunTimer = null;
+
+        private string autoScriptToRun = "";
+
+        private string autoStartProject = "";
+
         public MainWindow()
         {
             InitializeComponent();
             this.RestoreSizeAndLocation();
             PrepareUndo();
+        }
+
+        private void AutoRunScript()
+        {
+            NotificationManager.Notify("StartWithOldProjectNoLoad", autoStartProject);
+            NotificationManager.Notify("AutoRunScript", autoScriptToRun);
+        }
+
+        private void AutoRunTimer_Tick(object sender, EventArgs e)
+        {
+            autoRunTimer?.Stop();
+            AutoRunScript();
+            Application.Current.Shutdown();
         }
 
         private void PrepareUndo()
@@ -73,18 +93,27 @@ namespace Barnacle
         {
             // check if we have been opened with a project file name on the command line
             string[] args = Environment.GetCommandLineArgs();
-            string startProject = "";
+
             foreach (string s in args)
             {
-                if (s.EndsWith(".bmf"))
+                if (s.EndsWith(".bmf") && autoStartProject == "")
                 {
-                    startProject = s;
-                    break;
+                    autoStartProject = s;
+                }
+                if (s.EndsWith(".lmp") && autoScriptToRun == "")
+                {
+                    autoScriptToRun = s;
                 }
             }
-            if (startProject != "")
+            if (autoStartProject != "" && autoScriptToRun != "")
             {
-                NotificationManager.Notify("ReloadProject", startProject);
+                // command line asks us to load a project and run a script in it
+                // We can't do that from here as things haven't fully started yet
+                // so delay for a few seconds
+                autoRunTimer = new DispatcherTimer();
+                autoRunTimer.Interval = new TimeSpan(0, 0, 1);
+                autoRunTimer.Tick += AutoRunTimer_Tick;
+                autoRunTimer.Start();
             }
 
             InfoWindow.Instance().Owner = this;
