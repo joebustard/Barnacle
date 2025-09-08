@@ -85,6 +85,7 @@ namespace ScriptLanguage
                 "dim",
                 "forceunion",
                 "height",
+                "hull",
                 "index",
                 "inputstring",
                 "insertpart",
@@ -114,6 +115,8 @@ namespace ScriptLanguage
                 "makeplatelet",
                 "makeplankwall",
                 "makepie",
+                "makepierceddisk",
+                "makepiercedring",
                 "makepulley",
                 "makereuleaux",
                 "makerectgrille",
@@ -2715,6 +2718,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "hull":
+                            {
+                                exp = GetFunctionNode<HullNode>(parentName);
+                            }
+                            break;
+
                         case "inputstring":
                             {
                                 exp = ParseInputStringFunction(parentName);
@@ -2886,6 +2895,18 @@ namespace ScriptLanguage
                         case "makepie":
                             {
                                 exp = ParseMakePieFunction(parentName);
+                            }
+                            break;
+
+                        case "makepierceddisk":
+                            {
+                                exp = ParseMakePiercedDiskFunction(parentName);
+                            }
+                            break;
+
+                        case "makepiercedring":
+                            {
+                                exp = ParseMakePiercedRingFunction(parentName);
                             }
                             break;
 

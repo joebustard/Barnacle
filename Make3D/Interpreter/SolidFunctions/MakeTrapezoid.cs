@@ -67,6 +67,7 @@ namespace ScriptLanguage
 
                         obj.CalcScale(false);
                         obj.Remesh();
+                        obj.CalculateAbsoluteBounds();
                         int id = Script.NextObjectId;
                         Script.ResultArtefacts[id] = obj;
                         ExecutionStack.Instance().PushSolid(id);

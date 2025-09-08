@@ -47,6 +47,7 @@ namespace ScriptLanguage
                                             Point3D pos = new Point3D(xr, yr, zr);
                                             Script.ResultArtefacts[objectIndex].Position = pos;
                                             Script.ResultArtefacts[objectIndex].Remesh();
+                                            Script.ResultArtefacts[objectIndex].CalculateAbsoluteBounds();
                                             result = true;
                                         }
                                         else

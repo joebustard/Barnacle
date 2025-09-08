@@ -108,6 +108,7 @@ namespace ScriptLanguage
                                         break;
                                 }
                                 Script.ResultArtefacts[objectIndex].FlipInside();
+                                Script.ResultArtefacts[objectIndex].CalculateAbsoluteBounds();
                                 GC.Collect();
                                 result = true;
                             }

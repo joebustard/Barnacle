@@ -95,6 +95,7 @@ namespace ScriptLanguage
                                     case Alignment.Back: direction = "back"; break;
                                 }
                                 Mirror.Reflect(ob, direction);
+                                ob.CalculateAbsoluteBounds();
                                 result = true;
                             }
                         }

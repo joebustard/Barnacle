@@ -7,12 +7,12 @@ namespace ScriptLanguage
 {
     internal class MakeTextNode : ExpressionNode
     {
-        private ExpressionNode textExp;
+        private ExpressionNode boldExp;
         private ExpressionNode fontNameExp;
         private ExpressionNode fontSizeExp;
         private ExpressionNode heightExp;
-        private ExpressionNode boldExp;
         private ExpressionNode italicExp;
+        private ExpressionNode textExp;
 
         public MakeTextNode(ExpressionCollection coll)
         {
@@ -65,6 +65,7 @@ namespace ScriptLanguage
                         PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
                         obj.CalcScale(false);
                         obj.Remesh();
+                        obj.CalculateAbsoluteBounds();
                         int id = Script.NextObjectId;
                         Script.ResultArtefacts[id] = obj;
                         ExecutionStack.Instance().PushSolid(id);

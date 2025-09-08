@@ -11,10 +11,10 @@ namespace ScriptLanguage
         private ExpressionNode flatHeightExp;
         private ExpressionNode flatLengthExp;
         private ExpressionNode pillWidthExp;
-        private ExpressionNode trayThicknessExp;
         private ExpressionNode shapeExp;
+        private ExpressionNode trayThicknessExp;
 
-        public MakePillNode(ExpressionNode flatLength, ExpressionNode flatHeight, ExpressionNode edge, ExpressionNode pillWidth, ExpressionNode trayThickness, ExpressionNode shape )
+        public MakePillNode(ExpressionNode flatLength, ExpressionNode flatHeight, ExpressionNode edge, ExpressionNode pillWidth, ExpressionNode trayThickness, ExpressionNode shape)
         {
             this.flatLengthExp = flatLength;
             this.flatHeightExp = flatHeight;
@@ -82,7 +82,7 @@ namespace ScriptLanguage
                     Log.Instance().AddEntry("MakePill : PillWidth value out of range (2..200)");
                     inRange = false;
                 }
-                if (valShape == 2 && ( valTrayThickness < 0.1 || valTrayThickness >= valFlatLength /2 ))
+                if (valShape == 2 && (valTrayThickness < 0.1 || valTrayThickness >= valFlatLength / 2))
                 {
                     Log.Instance().AddEntry("MakePill : PillWidth value out of range (2..200)");
                     inRange = false;
@@ -99,13 +99,14 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     Point3DCollection tmp = new Point3DCollection();
-                    PillMaker maker = new PillMaker(valFlatLength, valFlatHeight, valEdge, valPillWidth,valTrayThickness, valShape);
+                    PillMaker maker = new PillMaker(valFlatLength, valFlatHeight, valEdge, valPillWidth, valTrayThickness, valShape);
 
                     maker.Generate(tmp, obj.TriangleIndices);
                     PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
 
                     obj.CalcScale(false);
                     obj.Remesh();
+                    obj.CalculateAbsoluteBounds();
                     int id = Script.NextObjectId;
                     Script.ResultArtefacts[id] = obj;
                     ExecutionStack.Instance().PushSolid(id);

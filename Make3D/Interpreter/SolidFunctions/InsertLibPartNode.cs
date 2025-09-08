@@ -42,6 +42,7 @@ namespace ScriptLanguage
                                 clone.Remesh();
                                 int id = Script.NextObjectId;
                                 Script.ResultArtefacts[id] = clone;
+                                Script.ResultArtefacts[id].CalculateAbsoluteBounds();
                                 ExecutionStack.Instance().PushSolid(id);
                                 result = true;
                             }

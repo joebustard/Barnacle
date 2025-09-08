@@ -122,7 +122,7 @@ namespace Barnacle.Object3DLib
                 {
                     if (reportMissing)
                     {
-                        MessageBox.Show("Cant find object " + Name + " in file " + Reference.Path);
+                        MessageBox.Show("Cant find object " + Reference.SourceObject + " in file " + Reference.Path);
                     }
                 }
                 else
@@ -157,6 +157,7 @@ namespace Barnacle.Object3DLib
 
         public override void ReadBinary(BinaryReader reader)
         {
+            byte baseTag = reader.ReadByte();
             base.ReadBinary(reader);
             Name = reader.ReadString();
             double x, y, z;

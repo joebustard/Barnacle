@@ -9,12 +9,12 @@ namespace ScriptLanguage
 {
     internal class MakeShapedTiledRoofNode : ExpressionNode
     {
-        private ExpressionNode pathExp;
-        private ExpressionNode tileLengthExp;
-        private ExpressionNode tileHeightExp;
-        private ExpressionNode tileDepthExp;
         private ExpressionNode mortarGapExp;
+        private ExpressionNode pathExp;
         private ExpressionNode roofWidthExp;
+        private ExpressionNode tileDepthExp;
+        private ExpressionNode tileHeightExp;
+        private ExpressionNode tileLengthExp;
 
         public MakeShapedTiledRoofNode(ExpressionNode pathNode, ExpressionNode tileLength, ExpressionNode tileHeight, ExpressionNode tileDepth, ExpressionNode mortarGap, ExpressionNode roofWidth)
         {
@@ -114,6 +114,7 @@ namespace ScriptLanguage
 
                     obj.CalcScale(false);
                     obj.Remesh();
+                    obj.CalculateAbsoluteBounds();
                     int id = Script.NextObjectId;
                     Script.ResultArtefacts[id] = obj;
                     ExecutionStack.Instance().PushSolid(id);

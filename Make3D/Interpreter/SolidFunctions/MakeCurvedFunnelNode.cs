@@ -7,10 +7,10 @@ namespace ScriptLanguage
 {
     internal class MakeCurvedFunnelNode : ExpressionNode
     {
-        private ExpressionNode radiusExp;
         private ExpressionNode factorAExp;
-        private ExpressionNode wallThicknessExp;
         private ExpressionNode heightExp;
+        private ExpressionNode radiusExp;
+        private ExpressionNode wallThicknessExp;
 
         public MakeCurvedFunnelNode
             (
@@ -93,6 +93,7 @@ namespace ScriptLanguage
 
                     obj.CalcScale(false);
                     obj.Remesh();
+                    obj.CalculateAbsoluteBounds();
                     int id = Script.NextObjectId;
                     Script.ResultArtefacts[id] = obj;
                     ExecutionStack.Instance().PushSolid(id);

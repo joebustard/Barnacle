@@ -6,8 +6,8 @@
     xmlns:Views="clr-namespace:Barnacle.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Barnacle"
-    xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
     d:DesignHeight="550"
     d:DesignWidth="800"
     Loaded="ScriptView_Loaded"
@@ -30,16 +30,15 @@
                     <Grid Grid.Row="0">
 
                         <RichTextBox
-                                x:Name="ScriptBox"
-                                MaxHeight="500"
-                                HorizontalAlignment="Stretch"
-
-                                Block.LineHeight="2"
-                                FontSize="32"
-                                IsEnabled="{Binding EnableRun}"
-                                PreviewKeyDown="ScriptBox_PreviewKeyDown"
-                                TextChanged="ScriptBox_TextChanged"
-                                VerticalScrollBarVisibility="Visible">
+                            x:Name="ScriptBox"
+                            MaxHeight="500"
+                            HorizontalAlignment="Stretch"
+                            Block.LineHeight="2"
+                            FontSize="32"
+                            IsEnabled="{Binding EnableRun}"
+                            PreviewKeyDown="ScriptBox_PreviewKeyDown"
+                            TextChanged="ScriptBox_TextChanged"
+                            VerticalScrollBarVisibility="Visible">
                             <RichTextBox.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Command="ApplicationCommands.Cut" Header="Cut" />
@@ -47,22 +46,22 @@
                                     <MenuItem Command="ApplicationCommands.Paste" Header="Paste" />
                                     <Separator />
                                     <MenuItem
-                                            Command="{Binding ScriptCommand}"
-                                            CommandParameter="InsSolidFunc"
-                                            Header="Insert Solid Func" />
+                                        Command="{Binding ScriptCommand}"
+                                        CommandParameter="InsSolidFunc"
+                                        Header="Insert Solid Func" />
                                     <MenuItem
-                                            Command="{Binding ScriptCommand}"
-                                            CommandParameter="BlankProcedure"
-                                            Header="Insert Blank Procedure" />
+                                        Command="{Binding ScriptCommand}"
+                                        CommandParameter="BlankProcedure"
+                                        Header="Insert Blank Procedure" />
                                     <MenuItem
-                                            Command="{Binding ScriptCommand}"
-                                            CommandParameter="Procedure"
-                                            Header="Insert Procedure With Parameters" />
+                                        Command="{Binding ScriptCommand}"
+                                        CommandParameter="Procedure"
+                                        Header="Insert Procedure With Parameters" />
 
                                     <MenuItem
-                                            Command="{Binding ScriptCommand}"
-                                            CommandParameter="FuncHead"
-                                            Header="Insert Func Header" />
+                                        Command="{Binding ScriptCommand}"
+                                        CommandParameter="FuncHead"
+                                        Header="Insert Func Header" />
                                 </ContextMenu>
                             </RichTextBox.ContextMenu>
                         </RichTextBox>
@@ -121,7 +120,7 @@
                                 Content="Close"
                                 IsEnabled="{Binding EnableRun}" />
 
-                            <StackPanel  Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal">
                                 <TextBox
                                     x:Name="SearchBox"
                                     Width="80"
@@ -129,7 +128,6 @@
                                     Text="{Binding SearchText}" />
                                 <Button
                                     x:Name="SearchBut"
-
                                     Command="{Binding FindCommand}"
                                     Content="Find"
                                     IsEnabled="{Binding EnableRun}" />
@@ -150,8 +148,7 @@
                 </Grid>
             </TabItem>
             <TabItem Header="3D Output From Script" PreviewKeyDown="ScriptBox_PreviewKeyDown">
-                <u:ObjectView
-                    x:Name="Viewer" />
+                <u:ObjectView x:Name="Viewer" />
 
                 <!--
                 <Grid

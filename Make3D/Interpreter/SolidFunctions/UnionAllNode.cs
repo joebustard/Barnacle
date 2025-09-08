@@ -58,7 +58,7 @@ namespace ScriptLanguage
                     Script.NextObjectId = 0;
                     int id = Script.NextObjectId;
                     Script.ResultArtefacts[id] = leftie;
-                    
+                    Script.ResultArtefacts[id].CalculateAbsoluteBounds();
                     leftie.CalcScale(false);
                     leftie.Remesh();
                     ExecutionStack.Instance().PushSolid(id);

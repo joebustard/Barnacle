@@ -9,21 +9,19 @@ namespace ScriptLanguage
 {
     internal class MakeConstructionStripNode : ExpressionNode
     {
-        private ExpressionNode stripHeightExp;
-        private ExpressionNode stripWidthExp;
-        private ExpressionNode stripRepeatsExp;
         private ExpressionNode holeRadiusExp;
         private ExpressionNode numberOfHolesExp;
+        private ExpressionNode stripHeightExp;
+        private ExpressionNode stripRepeatsExp;
+        private ExpressionNode stripWidthExp;
 
-
-        public MakeConstructionStripNode( ExpressionNode stripHeight, ExpressionNode stripWidth, ExpressionNode stripRepeats, ExpressionNode holeRadius, ExpressionNode numberOfHoles            )
+        public MakeConstructionStripNode(ExpressionNode stripHeight, ExpressionNode stripWidth, ExpressionNode stripRepeats, ExpressionNode holeRadius, ExpressionNode numberOfHoles)
         {
             this.stripHeightExp = stripHeight;
             this.stripWidthExp = stripWidth;
             this.stripRepeatsExp = stripRepeats;
             this.holeRadiusExp = holeRadius;
             this.numberOfHolesExp = numberOfHoles;
-
         }
 
         public MakeConstructionStripNode(ExpressionCollection coll)
@@ -33,7 +31,6 @@ namespace ScriptLanguage
             this.stripRepeatsExp = coll.Get(2);
             this.holeRadiusExp = coll.Get(3);
             this.numberOfHolesExp = coll.Get(4);
-
         }
 
         /// Execute this node
@@ -43,10 +40,10 @@ namespace ScriptLanguage
         {
             bool result = false;
 
-            double valStripHeight = 0; 
-            double valStripWidth = 0; 
-            int valStripRepeats = 0; 
-            double valHoleRadius = 0; 
+            double valStripHeight = 0;
+            double valStripWidth = 0;
+            int valStripRepeats = 0;
+            double valHoleRadius = 0;
             int valNumberOfHoles = 0;
 
             if (EvalExpression(stripHeightExp, ref valStripHeight, "StripHeight", "MakeConstructionStrip") &&
@@ -107,6 +104,7 @@ namespace ScriptLanguage
 
                     obj.CalcScale(false);
                     obj.Remesh();
+                    obj.CalculateAbsoluteBounds();
                     int id = Script.NextObjectId;
                     Script.ResultArtefacts[id] = obj;
                     ExecutionStack.Instance().PushSolid(id);

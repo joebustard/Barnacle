@@ -63,6 +63,7 @@ namespace ScriptLanguage
                         PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
                         obj.CalcScale(false);
                         obj.Remesh();
+                        obj.CalculateAbsoluteBounds();
                         int id = Script.NextObjectId;
                         Script.ResultArtefacts[id] = obj;
                         ExecutionStack.Instance().PushSolid(id);

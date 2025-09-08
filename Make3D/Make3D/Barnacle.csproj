@@ -135,6 +135,10 @@
     <Compile Include="Dialogs\NewUserTemplate.xaml.cs">
       <DependentUpon>NewUserTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\PiercedDisk\PiercedDiskDlg.xaml.cs">
+      <DependentUpon>PiercedDiskDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\PiercedRing\PiercedRingDlg.xaml.cs" />
     <Compile Include="Dialogs\RenameSelection\RenameSelectionDlg.xaml.cs">
       <DependentUpon>RenameSelectionDlg.xaml</DependentUpon>
     </Compile>
@@ -558,6 +562,14 @@
     <Page Include="Dialogs\NewUserTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\PiercedDisk\PiercedDiskDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\PiercedRing\PiercedRingDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\RenameSelection\RenameSelectionDlg.xaml">
       <SubType>Designer</SubType>

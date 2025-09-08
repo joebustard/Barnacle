@@ -52,6 +52,8 @@
     <Compile Include="BicornMaker.cs" />
     <Compile Include="GrayScaleImagePlaqueMaker.cs" />
     <Compile Include="MakeCrossGrill.cs" />
+    <Compile Include="PiercedDisk\Hole.cs" />
+    <Compile Include="PiercedDisk\MakePiercedDisk.cs" />
     <Compile Include="MakeTray.cs" />
     <Compile Include="Mirror\Mirror.cs" />
     <Compile Include="ParameterLimits.cs" />
@@ -106,6 +108,7 @@
     <Compile Include="MorphableModel\Primitives\MorphableStar6.cs" />
     <Compile Include="MorphableModel\Primitives\MorphableStellateDoDec.cs" />
     <Compile Include="PGramMaker.cs" />
+    <Compile Include="PiercedRing\MakePiercedRing.cs" />
     <Compile Include="PlaneCutter\EdgeProcessor.cs" />
     <Compile Include="PlaneCutter\EdgeRecord.cs" />
     <Compile Include="PlaneCutter\PlaneCutter.cs" />

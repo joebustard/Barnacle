@@ -48,6 +48,7 @@ namespace ScriptLanguage
                                             Vector3D rel = new Vector3D(xr, yr, zr);
                                             Script.ResultArtefacts[objectIndex].Position += rel;
                                             Script.ResultArtefacts[objectIndex].Remesh();
+                                            Script.ResultArtefacts[objectIndex].CalculateAbsoluteBounds();
                                             result = true;
                                         }
                                         else

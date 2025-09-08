@@ -58,6 +58,7 @@ namespace ScriptLanguage
                                     Script.ResultArtefacts[objectIndex].AbsoluteToRelative();
 
                                     Script.ResultArtefacts[objectIndex].Remesh();
+                                    Script.ResultArtefacts[objectIndex].CalculateAbsoluteBounds();
                                     result = true;
                                 }
                                 else

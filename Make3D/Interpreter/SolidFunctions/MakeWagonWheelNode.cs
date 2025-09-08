@@ -7,14 +7,14 @@ namespace ScriptLanguage
 {
     internal class MakeWagonWheelNode : ExpressionNode
     {
+        private ExpressionNode axleBoreExp;
         private ExpressionNode hubRadiusExp;
         private ExpressionNode hubThicknessExp;
+        private ExpressionNode numberOfSpokesExp;
+        private ExpressionNode rimDepthExp;
         private ExpressionNode rimInnerRadiusExp;
         private ExpressionNode rimThicknessExp;
-        private ExpressionNode rimDepthExp;
-        private ExpressionNode numberOfSpokesExp;
         private ExpressionNode spokeRadiusExp;
-        private ExpressionNode axleBoreExp;
 
         public MakeWagonWheelNode(ExpressionNode hubRadius, ExpressionNode hubThickness, ExpressionNode rimInnerRadius, ExpressionNode rimThickness, ExpressionNode rimDepth, ExpressionNode numberOfSpokes, ExpressionNode spokeRadius, ExpressionNode axleBore)
         {
@@ -138,6 +138,7 @@ namespace ScriptLanguage
 
                         obj.CalcScale(false);
                         obj.Remesh();
+                        obj.CalculateAbsoluteBounds();
                         int id = Script.NextObjectId;
                         Script.ResultArtefacts[id] = obj;
                         ExecutionStack.Instance().PushSolid(id);

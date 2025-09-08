@@ -46,6 +46,7 @@ namespace ScriptLanguage
                                             Point3D rot = new Point3D(xr, yr, zr);
                                             Script.ResultArtefacts[objectIndex].Rotate(rot);
                                             Script.ResultArtefacts[objectIndex].Remesh();
+                                            Script.ResultArtefacts[objectIndex].CalculateAbsoluteBounds();
                                         }
                                         else
                                         {

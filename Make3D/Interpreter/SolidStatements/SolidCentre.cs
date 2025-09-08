@@ -33,6 +33,7 @@ namespace ScriptLanguage
                             {
                                 Script.ResultArtefacts[objectIndex].MoveToCentre();
                                 Script.ResultArtefacts[objectIndex].Remesh();
+                                Script.ResultArtefacts[objectIndex].CalculateAbsoluteBounds();
                                 result = true;
                             }
                         }

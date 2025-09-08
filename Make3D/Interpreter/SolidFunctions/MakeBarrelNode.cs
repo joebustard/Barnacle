@@ -16,14 +16,15 @@ namespace ScriptLanguage
         private ExpressionNode shellExp;
         private ExpressionNode shellThicknessExp;
         private ExpressionNode topRadiusExp;
-        public MakeBarrelNode (
+
+        public MakeBarrelNode(
             ExpressionNode barrelHeight,
             ExpressionNode topRadius,
             ExpressionNode middleRadius,
             ExpressionNode numberOrRibs,
             ExpressionNode shell,
             ExpressionNode shellThickness,
-            ExpressionNode ribDepth  )
+            ExpressionNode ribDepth)
         {
             this.barrelHeightExp = barrelHeight;
             this.topRadiusExp = topRadius;
@@ -32,7 +33,6 @@ namespace ScriptLanguage
             this.shellExp = shell;
             this.shellThicknessExp = shellThickness;
             this.ribDepthExp = ribDepth;
-
         }
 
         public MakeBarrelNode(ExpressionCollection coll)
@@ -44,7 +44,6 @@ namespace ScriptLanguage
             this.shellExp = coll.Get(4);
             this.shellThicknessExp = coll.Get(5);
             this.ribDepthExp = coll.Get(6);
-
         }
 
         /// Execute this node
@@ -54,12 +53,12 @@ namespace ScriptLanguage
         {
             bool result = false;
 
-            double valBarrelHeight = 0; 
-            double valTopRadius = 0; 
-            double valMiddleRadius = 0;             
-            double valNumberOrRibs = 0; 
-            bool valShell = false; 
-            double valShellThickness = 0; 
+            double valBarrelHeight = 0;
+            double valTopRadius = 0;
+            double valMiddleRadius = 0;
+            double valNumberOrRibs = 0;
+            bool valShell = false;
+            double valShellThickness = 0;
             double valRibDepth = 0;
 
             if (
@@ -91,7 +90,6 @@ namespace ScriptLanguage
                     Log.Instance().AddEntry("MakeBarrel : MiddleRadius value out of range (2..100)");
                     inRange = false;
                 }
-
 
                 if (valNumberOrRibs < 2 || valNumberOrRibs > 30)
                 {
@@ -128,6 +126,7 @@ namespace ScriptLanguage
 
                     obj.CalcScale(false);
                     obj.Remesh();
+                    obj.CalculateAbsoluteBounds();
                     int id = Script.NextObjectId;
                     Script.ResultArtefacts[id] = obj;
                     ExecutionStack.Instance().PushSolid(id);

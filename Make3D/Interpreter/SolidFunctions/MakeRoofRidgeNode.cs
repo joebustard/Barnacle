@@ -17,7 +17,6 @@ namespace ScriptLanguage
         private ExpressionNode ridgeLengthExp;
         private ExpressionNode shapeExp;
 
-
         public MakeRoofRidgeNode
             (
             ExpressionNode armLength, ExpressionNode armAngle, ExpressionNode armThickness, ExpressionNode ridgeLength, ExpressionNode crownRadius, ExpressionNode flatCrestWidth, ExpressionNode shape
@@ -30,7 +29,6 @@ namespace ScriptLanguage
             this.crownRadiusExp = crownRadius;
             this.flatCrestWidthExp = flatCrestWidth;
             this.shapeExp = shape;
-
         }
 
         public MakeRoofRidgeNode
@@ -43,7 +41,6 @@ namespace ScriptLanguage
             this.crownRadiusExp = coll.Get(4);
             this.flatCrestWidthExp = coll.Get(5);
             this.shapeExp = coll.Get(6);
-
         }
 
         /// Execute this node
@@ -53,10 +50,10 @@ namespace ScriptLanguage
         {
             bool result = false;
 
-            double valArmLength = 0; 
-            double valArmAngle = 0; 
-            double valCrownRadius = 0; 
-            double valFlatCrestWidth = 0; 
+            double valArmLength = 0;
+            double valArmAngle = 0;
+            double valCrownRadius = 0;
+            double valFlatCrestWidth = 0;
             int valShape = 0;
             double valRidgeLength = 0;
             double valArmThickness = 0;
@@ -131,13 +128,14 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     Point3DCollection tmp = new Point3DCollection();
-                    RoofRidgeMaker maker = new RoofRidgeMaker(valArmLength, valArmAngle,valArmThickness,valRidgeLength, valCrownRadius, valFlatCrestWidth, valShape);
+                    RoofRidgeMaker maker = new RoofRidgeMaker(valArmLength, valArmAngle, valArmThickness, valRidgeLength, valCrownRadius, valFlatCrestWidth, valShape);
 
                     maker.Generate(tmp, obj.TriangleIndices);
                     PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
 
                     obj.CalcScale(false);
                     obj.Remesh();
+                    obj.CalculateAbsoluteBounds();
                     int id = Script.NextObjectId;
                     Script.ResultArtefacts[id] = obj;
                     ExecutionStack.Instance().PushSolid(id);

@@ -12,16 +12,19 @@ namespace ScriptLanguage
         private static string label = "Make//TOOLNAME";
         //NODEFIELDS
 
-        public Make//TOOLNAMENode
-            (
+ 	public Make//TOOLNAMENode()
+        {
+         
+        }
+
+        public Make//TOOLNAMENode(
             //CONSTRUCTORPARAMETERS
             )
         {
             //COPYFIELDS
         }
 
-        public Make//TOOLNAMENode
-                (ExpressionCollection coll)
+        public Make//TOOLNAMENode(ExpressionCollection coll)
         {
             //COPYCOLLFIELDS
         }
@@ -106,11 +109,11 @@ namespace ScriptLanguage
                 ParamLimit pl = maker.GetLimits(paramName);
                 if (pl != null)
                 {
-                    Log.Instance().AddEntry($"{Label} : {paramName} value {val} out of range ({pl.Low}..{pl.High}");
+                    Log.Instance().AddEntry($"{label} : {paramName} value {val} out of range ({pl.Low}..{pl.High}");
                 }
                 else
                 {
-                    Log.Instance().AddEntry($"{Label} : Can't check parameter {paramName}");
+                    Log.Instance().AddEntry($"{label} : Can't check parameter {paramName}");
                 }
             }
 

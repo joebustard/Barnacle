@@ -9,14 +9,14 @@ namespace ScriptLanguage
 {
     internal class MakeBoxNode : ExpressionNode
     {
-        private ExpressionNode boxLengthExp;
-        private ExpressionNode boxHeightExp;
-        private ExpressionNode boxWidthExp;
+        private ExpressionNode backThicknessExp;
         private ExpressionNode baseThicknessExp;
+        private ExpressionNode boxHeightExp;
+        private ExpressionNode boxLengthExp;
+        private ExpressionNode boxWidthExp;
+        private ExpressionNode frontThicknessExp;
         private ExpressionNode leftThicknessExp;
         private ExpressionNode rightThicknessExp;
-        private ExpressionNode frontThicknessExp;
-        private ExpressionNode backThicknessExp;
 
         public MakeBoxNode
             (
@@ -142,6 +142,7 @@ namespace ScriptLanguage
 
                     obj.CalcScale(false);
                     obj.Remesh();
+                    obj.CalculateAbsoluteBounds();
                     int id = Script.NextObjectId;
                     Script.ResultArtefacts[id] = obj;
                     ExecutionStack.Instance().PushSolid(id);

@@ -37,8 +37,10 @@ Added
 
 Fixed
   Slice was showing estimated time wrong if it was more than a day
-  Index()  function not working
-  Small issue when user selects a different object when camera is in point at object mode 
+  Limpet Index()  function not working
+  Small issue when user selects a different object when camera is in "point at" object mode 
+  Fixed issue with undo mechanism losing objects if a group was reference from another file
+  Some functions in limpet didn't update an objects boundng box.
 
 Changed
   Platelet width from int to double to allow fractions of millimetres
@@ -48,7 +50,8 @@ Changed
   Improved the curve interpolation of the aircraft rib fuselage tool
   Changed Min box side thicknesses to 0.1mm ( from 1mm)
   Tank Track Tool accepts user defined track links
-  Changed referece mechanism to allow copies and clones of referenced objects
+  Changed reference mechanism to allow copies and clones of referenced objects
+  Prevent a file adding a reference to itself
 
 v1.0.8
 ===========

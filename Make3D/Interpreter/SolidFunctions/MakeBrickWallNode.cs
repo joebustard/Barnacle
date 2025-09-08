@@ -7,13 +7,13 @@ namespace ScriptLanguage
 {
     internal class MakeBrickWallNode : ExpressionNode
     {
-        private ExpressionNode wallLengthExp;
-        private ExpressionNode wallHeightExp;
-        private ExpressionNode wallWidthExp;
-        private ExpressionNode largeBrickLengthExp;
-        private ExpressionNode smallBrickLengthExp;
         private ExpressionNode brickHeightExp;
+        private ExpressionNode largeBrickLengthExp;
         private ExpressionNode mortarGapExp;
+        private ExpressionNode smallBrickLengthExp;
+        private ExpressionNode wallHeightExp;
+        private ExpressionNode wallLengthExp;
+        private ExpressionNode wallWidthExp;
 
         public MakeBrickWallNode
             (
@@ -123,6 +123,7 @@ namespace ScriptLanguage
 
                     obj.CalcScale(false);
                     obj.Remesh();
+                    obj.CalculateAbsoluteBounds();
                     int id = Script.NextObjectId;
                     Script.ResultArtefacts[id] = obj;
                     ExecutionStack.Instance().PushSolid(id);

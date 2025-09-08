@@ -12,8 +12,8 @@ namespace ScriptLanguage
         private ExpressionNode lengthExp;
         private ExpressionNode tileHeightExp;
         private ExpressionNode tileLengthExp;
-        private ExpressionNode tileWidthExp;
         private ExpressionNode tileOverlapExp;
+        private ExpressionNode tileWidthExp;
         private ExpressionNode widthExp;
 
         public MakeTiledRoofNode
@@ -86,7 +86,7 @@ namespace ScriptLanguage
                     inRange = false;
                 }
 
-                if (valWidth <1 || valWidth > 20)
+                if (valWidth < 1 || valWidth > 20)
                 {
                     Log.Instance().AddEntry("MakeTiledRoof : Width value out of range (5..20)");
                     inRange = false;
@@ -140,6 +140,7 @@ namespace ScriptLanguage
 
                     obj.CalcScale(false);
                     obj.Remesh();
+                    obj.CalculateAbsoluteBounds();
                     int id = Script.NextObjectId;
                     Script.ResultArtefacts[id] = obj;
                     ExecutionStack.Instance().PushSolid(id);

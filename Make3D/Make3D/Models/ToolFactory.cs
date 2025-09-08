@@ -117,6 +117,14 @@ namespace Barnacle.Models
                     res = new PillDlg();
                     break;
 
+                case "PiercedDisk":
+                    res = new PiercedDiskDlg();
+                    break;
+
+                case "PiercedRing":
+                    res = new PiercedRingDlg();
+                    break;
+
                 case "Platelet":
                     res = new Platelet();
                     break;

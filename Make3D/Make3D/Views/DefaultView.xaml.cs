@@ -40,26 +40,26 @@ namespace Barnacle.Views
         public DefaultView()
         {
             InitializeComponent();
-            NotificationManager.Subscribe("NewFile", NewFile);
-            NotificationManager.Subscribe("NewProject", NewProject);
-            NotificationManager.Subscribe("SaveAsFile", SaveAsFile);
-            NotificationManager.Subscribe("SaveFile", SaveFile);
-            NotificationManager.Subscribe("OpenFile", OpenFile);
-            NotificationManager.Subscribe("InsertFile", InsertFile);
-            NotificationManager.Subscribe("Reference", ReferenceModel);
-            NotificationManager.Subscribe("OpenRecentFile", OpenRecentFile);
+            NotificationManager.Subscribe("AutoRunScript", AutoRunScript);
             NotificationManager.Subscribe("CheckExit", CheckExit);
-            NotificationManager.Subscribe("ProjectChanged", ProjectChanged);
-            NotificationManager.Subscribe("OpenProject", OpenProject);
-            NotificationManager.Subscribe("ReloadProject", ReloadProject);
-            NotificationManager.Subscribe("ReloadProjectDontLoadLastFile", ReloadProject);
             NotificationManager.Subscribe("ExportRefresh", RefreshAfterExport);
             NotificationManager.Subscribe("ImportRefresh", RefreshAfterImport);
+            NotificationManager.Subscribe("InsertFile", InsertFile);
+            NotificationManager.Subscribe("NewFile", NewFile);
+            NotificationManager.Subscribe("NewProject", NewProject);
+            NotificationManager.Subscribe("ObjectSelected", SelectedObjectChanged);
+            NotificationManager.Subscribe("OpenFile", OpenFile);
+            NotificationManager.Subscribe("OpenProject", OpenProject);
+            NotificationManager.Subscribe("OpenRecentFile", OpenRecentFile);
+            NotificationManager.Subscribe("ProjectChanged", ProjectChanged);
+            NotificationManager.Subscribe("Reference", ReferenceModel);
+            NotificationManager.Subscribe("ReloadProject", ReloadProject);
+            NotificationManager.Subscribe("ReloadProjectDontLoadLastFile", ReloadProject);
+            NotificationManager.Subscribe("SaveAsFile", SaveAsFile);
+            NotificationManager.Subscribe("SaveFile", SaveFile);
             NotificationManager.Subscribe("ScriptEditorClosed", ScriptEditorClosed);
             NotificationManager.Subscribe("SolutionPanel", ChangeSolutionPanelVisibility);
-            NotificationManager.Subscribe("ObjectSelected", SelectedObjectChanged);
             NotificationManager.Subscribe("SwitchToObjectProperties", SwitchToObjectProperties);
-            NotificationManager.Subscribe("AutoRunScript", AutoRunScript);
             vm = DataContext as DefaultViewModel;
         }
 
@@ -344,9 +344,16 @@ namespace Barnacle.Views
             dlg.Filter = BaseViewModel.Document.FileFilter;
             if (dlg.ShowDialog() == true)
             {
-                CheckPoint();
-                BaseViewModel.Document.ReferenceFile(dlg.FileName);
-                NotificationManager.Notify("Refresh", null);
+                if (dlg.FileName.ToLower() != BaseViewModel.Document.FilePath.ToLower())
+                {
+                    CheckPoint();
+                    BaseViewModel.Document.ReferenceFile(dlg.FileName);
+                    NotificationManager.Notify("Refresh", null);
+                }
+                else
+                {
+                    MessageBox.Show("A file is not allowed to reference itself");
+                }
             }
         }
 

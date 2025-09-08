@@ -7,9 +7,9 @@ namespace ScriptLanguage
 {
     internal class MakeParabolicDishNode : ExpressionNode
     {
+        private ExpressionNode pitchExp;
         private ExpressionNode radiusExp;
         private ExpressionNode wallThicknessExp;
-        private ExpressionNode pitchExp;
 
         public MakeParabolicDishNode(ExpressionNode radius, ExpressionNode wallThickness, ExpressionNode pitch)
         {
@@ -82,6 +82,7 @@ namespace ScriptLanguage
 
                         obj.CalcScale(false);
                         obj.Remesh();
+                        obj.CalculateAbsoluteBounds();
                         int id = Script.NextObjectId;
                         Script.ResultArtefacts[id] = obj;
                         ExecutionStack.Instance().PushSolid(id);

@@ -7,19 +7,19 @@ namespace ScriptLanguage
 {
     internal class MakePlankWallNode : ExpressionNode
     {
-        private ExpressionNode wallLengthExp;
-        private ExpressionNode wallHeightExp;
-        private ExpressionNode wallWidthExp;
-        private ExpressionNode plankWidthExp;
-        private ExpressionNode gapExp;
         private ExpressionNode gapDepthExp;
+        private ExpressionNode gapExp;
+        private ExpressionNode plankWidthExp;
+        private ExpressionNode wallHeightExp;
+        private ExpressionNode wallLengthExp;
+        private ExpressionNode wallWidthExp;
 
         public MakePlankWallNode(
-            ExpressionNode wallLength, 
-            ExpressionNode wallHeight, 
-            ExpressionNode wallWidth, 
-            ExpressionNode plankWidth, 
-            ExpressionNode gap, 
+            ExpressionNode wallLength,
+            ExpressionNode wallHeight,
+            ExpressionNode wallWidth,
+            ExpressionNode plankWidth,
+            ExpressionNode gap,
             ExpressionNode gapDepth)
         {
             this.wallLengthExp = wallLength;
@@ -30,7 +30,7 @@ namespace ScriptLanguage
             this.gapDepthExp = gapDepth;
         }
 
-        public MakePlankWallNode (ExpressionCollection coll)
+        public MakePlankWallNode(ExpressionCollection coll)
         {
             this.wallLengthExp = coll.Get(0);
             this.wallHeightExp = coll.Get(1);
@@ -47,11 +47,11 @@ namespace ScriptLanguage
         {
             bool result = false;
 
-            double valWallLength = 0; 
-            double valWallHeight = 0; 
-            double valWallWidth = 0; 
-            double valPlankWidth = 0; 
-            double valGap = 0; 
+            double valWallLength = 0;
+            double valWallHeight = 0;
+            double valWallWidth = 0;
+            double valPlankWidth = 0;
+            double valGap = 0;
             double valGapDepth = 0;
 
             if (EvalExpression(wallLengthExp, ref valWallLength, "WallLength", "MakePlankWall") &&
@@ -119,6 +119,7 @@ namespace ScriptLanguage
 
                     obj.CalcScale(false);
                     obj.Remesh();
+                    obj.CalculateAbsoluteBounds();
                     int id = Script.NextObjectId;
                     Script.ResultArtefacts[id] = obj;
                     ExecutionStack.Instance().PushSolid(id);

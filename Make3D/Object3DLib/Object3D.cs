@@ -468,6 +468,15 @@ namespace Barnacle.Object3DLib
             }
         }
 
+        public void CalculateAbsoluteBounds()
+        {
+            absoluteBounds = new Bounds3D();
+            foreach (Point3D ab in absoluteObjectVertices)
+            {
+                absoluteBounds.Adjust(ab);
+            }
+        }
+
         public virtual Object3D Clone(bool useIndices = false)
         {
             Object3D res = new Object3D();

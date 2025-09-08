@@ -450,7 +450,6 @@ namespace Barnacle.Models
                     WriteBinary(fileName);
                     DateTime end = DateTime.Now;
                     TimeSpan ts = end - st;
-                    System.Diagnostics.Debug.WriteLine("bob = " + ts.TotalMilliseconds);
                 }
             }
         }
@@ -1262,21 +1261,11 @@ namespace Barnacle.Models
                                 ReferenceObject3D ob = new ReferenceObject3D();
                                 ob.ReadBinary(reader);
                                 ob.Remesh();
-                                // so we should have already read the referenced files by now
-                                // meaning there should already be a referenced object which matches.
-                                // if there is then update its position to whatever this object says
+                                ob.SetMesh();
 
-                                foreach (Object3D old in Content)
+                                if (!(double.IsNegativeInfinity(ob.Position.X)))
                                 {
-                                    if (old is ReferenceObject3D)
-                                    {
-                                        if (old.Name == ob.Name && (old as ReferenceObject3D).Reference.Path == ob.Reference.Path)
-                                        {
-                                            old.Position = ob.Position;
-                                            old.Rotation = ob.Rotation;
-                                            break;
-                                        }
-                                    }
+                                    Content.Add(ob);
                                 }
                             }
                             break;
@@ -1288,17 +1277,9 @@ namespace Barnacle.Models
                                 ob.Remesh();
                                 ob.SetMesh();
 
-                                foreach (Object3D old in Content)
+                                if (!(double.IsNegativeInfinity(ob.Position.X)))
                                 {
-                                    if (old is ReferenceGroup3D)
-                                    {
-                                        if (old.Name == ob.Name && (old as ReferenceGroup3D).Reference.Path == ob.Reference.Path)
-                                        {
-                                            old.Position = ob.Position;
-                                            old.Rotation = ob.Rotation;
-                                            break;
-                                        }
-                                    }
+                                    Content.Add(ob);
                                 }
                             }
                             break;

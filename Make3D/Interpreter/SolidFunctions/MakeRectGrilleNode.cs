@@ -9,15 +9,15 @@ namespace ScriptLanguage
 {
     internal class MakeRectGrilleNode : ExpressionNode
     {
-        private ExpressionNode grillLengthExp;
-        private ExpressionNode grillHeightExp;
-        private ExpressionNode grillWidthExp;
-        private ExpressionNode makeEdgeExp;
         private ExpressionNode edgeThicknessExp;
-        private ExpressionNode verticalBarsExp;
-        private ExpressionNode verticalBarThicknessExp;
+        private ExpressionNode grillHeightExp;
+        private ExpressionNode grillLengthExp;
+        private ExpressionNode grillWidthExp;
         private ExpressionNode horizontalBarsExp;
         private ExpressionNode horizontalBarThicknessExp;
+        private ExpressionNode makeEdgeExp;
+        private ExpressionNode verticalBarsExp;
+        private ExpressionNode verticalBarThicknessExp;
 
         public MakeRectGrilleNode
             (
@@ -56,7 +56,7 @@ namespace ScriptLanguage
         {
             bool result = false;
 
-            double valGrillLength = 0; 
+            double valGrillLength = 0;
             double valGrillHeight = 0;
             double valGrillWidth = 0;
             bool valMakeEdge = false; double valEdgeThickness = 0; double valVerticalBars = 0; double valVerticalBarThickness = 0; double valHorizontalBars = 0; double valHorizontalBarThickness = 0;
@@ -141,6 +141,7 @@ namespace ScriptLanguage
 
                     obj.CalcScale(false);
                     obj.Remesh();
+                    obj.CalculateAbsoluteBounds();
                     int id = Script.NextObjectId;
                     Script.ResultArtefacts[id] = obj;
                     ExecutionStack.Instance().PushSolid(id);

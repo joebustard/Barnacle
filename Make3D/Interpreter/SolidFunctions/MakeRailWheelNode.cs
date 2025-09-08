@@ -7,15 +7,15 @@ namespace ScriptLanguage
 {
     internal class MakeRailWheelNode : ExpressionNode
     {
+        private ExpressionNode axleBoreDiameterExp;
         private ExpressionNode flangeDiameterExp;
         private ExpressionNode flangeHeightExp;
         private ExpressionNode hubDiameterExp;
         private ExpressionNode hubHeightExp;
-        private ExpressionNode upperRimDiameterExp;
         private ExpressionNode lowerRimDiameterExp;
-        private ExpressionNode rimThicknessExp;
         private ExpressionNode rimHeightExp;
-        private ExpressionNode axleBoreDiameterExp;
+        private ExpressionNode rimThicknessExp;
+        private ExpressionNode upperRimDiameterExp;
 
         public MakeRailWheelNode(ExpressionNode flangeDiameterExp,
                                  ExpressionNode flangeHeightExp,
@@ -120,6 +120,7 @@ namespace ScriptLanguage
 
                         obj.CalcScale(false);
                         obj.Remesh();
+                        obj.CalculateAbsoluteBounds();
                         int id = Script.NextObjectId;
                         Script.ResultArtefacts[id] = obj;
                         ExecutionStack.Instance().PushSolid(id);
@@ -135,25 +136,6 @@ namespace ScriptLanguage
                 Log.Instance().AddEntry($"MakeRailWheel : {ex.Message}");
             }
             return result;
-        }
-
-        private static bool RangeCheck(RailWheelMaker maker, string paramName, double val)
-        {
-            bool inRange = maker.CheckLimits(paramName, val);
-            if (!inRange)
-            {
-                ParamLimit pl = maker.GetLimits(paramName);
-                if (pl != null)
-                {
-                    Log.Instance().AddEntry($"MakeRailWheel : {paramName} value {val} out of range ({pl.Low}..{pl.High}");
-                }
-                else
-                {
-                    Log.Instance().AddEntry($"MakeRailWheel : Can't check parameter {paramName}");
-                }
-            }
-
-            return inRange;
         }
 
         /// Returns a String representation of this node that can be used for
@@ -189,6 +171,25 @@ namespace ScriptLanguage
             result += rimHeightExp.ToString() + ", ";
             result += axleBoreDiameterExp.ToString();
             return result;
+        }
+
+        private static bool RangeCheck(RailWheelMaker maker, string paramName, double val)
+        {
+            bool inRange = maker.CheckLimits(paramName, val);
+            if (!inRange)
+            {
+                ParamLimit pl = maker.GetLimits(paramName);
+                if (pl != null)
+                {
+                    Log.Instance().AddEntry($"MakeRailWheel : {paramName} value {val} out of range ({pl.Low}..{pl.High}");
+                }
+                else
+                {
+                    Log.Instance().AddEntry($"MakeRailWheel : Can't check parameter {paramName}");
+                }
+            }
+
+            return inRange;
         }
     }
 }

@@ -13,8 +13,7 @@ namespace ScriptLanguage
             "roof","cone","pyramid","roundroof","cap","polygon","rightangle","pointy"
       };
 
-        private  string[] shapenames;
-        
+        private string[] shapenames;
 
         private ExpressionNode typeExp;
         private ExpressionNode xExp;
@@ -106,6 +105,7 @@ namespace ScriptLanguage
 
                                         obj.CalcScale(false);
                                         obj.Remesh();
+                                        obj.CalculateAbsoluteBounds();
                                         int id = Script.NextObjectId;
                                         Script.ResultArtefacts[id] = obj;
                                         ExecutionStack.Instance().PushSolid(id);

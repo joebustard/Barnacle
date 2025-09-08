@@ -67,7 +67,10 @@
     <Compile Include="IntrinsicFunctions\RndNode.cs" />
     <Compile Include="Parser\ExtraParsingFunctions\ParseGeneralStatement.cs" />
     <Compile Include="Parser\ExtraParsingFunctions\ParseMakeTrayNode.cs" />
+    <Compile Include="Parser\ExtraParsingFunctions\ParsePiercedDiskNode.cs" />
+    <Compile Include="Parser\ExtraParsingFunctions\ParsePiercedRingNode.cs" />
     <Compile Include="SolidFunctions\GetSolidPosNode.cs" />
+    <Compile Include="SolidFunctions\HullNode.cs" />
     <Compile Include="SolidFunctions\InsertPartNode.cs" />
     <Compile Include="SolidFunctions\IsSolidNode.cs" />
     <Compile Include="SolidFunctions\MakeBarrelNode.cs" />
@@ -80,6 +83,8 @@
     <Compile Include="SolidFunctions\MakeObliqueEndCylinderNode.cs" />
     <Compile Include="SolidFunctions\MakePathLoftNode.cs" />
     <Compile Include="SolidFunctions\MakePieNode.cs" />
+    <Compile Include="SolidFunctions\MakePiercedDiskNode.cs" />
+    <Compile Include="SolidFunctions\MakePiercedRingNode.cs" />
     <Compile Include="SolidFunctions\MakePillNode.cs" />
     <Compile Include="SolidFunctions\MakeRectGrilleNode.cs" />
     <Compile Include="SolidFunctions\MakeRoofRidgeNode.cs" />

@@ -7,10 +7,10 @@ namespace ScriptLanguage
 {
     internal class MakeStoneWallNode : ExpressionNode
     {
-        private ExpressionNode wallLengthExp;
-        private ExpressionNode wallHeightExp;
-        private ExpressionNode wallThicknessExp;
         private ExpressionNode stoneSize;
+        private ExpressionNode wallHeightExp;
+        private ExpressionNode wallLengthExp;
+        private ExpressionNode wallThicknessExp;
 
         public MakeStoneWallNode
             (
@@ -96,6 +96,7 @@ namespace ScriptLanguage
 
                     obj.CalcScale(false);
                     obj.Remesh();
+                    obj.CalculateAbsoluteBounds();
                     int id = Script.NextObjectId;
                     Script.ResultArtefacts[id] = obj;
                     ExecutionStack.Instance().PushSolid(id);

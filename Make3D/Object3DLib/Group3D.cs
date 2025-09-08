@@ -15,6 +15,7 @@ namespace Barnacle.Object3DLib
 {
     public class Group3D : Object3D
     {
+        private const byte nullObjectTag = 255;
         private Scale3D groupScale;
         private Object3D leftObject;
         private Solid leftSolid;
@@ -581,7 +582,7 @@ namespace Barnacle.Object3DLib
                     }
                     break;
 
-                case 2:
+                case nullObjectTag:
                     break;
             }
             type = reader.ReadByte();
@@ -603,7 +604,7 @@ namespace Barnacle.Object3DLib
                     }
                     break;
 
-                case 2:
+                case nullObjectTag:
                     break;
             }
 
@@ -709,7 +710,7 @@ namespace Barnacle.Object3DLib
             }
             else
             {
-                writer.Write((byte)2); // need a tag of some sort for deserialisation
+                writer.Write((byte)nullObjectTag); // need a tag of some sort for deserialisation
             }
             if (rightObject != null)
             {
@@ -717,7 +718,7 @@ namespace Barnacle.Object3DLib
             }
             else
             {
-                writer.Write((byte)2); // need a tag of some sort for deserialisation
+                writer.Write((byte)nullObjectTag); // need a tag of some sort for deserialisation
             }
         }
 

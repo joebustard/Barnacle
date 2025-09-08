@@ -9,18 +9,17 @@ namespace ScriptLanguage
 {
     internal class MakeTexturedTubeNode : ExpressionNode
     {
-        private ExpressionNode tubeHeightExp;
         private ExpressionNode innerRadiusExp;
-        private ExpressionNode thicknessExp;
         private ExpressionNode sweepExp;
-        private ExpressionNode textureExp;
         private ExpressionNode textureDepthExp;
+        private ExpressionNode textureExp;
         private ExpressionNode textureResolutionExp;
-
+        private ExpressionNode thicknessExp;
+        private ExpressionNode tubeHeightExp;
 
         public MakeTexturedTubeNode
             (
-            ExpressionNode tubeHeight, ExpressionNode innerRadius, ExpressionNode thickness,  ExpressionNode sweep, ExpressionNode texture, ExpressionNode textureDepth, ExpressionNode textureResolution
+            ExpressionNode tubeHeight, ExpressionNode innerRadius, ExpressionNode thickness, ExpressionNode sweep, ExpressionNode texture, ExpressionNode textureDepth, ExpressionNode textureResolution
             )
         {
             this.tubeHeightExp = tubeHeight;
@@ -30,7 +29,6 @@ namespace ScriptLanguage
             this.textureExp = texture;
             this.textureDepthExp = textureDepth;
             this.textureResolutionExp = textureResolution;
-
         }
 
         public MakeTexturedTubeNode
@@ -43,7 +41,6 @@ namespace ScriptLanguage
             this.textureExp = coll.Get(5);
             this.textureDepthExp = coll.Get(6);
             this.textureResolutionExp = coll.Get(7);
-
         }
 
         /// Execute this node
@@ -53,12 +50,12 @@ namespace ScriptLanguage
         {
             bool result = false;
 
-            double valTubeHeight = 0; 
-            double valInnerRadius = 0; 
-            double valThickness = 0; 
-            double valSweep = 0; 
-            string valTexture = ""; 
-            double valTextureDepth = 0; 
+            double valTubeHeight = 0;
+            double valInnerRadius = 0;
+            double valThickness = 0;
+            double valSweep = 0;
+            string valTexture = "";
+            double valTextureDepth = 0;
             double valTextureResolution = 0;
 
             if (
@@ -90,8 +87,6 @@ namespace ScriptLanguage
                     Log.Instance().AddEntry("MakeTexturedTube : Thickness value out of range (1..50)");
                     inRange = false;
                 }
-
-
 
                 if (valSweep < 1 || valSweep > 360)
                 {
@@ -130,6 +125,7 @@ namespace ScriptLanguage
 
                     obj.CalcScale(false);
                     obj.Remesh();
+                    obj.CalculateAbsoluteBounds();
                     int id = Script.NextObjectId;
                     Script.ResultArtefacts[id] = obj;
                     ExecutionStack.Instance().PushSolid(id);
@@ -153,7 +149,7 @@ namespace ScriptLanguage
 
             result += tubeHeightExp.ToRichText() + ", ";
             result += innerRadiusExp.ToRichText() + ", ";
-            result += thicknessExp.ToRichText() + ", ";            
+            result += thicknessExp.ToRichText() + ", ";
             result += sweepExp.ToRichText() + ", ";
             result += textureExp.ToRichText() + ", ";
             result += textureDepthExp.ToRichText() + ", ";
@@ -168,7 +164,7 @@ namespace ScriptLanguage
 
             result += tubeHeightExp.ToString() + ", ";
             result += innerRadiusExp.ToString() + ", ";
-            result += thicknessExp.ToString() + ", ";            
+            result += thicknessExp.ToString() + ", ";
             result += sweepExp.ToString() + ", ";
             result += textureExp.ToString() + ", ";
             result += textureDepthExp.ToString() + ", ";

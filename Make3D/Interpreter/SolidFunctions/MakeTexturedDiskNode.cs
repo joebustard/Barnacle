@@ -9,18 +9,16 @@ namespace ScriptLanguage
 {
     internal class MakeTexturedDiskNode : ExpressionNode
     {
-        private ExpressionNode tubeHeightExp;
         private ExpressionNode radiusExp;
-
         private ExpressionNode sweepExp;
-        private ExpressionNode textureExp;
         private ExpressionNode textureDepthExp;
+        private ExpressionNode textureExp;
         private ExpressionNode textureResolutionExp;
-
+        private ExpressionNode tubeHeightExp;
 
         public MakeTexturedDiskNode
             (
-            ExpressionNode tubeHeight, ExpressionNode radius,  ExpressionNode solid, ExpressionNode sweep, ExpressionNode texture, ExpressionNode textureDepth, ExpressionNode textureResolution
+            ExpressionNode tubeHeight, ExpressionNode radius, ExpressionNode solid, ExpressionNode sweep, ExpressionNode texture, ExpressionNode textureDepth, ExpressionNode textureResolution
             )
         {
             this.tubeHeightExp = tubeHeight;
@@ -30,7 +28,6 @@ namespace ScriptLanguage
             this.textureExp = texture;
             this.textureDepthExp = textureDepth;
             this.textureResolutionExp = textureResolution;
-
         }
 
         public MakeTexturedDiskNode
@@ -43,7 +40,6 @@ namespace ScriptLanguage
             this.textureExp = coll.Get(3);
             this.textureDepthExp = coll.Get(4);
             this.textureResolutionExp = coll.Get(5);
-
         }
 
         /// Execute this node
@@ -53,11 +49,11 @@ namespace ScriptLanguage
         {
             bool result = false;
 
-            double valTubeHeight = 0; 
-            double valRadius = 0; 
-            double valSweep = 0; 
-            string valTexture = ""; 
-            double valTextureDepth = 0; 
+            double valTubeHeight = 0;
+            double valRadius = 0;
+            double valSweep = 0;
+            string valTexture = "";
+            double valTextureDepth = 0;
             double valTextureResolution = 0;
 
             if (
@@ -113,13 +109,14 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     Point3DCollection tmp = new Point3DCollection();
-                    TexturedDiskMaker maker = new TexturedDiskMaker(valTubeHeight, valRadius,  valSweep, valTexture, valTextureDepth, valTextureResolution);
+                    TexturedDiskMaker maker = new TexturedDiskMaker(valTubeHeight, valRadius, valSweep, valTexture, valTextureDepth, valTextureResolution);
 
                     maker.Generate(tmp, obj.TriangleIndices);
                     PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
 
                     obj.CalcScale(false);
                     obj.Remesh();
+                    obj.CalculateAbsoluteBounds();
                     int id = Script.NextObjectId;
                     Script.ResultArtefacts[id] = obj;
                     ExecutionStack.Instance().PushSolid(id);

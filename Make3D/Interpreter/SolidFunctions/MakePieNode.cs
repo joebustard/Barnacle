@@ -7,21 +7,20 @@ namespace ScriptLanguage
 {
     internal class MakePieNode : ExpressionNode
     {
-        private ExpressionNode radiusExp;
         private ExpressionNode centreThicknessExp;
         private ExpressionNode edgeThicknessExp;
+        private ExpressionNode radiusExp;
         private ExpressionNode sweepExp;
 
-        public MakePieNode( ExpressionNode radius,
+        public MakePieNode(ExpressionNode radius,
                             ExpressionNode centreThickness,
-        ExpressionNode edgeThickness, 
+        ExpressionNode edgeThickness,
         ExpressionNode sweep)
         {
             this.radiusExp = radius;
             this.centreThicknessExp = edgeThickness;
             this.edgeThicknessExp = edgeThickness;
             this.sweepExp = sweep;
-
         }
 
         public MakePieNode
@@ -30,7 +29,7 @@ namespace ScriptLanguage
             this.radiusExp = coll.Get(0);
             this.centreThicknessExp = coll.Get(1);
             this.edgeThicknessExp = coll.Get(2);
-            this.sweepExp = coll.Get(3);                        
+            this.sweepExp = coll.Get(3);
         }
 
         /// Execute this node
@@ -40,18 +39,17 @@ namespace ScriptLanguage
         {
             bool result = false;
 
-            double valRadius = 0; 
+            double valRadius = 0;
             double valCentreThickness = 0;
             double valEdgeThickness = 0;
-            double valSweep = 0; 
-
+            double valSweep = 0;
 
             if (
                EvalExpression(radiusExp, ref valRadius, "Radius", "MakePie") &&
                EvalExpression(edgeThicknessExp, ref valEdgeThickness, "Edge Thickness", "MakePie") &&
                EvalExpression(sweepExp, ref valSweep, "Sweep", "MakePie") &&
                EvalExpression(centreThicknessExp, ref valCentreThickness, "CentreThick", "MakePie"))
-            
+
             {
                 // check calculated values are in range
                 bool inRange = true;
@@ -78,7 +76,6 @@ namespace ScriptLanguage
                     inRange = false;
                 }
 
-
                 if (inRange)
                 {
                     result = true;
@@ -91,13 +88,14 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     Point3DCollection tmp = new Point3DCollection();
-                    PieMaker maker = new PieMaker(valRadius, valCentreThickness,valEdgeThickness, valSweep);
+                    PieMaker maker = new PieMaker(valRadius, valCentreThickness, valEdgeThickness, valSweep);
 
                     maker.Generate(tmp, obj.TriangleIndices);
                     PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
 
                     obj.CalcScale(false);
                     obj.Remesh();
+                    obj.CalculateAbsoluteBounds();
                     int id = Script.NextObjectId;
                     Script.ResultArtefacts[id] = obj;
                     ExecutionStack.Instance().PushSolid(id);
@@ -122,7 +120,7 @@ namespace ScriptLanguage
             result += radiusExp.ToRichText() + ", ";
             result += centreThicknessExp.ToRichText() + ", ";
             result += edgeThicknessExp.ToRichText() + ", ";
-            result += sweepExp.ToRichText() ;
+            result += sweepExp.ToRichText();
             result += " )";
             return result;
         }
