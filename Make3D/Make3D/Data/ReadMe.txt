@@ -33,14 +33,15 @@ Added
   Added Gray Scale image option to ImagePlaque tool
   Executable will take two parameters on the command line. One is the full path of the project file (the .bmf), the other is a script file. 
       The project is loaded, script run and then exe exits
-  
+  Extra setting to allow user to specify a project containing user defined tank track links
 
 Fixed
   Slice was showing estimated time wrong if it was more than a day
   Limpet Index()  function not working
   Small issue when user selects a different object when camera is in "point at" object mode 
-  Fixed issue with undo mechanism losing objects if a group was reference from another file
+  Fixed issue with undo mechanism losing objects if a group was referenced from another file
   Some functions in limpet didn't update an objects boundng box.
+  Issue with bevel limit checks in trapezoid dialog. One limit exceeded it was impossible to reduce it. Corrected
 
 Changed
   Platelet width from int to double to allow fractions of millimetres

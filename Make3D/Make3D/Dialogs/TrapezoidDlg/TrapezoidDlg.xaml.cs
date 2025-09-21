@@ -16,6 +16,7 @@
 // *************************************************************************
 
 using MakerLib;
+using System;
 using System.ComponentModel;
 using System.Windows;
 
@@ -51,13 +52,14 @@ namespace Barnacle.Dialogs
             {
                 if (shapeBevel != value)
                 {
-                    if (shapeBevel < 0 || shapeBevel > BevelLimit())
+                    if (value < 0 || value > BevelLimit())
                     {
                         WarningText = "Bevel must be in range 0 to " + BevelLimit().ToString();
                     }
                     else
                     {
                         shapeBevel = value;
+                        WarningText = "";
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
@@ -169,14 +171,24 @@ namespace Barnacle.Dialogs
 
         private double BevelLimit()
         {
-            double min = shapeTopLength / 2 - 1;
-            if (shapeHeight / 2 - 1 < min)
+
+            /*
+                double min = shapeTopLength / 2 - 1;
+                if (shapeHeight / 2 - 1 < min)
+                {
+                    min = shapeHeight / 2 - 1;
+                }
+                if (shapeBottomLength / 2 - 1 < min)
+                {
+                    min = shapeBottomLength / 2 - 1;
+                }
+                */
+            double min = Math.Min(shapeBottomLength,shapeTopLength);
+            min = Math.Min(min, shapeWidth);
+            min = min / 2;
+            if (min > 1)
             {
-                min = shapeHeight / 2 - 1;
-            }
-            if (shapeBottomLength / 2 - 1 < min)
-            {
-                min = shapeBottomLength / 2 - 1;
+                min -= 1;
             }
             return min;
         }
