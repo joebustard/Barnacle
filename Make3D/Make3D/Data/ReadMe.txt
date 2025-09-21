@@ -1,6 +1,8 @@
 ﻿v1.0.9
 ===========
 Added
+  Pierced disk tool. Creates a disk with holes around its edge.
+  Pierced ring tool. Creates a ring with holes around its egge.
   Added top/bottom camera buttons to objectviewer user control.
   Five more primitives, staircase, squiggle, cross block, right bracket and screw diver bit
   Two "Wedge" profiles added to path loft
