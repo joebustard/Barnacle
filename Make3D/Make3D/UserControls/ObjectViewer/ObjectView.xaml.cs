@@ -81,9 +81,18 @@ namespace Barnacle.UserControls.ObjectViewer
             showAxies = true;
             modelContent = new Model3DGroup();
             multiModels = new Model3DGroup();
+            OnViewMouseDown = null;
+            OnViewMouseUp = null;
+            OnViewMouseMove = null;
         }
 
         public delegate bool UserKeyHandler(Key key, bool shift, bool ctrl, bool alt);
+
+        public delegate bool ViewMouseDown(object sender, MouseEventArgs e);
+
+        public delegate bool ViewMouseMove(object sender, MouseEventArgs e);
+
+        public delegate bool ViewMouseUp(object sender, MouseEventArgs e);
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -208,6 +217,24 @@ namespace Barnacle.UserControls.ObjectViewer
             {
                 return multiModels;
             }
+        }
+
+        public ViewMouseDown OnViewMouseDown
+        {
+            get;
+            set;
+        }
+
+        public ViewMouseMove OnViewMouseMove
+        {
+            get;
+            set;
+        }
+
+        public ViewMouseUp OnViewMouseUp
+        {
+            get;
+            set;
         }
 
         public bool ShowAxies
@@ -578,39 +605,65 @@ namespace Barnacle.UserControls.ObjectViewer
         private void Viewport_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Keyboard.Focus(this);
-
-            Viewport3D vp = sender as Viewport3D;
-            if (vp != null)
+            bool handled = false;
+            if (OnViewMouseDown != null)
             {
-                if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
-                {
-                    oldMousePos = e.GetPosition(vp);
-                }
+                handled = OnViewMouseDown(sender, e);
             }
-            else
+            if (!handled)
             {
-                oldMousePos = new Point(double.NaN, double.NaN);
+                Viewport3D vp = sender as Viewport3D;
+                if (vp != null)
+                {
+                    if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
+                    {
+                        oldMousePos = e.GetPosition(vp);
+                    }
+                }
+                else
+                {
+                    oldMousePos = new Point(double.NaN, double.NaN);
+                }
             }
         }
 
         private void Viewport_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            Viewport3D vp = sender as Viewport3D;
-            if (vp != null)
+            bool handled = false;
+            if (OnViewMouseMove != null)
             {
-                if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
+                handled = OnViewMouseMove(sender, e);
+            }
+            if (!handled)
+            {
+                Viewport3D vp = sender as Viewport3D;
+
+                if (vp != null)
                 {
-                    Point pn = e.GetPosition(vp);
-                    if (!double.IsNaN(oldMousePos.X))
+                    if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
                     {
-                        double dx = pn.X - oldMousePos.X;
-                        double dy = pn.Y - oldMousePos.Y;
-                        polarCamera.Move(dx, -dy);
-                        UpdateCameraPos();
+                        Point pn = e.GetPosition(vp);
+                        if (!double.IsNaN(oldMousePos.X))
+                        {
+                            double dx = pn.X - oldMousePos.X;
+                            double dy = pn.Y - oldMousePos.Y;
+                            polarCamera.Move(dx, -dy);
+                            UpdateCameraPos();
+                        }
+                        oldMousePos = pn;
+                        e.Handled = true;
                     }
-                    oldMousePos = pn;
-                    e.Handled = true;
                 }
+            }
+        }
+
+        private void Viewport_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            Keyboard.Focus(this);
+            bool handled = false;
+            if (OnViewMouseUp != null)
+            {
+                handled = OnViewMouseUp(sender, e);
             }
         }
 

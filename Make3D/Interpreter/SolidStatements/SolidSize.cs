@@ -53,6 +53,7 @@ namespace ScriptLanguage
                                                 zr = zr / sc.Z;
                                                 Script.ResultArtefacts[objectIndex].ScaleMesh(xr, yr, zr);
                                                 Script.ResultArtefacts[objectIndex].Remesh();
+                                                Script.ResultArtefacts[objectIndex].CalculateAbsoluteBounds();
                                             }
                                             else
                                             {

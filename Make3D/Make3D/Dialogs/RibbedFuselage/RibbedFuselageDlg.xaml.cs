@@ -519,7 +519,7 @@ namespace Barnacle.Dialogs
                 GenerateModel();
             }
 
-            if (dirty && MessageBox.Show("Data has changed. SaveAsTemplate it before closing", "Warning", System.Windows.MessageBoxButton.YesNo) == System.Windows.MessageBoxResult.Yes)
+            if (dirty && MessageBox.Show("Data has changed. Save it before closing", "Warning", System.Windows.MessageBoxButton.YesNo) == System.Windows.MessageBoxResult.Yes)
             {
                 Save();
             }

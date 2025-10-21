@@ -38,6 +38,7 @@ namespace Barnacle
         private string autoScriptToRun = "";
 
         private string autoStartProject = "";
+        //        private bool minimiseOnStart = false;
 
         public MainWindow()
         {
@@ -96,6 +97,11 @@ namespace Barnacle
 
             foreach (string s in args)
             {
+                if (s.ToLower() == "-m")
+                {
+                    //minimiseOnStart = true;
+                    Application.Current.MainWindow.WindowState = WindowState.Minimized;
+                }
                 if (s.EndsWith(".bmf") && autoStartProject == "")
                 {
                     autoStartProject = s;

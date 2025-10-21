@@ -30,6 +30,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -123,6 +124,10 @@ namespace Barnacle.Dialogs
             ToolShapeItems.Add("Inflate");
             ToolShapeItems.Add("Smooth");
             ToolShape = ToolShapeItems[0];
+
+            Viewer.OnViewMouseDown = ViewMouseDown;
+            Viewer.OnViewMouseUp = ViewMouseUp;
+            Viewer.OnViewMouseMove = ViewMouseMove;
         }
 
         public bool Symetric
@@ -365,115 +370,10 @@ namespace Barnacle.Dialogs
 
         protected override void Viewport_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            Viewport3D vp = sender as Viewport3D;
-            if (vp != null)
-            {
-                if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
-                {
-                    lastHitModel = null;
-                    ClearToolSelection();
-                    oldMousePos = e.GetPosition(vp);
-                    HitTest(vp, oldMousePos);
-
-                    claySelected = false;
-                    if (lastHitModel == clayModel)
-                    {
-                        claySelected = true;
-                        markers.Clear();
-                        wireframes.Clear();
-                        SelectFaceVertices(lastHitV0, lastHitV1, lastHitV2, lastHitPoint, currentTool.Radius);
-                    }
-                    /*
-                    for (int i = 0; i < numbersectors && claySelected == false; i++)
-                    {
-                        for (int j = 0; j < numbersectors && claySelected == false; j++)
-                        {
-                            for (int k = 0; k < numbersectors && claySelected == false; k++)
-                            {
-                                if (lastHitModel == sectorModels[i, j, k].HitModel)
-                                {
-                                    claySelected = true;
-                                }
-                            }
-                        }
-                    }
-                    */
-                }
-                else if (e.RightButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
-                {
-                    oldMousePos = e.GetPosition(vp);
-                }
-            }
         }
 
         protected override void Viewport_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            Viewport3D vp = sender as Viewport3D;
-            if (vp != null)
-            {
-                Point pn = e.GetPosition(vp);
-                HitTest(vp, pn);
-                double dx = pn.X - oldMousePos.X;
-                double dy = pn.Y - oldMousePos.Y;
-                if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
-                {
-                    if (claySelected)
-                    {
-                        if (dx < 1 && dy < 1)
-                        {
-                            if (lastHitPoint != null)
-                            {
-                                SelectFaceVertices(lastHitV0, lastHitV1, lastHitV2, lastHitPoint, currentTool.Radius);
-                                if (symetric)
-                                {
-                                }
-                            }
-                        }
-                        else
-                        {
-                            double dist = Math.Sqrt(dx * dx + dy * dy);
-                            if (dist > 0)
-                            {
-                                double diff = 1 / dist;
-                                if (diff < 0.1)
-                                {
-                                    diff = 0.1;
-                                }
-                                for (double t = 0; t <= 1; t += diff)
-
-                                {
-                                    double px = oldMousePos.X + t * dx;
-                                    double py = oldMousePos.Y + t * dy;
-                                    HitTest(vp, new Point(px, py));
-                                    if (lastHitPoint != null)
-                                    {
-                                        SelectFaceVertices(lastHitV0, lastHitV1, lastHitV2, lastHitPoint, currentTool.Radius);
-                                        if (symetric)
-                                        {
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Camera.Move(dx, -dy);
-                        UpdateCameraPos();
-                    }
-
-                    oldMousePos = pn;
-                    e.Handled = true;
-                }
-                else
-                if (e.RightButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
-                {
-                    Camera.Move(dx, -dy);
-                    UpdateCameraPos();
-                    oldMousePos = pn;
-                    e.Handled = true;
-                }
-            }
         }
 
         private void ClearToolSelection()
@@ -566,7 +466,7 @@ namespace Barnacle.Dialogs
 
             ToolShape = EditorParameters.Get("ToolShape");
 
-            ToolsSize = EditorParameters.GetDouble("ToolsSize", 30);
+            ToolsSize = EditorParameters.GetDouble("ToolsSize", 10);
 
             ToolStrength = EditorParameters.GetDouble("ToolStrength", 5);
 
@@ -667,12 +567,142 @@ namespace Barnacle.Dialogs
             if (loaded)
             {
                 GenerateShape();
-                Viewer.Model = GetModel();
+
+                Viewer.MultiModels.Children.Clear();
+                clayModel = GetModel();
+                Viewer.MultiModels.Children.Add(clayModel);
+                foreach (GeometryModel3D gm in markers)
+                {
+                    Viewer.MultiModels.Children.Add(gm);
+                }
+                foreach (GeometryModel3D gm in wireframes)
+                {
+                    if (gm != null)
+                    {
+                        Viewer.MultiModels.Children.Add(gm);
+                    }
+                }
+                Viewer.Redisplay();
             }
         }
 
-        private void Viewport_MouseUp(object sender, System.Windows.Input.MouseEventArgs e)
+        private bool ViewMouseDown(object sender, MouseEventArgs e)
         {
+            bool handled = false;
+            Viewport3D vp = sender as Viewport3D;
+            if (vp != null)
+            {
+                if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
+                {
+                    lastHitModel = null;
+                    ClearToolSelection();
+                    markers.Clear();
+                    wireframes.Clear();
+                    oldMousePos = e.GetPosition(vp);
+                    HitTest(vp, oldMousePos);
+
+                    claySelected = false;
+                    if (lastHitModel == clayModel)
+                    {
+                        claySelected = true;
+
+                        SelectFaceVertices(lastHitV0, lastHitV1, lastHitV2, lastHitPoint, currentTool.Radius);
+                        handled = true;
+                    }
+                    /*
+                    for (int i = 0; i < numbersectors && claySelected == false; i++)
+                    {
+                        for (int j = 0; j < numbersectors && claySelected == false; j++)
+                        {
+                            for (int k = 0; k < numbersectors && claySelected == false; k++)
+                            {
+                                if (lastHitModel == sectorModels[i, j, k].HitModel)
+                                {
+                                    claySelected = true;
+                                }
+                            }
+                        }
+                    }
+                    */
+                }
+                else if (e.RightButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
+                {
+                    oldMousePos = e.GetPosition(vp);
+                    handled = true;
+                }
+            }
+            return handled;
+        }
+
+        private bool ViewMouseMove(object sender, MouseEventArgs e)
+        {
+            bool handled = false;
+            Viewport3D vp = sender as Viewport3D;
+            if (vp != null)
+            {
+                Point pn = e.GetPosition(vp);
+                HitTest(vp, pn);
+                double dx = pn.X - oldMousePos.X;
+                double dy = pn.Y - oldMousePos.Y;
+                if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
+                {
+                    if (claySelected)
+                    {
+                        handled = true;
+                        if (dx < 1 && dy < 1)
+                        {
+                            if (lastHitPoint != null)
+                            {
+                                SelectFaceVertices(lastHitV0, lastHitV1, lastHitV2, lastHitPoint, currentTool.Radius);
+                                if (symetric)
+                                {
+                                }
+                            }
+                        }
+                        else
+                        {
+                            double dist = Math.Sqrt(dx * dx + dy * dy);
+                            if (dist > 0)
+                            {
+                                double diff = 1 / dist;
+                                if (diff < 0.1)
+                                {
+                                    diff = 0.1;
+                                }
+                                for (double t = 0; t <= 1; t += diff)
+
+                                {
+                                    double px = oldMousePos.X + t * dx;
+                                    double py = oldMousePos.Y + t * dy;
+                                    HitTest(vp, new Point(px, py));
+                                    if (lastHitPoint != null)
+                                    {
+                                        SelectFaceVertices(lastHitV0, lastHitV1, lastHitV2, lastHitPoint, currentTool.Radius);
+                                        if (symetric)
+                                        {
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    /*
+                    else
+                    {
+                        Camera.Move(dx, -dy);
+                        UpdateCameraPos();
+                    }
+                    */
+
+                    oldMousePos = pn;
+                }
+            }
+            return handled;
+        }
+
+        private bool ViewMouseUp(object sender, MouseEventArgs e)
+        {
+            bool handled = false;
             if (claySelected)
             {
                 ToolProcess();
@@ -681,7 +711,13 @@ namespace Barnacle.Dialogs
                 {
                 }
                 claySelected = false;
+                handled = true;
             }
+            return handled;
+        }
+
+        private void Viewport_MouseUp(object sender, System.Windows.Input.MouseEventArgs e)
+        {
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -694,13 +730,34 @@ namespace Barnacle.Dialogs
             ToolShape = ToolShapeItems[0];
             Point3DCollection cubeVertices = new Point3DCollection();
             Int32Collection cubeFaces = new Int32Collection();
-            // GenerateSphere(cubeVertices, cubeFaces, new Point3D(0, 0, 0), 50, 5, 5);
 
             IcoSphereCreator ico = new IcoSphereCreator();
-            ico.Create(4, ref cubeVertices, ref cubeFaces, 100);
+            ico.Create(6, ref cubeVertices, ref cubeFaces, 100);
+            /*
+            double d = 2.5;
+            for (int i = 0; i < 50; i++)
+            {
+                for (int j = 0; j < 50; j++)
+                {
+                    double x = (i * d) - 25;
+                    double y = j * d;
 
-            // pmesh = new PlanktonMesh(cubeVertices, cubeFaces);
+                    int v0 = AddVertice(new Point3D(x, y, 0));
+                    int v1 = AddVertice(new Point3D(x + d, y, 0));
+                    int v2 = AddVertice(new Point3D(x, y + d, 0));
+                    int v3 = AddVertice(new Point3D(x + d, y + d, 0));
 
+                    cubeFaces.Add(v0);
+                    cubeFaces.Add(v1);
+                    cubeFaces.Add(v2);
+
+                    cubeFaces.Add(v1);
+                    cubeFaces.Add(v3);
+                    cubeFaces.Add(v2);
+                }
+            }
+            cubeVertices = Vertices;
+            */
             pmesh = new Mesh(cubeVertices, cubeFaces);
             loaded = true;
             UpdateDisplay();

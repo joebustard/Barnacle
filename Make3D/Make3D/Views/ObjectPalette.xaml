@@ -358,6 +358,14 @@
                 ToolTip="Add a Pie Slice">
                 <Image Source="/Barnacle;component/Images/Buttons/PieSlice.png" />
             </Button>
+            <Button
+                Command="{Binding AddCommand}"
+                CommandParameter="Tetrahedron"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource PrimitiveImageButton}"
+                ToolTip="Add a Tetrahedron">
+                <Image Source="/Barnacle;component/Images/Buttons/Tetrahedron.png" />
+            </Button>
         </UniformGrid>
     </Grid>
 </UserControl>

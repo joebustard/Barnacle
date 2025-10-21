@@ -10,10 +10,10 @@ namespace SimpleSmoothLib
 {
     public class SimpleSmoother
     {
-        private VertexAverage[] averagePoints;
-        private Point3DCollection vertices;
-        private Int32Collection faces;
         public Int32Collection[] Neighbours;
+        private VertexAverage[] averagePoints;
+        private Int32Collection faces;
+        private Point3DCollection vertices;
 
         public SimpleSmoother(Point3DCollection v, Int32Collection f)
         {
@@ -38,12 +38,6 @@ namespace SimpleSmoothLib
                     CheckAdd(c, b, a);
                 }
             }
-        }
-
-        private void CheckAdd(int a, int b, int c)
-        {
-            if (!Neighbours[a].Contains(b)) Neighbours[a].Add(b);
-            if (!Neighbours[a].Contains(c)) Neighbours[a].Add(c);
         }
 
         public void Smooth(int iterations, double mu)
@@ -75,6 +69,12 @@ namespace SimpleSmoothLib
                     mu2 = -mu - 0.01;
                 }
             }
+        }
+
+        private void CheckAdd(int a, int b, int c)
+        {
+            if (!Neighbours[a].Contains(b)) Neighbours[a].Add(b);
+            if (!Neighbours[a].Contains(c)) Neighbours[a].Add(c);
         }
 
         private Point3D Move(int i, double mu)

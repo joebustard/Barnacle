@@ -1,4 +1,19 @@
-﻿v1.0.9
+﻿
+v1.0.10
+===========
+Added
+  Extra primitive tetrahedron
+  Drop from left, right, front and back added to editor.
+  dropabove, dropbelow, dropfront, dropback, dropleft, dropright added to limpet
+
+Fixed
+  The number of vertices and faces shown for the selected object didn't update automaticall when the object was subdivided
+  Small bug were drop would sometimes ignore overlapping triangles which should have been considered
+
+Changed
+Paste path string in flexipath control now adjusts pasted coordinates so all path is in range
+
+v1.0.9
 ===========
 Added
   Pierced disk tool. Creates a disk with holes around its edge.

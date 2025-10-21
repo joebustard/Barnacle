@@ -30,12 +30,15 @@ namespace Barnacle.Dialogs.ClaySculpt
     public class ToolSelectionContent
     {
         public List<FaceStatus> FaceStates;
+        public Int32Collection SearchVertexQueue;
         public Int32Collection SelectedVertices;
+
+        private Point3D hitCentre;
 
         // private PlanktonMesh pmesh;
         private Mesh pmesh;
 
-        public Int32Collection SearchVertexQueue;
+        private double searchRadius;
 
         // public ToolSelectionContent(PlanktonMesh pmesh)
         public ToolSelectionContent(Mesh pmesh)
@@ -51,6 +54,63 @@ namespace Barnacle.Dialogs.ClaySculpt
             FaceStates.Clear();
             SelectedVertices.Clear();
             SearchVertexQueue.Clear();
+        }
+
+        // public double Distance(Point3D c, PlanktonVertex vx)
+        public double Distance(Point3D c, Vertex vx)
+        {
+            double res = Math.Sqrt(
+                (c.X - (double)vx.X) * (c.X - (double)vx.X) +
+                (c.Y - (double)vx.Y) * (c.Y - (double)vx.Y) +
+                (c.Z - (double)vx.Z) * (c.Z - (double)vx.Z)
+                );
+
+            return res;
+        }
+
+        public List<int> GetListOfEdgesFromPoint(int vindex)
+        {
+            List<int> res = new List<int>();
+            int firstHalfEdge = pmesh.Vertices[vindex].OutgoingHalfEdge;
+            int cur = firstHalfEdge;
+            int count = 0;
+            do
+            {
+                if (!res.Contains(cur))
+                {
+                    res.Add(cur);
+                }
+                cur = pmesh.HalfEdges[cur].Next;
+                cur = pmesh.HalfEdges[cur].Next;
+                cur = pmesh.HalfEdges[cur].Twin;
+                count++;
+            } while (count < 1000 && cur != firstHalfEdge);
+            return res;
+        }
+
+        public void SubdivideSelectedFaces()
+        {
+            Int32Collection newVerticeIds = new Int32Collection();
+
+            List<int> edgesToSplit = new List<int>();
+            foreach (int vindex in SelectedVertices)
+            {
+                // get a list of the halfedges from this point
+
+                List<int> el = GetListOfEdgesFromPoint(vindex);
+                foreach (int e in el)
+                {
+                    if (EdgeSqrLength(e) > 0.1 && !edgesToSplit.Contains(e) && !edgesToSplit.Contains(pmesh.HalfEdges[e].Twin))
+                    {
+                        edgesToSplit.Add(e);
+                    }
+                }
+            }
+            pmesh.SplitTheseEdges(edgesToSplit, newVerticeIds);
+            foreach (int vindex in newVerticeIds)
+            {
+                SelectedVertices.Add(vindex);
+            }
         }
 
         // internal PlanktonVertex GetVertex(int vid)
@@ -83,9 +143,6 @@ namespace Barnacle.Dialogs.ClaySculpt
             pmesh.Vertices[vid].Y += (float)offset.Y;
             pmesh.Vertices[vid].Z += (float)offset.Z;
         }
-
-        private Point3D hitCentre;
-        private double searchRadius;
 
         internal void SelectedInRange(Point3D centre, double radius)
         {
@@ -129,60 +186,6 @@ namespace Barnacle.Dialogs.ClaySculpt
             }
         }
 
-        private void DumpSearchFaces(Int32Collection fces)
-        {
-            System.Diagnostics.Debug.WriteLine("SearchFaces");
-            foreach (int f in fces)
-            {
-                System.Diagnostics.Debug.Write($"{f},");
-            }
-            System.Diagnostics.Debug.WriteLine("Search");
-        }
-
-        public void SubdivideSelectedFaces()
-        {
-            List<int> edgesToSplit = new List<int>();
-            foreach (int vindex in SelectedVertices)
-            {
-                // get a list of the halfedges from this point
-
-                List<int> el = GetListOfEdgesFromPoint(vindex);
-                foreach (int e in el)
-                {
-                    if (EdgeSqrLength(e) > 0.1 && !edgesToSplit.Contains(e) && !edgesToSplit.Contains(pmesh.HalfEdges[e].Twin))
-                    {
-                        edgesToSplit.Add(e);
-                    }
-                }
-            }
-            pmesh.SplitTheseEdges(edgesToSplit);
-        }
-
-        private double EdgeSqrLength(int edge)
-        {
-            return pmesh.GetSqrLength(edge);
-        }
-
-        public List<int> GetListOfEdgesFromPoint(int vindex)
-        {
-            List<int> res = new List<int>();
-            int firstHalfEdge = pmesh.Vertices[vindex].OutgoingHalfEdge;
-            int cur = firstHalfEdge;
-            int count = 0;
-            do
-            {
-                if (!res.Contains(cur))
-                {
-                    res.Add(cur);
-                }
-                cur = pmesh.HalfEdges[cur].Next;
-                cur = pmesh.HalfEdges[cur].Next;
-                cur = pmesh.HalfEdges[cur].Twin;
-                count++;
-            } while (count < 1000 && cur != firstHalfEdge);
-            return res;
-        }
-
         private int CountPointsOfFace(int faceId, Int32Collection verticeList)
         {
             int res = 0;
@@ -220,6 +223,16 @@ namespace Barnacle.Dialogs.ClaySculpt
             System.Diagnostics.Debug.WriteLine("");
         }
 
+        private void DumpSearchFaces(Int32Collection fces)
+        {
+            System.Diagnostics.Debug.WriteLine("SearchFaces");
+            foreach (int f in fces)
+            {
+                System.Diagnostics.Debug.Write($"{f},");
+            }
+            System.Diagnostics.Debug.WriteLine("Search");
+        }
+
         private void DumpSelectedVertices()
         {
             System.Diagnostics.Debug.WriteLine("SelectedVertices");
@@ -232,16 +245,9 @@ namespace Barnacle.Dialogs.ClaySculpt
             }
         }
 
-        // public double Distance(Point3D c, PlanktonVertex vx)
-        public double Distance(Point3D c, Vertex vx)
+        private double EdgeSqrLength(int edge)
         {
-            double res = Math.Sqrt(
-                (c.X - (double)vx.X) * (c.X - (double)vx.X) +
-                (c.Y - (double)vx.Y) * (c.Y - (double)vx.Y) +
-                (c.Z - (double)vx.Z) * (c.Z - (double)vx.Z)
-                );
-
-            return res;
+            return pmesh.GetSqrLength(edge);
         }
     }
 }

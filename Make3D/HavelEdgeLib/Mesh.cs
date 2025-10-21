@@ -10,6 +10,7 @@ namespace HalfEdgeLib
 {
     public class Mesh
     {
+        public List<List<HalfEdge>> Boundaries;
         public List<Face> Faces;
         public List<HalfEdge> HalfEdges;
         public List<Vertex> Vertices;
@@ -100,73 +101,23 @@ namespace HalfEdgeLib
             StitchBoundary();
         }
 
-        public Vector3D GetVertexNormal(int index)
+        public List<HalfEdge> BoundaryHalfEdges
         {
-            Point3D vertex = new Point3D(Vertices[index].X, Vertices[index].Y, Vertices[index].Z);
-            Vector3D normal = new Vector3D();
-
-            var ring = this.GetVertexNeighbours(index);
-            int n = ring.Count;
-
-            for (int i = 0; i < n - 1; i++)
-            {
-                int p1 = ring[i];
-                int p2 = ring[i + 1];
-                Vector3D v1 = new Vector3D(Vertices[p1].X - vertex.X, Vertices[p1].Y - vertex.Y, Vertices[p1].Z - vertex.Z);
-                Vector3D v2 = new Vector3D(Vertices[p2].X - vertex.X, Vertices[p2].Y - vertex.Y, Vertices[p2].Z - vertex.Z);
-                normal += Vector3D.CrossProduct(v1, v2);
-            }
-            normal.Normalize();
-
-            if (n == 3)
-            {
-                normal *= -1;
-            }
-
-            System.Diagnostics.Debug.WriteLine($"Ring size {n}, Normal {normal.X},{normal.Y},{normal.Z}");
-            return normal;
+            get; set;
         }
 
-        private List<int> GetVertexNeighbours(int index)
+        public List<HalfEdge> FakeFace
         {
-            List<int> res = new List<int>();
-            if (index >= 0 && index < HalfEdges.Count)
-            {
-                int origin = Vertices[index].OutgoingHalfEdge;
-                int count = 0;
-                int current = origin;
-                do
-                {
-                    int next = HalfEdges[current].Next;
-                    if (next != -1)
-                    {
-                        res.Add(HalfEdges[next].StartVertex);
-                    }
-
-                    current = HalfEdges[current].Twin;
-                    if (current != -1)
-                    {
-                        current = HalfEdges[current].Next;
-                    }
-
-                    count++;
-                } while (count < 100 && origin != current && current != -1);
-            }
-            return res;
-        }
-
-        public double GetSqrLength(int edge)
-        {
-            int s = HalfEdges[edge].StartVertex;
-            int e = HalfEdges[HalfEdges[edge].Next].StartVertex;
-            double res = (Vertices[s].X - Vertices[e].X) * (Vertices[s].X - Vertices[e].X);
-            res += (Vertices[s].Y - Vertices[e].Y) * (Vertices[s].Y - Vertices[e].Y);
-            res += (Vertices[s].Z - Vertices[e].Z) * (Vertices[s].Z - Vertices[e].Z);
-            return res;
+            get; set;
         }
 
         public int HalfEdgeCount
-        { get { return HalfEdges.Count; } }
+        {
+            get
+            {
+                return HalfEdges.Count;
+            }
+        }
 
         public void AddFacePoint(int e, Int32Collection faces)
         {
@@ -236,6 +187,122 @@ namespace HalfEdgeLib
             }
         }
 
+        public void FlipTriangle(int e0)
+        {
+            Logger.LogLine($"Flip {e0}");
+            // gather data
+            int e1 = HalfEdges[e0].Next;
+            int e2 = HalfEdges[e1].Next;
+
+            int t0 = HalfEdges[e0].Twin;
+            int t1 = HalfEdges[t0].Next;
+            int t2 = HalfEdges[t1].Next;
+
+            int face0 = HalfEdges[e0].Face;
+            int face1 = HalfEdges[t0].Face;
+
+            int v0 = HalfEdges[e0].StartVertex;
+            int v1 = HalfEdges[e1].StartVertex;
+            int v2 = HalfEdges[e2].StartVertex;
+            int v3 = HalfEdges[t2].StartVertex;
+            if (!HalfEdgeExists(v2, v3))
+            {
+                //            Logger.LogLine($" Flip edges {e0},{e1},{e2}");
+                //            Logger.LogLine($" vertices {v0},{v1},{v2}");
+                //Logger.LogLine($" Flip twin edges {t0},{t1},{t2}");
+                //            Logger.LogLine($" vertices {v1},{v0},{v3}");
+
+                // all ready have e0 and t0 twins, gather the rest
+                int e1t = HalfEdges[e1].Twin;
+                int e2t = HalfEdges[e2].Twin;
+                int t1t = HalfEdges[t1].Twin;
+                int t2t = HalfEdges[t2].Twin;
+                // Logger.LogLine($" Outside twins e1t={e1t}, e2t = {e2t}, t1t={t1t}, t2t={t2t}");
+
+                // now swap things around
+                HalfEdges[e0].StartVertex = v3;
+                HalfEdges[e1].StartVertex = v2;
+                HalfEdges[e2].StartVertex = v0;
+                // Logger.LogLine($" After Flip {v2},{v3},{v1}");
+                HalfEdges[t0].StartVertex = v2;
+                HalfEdges[t1].StartVertex = v3;
+                HalfEdges[t2].StartVertex = v1;
+                // Logger.LogLine($" After Flip {v3},{v2},{v0}");
+
+                TwinUp(e1, e2t);
+                TwinUp(e2, t1t);
+                TwinUp(t1, t2t);
+                TwinUp(t2, e1t);
+
+                Vertices[v0].OutgoingHalfEdge = e2;
+                Vertices[v1].OutgoingHalfEdge = t2;
+                Vertices[v2].OutgoingHalfEdge = e1;
+                Vertices[v3].OutgoingHalfEdge = t1;
+
+                Faces[face0].FirstEdge = e0;
+                Faces[face1].FirstEdge = t0;
+            }
+            else
+            {
+                Logger.LogLine("Would cause duplicate edge");
+            }
+        }
+
+        /// <summary>
+        /// Return the start and end vertices of the requested half edge
+        /// </summary>
+        /// <param name="edge"></param>
+        /// <param name="s"></param>
+        /// <param name="e"></param>
+        public void GetEdgeVertices(int edge, out int s, out int e)
+        {
+            s = -1;
+            e = -1;
+            if (edge >= 0 && edge < HalfEdges.Count)
+            {
+                s = HalfEdges[edge].StartVertex;
+                edge = HalfEdges[edge].Twin;
+                e = HalfEdges[edge].StartVertex;
+            }
+        }
+
+        public double GetSqrLength(int edge)
+        {
+            int s = HalfEdges[edge].StartVertex;
+            int e = HalfEdges[HalfEdges[edge].Next].StartVertex;
+            double res = (Vertices[s].X - Vertices[e].X) * (Vertices[s].X - Vertices[e].X);
+            res += (Vertices[s].Y - Vertices[e].Y) * (Vertices[s].Y - Vertices[e].Y);
+            res += (Vertices[s].Z - Vertices[e].Z) * (Vertices[s].Z - Vertices[e].Z);
+            return res;
+        }
+
+        public Vector3D GetVertexNormal(int index)
+        {
+            Point3D vertex = new Point3D(Vertices[index].X, Vertices[index].Y, Vertices[index].Z);
+            Vector3D normal = new Vector3D();
+
+            var ring = this.GetVertexNeighbours(index);
+            int n = ring.Count;
+
+            for (int i = 0; i < n - 1; i++)
+            {
+                int p1 = ring[i];
+                int p2 = ring[i + 1];
+                Vector3D v1 = new Vector3D(Vertices[p1].X - vertex.X, Vertices[p1].Y - vertex.Y, Vertices[p1].Z - vertex.Z);
+                Vector3D v2 = new Vector3D(Vertices[p2].X - vertex.X, Vertices[p2].Y - vertex.Y, Vertices[p2].Z - vertex.Z);
+                normal += Vector3D.CrossProduct(v1, v2);
+            }
+            normal.Normalize();
+
+            if (n == 3)
+            {
+                normal *= -1;
+            }
+
+            System.Diagnostics.Debug.WriteLine($"Ring size {n}, Normal {normal.X},{normal.Y},{normal.Z}");
+            return normal;
+        }
+
         /// <summary>
         /// Sbbdivide all the edges
         /// </summary>
@@ -291,7 +358,7 @@ namespace HalfEdgeLib
         /// <summary>
         /// Sbbdivide a list of edges
         /// </summary>
-        public void SplitTheseEdges(List<int> source)
+        public void SplitTheseEdges(List<int> source, Int32Collection newVerticeIds)
         {
             List<int> neoVertices = new List<int>();
             List<int> neoHalfEdges = new List<int>();
@@ -350,6 +417,11 @@ namespace HalfEdgeLib
                 }
             }
             */
+
+            foreach (int neo in neoVertices)
+            {
+                newVerticeIds.Add(neo);
+            }
         }
 
         /// <summary>
@@ -484,24 +556,6 @@ namespace HalfEdgeLib
         }
 
         /// <summary>
-        /// Return the start and end vertices of the requested half edge
-        /// </summary>
-        /// <param name="edge"></param>
-        /// <param name="s"></param>
-        /// <param name="e"></param>
-        public void GetEdgeVertices(int edge, out int s, out int e)
-        {
-            s = -1;
-            e = -1;
-            if (edge >= 0 && edge < HalfEdges.Count)
-            {
-                s = HalfEdges[edge].StartVertex;
-                edge = HalfEdges[edge].Twin;
-                e = HalfEdges[edge].StartVertex;
-            }
-        }
-
-        /// <summary>
         /// Get a list of the vertices associated with a face
         /// </summary>
         /// <param name="f"></param>
@@ -571,6 +625,56 @@ namespace HalfEdgeLib
             return res;
         }
 
+        private List<int> GetVertexNeighbours(int index)
+        {
+            List<int> res = new List<int>();
+            if (index >= 0 && index < HalfEdges.Count)
+            {
+                int origin = Vertices[index].OutgoingHalfEdge;
+                int count = 0;
+                int current = origin;
+                do
+                {
+                    int next = HalfEdges[current].Next;
+                    if (next != -1)
+                    {
+                        res.Add(HalfEdges[next].StartVertex);
+                    }
+
+                    current = HalfEdges[current].Twin;
+                    if (current != -1)
+                    {
+                        current = HalfEdges[current].Next;
+                    }
+
+                    count++;
+                } while (count < 100 && origin != current && current != -1);
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// Find if there is a half edge from a given point to anotherhe.
+        /// </summary>
+        /// <param name="v0"></param>
+        /// <param name="v1"></param>
+        /// <returns></returns>
+        private bool HalfEdgeExists(int v0, int v1)
+        {
+            bool res = false;
+            List<int> outgoing = GetHalfEdgesFromVertex(v0);
+            foreach (int he in outgoing)
+            {
+                int n = HalfEdges[HalfEdges[he].Next].StartVertex;
+                if (n == 1)
+                {
+                    res = true;
+                    break;
+                }
+            }
+            return res;
+        }
+
         /// <summary>
         /// Link three half edges as a triangle
         /// </summary>
@@ -594,6 +698,27 @@ namespace HalfEdgeLib
         private void LogVertex(int i)
         {
             Logger.Log($" {Vertices[i].X}, {Vertices[i].Y}, {Vertices[i].Z},  ");
+        }
+
+        private void MarkBoundaryAndEndVertices()
+        {
+            BoundaryHalfEdges = new List<HalfEdge>();
+            for (int i = 0; i < HalfEdges.Count; i++)
+            {
+                HalfEdges[i].Id = i;
+                HalfEdge he = HalfEdges[i];
+
+                if (he.Twin == -1)
+                {
+                    BoundaryHalfEdges.Add(he);
+                    he.OnBoundary = true;
+                    Vertices[he.StartVertex].OnBoundary = true;
+                }
+                if (he.Next != -1)
+                {
+                    he.EndVertex = HalfEdges[he.Next].StartVertex;
+                }
+            }
         }
 
         /// <summary>
@@ -715,127 +840,6 @@ namespace HalfEdgeLib
             return v4;
         }
 
-        /// <summary>
-        /// Mark two halfedges as twins
-        /// </summary>
-        /// <param name="i"></param>
-        /// <param name="j"></param>
-        private void TwinUp(int i, int j)
-        {
-            // Logger.LogLine($"Twin up {i},{j}");
-            HalfEdges[i].Twin = j;
-            HalfEdges[j].Twin = i;
-        }
-
-        public void FlipTriangle(int e0)
-        {
-            Logger.LogLine($"Flip {e0}");
-            // gather data
-            int e1 = HalfEdges[e0].Next;
-            int e2 = HalfEdges[e1].Next;
-
-            int t0 = HalfEdges[e0].Twin;
-            int t1 = HalfEdges[t0].Next;
-            int t2 = HalfEdges[t1].Next;
-
-            int face0 = HalfEdges[e0].Face;
-            int face1 = HalfEdges[t0].Face;
-
-            int v0 = HalfEdges[e0].StartVertex;
-            int v1 = HalfEdges[e1].StartVertex;
-            int v2 = HalfEdges[e2].StartVertex;
-            int v3 = HalfEdges[t2].StartVertex;
-            if (!HalfEdgeExists(v2, v3))
-            {
-                //            Logger.LogLine($" Flip edges {e0},{e1},{e2}");
-                //            Logger.LogLine($" vertices {v0},{v1},{v2}");
-                //Logger.LogLine($" Flip twin edges {t0},{t1},{t2}");
-                //            Logger.LogLine($" vertices {v1},{v0},{v3}");
-
-                // all ready have e0 and t0 twins, gather the rest
-                int e1t = HalfEdges[e1].Twin;
-                int e2t = HalfEdges[e2].Twin;
-                int t1t = HalfEdges[t1].Twin;
-                int t2t = HalfEdges[t2].Twin;
-                // Logger.LogLine($" Outside twins e1t={e1t}, e2t = {e2t}, t1t={t1t}, t2t={t2t}");
-
-                // now swap things around
-                HalfEdges[e0].StartVertex = v3;
-                HalfEdges[e1].StartVertex = v2;
-                HalfEdges[e2].StartVertex = v0;
-                // Logger.LogLine($" After Flip {v2},{v3},{v1}");
-                HalfEdges[t0].StartVertex = v2;
-                HalfEdges[t1].StartVertex = v3;
-                HalfEdges[t2].StartVertex = v1;
-                // Logger.LogLine($" After Flip {v3},{v2},{v0}");
-
-                TwinUp(e1, e2t);
-                TwinUp(e2, t1t);
-                TwinUp(t1, t2t);
-                TwinUp(t2, e1t);
-
-                Vertices[v0].OutgoingHalfEdge = e2;
-                Vertices[v1].OutgoingHalfEdge = t2;
-                Vertices[v2].OutgoingHalfEdge = e1;
-                Vertices[v3].OutgoingHalfEdge = t1;
-
-                Faces[face0].FirstEdge = e0;
-                Faces[face1].FirstEdge = t0;
-            }
-            else
-            {
-                Logger.LogLine("Would cause duplicate edge");
-            }
-        }
-
-        /// <summary>
-        /// Find if there is a half edge from a given point to anotherhe.
-        /// </summary>
-        /// <param name="v0"></param>
-        /// <param name="v1"></param>
-        /// <returns></returns>
-        private bool HalfEdgeExists(int v0, int v1)
-        {
-            bool res = false;
-            List<int> outgoing = GetHalfEdgesFromVertex(v0);
-            foreach (int he in outgoing)
-            {
-                int n = HalfEdges[HalfEdges[he].Next].StartVertex;
-                if (n == 1)
-                {
-                    res = true;
-                    break;
-                }
-            }
-            return res;
-        }
-
-        public List<HalfEdge> BoundaryHalfEdges { get; set; }
-
-        private void MarkBoundaryAndEndVertices()
-        {
-            BoundaryHalfEdges = new List<HalfEdge>();
-            for (int i = 0; i < HalfEdges.Count; i++)
-            {
-                HalfEdges[i].Id = i;
-                HalfEdge he = HalfEdges[i];
-
-                if (he.Twin == -1)
-                {
-                    BoundaryHalfEdges.Add(he);
-                    he.OnBoundary = true;
-                    Vertices[he.StartVertex].OnBoundary = true;
-                }
-                if (he.Next != -1)
-                {
-                    he.EndVertex = HalfEdges[he.Next].StartVertex;
-                }
-            }
-        }
-
-        public List<HalfEdge> FakeFace { get; set; }
-        public List<List<HalfEdge>> Boundaries;
-
         private void StitchBoundary()
         {
             if (BoundaryHalfEdges != null)
@@ -916,6 +920,18 @@ namespace HalfEdgeLib
             }
             Boundaries.Add(FakeFace);
             */
+        }
+
+        /// <summary>
+        /// Mark two halfedges as twins
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="j"></param>
+        private void TwinUp(int i, int j)
+        {
+            // Logger.LogLine($"Twin up {i},{j}");
+            HalfEdges[i].Twin = j;
+            HalfEdges[j].Twin = i;
         }
     }
 }

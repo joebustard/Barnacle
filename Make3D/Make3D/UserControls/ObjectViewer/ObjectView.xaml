@@ -30,6 +30,7 @@
                 <Viewport3D
                     Name="viewport3D1"
                     MouseDown="Viewport_MouseDown"
+                    MouseUp="Viewport_MouseUp"
                     MouseMove="Viewport_MouseMove"
                     MouseWheel="Viewport_MouseWheel">
 
@@ -135,7 +136,6 @@
                     ToolTip="Move the camera to the default bottom position and point it at the centre.">
                     <Image Source="/Barnacle;component/Images/Buttons/BottomEye.png" />
                 </Button>
-
             </Grid>
         </Border>
     </Grid>

@@ -27,6 +27,12 @@ namespace ScriptLanguage
                 "bool",
                 "centre",
                 "delete",
+                "dropabove",
+                "dropbelow",
+                "dropleft",
+                "dropright",
+                "dropfront",
+                "dropback",
                 "do",
                 "double",
                 "else",
@@ -1489,6 +1495,54 @@ namespace ScriptLanguage
             return result;
         }
 
+        private bool ParseDropStatement(CompoundNode parentNode, String parentName, string id)
+        {
+            bool result = false;
+            SolidDropNode sal = new SolidDropNode();
+
+            switch (id)
+            {
+                case "dropleft":
+                    {
+                        sal.Orientation = SolidDropNode.Alignment.Left;
+                    }
+                    break;
+
+                case "dropright":
+                    {
+                        sal.Orientation = SolidDropNode.Alignment.Right;
+                    }
+                    break;
+
+                case "dropabove":
+                    {
+                        sal.Orientation = SolidDropNode.Alignment.Above;
+                    }
+                    break;
+
+                case "dropbelow":
+                    {
+                        sal.Orientation = SolidDropNode.Alignment.Below;
+                    }
+                    break;
+
+                case "dropfront":
+                    {
+                        sal.Orientation = SolidDropNode.Alignment.Front;
+                    }
+                    break;
+
+                case "dropback":
+                    {
+                        sal.Orientation = SolidDropNode.Alignment.Back;
+                    }
+                    break;
+            }
+
+            result = ParseSolidStatement(parentNode, parentName, sal.label, 2, sal);
+            return result;
+        }
+
         private bool ParseExitStatement(CompoundNode parentNode)
         {
             bool result = CheckForSemiColon();
@@ -2192,6 +2246,17 @@ namespace ScriptLanguage
                 case "double":
                     {
                         result = ParseDoubleStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "dropleft":
+                case "dropright":
+                case "dropabove":
+                case "dropbelow":
+                case "dropfront":
+                case "dropback":
+                    {
+                        result = ParseDropStatement(parentNode, parentName, Identifier);
                     }
                     break;
 

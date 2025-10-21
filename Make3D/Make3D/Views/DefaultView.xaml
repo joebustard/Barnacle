@@ -737,6 +737,42 @@
                             Header="Below"
                             ImageSource="/Barnacle;component/Images/Buttons/Arrange.png"
                             ToolTip="Drop the selected items from below" />
+                        <Custom:RibbonMenuItem
+                            x:Name="RightDropButton"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding DropCommand}"
+                            CommandParameter="Right"
+                            Header="Right"
+                            ImageSource="/Barnacle;component/Images/Buttons/Arrange.png"
+                            ToolTip="Drop the selected items from the right" />
+                        <Custom:RibbonMenuItem
+                            x:Name="LeftDropButton"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding DropCommand}"
+                            CommandParameter="Left"
+                            Header="Left"
+                            ImageSource="/Barnacle;component/Images/Buttons/Arrange.png"
+                            ToolTip="Drop the selected items from the left" />
+                        <Custom:RibbonMenuItem
+                            x:Name="FrontDropButton"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding DropCommand}"
+                            CommandParameter="Front"
+                            Header="Front"
+                            ImageSource="/Barnacle;component/Images/Buttons/Arrange.png"
+                            ToolTip="Drop the selected items from the front" />
+                        <Custom:RibbonMenuItem
+                            x:Name="BackDropButton"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding DropCommand}"
+                            CommandParameter="Back"
+                            Header="Back"
+                            ImageSource="/Barnacle;component/Images/Buttons/Arrange.png"
+                            ToolTip="Drop the selected items from the back" />
                     </Custom:RibbonMenuButton>
 
                     <Custom:RibbonMenuButton

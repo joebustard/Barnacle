@@ -15,6 +15,7 @@
 // *                                                                         *
 // *************************************************************************
 
+using Barnacle.Object3DLib;
 using Barnacle.ViewModels;
 using Barnacle.ViewModels.Logging;
 using System;
@@ -27,6 +28,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
+using static CSGLib.BooleanModeller;
 
 namespace Barnacle.Views
 {
@@ -269,9 +271,17 @@ Procedure MyProc(  )
             ResultsBox.Text = "";
 
             vm.ClearResults();
+
             if (RefreshInterpreterSource())
             {
                 vm.RunScript();
+            }
+            else
+            {
+                foreach (ScriptLanguage.LogEntry le in ScriptLanguage.Log.Instance().LogEntrys)
+                {
+                    ResultsBox.Text += $"{le.DateStamp}, {le.Text}\r\n";
+                }
             }
         }
 

@@ -73,6 +73,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("ObjectProperties", "PositionUpdated", OnPositionUpdated);
             NotificationManager.Subscribe("ObjectProperties", "SuspendEditing", SuspendEditing);
             NotificationManager.Subscribe("ObjectProperties", "ScaleByPercent", OnScaleByPercent);
+            NotificationManager.Subscribe("ObjectProperties", "MetricsUpdated", OnMetricsUpdated);
 
             editingActive = true;
             rotationX = 90;
@@ -657,6 +658,14 @@ namespace Barnacle.ViewModels
                 LoggerLib.Logger.LogLine(ex.Message);
             }
             return res;
+        }
+
+        private void OnMetricsUpdated(object param)
+        {
+            if (selectedObject != null)
+            {
+                ObjectMetrics = $"v:{selectedObject.RelativeObjectVertices.Count} f:{selectedObject.TotalFaces}";
+            }
         }
 
         private void OnMoveToCentre(object obj)

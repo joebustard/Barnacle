@@ -126,10 +126,6 @@ namespace Barnacle.Views
                 if (RunScript(p, false))
                 {
                 }
-                else
-                {
-                    MessageBox.Show($"Failed : ${p}");
-                }
             }
         }
 
@@ -379,6 +375,14 @@ namespace Barnacle.Views
             LoadNamedProject(projName, false);
         }
 
+        private void ReportRunStatus(bool b, string s)
+        {
+            if (b)
+            {
+                MessageBox.Show(s);
+            }
+        }
+
         private bool RunScript(string fileName, bool saveSolids = true)
         {
             Dictionary<int, Object3D> content = new Dictionary<int, Object3D>();
@@ -398,7 +402,7 @@ namespace Barnacle.Views
 
                     if (!script.Execute())
                     {
-                        MessageBox.Show("Script failed to run");
+                        ReportRunStatus(saveSolids, "Script failed to run");
                     }
                     else
                     {
@@ -416,12 +420,12 @@ namespace Barnacle.Views
                 }
                 else
                 {
-                    MessageBox.Show("Script failed to load");
+                    ReportRunStatus(saveSolids, "Script failed to load");
                 }
             }
             else
             {
-                MessageBox.Show($"Script failed to load {fileName}");
+                ReportRunStatus(saveSolids, $"Script failed to load {fileName}");
             }
             return result;
         }

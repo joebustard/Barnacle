@@ -390,6 +390,9 @@
     </Compile>
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="UserControls\ColourPicker\AvailableColour.cs" />
+    <Compile Include="ViewModels\EditorViewModel\ExtraFunctions\CameraFunctions.cs" />
+    <Compile Include="ViewModels\EditorViewModel\ExtraFunctions\CutAndPasteFunctions.cs" />
+    <Compile Include="ViewModels\EditorViewModel\ExtraFunctions\DropFunctions.cs" />
     <Compile Include="ViewModels\Logging\Log.cs" />
     <Compile Include="ViewModels\Logging\LogEntry.cs" />
     <Compile Include="ViewModels\RichTextBoxExtensions.cs" />
@@ -451,8 +454,8 @@
     </Compile>
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\CameraViewModel.cs" />
-    <Compile Include="ViewModels\DefaultViewModel.cs" />
-    <Compile Include="ViewModels\EditorViewModel.cs" />
+    <Compile Include="ViewModels\DefaultViewModel\DefaultViewModel.cs" />
+    <Compile Include="ViewModels\EditorViewModel\EditorViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Models\Mru\MruEntry.cs" />
     <Compile Include="ViewModels\RelayCommand.cs" />
@@ -1460,6 +1463,7 @@
     <Resource Include="Images\Buttons\ToggleArcDirection.png" />
     <Resource Include="Images\Buttons\SdfModel.png" />
     <Resource Include="Images\Buttons\PieSlice.png" />
+    <Resource Include="Images\Buttons\Tetrahedron.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

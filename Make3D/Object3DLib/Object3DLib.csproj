@@ -46,7 +46,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bounds2D.cs" />
     <Compile Include="Bounds3D.cs" />
+    <Compile Include="Drop\ObjectDropper.cs" />
     <Compile Include="ExternalReference.cs" />
     <Compile Include="ExtraPrimitives\BoxFrame.cs" />
     <Compile Include="ExtraPrimitives\ButtonTop.cs" />
@@ -61,6 +63,7 @@
     <Compile Include="ExtraPrimitives\Star6.cs" />
     <Compile Include="ExtraPrimitives\StellateDoDecahedron.cs" />
     <Compile Include="ExtraPrimitives\StellateOctahedron.cs" />
+    <Compile Include="ExtraPrimitives\Tetrahedron.cs" />
     <Compile Include="ExtraPrimitives\UBeam.cs" />
     <Compile Include="ExtraPrimitives\XBar.cs" />
     <Compile Include="ExtraPrimitives\CrossBlock.cs" />
@@ -81,6 +84,7 @@
     <Compile Include="ReferenceGroup3D.cs" />
     <Compile Include="ReferenceObject3D.cs" />
     <Compile Include="Scale3D.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ClassLibrary1\HullLIbrary.csproj">

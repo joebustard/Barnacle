@@ -101,6 +101,7 @@ namespace Barnacle.Object3DLib
              new PrimTableEntry( "rightbracket", PrimitiveGenerator.GenerateRightBracket,Colors.Plum),
              new PrimTableEntry( "screwdriverbit", PrimitiveGenerator.GenerateScrewDriverBit,Colors.Teal),
              new PrimTableEntry( "pie", PrimitiveGenerator.GeneratePie,Colors.SpringGreen),
+             new PrimTableEntry( "tetrahedron", PrimitiveGenerator.GenerateTetrahedron,Colors.CadetBlue),
             //Next_Primitive_Table_Entry
         };
 
@@ -758,7 +759,6 @@ namespace Barnacle.Object3DLib
             }
             else
             {
-                // relativeObjectVertices = new Point3DCollection();
                 relativeObjectVertices = new List<P3D>();
                 XmlNodeList vtl = nd.SelectNodes("v");
                 foreach (XmlNode vn in vtl)
@@ -951,13 +951,6 @@ namespace Barnacle.Object3DLib
                 tmp.Add(ap);
             }
             relativeObjectVertices = tmp;
-
-            /*
-        for (int i = 0; i < relativeObjectVertices.Count; i++)
-        {
-            relativeObjectVertices[i].Scale((float)sx, (float)sy, (float)sz);
-        }
-        */
         }
 
         public void SetMesh()

@@ -28,43 +28,42 @@ namespace Barnacle.Dialogs.ClaySculpt
 
         public SculptingTool()
         {
-            Radius = 10;
-            Scaler = 10;
+            Radius = 5;
+            Scaler = 2;
             Inverse = false;
         }
 
-        public bool Inverse { get; set; }
-        public double Radius { get; set; }
-        public double Scaler { get; set; }
-
-        public virtual double Force(double v)
+        public bool Inverse
         {
-            double res = 0;
-            if (v > 0 && v <= Radius)
-            {
-                res = Math.Cos((v / Radius) * piByTwo) * Scaler;
-            }
-            return res;
+            get; set;
+        }
+
+        public double Radius
+        {
+            get; set;
+        }
+
+        public double Scaler
+        {
+            get; set;
         }
 
         public bool ApplyTool(ToolSelectionContent content, Point3D centre)
         {
             bool res = true;
-            content.SubdivideSelectedFaces();
+            // content.SubdivideSelectedFaces();
             foreach (int vid in content.SelectedVertices)
             {
-                //PlanktonVertex xyz = content.GetVertex(vid);
                 Vertex xyz = content.GetVertex(vid);
                 Vector3D pxyz = new Vector3D(xyz.X, xyz.Y, xyz.Z);
-
-                // PlanktonXYZ normal = content.GetVertexNormal(vid);
                 Vector3D normal = content.GetVertexNormal(vid);
                 // System.Diagnostics.Debug.WriteLine($" x={xyz.X},y={xyz.Y},z={xyz.Z}");
                 // System.Diagnostics.Debug.WriteLine($" nx={normal.X},ny={normal.Y},nz={normal.Z}");
                 pxyz.Normalize();
 
                 double dot = Vector3D.DotProduct(pxyz, normal);
-                float sign = Math.Sign(dot);
+                //float sign = Math.Sign(dot);
+                float sign = -1;
                 if (Inverse)
                 {
                     sign = -sign;
@@ -72,11 +71,22 @@ namespace Barnacle.Dialogs.ClaySculpt
                 // System.Diagnostics.Debug.WriteLine($"dot={dot}");
                 double d = content.Distance(centre, xyz);
                 float force = sign * (float)Force(d);
+
                 normal.X *= force;
                 normal.Y *= force;
                 normal.Z *= force;
                 // System.Diagnostics.Debug.WriteLine($" offx={normal.X},offy={normal.Y},offz={normal.Z}");
                 content.MoveVertex(normal, vid);
+            }
+            return res;
+        }
+
+        public virtual double Force(double v)
+        {
+            double res = 0;
+            if (v > 0 && v <= Radius)
+            {
+                res = Math.Cos((v / Radius) * piByTwo) * Scaler;
             }
             return res;
         }

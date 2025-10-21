@@ -77,8 +77,8 @@ namespace ScriptLanguage
                                     Script.ResultArtefacts[id] = grp;
                                     ExecutionStack.Instance().PushSolid(id);
                                     //   ExecutionStack.Instance().LogStackTop();
-                                    leftie.Remesh();
-                                    rightie.Remesh();
+                                  //  leftie.Remesh();
+                                  //  rightie.Remesh();
 
                                     result = true;
                                     // invalidate the two source objects

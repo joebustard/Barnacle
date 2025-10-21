@@ -58,7 +58,7 @@ using System.Windows.Threading;
 
 namespace Barnacle.ViewModels
 {
-    internal class EditorViewModel : BaseViewModel, INotifyPropertyChanged
+    internal partial class EditorViewModel : BaseViewModel, INotifyPropertyChanged
     {
         private const string cameraRecordFile = "camerapos.txt";
 
@@ -754,52 +754,6 @@ namespace Barnacle.ViewModels
             return gm;
         }
 
-        private static double ObjectGapAbove(ref double maxMove, ref double baseDistance, Vector3D rayDirection, Vector3D v0, Vector3D v1, Vector3D v2, Vector3D v3, Vector3D v4, Vector3D v5, Vector3D rayOrigin)
-        {
-            double obDistance;
-            if (PrintPlacementLib.Utils.RayTriangleIntersect(rayOrigin, rayDirection,
-                                                              v0, v1, v2, out obDistance))
-            {
-                if (PrintPlacementLib.Utils.RayTriangleIntersect(rayOrigin, rayDirection,
-                                 v3, v4, v5, out baseDistance))
-                {
-                    if (obDistance >= baseDistance)
-                    {
-                        double canMove = obDistance - baseDistance;
-                        if (maxMove > canMove)
-                        {
-                            maxMove = canMove;
-                        }
-                    }
-                }
-            }
-
-            return obDistance;
-        }
-
-        private static double ObjectGapUnder(ref double maxMove, ref double baseDistance, Vector3D rayDirection, Vector3D v0, Vector3D v1, Vector3D v2, Vector3D v3, Vector3D v4, Vector3D v5, Vector3D rayOrigin)
-        {
-            double obDistance;
-            if (PrintPlacementLib.Utils.RayTriangleIntersect(rayOrigin, rayDirection,
-                                                              v0, v1, v2, out obDistance))
-            {
-                if (PrintPlacementLib.Utils.RayTriangleIntersect(rayOrigin, rayDirection,
-                                 v3, v4, v5, out baseDistance))
-                {
-                    if (obDistance >= baseDistance)
-                    {
-                        double canMove = obDistance - baseDistance;
-                        if (maxMove > canMove)
-                        {
-                            maxMove = canMove;
-                        }
-                    }
-                }
-            }
-
-            return obDistance;
-        }
-
         private static MeshDecimator.Mesh ObjectMeshToDecimatorMesh(Object3D ob)
         {
             MeshDecimator.Mesh mesh;
@@ -1047,26 +1001,6 @@ namespace Barnacle.ViewModels
             dlg.ShowDialog();
         }
 
-        private void BackCamera()
-        {
-            ResetSelection();
-            camera.HomeBack();
-            SetCameraDistance();
-            NotifyPropertyChanged("CameraPos");
-            CameraScrollDelta = new Point3D(-1, 1, 0);
-            LookToCenter();
-            zoomPercent = 100;
-        }
-
-        private Vector3D BaryCentric(Vector3D v0, Vector3D v1, Vector3D v2, double u, double v, double w)
-        {
-            Vector3D res = new Vector3D();
-            res.X = (u * v0.X) + (v * v1.X) + (w * v2.X);
-            res.Y = (u * v0.Y) + (v * v1.Y) + (w * v2.Y);
-            res.Z = (u * v0.Z) + (v * v1.Z) + (w * v2.Z);
-            return res;
-        }
-
         private void BendObjectInHalf(Object3D ob, string ori, double angleDegrees, bool fold = false)
         {
             double smallObjectsLimit = 500;
@@ -1248,17 +1182,6 @@ namespace Barnacle.ViewModels
             {
                 MessageBox.Show("Requires a single object to be selected", "Warning");
             }
-        }
-
-        private void BottomCamera()
-        {
-            ResetSelection();
-            camera.HomeBottom();
-            SetCameraDistance();
-            NotifyPropertyChanged("CameraPos");
-            CameraScrollDelta = new Point3D(-1, 0, -1);
-            LookToCenter();
-            zoomPercent = 100;
         }
 
         private bool BreakGroup()
@@ -1597,6 +1520,7 @@ namespace Barnacle.ViewModels
                 ob.Remesh();
                 RegenerateDisplayList();
                 GC.Collect();
+                NotificationManager.Notify("MetricsUpdated", null);
             }
             else
             {
@@ -1686,194 +1610,6 @@ namespace Barnacle.ViewModels
                 Document.Dirty = true;
                 RegenerateDisplayList();
                 NotificationManager.Notify("ObjectNamesChanged", null);
-            }
-        }
-
-        private void DropFromAbove(Object3D baseOb, Bounds3D bns, List<Bounds2D> baseTriBounds, Object3D ob)
-        {
-            double maxMove = double.MaxValue;
-            // Move the object above the base one
-            Point3D originalPos = ob.Position;
-            double dAbsY = ob.Position.Y - (ob.AbsoluteBounds.Lower.Y - bns.Upper.Y) + 10.0;
-
-            ob.Position = new Point3D(ob.Position.X, dAbsY, ob.Position.Z);
-            ob.Remesh();
-
-            List<Bounds2D> movBounds = new List<Bounds2D>();
-            GetTriangleBounds2D(ob, movBounds);
-
-            for (int movIndex = 0; movIndex < movBounds.Count; movIndex++)
-            {
-                for (int baseIndex = 0; baseIndex < baseTriBounds.Count; baseIndex++)
-                {
-                    Bounds2D overlap = baseTriBounds[baseIndex].Overlap(movBounds[movIndex]);
-                    if (overlap != null)
-                    {
-                        // so tri angle movIndex is above triangle baseIndex in the area given by overlap
-                        // Shoot a ray up from each corner of the over lap
-                        // WE expect the ray should hit both tri angles at at least three of the corners of the overlap
-                        double obDistance = 0;
-                        double baseDistance = 0;
-                        Vector3D rayDirection = new Vector3D(0, 1, 0);
-                        double rayY = 0;
-                        rayY = Math.Min(rayY, ob.AbsoluteBounds.Lower.Y - 10);
-                        rayY = Math.Min(rayY, baseOb.AbsoluteBounds.Lower.Y - 10);
-                        int faceIndex = movIndex * 3;
-                        int f0 = ob.TriangleIndices[faceIndex];
-                        int f1 = ob.TriangleIndices[faceIndex + 1];
-                        int f2 = ob.TriangleIndices[faceIndex + 2];
-
-                        Vector3D v0 = new Vector3D(ob.AbsoluteObjectVertices[f0].X, ob.AbsoluteObjectVertices[f0].Y, ob.AbsoluteObjectVertices[f0].Z);
-                        Vector3D v1 = new Vector3D(ob.AbsoluteObjectVertices[f1].X, ob.AbsoluteObjectVertices[f1].Y, ob.AbsoluteObjectVertices[f1].Z);
-                        Vector3D v2 = new Vector3D(ob.AbsoluteObjectVertices[f2].X, ob.AbsoluteObjectVertices[f2].Y, ob.AbsoluteObjectVertices[f2].Z);
-
-                        faceIndex = baseIndex * 3;
-                        int f3 = baseOb.TriangleIndices[faceIndex];
-                        int f4 = baseOb.TriangleIndices[faceIndex + 1];
-                        int f5 = baseOb.TriangleIndices[faceIndex + 2];
-
-                        Vector3D v3 = new Vector3D(baseOb.AbsoluteObjectVertices[f3].X, baseOb.AbsoluteObjectVertices[f3].Y, baseOb.AbsoluteObjectVertices[f3].Z);
-                        Vector3D v4 = new Vector3D(baseOb.AbsoluteObjectVertices[f4].X, baseOb.AbsoluteObjectVertices[f4].Y, baseOb.AbsoluteObjectVertices[f4].Z);
-                        Vector3D v5 = new Vector3D(baseOb.AbsoluteObjectVertices[f5].X, baseOb.AbsoluteObjectVertices[f5].Y, baseOb.AbsoluteObjectVertices[f5].Z);
-
-                        // pass ray through triangle corners
-                        Vector3D rayOrigin = new Vector3D(v0.X, rayY, v0.Z);
-                        ObjectGapAbove(ref maxMove, ref baseDistance, rayDirection, v0, v1, v2, v3, v4, v5, rayOrigin);
-                        rayOrigin = new Vector3D(v1.X, rayY, v1.Z);
-                        ObjectGapAbove(ref maxMove, ref baseDistance, rayDirection, v0, v1, v2, v3, v4, v5, rayOrigin);
-                        rayOrigin = new Vector3D(v2.X, rayY, v2.Z);
-                        ObjectGapAbove(ref maxMove, ref baseDistance, rayDirection, v0, v1, v2, v3, v4, v5, rayOrigin);
-
-                        // pass ray through barycentre
-                        Vector3D bc = BaryCentric(v0, v1, v2, 0.333333, 0.333333, 0.333333);
-                        rayOrigin = new Vector3D(bc.X, rayY, bc.Z);
-                        ObjectGapAbove(ref maxMove, ref baseDistance, rayDirection, v0, v1, v2, v3, v4, v5, rayOrigin);
-
-                        // pass ray through three other sample points
-                        bc = BaryCentric(v0, v1, v2, 0.2, 0.4, 0.4);
-                        rayOrigin = new Vector3D(bc.X, rayY, bc.Z);
-                        ObjectGapAbove(ref maxMove, ref baseDistance, rayDirection, v0, v1, v2, v3, v4, v5, rayOrigin);
-
-                        bc = BaryCentric(v0, v1, v2, 0.4, 0.2, 0.4);
-                        rayOrigin = new Vector3D(bc.X, rayY, bc.Z);
-                        ObjectGapAbove(ref maxMove, ref baseDistance, rayDirection, v0, v1, v2, v3, v4, v5, rayOrigin);
-
-                        bc = BaryCentric(v0, v1, v2, 0.4, 0.4, 0.2);
-                        rayOrigin = new Vector3D(bc.X, rayY, bc.Z);
-                        ObjectGapAbove(ref maxMove, ref baseDistance, rayDirection, v0, v1, v2, v3, v4, v5, rayOrigin);
-                    }
-                }
-            }
-
-            if (maxMove < double.MaxValue)
-            {
-                ob.Position = new Point3D(ob.Position.X, ob.Position.Y - maxMove - 0.1, ob.Position.Z);
-                ob.Remesh();
-            }
-            else
-            {
-                // Cant drop so put back in place
-                ob.Position = originalPos;
-                ob.Remesh();
-            }
-        }
-
-        private void DropFromBelow(Object3D baseOb, Bounds3D bns, List<Bounds2D> baseTriBounds, Object3D ob)
-        {
-            double maxMove = double.MaxValue;
-            Point3D originalPos = ob.Position;
-
-            // Move the object below the base one
-            double dAbsY = ob.Position.Y + (bns.Lower.Y - ob.AbsoluteBounds.Upper.Y) - 10.0;
-
-            ob.Position = new Point3D(ob.Position.X, dAbsY, ob.Position.Z);
-            ob.Remesh();
-
-            List<Bounds2D> movBounds = new List<Bounds2D>();
-            GetTriangleBounds2D(ob, movBounds);
-
-            for (int movIndex = 0; movIndex < movBounds.Count; movIndex++)
-            {
-                for (int baseIndex = 0; baseIndex < baseTriBounds.Count; baseIndex++)
-                {
-                    Bounds2D overlap = baseTriBounds[baseIndex].Overlap(movBounds[movIndex]);
-                    if (overlap != null)
-                    {
-                        // so tri angle movIndex is above triangle baseIndex in the area given by overlap
-                        // Shoot a ray up from each corner of the over lap
-                        // WE expect the ray should hit both tri angles at at least three of the corners of the overlap
-                        double obDistance = 0;
-                        double baseDistance = 0;
-                        double rayY = ob.AbsoluteBounds.Upper.Y + 10;
-                        rayY = Math.Max(rayY, baseOb.AbsoluteBounds.Upper.Y + 10);
-                        Vector3D rayDirection = new Vector3D(0, -1, 0);
-                        int faceIndex = movIndex * 3;
-                        int f0 = ob.TriangleIndices[faceIndex];
-                        int f1 = ob.TriangleIndices[faceIndex + 1];
-                        int f2 = ob.TriangleIndices[faceIndex + 2];
-
-                        Vector3D v0 = new Vector3D(ob.AbsoluteObjectVertices[f0].X, ob.AbsoluteObjectVertices[f0].Y, ob.AbsoluteObjectVertices[f0].Z);
-                        Vector3D v1 = new Vector3D(ob.AbsoluteObjectVertices[f1].X, ob.AbsoluteObjectVertices[f1].Y, ob.AbsoluteObjectVertices[f1].Z);
-                        Vector3D v2 = new Vector3D(ob.AbsoluteObjectVertices[f2].X, ob.AbsoluteObjectVertices[f2].Y, ob.AbsoluteObjectVertices[f2].Z);
-
-                        faceIndex = baseIndex * 3;
-                        int f3 = baseOb.TriangleIndices[faceIndex];
-                        int f4 = baseOb.TriangleIndices[faceIndex + 1];
-                        int f5 = baseOb.TriangleIndices[faceIndex + 2];
-
-                        Vector3D v3 = new Vector3D(baseOb.AbsoluteObjectVertices[f3].X, baseOb.AbsoluteObjectVertices[f3].Y, baseOb.AbsoluteObjectVertices[f3].Z);
-                        Vector3D v4 = new Vector3D(baseOb.AbsoluteObjectVertices[f4].X, baseOb.AbsoluteObjectVertices[f4].Y, baseOb.AbsoluteObjectVertices[f4].Z);
-                        Vector3D v5 = new Vector3D(baseOb.AbsoluteObjectVertices[f5].X, baseOb.AbsoluteObjectVertices[f5].Y, baseOb.AbsoluteObjectVertices[f5].Z);
-
-                        Vector3D rayOrigin = new Vector3D(v0.X, rayY, v0.Z);
-                        obDistance = ObjectGapUnder(ref maxMove, ref baseDistance, rayDirection, v0, v1, v2, v3, v4, v5, rayOrigin);
-                        rayOrigin = new Vector3D(v1.X, rayY, v1.Z);
-                        obDistance = ObjectGapUnder(ref maxMove, ref baseDistance, rayDirection, v0, v1, v2, v3, v4, v5, rayOrigin);
-                        rayOrigin = new Vector3D(v2.X, rayY, v2.Z);
-                        obDistance = ObjectGapUnder(ref maxMove, ref baseDistance, rayDirection, v0, v1, v2, v3, v4, v5, rayOrigin);
-                    }
-                }
-            }
-
-            if (maxMove < double.MaxValue)
-            {
-                ob.Position = new Point3D(ob.Position.X, ob.Position.Y + maxMove + 0.1, ob.Position.Z);
-                ob.Remesh();
-            }
-            else
-            {
-                // Cant drop so put back in place
-                ob.Position = originalPos;
-                ob.Remesh();
-            }
-        }
-
-        private void DropItems(string dir)
-        {
-            CheckPoint();
-            Object3D baseOb = selectedObjectAdorner.SelectedObjects[0];
-            Bounds3D bns = new Bounds3D(baseOb.AbsoluteBounds);
-
-            List<Bounds2D> baseTriBounds = new List<Bounds2D>();
-            GetTriangleBounds2D(baseOb, baseTriBounds);
-
-            for (int i = 1; i < selectedItems.Count; i++)
-            {
-                Object3D ob = selectedItems[i];
-                switch (dir.ToLower())
-                {
-                    case "above":
-                        {
-                            DropFromAbove(baseOb, bns, baseTriBounds, ob);
-                        }
-                        break;
-
-                    case "below":
-                        {
-                            DropFromBelow(baseOb, bns, baseTriBounds, ob);
-                        }
-                        break;
-                }
             }
         }
 
@@ -2164,55 +1900,6 @@ namespace Barnacle.ViewModels
             }
         }
 
-        private bool ForceUnion()
-        {
-            document.Dirty = true;
-            bool res = false;
-            if (selectedObjectAdorner != null)
-            {
-                if (selectedObjectAdorner.NumberOfSelectedObjects() > 1)
-                {
-                    CheckPoint();
-                    Point3D minPnt = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
-                    Point3D maxPnt = new Point3D(double.MinValue, double.MinValue, double.MinValue);
-                    foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
-                    {
-                        minPnt = MinPoint(minPnt, ob.AbsoluteBounds.Lower);
-                        maxPnt = MaxPoint(maxPnt, ob.AbsoluteBounds.Upper);
-                    }
-
-                    Point3DCollection vertices = new Point3DCollection();
-                    Int32Collection faces = new Int32Collection();
-                    OctTreeLib.OctTree octree = new OctTreeLib.OctTree(vertices, minPnt, maxPnt, 200);
-                    foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
-                    {
-                        foreach (int f in ob.TriangleIndices)
-                        {
-                            var sp = ob.AbsoluteObjectVertices[f];
-                            Point3D p = new Point3D(sp.X, sp.Y, sp.Z);
-                            int nf = octree.AddPoint(p);
-
-                            faces.Add(nf);
-                        }
-                    }
-                    for (int i = 1; i < selectedObjectAdorner.SelectedObjects.Count; i++)
-                    {
-                        Document.Content.Remove(selectedObjectAdorner.SelectedObjects[i]);
-                    }
-
-                    selectedObjectAdorner.SelectedObjects[0].AbsoluteObjectVertices = vertices;
-                    selectedObjectAdorner.SelectedObjects[0].TriangleIndices = faces;
-                    selectedObjectAdorner.SelectedObjects[0].AbsoluteToRelative();
-                    selectedObjectAdorner.SelectedObjects[0].Remesh();
-                    Document.Dirty = true;
-                    RegenerateDisplayList();
-                    NotificationManager.Notify("ObjectNamesChanged", null);
-                    res = true;
-                }
-            }
-            return res;
-        }
-
         private KeyboardRotation GetRotationDirection(Key k, bool ctrlDown = false)
         {
             KeyboardRotation result = KeyboardRotation.z1;
@@ -2265,24 +1952,6 @@ namespace Barnacle.ViewModels
                     break;
             }
             return res;
-        }
-
-        private void GetTriangleBounds2D(Object3D object3D, List<Bounds2D> bounds)
-        {
-            bounds.Clear();
-            int i = 0;
-            while (i + 2 < object3D.TriangleIndices.Count)
-            {
-                Bounds2D bounds2D = new Bounds2D();
-
-                for (int j = 0; j < 3; j++)
-                {
-                    int f = object3D.TriangleIndices[i + j];
-                    bounds2D.Adjust(object3D.AbsoluteObjectVertices[f].X, object3D.AbsoluteObjectVertices[f].Z);
-                }
-                bounds.Add(bounds2D);
-                i += 3;
-            }
         }
 
         private bool GroupToMesh()
@@ -3016,38 +2685,6 @@ namespace Barnacle.ViewModels
             return handled;
         }
 
-        private void HomeCamera()
-        {
-            ResetSelection();
-            camera.HomeFront();
-            SetCameraDistance();
-            NotifyPropertyChanged("CameraPos");
-            CameraScrollDelta = new Point3D(1, 1, 0);
-            LookToCenter();
-            zoomPercent = 100;
-        }
-
-        private void LeftCamera()
-        {
-            ResetSelection();
-            camera.HomeLeft();
-            // true because we are looking from the side
-            SetCameraDistance(true);
-            NotifyPropertyChanged("CameraPos");
-            CameraScrollDelta = new Point3D(0, 1, 1);
-            LookToCenter();
-            zoomPercent = 100;
-        }
-
-        private void LoadCamera()
-        {
-            string dataPath = PathManager.CommonAppDataFolder() + "\\" + cameraRecordFile;
-            camera.Read(dataPath);
-            LookToCenter();
-            ReportCameraPosition();
-            NotifyPropertyChanged("CameraPos");
-        }
-
         private void LoadingNewFile(object param)
         {
             // about to switch files dont leave the adorners hanging around
@@ -3090,38 +2727,6 @@ namespace Barnacle.ViewModels
             }
 
             return res;
-        }
-
-        private void LookAtObject()
-        {
-            if (selectedItems.Count == 1)
-            {
-                Object3D sel = selectedItems[0];
-                CameraLookObject = sel.Position;
-                camera.LookAt(CameraLookObject);
-                LookToObject();
-                NotifyPropertyChanged("CameraPos");
-                NotifyPropertyChanged("LookDirection");
-            }
-        }
-
-        private void LookToCenter()
-        {
-            lookDirection.X = -camera.CameraPos.X;
-            lookDirection.Y = -camera.CameraPos.Y;
-            lookDirection.Z = -camera.CameraPos.Z;
-            lookDirection.Normalize();
-            NotifyPropertyChanged("LookDirection");
-        }
-
-        private void LookToObject()
-        {
-            Vector3D v = new Vector3D(CameraLookObject.X - camera.CameraPos.X,
-                  CameraLookObject.Y - camera.CameraPos.Y,
-                  CameraLookObject.Z - camera.CameraPos.Z);
-            v.Normalize();
-            LookDirection = v;
-            NotifyPropertyChanged("LookDirection");
         }
 
         private void LoopSmooth(Object3D ob)
@@ -3266,17 +2871,6 @@ namespace Barnacle.ViewModels
                 ob.Remesh();
             }
             Document.Dirty = true;
-        }
-
-        private void MoveCameraDelta(Point lastMouse, Point newPos)
-        {
-            double dx = newPos.X - lastMouse.X;
-            double dy = newPos.Y - lastMouse.Y;
-            double dz = newPos.X - lastMouse.X;
-
-            camera.Move(dx, dy);
-            ReportCameraPosition();
-            NotifyPropertyChanged("CameraPos");
         }
 
         private void MoveSelectionToCentre()
@@ -3464,299 +3058,6 @@ namespace Barnacle.ViewModels
         private void OnBendAngle(object param)
         {
             bendAngle = Convert.ToDouble(param as string);
-        }
-
-        private void OnCameraCommand(object param)
-        {
-            string p = param.ToString();
-            switch (p)
-            {
-                case "CameraHome":
-                    {
-                        HomeCamera();
-                        cameraMode = CameraModes.CameraMoveLookCenter;
-                    }
-                    break;
-
-                case "CameraBack":
-                    {
-                        BackCamera();
-                        cameraMode = CameraModes.CameraMoveLookCenter;
-                    }
-                    break;
-
-                case "CameraLeft":
-                    {
-                        LeftCamera();
-                        cameraMode = CameraModes.CameraMoveLookCenter;
-                    }
-                    break;
-
-                case "CameraRight":
-                    {
-                        RightCamera();
-                        cameraMode = CameraModes.CameraMoveLookCenter;
-                    }
-                    break;
-
-                case "CameraTop":
-                    {
-                        TopCamera();
-                        cameraMode = CameraModes.CameraMoveLookCenter;
-                    }
-                    break;
-
-                case "CameraBottom":
-                    {
-                        BottomCamera();
-                        cameraMode = CameraModes.CameraMoveLookCenter;
-                    }
-                    break;
-
-                case "CameraLookCenter":
-                    {
-                        LookToCenter();
-                        ReportCameraPosition();
-                        cameraMode = CameraModes.CameraMoveLookCenter;
-                    }
-                    break;
-
-                case "CameraMove":
-                    {
-                        cameraMode = CameraModes.CameraMove;
-                    }
-                    break;
-
-                case "CameraMoveLookCenter":
-                    {
-                        cameraMode = CameraModes.CameraMoveLookCenter;
-                        camera.LookAt(new Point3D(0, 0, 0));
-                    }
-                    break;
-
-                case "CameraLookObject":
-                    {
-                        cameraMode = CameraModes.CameraMoveLookObject;
-                        LookAtObject();
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-            ReportCameraPosition();
-        }
-
-        private void OnCircularPaste(object param)
-        {
-            CircularPasteDlg dlg = new CircularPasteDlg();
-            dlg.Owner = Application.Current.MainWindow;
-            if (dlg.ShowDialog() == true)
-            {
-                if (ObjectClipboard.HasItems())
-                {
-                    CheckPoint();
-                    RecalculateAllBounds();
-                    if (selectedObjectAdorner != null)
-                    {
-                        selectedObjectAdorner.Clear();
-                    }
-                    double radius = Convert.ToDouble(dlg.RadiusBox.Text);
-                    double altRadius = Convert.ToDouble(dlg.AltBox.Text);
-                    if (altRadius == 0)
-                    {
-                        altRadius = radius;
-                    }
-                    if (radius > 0 || altRadius > 0)
-                    {
-                        double cx = allBounds.Upper.X;
-                        if (radius > altRadius)
-                        {
-                            cx += radius;
-                        }
-                        else
-                        {
-                            cx += altRadius;
-                        }
-                        double cy = 0;
-                        double cz = 0;
-                        if (Project.SharedProjectSettings.PlaceNewAtMarker && floorMarker != null)
-                        {
-                            cx = floorMarker.Position.X;
-                            cy = floorMarker.Position.Y;
-                            cz = floorMarker.Position.Z;
-                        }
-                        int repeats = Convert.ToInt16(dlg.RepeatsBox.Text);
-                        if (repeats > 0)
-                        {
-                            double rx;
-                            double ry;
-                            double rz;
-
-                            double dTheta = (Math.PI * 2) / repeats;
-                            double theta = 0;
-                            bool alt = false;
-                            double x;
-                            double y;
-
-                            while (theta < (Math.PI * 2))
-                            {
-                                rx = 0;
-                                ry = 0;
-                                rz = 0;
-                                if (!alt)
-                                {
-                                    x = radius * Math.Cos(theta);
-                                    y = radius * Math.Sin(theta);
-                                }
-                                else
-                                {
-                                    x = altRadius * Math.Cos(theta);
-                                    y = altRadius * Math.Sin(theta);
-                                }
-                                alt = !alt;
-                                foreach (Object3D cl in ObjectClipboard.Items)
-                                {
-                                    Object3D o = cl.Clone();
-                                    o.Name = Document.NextName;
-
-                                    if (o is Group3D)
-                                    {
-                                        (o as Group3D).Init();
-                                    }
-
-                                    if (dlg.DirectionX.IsChecked == true)
-                                    {
-                                        o.Position = new Point3D(cx + o.AbsoluteBounds.Width / 2 + x, cy, cz + o.AbsoluteBounds.Depth / 2 + y);
-                                        ry = -theta;
-                                        if (dlg.FaceIn.IsChecked == true)
-                                        {
-                                            ry += Math.PI;
-                                        }
-                                    }
-
-                                    if (dlg.DirectionY.IsChecked == true)
-                                    {
-                                        o.Position = new Point3D(cx, cy + o.AbsoluteBounds.Height / 2 + x, cz + o.AbsoluteBounds.Depth / 2 + y);
-                                        // rx = (Math.PI / 2) + theta;
-                                        rx = theta;
-                                        if (dlg.FaceIn.IsChecked == true)
-                                        {
-                                            rx += Math.PI;
-                                        }
-                                    }
-
-                                    if (dlg.DirectionZ.IsChecked == true)
-                                    {
-                                        o.Position = new Point3D(cx + o.AbsoluteBounds.Width / 2 + x, cy + o.AbsoluteBounds.Height / 2 + y, cz);
-                                        // rz = theta;
-                                        //rz = (Math.PI / 2) + theta;
-                                        rz = 3 * Math.PI / 2 + theta;
-                                        if (dlg.FaceIn.IsChecked == true)
-                                        {
-                                            rz += Math.PI;
-                                        }
-                                    }
-
-                                    o.CalcScale(false);
-
-                                    if (!dlg.FaceNone.IsChecked == true)
-                                    {
-                                        o.RotateRad(new Point3D(rx, ry, rz));
-                                    }
-
-                                    o.Remesh();
-
-                                    if (dlg.DirectionX.IsChecked == true)
-                                    {
-                                        o.MoveToFloor();
-                                    }
-                                    allBounds.Add(o.AbsoluteBounds);
-                                    GeometryModel3D gm = GetMesh(o);
-                                    Document.Content.Add(o);
-                                    Document.Dirty = true;
-
-                                    selectedItems.Add(o);
-                                    if (selectedObjectAdorner == null)
-                                    {
-                                        MakeSizeAdorner();
-                                    }
-                                    selectedObjectAdorner.AdornObject(o);
-                                }
-
-                                theta += dTheta;
-                            }
-                        }
-                        document.Dirty = true;
-                        RegenerateDisplayList();
-                        UpdateSelectionDisplay();
-                    }
-                }
-            }
-        }
-
-        private void OnCloneInPlace(object param)
-        {
-            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
-            {
-                Object3D ob = selectedObjectAdorner.SelectedObjects[0];
-                if (ob != null)
-                {
-                    CheckPoint();
-                    Object3D o = ob.Clone();
-                    o.Name = Document.DuplicateName(o.Name);
-
-                    o.Remesh();
-                    // o.MoveToFloor();
-                    o.CalcScale(false);
-                    allBounds += o.AbsoluteBounds;
-                    GeometryModel3D gm = GetMesh(o);
-                    Document.Content.Add(o);
-                    Document.Dirty = true;
-
-                    selectedObjectAdorner.Clear();
-                    selectedObjectAdorner.AdornObject(o);
-                    RegenerateDisplayList();
-                    NotificationManager.Notify("ObjectNamesChanged", null);
-                    NotificationManager.Notify("ObjectSelected", o);
-                    PassOnGroupStatus(o);
-                }
-            }
-            else
-            {
-                MessageBox.Show("Must have a single object selected", "Error");
-            }
-        }
-
-        private void OnCopy(object param)
-        {
-            if (selectedObjectAdorner != null)
-            {
-                ObjectClipboard.Clear();
-                GC.Collect();
-                foreach (Object3D o in selectedObjectAdorner.SelectedObjects)
-                {
-                    ObjectClipboard.Add(o);
-                }
-            }
-        }
-
-        private void OnCut(object param)
-        {
-            if (selectedObjectAdorner != null)
-            {
-                CheckPoint();
-                ObjectClipboard.Clear();
-                foreach (Object3D o in selectedObjectAdorner.SelectedObjects)
-                {
-                    ObjectClipboard.Add(o);
-                    Document.DeleteObject(o);
-                }
-                document.Dirty = true;
-                selectedObjectAdorner.Clear();
-                RegenerateDisplayList();
-                NotificationManager.Notify("ObjectNamesChanged", null);
-            }
         }
 
         private void OnCutPlane(object obj)
@@ -4368,6 +3669,8 @@ namespace Barnacle.ViewModels
             else
             {
                 SubdivideObject(selectedItems[0]);
+                // let any one who is interested know that the number of faces etc have probably changed.
+                NotificationManager.Notify("MetricsUpdated", null);
             }
         }
 
@@ -4381,6 +3684,7 @@ namespace Barnacle.ViewModels
             else
             {
                 MirrorObject(s);
+                NotificationManager.Notify("MetricsUpdated", null);
             }
         }
 
@@ -4406,90 +3710,6 @@ namespace Barnacle.ViewModels
             RegenerateDisplayList();
         }
 
-        private void OnMultiPaste(object param)
-        {
-            MultiPasteConfig cfg = param as MultiPasteConfig;
-            if (cfg != null)
-            {
-                if (ObjectClipboard.HasItems())
-                {
-                    CheckPoint();
-                    RecalculateAllBounds();
-                    if (selectedObjectAdorner == null)
-                    {
-                        MakeSizeAdorner();
-                    }
-
-                    selectedObjectAdorner.Clear();
-                    double cx = allBounds.Upper.X;
-
-                    double cy = allBounds.Upper.Y;
-                    double cz = allBounds.Upper.Z;
-                    if (Project.SharedProjectSettings.PlaceNewAtMarker && floorMarker != null)
-                    {
-                        cx = floorMarker.Position.X;
-                        cy = floorMarker.Position.Y;
-                        cz = floorMarker.Position.Z;
-                    }
-                    double altOff = 0;
-                    for (int i = 0; i < cfg.Repeats; i++)
-                    {
-                        if (i % 2 == 0)
-                        {
-                            altOff = 0;
-                        }
-                        else
-                        {
-                            altOff = cfg.AlternatingOffset;
-                        }
-                        foreach (Object3D cl in ObjectClipboard.Items)
-                        {
-                            Object3D o = cl.Clone();
-                            o.Name = Document.NextName;
-
-                            if (o is Group3D)
-                            {
-                                (o as Group3D).Init();
-                            }
-
-                            if (cfg.Direction == "X")
-                            {
-                                o.Position = new Point3D(cx + o.AbsoluteBounds.Width / 2, cy, cz + altOff);
-                                cx += o.AbsoluteBounds.Width + cfg.Spacing;
-                            }
-                            if (cfg.Direction == "Y")
-                            {
-                                o.Position = new Point3D(cx + altOff, cy + o.AbsoluteBounds.Height / 2, cz);
-                                cy += o.AbsoluteBounds.Height + cfg.Spacing;
-                            }
-                            if (cfg.Direction == "Z")
-                            {
-                                o.Position = new Point3D(cx + altOff, cy, cz + o.AbsoluteBounds.Depth / 2);
-                                cz += o.AbsoluteBounds.Depth + cfg.Spacing;
-                            }
-                            o.CalcScale(false);
-
-                            o.Remesh();
-                            if (cfg.Direction == "X" || cfg.Direction == "Z")
-                            {
-                                o.MoveToFloor();
-                            }
-
-                            allBounds.Add(o.AbsoluteBounds);
-                            GeometryModel3D gm = GetMesh(o);
-                            Document.Content.Add(o);
-                            Document.Dirty = true;
-
-                            selectedItems.Add(o);
-                            selectedObjectAdorner.AdornObject(o);
-                        }
-                    }
-                    UpdateSelectionDisplay();
-                    RegenerateDisplayList();
-                }
-            }
-        }
-
         private void OnNewDocument(object param)
         {
             selectedObjectAdorner?.Clear();
@@ -4507,42 +3727,6 @@ namespace Barnacle.ViewModels
             // that are not in the newly loaded file
             selectedObjectAdorner = null;
             RegenerateDisplayList();
-        }
-
-        private void OnPaste(object param)
-        {
-            if (ObjectClipboard.HasItems())
-            {
-                CheckPoint();
-                RecalculateAllBounds();
-
-                if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
-                {
-                    Object3D old = selectedObjectAdorner.SelectedObjects[0];
-                    MessageBoxResult res = MessageBox.Show("Do you want to replace " + old.Name + "?", "Info", MessageBoxButton.YesNo);
-                    if (res == MessageBoxResult.Yes)
-                    {
-                        Document.Content.Remove(old);
-                        PasteAt(old.Position);
-                    }
-                    else
-                    {
-                        OrdinaryPaste();
-                    }
-                }
-                else
-                {
-                    OrdinaryPaste();
-                }
-            }
-        }
-
-        private void OnPasteAt(object param)
-        {
-            if (ObjectClipboard.HasItems() && floorMarker != null)
-            {
-                PasteAt(floorMarker.Position);
-            }
         }
 
         private void OnRefresh(object param)
@@ -4772,40 +3956,6 @@ namespace Barnacle.ViewModels
             Document.Dirty = true;
         }
 
-        private void OrdinaryPaste()
-        {
-            selectedObjectAdorner?.Clear();
-
-            if (Project.SharedProjectSettings.PlaceNewAtMarker && floorMarker != null)
-            {
-                PasteAt(floorMarker.Position);
-            }
-            else
-            {
-                foreach (Object3D cl in ObjectClipboard.Items)
-                {
-                    Object3D o = cl.Clone();
-                    if (Document.ContainsName(o.Name))
-                    {
-                        o.Name = Document.DuplicateName(o.Name);
-                    }
-
-                    double cx = allBounds.Upper.X + o.AbsoluteBounds.Width / 2;
-
-                    o.Position = new Point3D(cx, 0, 0);
-                    o.Remesh();
-                    o.MoveToFloor();
-                    o.CalcScale(false);
-                    allBounds += o.AbsoluteBounds;
-                    GeometryModel3D gm = GetMesh(o);
-                    Document.Content.Add(o);
-                    Document.Dirty = true;
-                }
-            }
-            RegenerateDisplayList();
-            NotificationManager.Notify("ObjectNamesChanged", null);
-        }
-
         private void PassOnGroupStatus(Object3D o)
         {
             if (o is Group3D)
@@ -4816,61 +3966,6 @@ namespace Barnacle.ViewModels
             {
                 NotificationManager.Notify("GroupSelected", false);
             }
-        }
-
-        private void PasteAt(Point3D targetPoint)
-        {
-            CheckPoint();
-            RecalculateAllBounds();
-            selectedObjectAdorner?.Clear();
-            Point collectionCentre = new Point(0, 0);
-            // if we have more than one object being pasted at the marker we want to keep the
-            // relative positions the same as the original but treat the marker as there new centre.
-            // If there is only one object, it should just be positioned directly at the marker
-            if (ObjectClipboard.Items.Count > 1)
-            {
-                foreach (Object3D cl in ObjectClipboard.Items)
-                {
-                    collectionCentre.X = collectionCentre.X + cl.Position.X;
-                    collectionCentre.Y = collectionCentre.Y + cl.Position.Z;
-                }
-                collectionCentre.X /= ObjectClipboard.Items.Count;
-                collectionCentre.Y /= ObjectClipboard.Items.Count;
-            }
-            foreach (Object3D cl in ObjectClipboard.Items)
-            {
-                Object3D o = cl.Clone();
-                if (Document.ContainsName(o.Name))
-                {
-                    o.Name = Document.DuplicateName(o.Name);
-                }
-                if (o is Group3D)
-                {
-                    // (o as Group3D).Init();
-                }
-
-                if (ObjectClipboard.Items.Count > 1)
-                {
-                    double offsetX = o.Position.X - collectionCentre.X;
-                    double offsetZ = o.Position.Z - collectionCentre.Y;
-
-                    o.Position = new Point3D(targetPoint.X + offsetX, targetPoint.Y, targetPoint.Z + offsetZ);
-                }
-                else
-                {
-                    o.Position = new Point3D(targetPoint.X, targetPoint.Y, targetPoint.Z);
-                }
-                o.Remesh();
-                o.MoveToFloor();
-                o.CalcScale(false);
-                allBounds += o.AbsoluteBounds;
-                GeometryModel3D gm = GetMesh(o);
-                Document.Content.Add(o);
-                Document.Dirty = true;
-            }
-
-            RegenerateDisplayList();
-            NotificationManager.Notify("ObjectNamesChanged", null);
         }
 
         private bool Prescale(Object3D obj, string obType)
@@ -4967,14 +4062,6 @@ namespace Barnacle.ViewModels
                 RegenerateDisplayList();
                 document.Dirty = true;
             }
-        }
-
-        private void ReportCameraPosition()
-        {
-            String s = $"Camera ({camera.CameraPos.X:F2},{camera.CameraPos.Y:F2},{camera.CameraPos.Z:F2}) => ({lookDirection.X:F2},{lookDirection.Y:F2},{lookDirection.Z:F2}) Zoom {zoomPercent:F1}%";
-            NotificationManager.Notify("SetStatusText1", s);
-            NotifyPropertyChanged("ModelItems");
-            ReportStatistics();
         }
 
         /// <summary>
@@ -5111,26 +4198,6 @@ namespace Barnacle.ViewModels
             }
         }
 
-        private void RightCamera()
-        {
-            ResetSelection();
-            camera.HomeRight();
-            // true because we are looking from the side
-            SetCameraDistance(true);
-            NotifyPropertyChanged("CameraPos");
-            CameraScrollDelta = new Point3D(0, 1, -1);
-            LookToCenter();
-            zoomPercent = 100;
-        }
-
-        private void RotateCamera(double dt, double dp)
-        {
-            camera.RotateDegrees(dt, dp);
-            LookToCenter();
-            ReportCameraPosition();
-            NotifyPropertyChanged("CameraPos");
-        }
-
         private void RotateSelected(Object3D obj, Point3D pr)
         {
             if (obj != null)
@@ -5144,13 +4211,6 @@ namespace Barnacle.ViewModels
                 NotificationManager.Notify("RefreshAdorners", null);
                 Document.Dirty = true;
             }
-        }
-
-        private void SaveCamera()
-        {
-            string dataPath = PathManager.CommonAppDataFolder();
-            dataPath += "\\" + cameraRecordFile;
-            camera.Save(dataPath);
         }
 
         private void SeamObject(Object3D ob, double plane, ObjectSeamer.SeamerOrientation seamOrientation)
@@ -5488,36 +4548,6 @@ namespace Barnacle.ViewModels
             }
         }
 
-        private void SetCameraDistance(bool sideView = false)
-        {
-            double w = allBounds.Upper.X;
-            double h = allBounds.Upper.Y;
-            double d = allBounds.Upper.Z;
-
-            if (Math.Abs(allBounds.Lower.X) > w)
-            {
-                w = Math.Abs(allBounds.Lower.X);
-            }
-
-            if (Math.Abs(allBounds.Lower.Y) > h)
-            {
-                h = Math.Abs(allBounds.Lower.Y);
-            }
-
-            if (Math.Abs(allBounds.Lower.Z) > d)
-            {
-                d = Math.Abs(allBounds.Lower.Z);
-            }
-            if (sideView)
-            {
-                camera.DistanceToFit(d, h, w * 1.5);
-            }
-            else
-            {
-                camera.DistanceToFit(w, h, d * 1.5);
-            }
-        }
-
         private void SetSelectionColours()
         {
             bool first = true;
@@ -5743,16 +4773,6 @@ namespace Barnacle.ViewModels
             return true;
         }
 
-        private void TopCamera()
-        {
-            ResetSelection();
-            camera.HomeTop();
-            NotifyPropertyChanged("CameraPos");
-            CameraScrollDelta = new Point3D(1, 0, 1);
-            LookToCenter();
-            zoomPercent = 100;
-        }
-
         private async Task TryGroup(string s)
         {
             if (SelectionContainsReferences())
@@ -5806,17 +4826,6 @@ namespace Barnacle.ViewModels
             }
         }
 
-        private void UpdateLookAt()
-        {
-            if (cameraMode == CameraModes.CameraMoveLookObject)
-            {
-                if (selectedItems.Count == 1)
-                {
-                    LookAtObject();
-                }
-            }
-        }
-
         private void UpdateSelectionDisplay()
         {
             SetSelectionColours();
@@ -5839,34 +4848,6 @@ namespace Barnacle.ViewModels
         {
             double d = (double)param;
             keyrotationy = d;
-        }
-
-        private void Zoom(double v)
-        {
-            camera.Zoom(v);
-            zoomPercent += v;
-            ReportCameraPosition();
-            NotifyPropertyChanged("CameraPos");
-        }
-
-        private void ZoomIn(object param)
-        {
-            Zoom(1);
-        }
-
-        private void ZoomOut(object param)
-        {
-            if (zoomPercent > -50)
-            {
-                Zoom(-1);
-            }
-        }
-
-        private void ZoomReset(object param)
-        {
-            double diff = 100 - zoomPercent;
-            Zoom(diff);
-            zoomPercent = 100;
         }
 
         private void ZRotationChanged(object param)

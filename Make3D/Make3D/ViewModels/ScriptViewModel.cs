@@ -346,6 +346,8 @@ program ""Script Name""
             ResultsText = "";
             Refresh(resultsBox);
             content.Clear();
+            Log.Instance().Clear();
+            ScriptLanguage.Log.Instance().Clear();
             //RegenerateDisplayList();
             Viewer?.MultiModels.Children.Clear();
         }

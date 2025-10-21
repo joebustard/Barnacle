@@ -1160,13 +1160,13 @@ namespace Barnacle.LineLib
             }
             if (valid && pnts.Count >= 2)
             {
+                EnsureInBounds(pnts);
                 flexiPoints.Clear();
                 int i = 0;
                 foreach (FlexiPoint f in pnts)
                 {
                     f.Id = i;
                     flexiPoints.Add(f);
-                    CheckClip(f);
                     i++;
                 }
 
@@ -1685,6 +1685,51 @@ namespace Barnacle.LineLib
             ((point2.Y - point1.Y) * (point2.Y - point1.Y));
 
             return Math.Sqrt(diff);
+        }
+
+        private void EnsureInBounds(List<FlexiPoint> pnts)
+        {
+            double minx = double.MaxValue;
+            double miny = double.MaxValue;
+            foreach (FlexiPoint f in pnts)
+            {
+                if (f.X < minx)
+                {
+                    minx = f.X;
+                }
+                if (f.Y < miny)
+                {
+                    miny = f.Y;
+                }
+            }
+            bool move = false;
+            if (minx < 0)
+            {
+                // Move by the distance we are out of bounds by plus a little extra so point isn't exactly on edge of control
+                minx = -minx + 5;
+                move = true;
+            }
+            else
+            {
+                minx = 0;
+            }
+            if (miny < 0)
+            {
+                miny = -miny + 5;
+                move = true;
+            }
+            else
+            {
+                miny = 0;
+            }
+            if (move)
+            {
+                foreach (FlexiPoint f in pnts)
+                {
+                    f.X += minx;
+                    f.Y += miny;
+                }
+            }
         }
 
         private bool GetCoord(string v, ref double x, ref double y)
