@@ -494,7 +494,7 @@ program ""Script Name""
             ClearResults();
             Refresh(resultsBox);
             s_cts = new CancellationTokenSource();
-
+            NotificationManager.Notify("ScriptStatus", "true");
             RunRes res = await RunAsync(s_cts.Token).ConfigureAwait(true);
 
             // get the log entries from the script
@@ -533,6 +533,7 @@ program ""Script Name""
             Viewer.Redisplay();
             //RegenerateDisplayList();
             EnableRun = true;
+            NotificationManager.Notify("ScriptStatus", "false");
         }
 
         internal bool ScriptText(string scriptText)
@@ -688,10 +689,11 @@ program ""Script Name""
                 {
                     Rtf = script.ToErrorRichText(Source);
                 }
-                Dirty = false;
+
                 filePath = fileName;
                 NotificationManager.Notify("UpdateScript", null);
                 content.Clear();
+                Dirty = false;
             }
         }
 

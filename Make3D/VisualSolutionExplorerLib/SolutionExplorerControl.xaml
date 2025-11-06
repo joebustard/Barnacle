@@ -113,7 +113,7 @@
             AllowDrop="True"
             DragEnter="DropTree_DragEnter"
             Drop="DropTree_Drop"
-            Focusable="False"
+            Focusable="True"
             ItemsSource="{Binding Folders}"
             PreviewMouseLeftButtonDown="Tree_PreviewMouseLeftButtonDown"
             PreviewMouseMove="Tree_MouseMove"

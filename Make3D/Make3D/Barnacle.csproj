@@ -97,6 +97,7 @@
     </Compile>
     <Compile Include="Dialogs\Barrel\BarrelDlg.xaml.cs" />
     <Compile Include="Dialogs\BaseModellerDialog.cs" />
+    <Compile Include="Dialogs\BevelledGear\BevelledGearDlg.xaml.cs" />
     <Compile Include="Dialogs\BezierFuselage\BezierLine.cs" />
     <Compile Include="Dialogs\BezierFuselage\BulkheadControl.xaml.cs">
       <DependentUpon>BulkheadControl.xaml</DependentUpon>
@@ -495,6 +496,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\Barrel\BarrelDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\BevelledGear\BevelledGearDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

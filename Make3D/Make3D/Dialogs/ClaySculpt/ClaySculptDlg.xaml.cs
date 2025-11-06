@@ -731,13 +731,13 @@ namespace Barnacle.Dialogs
             Point3DCollection cubeVertices = new Point3DCollection();
             Int32Collection cubeFaces = new Int32Collection();
 
-            IcoSphereCreator ico = new IcoSphereCreator();
-            ico.Create(6, ref cubeVertices, ref cubeFaces, 100);
-            /*
-            double d = 2.5;
-            for (int i = 0; i < 50; i++)
+            //   IcoSphereCreator ico = new IcoSphereCreator();
+            // ico.Create(6, ref cubeVertices, ref cubeFaces, 100);
+
+            double d = 5;
+            for (int i = 0; i < 20; i++)
             {
-                for (int j = 0; j < 50; j++)
+                for (int j = 0; j < 20; j++)
                 {
                     double x = (i * d) - 25;
                     double y = j * d;
@@ -757,7 +757,7 @@ namespace Barnacle.Dialogs
                 }
             }
             cubeVertices = Vertices;
-            */
+
             pmesh = new Mesh(cubeVertices, cubeFaces);
             loaded = true;
             UpdateDisplay();

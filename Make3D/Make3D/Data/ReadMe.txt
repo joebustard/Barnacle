@@ -5,13 +5,22 @@ Added
   Extra primitive tetrahedron
   Drop from left, right, front and back added to editor.
   dropabove, dropbelow, dropfront, dropback, dropleft, dropright added to limpet
+  Addeded sgn() and Cenflo() to standard limpet lib
+  When importing from a thingiverse zip file, auto suggest an output subfolder name
+  First Version of a bevelled gear tool
+  solid bounds functions Left(),Right(),Top(),Bottom(),Front(),Back() added to limpet
 
 Fixed
   The number of vertices and faces shown for the selected object didn't update automaticall when the object was subdivided
   Small bug were drop would sometimes ignore overlapping triangles which should have been considered
+  Sometimes clicking on a file in the solution explorer would cause the treeview to just scroll the current file name into focus but not
+  change file.
 
 Changed
-Paste path string in flexipath control now adjusts pasted coordinates so all path is in range
+  Paste path string in flexipath control now adjusts pasted coordinates so all path is in range
+  Modified focus handling in the solution tree view
+  Don't allow user to load a new Limpet script if current one is executing
+
 
 v1.0.9
 ===========

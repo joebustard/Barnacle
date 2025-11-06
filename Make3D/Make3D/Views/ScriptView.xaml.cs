@@ -52,45 +52,6 @@ namespace Barnacle.Views
             NotificationManager.Subscribe("InsertIntoScript", InsertIntoScript);
         }
 
-        /*
-        public void HitTest(object sender, System.Windows.Input.MouseButtonEventArgs args)
-        {
-            Point mouseposition = args.GetPosition(viewport3D1);
-            Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
-            Vector3D testdirection = new Vector3D(mouseposition.X, mouseposition.Y, 10);
-            PointHitTestParameters pointparams = new PointHitTestParameters(mouseposition);
-            RayHitTestParameters rayparams = new RayHitTestParameters(testpoint3D, testdirection);
-
-            //test for a result in the Viewport3D
-            VisualTreeHelper.HitTest(viewport3D1, null, HTResult, pointparams);
-        }
-
-        public HitTestResultBehavior HTResult(System.Windows.Media.HitTestResult rawresult)
-        {
-            HitTestResultBehavior result = HitTestResultBehavior.Continue;
-            RayHitTestResult rayResult = rawresult as RayHitTestResult;
-
-            if (rayResult != null)
-            {
-                RayMeshGeometry3DHitTestResult rayMeshResult = rayResult as RayMeshGeometry3DHitTestResult;
-
-                if (rayMeshResult != null)
-                {
-                    GeometryModel3D hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
-                    if (lastHitModel == null)
-                    {
-                        // UpdateResultInfo(rayMeshResult);
-                        lastHitModel = hitgeo;
-                        lastHitPoint = rayMeshResult.PointHit;
-                    }
-                    result = HitTestResultBehavior.Stop;
-                }
-            }
-
-            return result;
-        }
-        */
-
         private void CheckClicked(object sender, RoutedEventArgs e)
         {
             vm.ClearResults();
@@ -131,17 +92,6 @@ namespace Barnacle.Views
                 //  RefreshInterpreterSource();
             }
         }
-
-        /*
-                private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
-                {
-                    lastHitModel = null;
-                    lastHitPoint = new Point3D(0, 0, 0);
-                    HitTest(sender, e);
-                    lastMousePos = e.GetPosition(this);
-                    vm.MouseDown(lastMousePos, e);
-                }
-        */
 
         private void Grid_MouseMove(object sender, MouseEventArgs e)
         {
@@ -343,6 +293,7 @@ Procedure MyProc(  )
             ScriptBox.Focusable = true;
             loaded = true;
             vm.EnableRun = true;
+            vm.Dirty = false;
         }
 
         private void SetDisplayRtf()

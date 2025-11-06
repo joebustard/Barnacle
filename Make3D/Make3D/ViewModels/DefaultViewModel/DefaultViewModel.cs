@@ -73,6 +73,7 @@ namespace Barnacle.ViewModels
         private bool leftTextAlignment;
         private ImageSource libraryImageSource;
         private Visibility libraryVisibility;
+        private bool limpetScriptRunning;
         private bool linearEnabled;
         private Ribbon MainRibbon;
 
@@ -89,6 +90,7 @@ namespace Barnacle.ViewModels
         private bool showFloorMarkerChecked;
         private bool showFloorMMChecked;
         private bool snapMarginChecked;
+        private bool solutionEnabled;
         private bool spurGearEnabled;
         private bool stadiumEnabled;
         private SubViewManager subViewMan;
@@ -205,6 +207,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("BackupProject", BackupProject);
             NotificationManager.Subscribe("IdleTimer", OnIdleTimer);
             NotificationManager.Subscribe("ObjectSelected", OnObjectSelected);
+            NotificationManager.Subscribe("ScriptStatus", OnScriptStatus);
             SubView = subViewMan.GetView("editor");
 
             CreateToolMenus();
@@ -216,6 +219,7 @@ namespace Barnacle.ViewModels
             LoadShowSettings();
             LoadPartLibrary();
             LoadAutoSaveSettings();
+            LimpetScriptIsRunning = false;
         }
 
         public ICommand AboutCommand
@@ -707,6 +711,23 @@ namespace Barnacle.ViewModels
             }
         }
 
+        public bool LimpetScriptIsRunning
+        {
+            get
+            {
+                return limpetScriptRunning;
+            }
+            set
+            {
+                if (limpetScriptRunning != value)
+                {
+                    limpetScriptRunning = value;
+                    NotifyPropertyChanged();
+                    SolutionEnabled = !limpetScriptRunning;
+                }
+            }
+        }
+
         public ICommand LinearCommand
         {
             get; set;
@@ -1181,6 +1202,22 @@ namespace Barnacle.ViewModels
                     }
                     NotifyPropertyChanged();
                     NotificationManager.Notify("SnapMargin", snapMarginChecked);
+                }
+            }
+        }
+
+        public bool SolutionEnabled
+        {
+            get
+            {
+                return solutionEnabled;
+            }
+            set
+            {
+                if (solutionEnabled != value)
+                {
+                    solutionEnabled = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -1686,7 +1723,7 @@ namespace Barnacle.ViewModels
             mechanicalToolsToShow.Add(new ToolDef("Oblique End Cylinder", true, "ObliqueEndCylinder", "Create a cylinder with one end cut."));
             mechanicalToolsToShow.Add(new ToolDef("Pierced Disk", true, "PiercedDisk", "Create a disk with holes cut through near the edge."));
             mechanicalToolsToShow.Add(new ToolDef("Pierced Ring", true, "PiercedRing", "Create a ring with holes cut through near the edge."));
-
+            mechanicalToolsToShow.Add(new ToolDef("Bevelled Gear", true, "BevelledGear", "Create a bevelled gear with a variable number of teeth."));
             SortMenu(mechanicalToolsToShow);
 
             NotifyPropertyChanged("MechanicalToolsToShow");
@@ -2179,6 +2216,19 @@ namespace Barnacle.ViewModels
             NotificationManager.Notify("ScreenShot", null);
         }
 
+        private void OnScriptStatus(object param)
+        {
+            string s = param.ToString();
+            if (s.ToLower() == "true")
+            {
+                LimpetScriptIsRunning = true;
+            }
+            else
+            {
+                LimpetScriptIsRunning = false;
+            }
+        }
+
         private void OnSelect(object obj)
         {
             NotificationManager.Notify("Select", obj);
@@ -2252,6 +2302,8 @@ namespace Barnacle.ViewModels
                 NotificationManager.Notify("SolutionPanel", false);
             }
             subViewMan.CloseCurrent();
+            LimpetScriptIsRunning = false;
+
             SubView = subViewMan.GetView(vwName);
         }
 

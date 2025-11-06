@@ -36,6 +36,10 @@ namespace Barnacle.Models
                     res = new FuselageLoftDialog();
                     break;
 
+                case "BevelledGear":
+                    res = new BevelledGearDlg();
+                    break;
+
                 case "BezierRing":
                     res = new BezierRingDlg();
                     break;

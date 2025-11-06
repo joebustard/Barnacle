@@ -1546,7 +1546,7 @@
                         <vsx1:SolutionExplorerControl
                             x:Name="SolutionExplorer"
                             Grid.Column="0"
-                            VerticalAlignment="Stretch" />
+                            VerticalAlignment="Stretch" IsEnabled="{Binding SolutionEnabled}" />
                     </Grid>
                 </TabItem>
 

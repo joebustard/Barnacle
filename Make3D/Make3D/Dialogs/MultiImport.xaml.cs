@@ -181,6 +181,7 @@ namespace Barnacle.Dialogs
                 if (importZipPath != value)
                 {
                     importZipPath = value;
+                    CreateNewFolderNameFromZipFile();
                 }
                 NotifyPropertyChanged();
             }
@@ -590,6 +591,17 @@ namespace Barnacle.Dialogs
         {
             DialogResult = true;
             Close();
+        }
+
+        private void CreateNewFolderNameFromZipFile()
+        {
+            string s = importZipPath;
+            if (s != "")
+            {
+                s = System.IO.Path.GetFileNameWithoutExtension(s);
+                s = s.Replace(' ', '_');
+                NewFolderName = s;
+            }
         }
 
         private async Task ImportModelsFromFolder(string targetSubFolder)

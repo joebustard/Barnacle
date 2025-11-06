@@ -69,8 +69,15 @@ namespace VisualSolutionExplorer
             }
         }
 
-        public ICommand FileClickCommand { get; set; }
-        public ICommand FileDoubleClickCommand { get; set; }
+        public ICommand FileClickCommand
+        {
+            get; set;
+        }
+
+        public ICommand FileDoubleClickCommand
+        {
+            get; set;
+        }
 
         public string FileName
         {
@@ -141,12 +148,21 @@ namespace VisualSolutionExplorer
 
         public ProjectFile ProjectFile
         {
-            get { return _projectFile; }
+            get
+            {
+                return _projectFile;
+            }
         }
 
-        public SolutionChangedDelegate SolutionChanged { get; set; }
+        public SolutionChangedDelegate SolutionChanged
+        {
+            get; set;
+        }
 
-        public ICommand StopEditing { get; set; }
+        public ICommand StopEditing
+        {
+            get; set;
+        }
 
         public void NotifySolutionChanged(string e, string p1, string p2)
         {
@@ -209,6 +225,11 @@ namespace VisualSolutionExplorer
             if (_projectFile.IsLibraryFile)
             {
                 NotifySolutionChanged("SelectLibraryFile", _projectFile.FilePath, "");
+            }
+            else
+            {
+                NotifySolutionChanged("SelectFile", _projectFile.FilePath, "");
+                IsSelected = true;
             }
         }
 

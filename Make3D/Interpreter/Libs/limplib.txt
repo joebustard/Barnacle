@@ -163,15 +163,15 @@ Colour WhiteSmoke	;
 Colour Yellow	;
 Colour YellowGreen	;
 
-    Function Colour Argb( Int  a, Int  r, Int  g, Int  b ) 
-    {
-       Colour c ;
-       c.a = a ;
-       c.r = r ;
-       c.g = g ;
-       c.b = b ;
-       Return c ;
-   } 
+Function Colour Argb( Int  a, Int  r, Int  g, Int  b ) 
+{
+   Colour c ;
+   c.a = a ;
+   c.r = r ;
+   c.g = g ;
+   c.b = b ;
+   Return c ;
+} 
 
  Function Vertex Zero()
  {
@@ -344,7 +344,9 @@ Procedure SetSolidSize( Solid sl, Size sz)
   Resize sl,sz.l,sz.h,sz.w;
 }
 
-
+// Name       : MakeSameSize
+// Does       : Makes two solids the same size
+// Parameters : the solids, sl2 is the one that changes size
 Procedure MakeSameSize( Solid sl1, Solid sl2)
 {
   Size sz;
@@ -352,34 +354,24 @@ Procedure MakeSameSize( Solid sl1, Solid sl2)
   SetSolidSize( sl2,sz);
 }
 
-Function Solid CleanUnion( solid s1, solid s2)
-{
-   solid t = union(s1,s2);
-   delete s1;
-   delete s2;
-   return t;
-}
 
-Function Solid CleanDifference( solid s1, solid s2)
-{
-   solid t = Difference(s1,s2);
-   delete s1;
-   delete s2;
-   return t;
-}
-
-Function Solid CleanIntersection( solid s1, solid s2)
-{
-   solid t = Intersection(s1,s2);
-   delete s1;
-   delete s2;
-   return t;
-}
-
+// Name       : FloorMove
+// Does       : floor a solid at a specific location
+// Parameters : the solid to move,
+//              the location to move the point to
 procedure floormove( solid sl, double px, double pz)
 {
     move sl,px,0,pz;
     floor sl;
+}
+
+// Name       : CenFlo
+// Does       : Centre and floor a solid  
+// Parameters : the solid to move
+procedure CenFlo(solid s)
+{
+     centre s;
+     floor s;
 }
 
 function solid HollowVertical( solid sl, double skinThickness)
@@ -407,7 +399,7 @@ function solid HollowVertical( solid sl, double skinThickness)
 		rmove cutter,0,-dy,0;
 
 		// add cut
-		sl = cleandifference(sl,cutter);
+		sl = difference(sl,cutter);
 	}
 	return sl;
 }
@@ -424,7 +416,7 @@ function solid ClipLeft( solid sl, double l)
 		solid cutter =Make("box",0,0,0,5000,5000,5000);
 		stackleft sl,cutter;
 		rmove cutter, l-0.1,0,0;
-		sl = cleandifference(sl,cutter);
+		sl = difference(sl,cutter);
 	}
 	return sl;
 }
@@ -441,7 +433,7 @@ function solid ClipRight( solid sl, double l)
 		solid cutter =Make("box",0,0,0,5000,5000,5000);
 		stackleft sl,cutter;
 		rmove cutter, 0.1-l,0,0;
-		sl = cleandifference(sl,cutter);
+		sl = difference(sl,cutter);
 	}
 	return sl;
 }
@@ -520,7 +512,7 @@ function solid ClipRight( solid sl, double l)
    }
 
    // Name          : Insertandplace
-   // Does          :  Insert a part and set its position and rotation  
+   // Does          : Insert a part and set its position and rotation  
    // Parameters    : The source file
    //               The part name
    //               the x,y,z to place it at
@@ -534,6 +526,23 @@ function solid ClipRight( solid sl, double l)
        Return sld ;
    }
 
+
+ // Name          : Sgn
+ // Does          : Resturns the sign of paramte 
+ // Parameters    : The value to check
+ // returns       : -1 if  the value is less than 0, 
+ //                  1 if its 0 or greater
+ function double sgn(double v)
+ {
+    double res = 1;
+    if ( v < 0)
+    {
+        res = -1;
+    }
+    return res;
+ }
+
+ //
  procedure InitialiseLimpLib()
  {
    SetDefaultColours();

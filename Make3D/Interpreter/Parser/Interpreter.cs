@@ -98,10 +98,17 @@ namespace ScriptLanguage
                 "insertlibpart",
                 "intersection",
                 "issolid",
+                "left",
+                "right",
+                "top",
+                "bottom",
+                "front",
+                "back",
                 "len",
                 "length",
                 "make",
                 "makebarrel",
+                "makebevelledgear",
                 "makebicorn",
                 "makebox",
                 "makebrickwall",
@@ -2108,6 +2115,19 @@ namespace ScriptLanguage
             return result;
         }
 
+        private ExpressionNode ParseGetSolidBoundFunction(string parentName, string prim)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode leftSolid = ParseExpressionNode(parentName);
+            if (leftSolid != null)
+            {
+                GetSolidBoundNode mn = new GetSolidBoundNode(leftSolid, prim);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+            return exp;
+        }
+
         private ExpressionNode ParseGetSolidPosFunction(string parentName, string prim)
         {
             ExpressionNode exp = null;
@@ -2849,6 +2869,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "makebevelledGear":
+                            {
+                                exp = ParseMakeBevelledGearFunction(parentName);
+                            }
+                            break;
+
                         case "makeobliqueendcylinder":
                             {
                                 exp = ParseMakeObliqueEndCylinderFunction(parentName);
@@ -3208,6 +3234,18 @@ namespace ScriptLanguage
                         case "height":
                             {
                                 exp = ParseGetSolidSizeFunction(parentName, functionName);
+                            }
+                            break;
+
+                        case "left":
+                        case "right":
+                        case "top":
+                        case "bottom":
+                        case "front":
+                        case "back":
+
+                            {
+                                exp = ParseGetSolidBoundFunction(parentName, functionName);
                             }
                             break;
 

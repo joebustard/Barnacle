@@ -60,6 +60,7 @@ namespace Barnacle.Views
             NotificationManager.Subscribe("ScriptEditorClosed", ScriptEditorClosed);
             NotificationManager.Subscribe("SolutionPanel", ChangeSolutionPanelVisibility);
             NotificationManager.Subscribe("SwitchToObjectProperties", SwitchToObjectProperties);
+            NotificationManager.Subscribe("ScriptStatus", OnScriptStatus);
             vm = DataContext as DefaultViewModel;
         }
 
@@ -278,6 +279,19 @@ namespace Barnacle.Views
             }
         }
 
+        private void OnScriptStatus(object param)
+        {
+            string s = param.ToString();
+            if (s.ToLower() == "true")
+            {
+                SolutionExplorer.IsEnabled = false;
+            }
+            else
+            {
+                SolutionExplorer.IsEnabled = true;
+            }
+        }
+
         private void OpenFile(object sender)
         {
             CheckSaveFirst(sender);
@@ -490,126 +504,21 @@ namespace Barnacle.Views
 
         private void SolutionChangeRequest(string changeEvent, string parameter1, string parameter2)
         {
-            switch (changeEvent)
+            if (!vm.LimpetScriptIsRunning)
             {
-                case "EditFile":
-                    {
-                        string fName = parameter1;
-                        string p = BaseViewModel.Project.BaseFolder;
-                        p = System.IO.Path.GetDirectoryName(p);
-                        p = p + fName;
-
-                        // is it a model file.
-                        string ext = System.IO.Path.GetExtension(p);
-                        ext = ext.ToLower();
-
-                        // Is it a limpet script file
-                        // if so change view and load it
-                        if (ext == ".lmp")
+                switch (changeEvent)
+                {
+                    case "EditFile":
                         {
-                            vm.SwitchToView("Script");
-                            NotificationManager.Notify("LimpetLoaded", p);
-                        }
-                    }
-                    break;
+                            string fName = parameter1;
+                            string p = BaseViewModel.Project.BaseFolder;
+                            p = System.IO.Path.GetDirectoryName(p);
+                            p = p + fName;
 
-                case "InsertFile":
-                    {
-                        string fName = parameter2;
-                        //Wrong
-                        string p = vm.GetPartsLibraryPath();
-                        p = System.IO.Path.GetDirectoryName(p);
-                        //p = System.IO.Path.GetDirectoryName(p);
-                        p = p + fName;
+                            // is it a model file.
+                            string ext = System.IO.Path.GetExtension(p);
+                            ext = ext.ToLower();
 
-                        // is it a model file.
-                        string ext = System.IO.Path.GetExtension(p);
-                        ext = ext.ToLower();
-
-                        if (ext == ".txt" && File.Exists(p))
-                        {
-                            CheckPoint();
-                            BaseViewModel.Document.InsertFile(p);
-                            NotificationManager.Notify("Refresh", null);
-                        }
-                    }
-                    break;
-
-                case "RunFile":
-                    {
-                        string fName = parameter2;
-                        string p = BaseViewModel.Project.BaseFolder;
-                        p = System.IO.Path.GetDirectoryName(p);
-                        p = p + fName;
-
-                        // is it a model file.
-                        string ext = System.IO.Path.GetExtension(p);
-                        ext = ext.ToLower();
-
-                        // Is it a limpet script file
-                        // if so change view and load it
-                        if (ext == ".lmp")
-                        {
-                            if (RunScript(p))
-                            {
-                                NotificationManager.Notify("Refresh", null);
-                            }
-                        }
-                    }
-                    break;
-
-                case "SelectLibraryFile":
-                    {
-                        string fName = parameter1;
-
-                        string p = vm.GetPartsLibraryPath();
-                        p = System.IO.Path.GetDirectoryName(p);
-                        p = p + fName;
-
-                        // is it a model file.
-                        string ext = System.IO.Path.GetExtension(p);
-                        ext = ext.ToLower();
-                        if (ext == ".txt" && File.Exists(p))
-                        {
-                            p = System.IO.Path.ChangeExtension(p, ".png");
-
-                            SetLibraryImageSource(p);
-                            NotificationManager.Notify("LibraryImageSource", null);
-                        }
-                    }
-                    break;
-
-                case "SelectFile":
-                    {
-                        string fName = parameter1;
-                        string p = BaseViewModel.Project.BaseFolder;
-                        p = System.IO.Path.GetDirectoryName(p);
-                        p = p + fName;
-
-                        // is it a model file.
-                        string ext = System.IO.Path.GetExtension(p);
-                        ext = ext.ToLower();
-                        if (ext == ".txt")
-                        {
-                            vm.SwitchToView("Editor");
-                            if (p != BaseViewModel.Document.FilePath)
-                            {
-                                CheckSaveFirst(null);
-
-                                if (File.Exists(p))
-                                {
-                                    NotificationManager.Notify("Loading", null);
-                                    BaseViewModel.Document.Load(p);
-                                    undoer.ClearUndoFiles();
-                                    NotificationManager.Notify("Refresh", null);
-                                    BaseViewModel.Project.FirstFile = fName;
-                                    NotificationManager.Notify("ObjectSelected", null);
-                                    NotificationManager.Notify("GroupSelected", false);
-                                }
-                            }
-                        }
-                        else
-                        {
                             // Is it a limpet script file
                             // if so change view and load it
                             if (ext == ".lmp")
@@ -617,296 +526,326 @@ namespace Barnacle.Views
                                 vm.SwitchToView("Script");
                                 NotificationManager.Notify("LimpetLoaded", p);
                             }
-                            else
+                        }
+                        break;
+
+                    case "InsertFile":
+                        {
+                            string fName = parameter2;
+                            //Wrong
+                            string p = vm.GetPartsLibraryPath();
+                            p = System.IO.Path.GetDirectoryName(p);
+                            //p = System.IO.Path.GetDirectoryName(p);
+                            p = p + fName;
+
+                            // is it a model file.
+                            string ext = System.IO.Path.GetExtension(p);
+                            ext = ext.ToLower();
+
+                            if (ext == ".txt" && File.Exists(p))
                             {
-                                OpenFileUsingOS(p);
+                                CheckPoint();
+                                BaseViewModel.Document.InsertFile(p);
+                                NotificationManager.Notify("Refresh", null);
                             }
                         }
-                    }
-                    break;
+                        break;
 
-                case "NewFolder":
-                    {
-                        String fName = parameter1;
-                        string p = BaseViewModel.Project.BaseFolder;
-
-                        p = System.IO.Path.GetDirectoryName(p);
-                        p = p + fName;
-                        try
+                    case "RunFile":
                         {
-                            Directory.CreateDirectory(p);
-                        }
-                        catch (Exception)
-                        {
-                        }
-                    }
-                    break;
+                            string fName = parameter2;
+                            string p = BaseViewModel.Project.BaseFolder;
+                            p = System.IO.Path.GetDirectoryName(p);
+                            p = p + fName;
 
-                case "NewLibraryFolder":
-                    {
-                        String fName = parameter1;
-                        string p = vm.GetPartsLibraryPath();
+                            // is it a model file.
+                            string ext = System.IO.Path.GetExtension(p);
+                            ext = ext.ToLower();
 
-                        p = System.IO.Path.GetDirectoryName(p);
-                        p = p + fName;
-                        try
-                        {
-                            Directory.CreateDirectory(p);
-                            BaseViewModel.PartLibraryProject.Save();
-                        }
-                        catch (Exception)
-                        {
-                        }
-                    }
-                    break;
-
-                case "RenameFolder":
-                    {
-                        String fName = parameter1;
-                        string p = BaseViewModel.Project.BaseFolder;
-                        p = System.IO.Path.GetDirectoryName(p);
-                        string old = p + fName;
-
-                        string renamed = p + parameter2;
-                        try
-                        {
-                            // does the old directory contain the document we currently have open?
-                            // if so we need to tell the document to sort itself out
-                            BaseViewModel.Document.RenameFolder(old, renamed);
-
-                            Directory.Move(old, renamed);
-                        }
-                        catch (Exception)
-                        {
-                        }
-                    }
-                    break;
-
-                case "RenameLibraryFolder":
-                    {
-                        String fName = parameter1;
-                        string p = vm.GetPartsLibraryPath();
-                        p = System.IO.Path.GetDirectoryName(p);
-                        string old = p + fName;
-
-                        string renamed = p + parameter2;
-                        try
-                        {
-                            Directory.Move(old, renamed);
-                            BaseViewModel.PartLibraryProject.Save();
-                        }
-                        catch (Exception)
-                        {
-                        }
-                    }
-                    break;
-
-                case "NewFile":
-                    {
-                        string fName = parameter1;
-                        string fileTemplate = parameter2;
-                        string p = BaseViewModel.Project.BaseFolder;
-                        p = System.IO.Path.GetDirectoryName(p);
-                        p = p + fName;
-
-                        // is it a model file.
-                        if (System.IO.Path.GetExtension(p) == ".txt")
-                        {
-                            if (p != BaseViewModel.Document.FilePath)
+                            // Is it a limpet script file
+                            // if so change view and load it
+                            if (ext == ".lmp")
                             {
-                                CheckSaveFirst(null);
-                                BaseViewModel.Document.Clear();
-                                BaseViewModel.Document.Save(p);
-                                if (File.Exists(p))
+                                if (RunScript(p))
                                 {
-                                    BaseViewModel.Document.Load(p);
                                     NotificationManager.Notify("Refresh", null);
-                                    NotificationManager.Notify("ObjectSelected", null);
-                                    NotificationManager.Notify("GroupSelected", false);
                                 }
                             }
                         }
-                        else
+                        break;
+
+                    case "SelectLibraryFile":
                         {
-                            if (fileTemplate != null)
+                            string fName = parameter1;
+
+                            string p = vm.GetPartsLibraryPath();
+                            p = System.IO.Path.GetDirectoryName(p);
+                            p = p + fName;
+
+                            // is it a model file.
+                            string ext = System.IO.Path.GetExtension(p);
+                            ext = ext.ToLower();
+                            if (ext == ".txt" && File.Exists(p))
                             {
-                                String templatePath = AppDomain.CurrentDomain.BaseDirectory + "templates\\" + fileTemplate;
-                                if (File.Exists(templatePath))
-                                {
-                                    try
-                                    {
-                                        File.Copy(templatePath, p);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        MessageBox.Show(ex.Message);
-                                    }
-                                }
+                                p = System.IO.Path.ChangeExtension(p, ".png");
+
+                                SetLibraryImageSource(p);
+                                NotificationManager.Notify("LibraryImageSource", null);
                             }
                         }
-                    }
-                    break;
+                        break;
 
-                case "CopyFile":
-                    {
-                        string p = BaseViewModel.Project.BaseFolder;
-                        p = System.IO.Path.GetDirectoryName(p);
-                        string fname1 = p + parameter1;
-                        string fname2 = p + parameter2;
-
-                        if (fname1 == BaseViewModel.Document.FilePath)
+                    case "SelectFile":
                         {
-                            CheckSaveFirst(null);
-                        }
-                        File.Copy(fname1, fname2);
-                    }
-                    break;
+                            string fName = parameter1;
+                            string p = BaseViewModel.Project.BaseFolder;
+                            p = System.IO.Path.GetDirectoryName(p);
+                            p = p + fName;
 
-                case "RenameFile":
-                    {
-                        String fName = parameter1;
-                        string p = BaseViewModel.Project.BaseFolder;
-                        p = System.IO.Path.GetDirectoryName(p);
-                        string old = p + fName;
-                        // string ren = System.IO.Path.GetFileName( parameter2);
-                        string ren = p + parameter2;
-                        try
-                        {
-                            if (System.IO.Path.GetExtension(old) == ".txt")
+                            // is it a model file.
+                            string ext = System.IO.Path.GetExtension(p);
+                            ext = ext.ToLower();
+                            if (ext == ".txt")
                             {
-                                if (old == BaseViewModel.Document.FilePath)
+                                vm.SwitchToView("Editor");
+                                if (p != BaseViewModel.Document.FilePath)
                                 {
                                     CheckSaveFirst(null);
-                                    // just incase we are renaming the currently open doc
-                                    // make sure document knows the name has changed to avoid it saving back into the old
-                                    // file name
-                                    BaseViewModel.Document.RenameCurrent(old, ren);
-                                    BaseViewModel.Project.FirstFile = fName;
+
+                                    if (File.Exists(p))
+                                    {
+                                        NotificationManager.Notify("Loading", null);
+                                        BaseViewModel.Document.Load(p);
+                                        undoer.ClearUndoFiles();
+                                        NotificationManager.Notify("Refresh", null);
+                                        BaseViewModel.Project.FirstFile = fName;
+                                        NotificationManager.Notify("ObjectSelected", null);
+                                        NotificationManager.Notify("GroupSelected", false);
+                                    }
                                 }
-                                if (File.Exists(ren))
-                                {
-                                    File.Delete(ren);
-                                }
-                                File.Move(old, ren);
                             }
                             else
                             {
-                                if (File.Exists(ren))
+                                // Is it a limpet script file
+                                // if so change view and load it
+                                if (ext == ".lmp")
                                 {
-                                    File.Delete(ren);
+                                    vm.SwitchToView("Script");
+                                    NotificationManager.Notify("LimpetLoaded", p);
                                 }
-                                File.Move(old, ren);
-                            }
-                        }
-                        catch (Exception)
-                        {
-                        }
-                    }
-                    break;
-
-                case "DeleteFile":
-                    {
-                        string p = BaseViewModel.Project.BaseFolder;
-                        p = System.IO.Path.GetDirectoryName(p);
-                        String fName = p + parameter1;
-                        try
-                        {
-                            bool deletingCurrent = false;
-                            if (fName == BaseViewModel.Document.FilePath)
-                            {
-                                deletingCurrent = true;
-                            }
-                            if (File.Exists(fName))
-                            {
-                                File.Delete(fName);
-                                if (deletingCurrent)
+                                else
                                 {
-                                    String open = BaseViewModel.Project.DefaultFileToOpen();
-                                    if (File.Exists(open))
+                                    OpenFileUsingOS(p);
+                                }
+                            }
+                        }
+                        break;
+
+                    case "NewFolder":
+                        {
+                            String fName = parameter1;
+                            string p = BaseViewModel.Project.BaseFolder;
+
+                            p = System.IO.Path.GetDirectoryName(p);
+                            p = p + fName;
+                            try
+                            {
+                                Directory.CreateDirectory(p);
+                            }
+                            catch (Exception)
+                            {
+                            }
+                        }
+                        break;
+
+                    case "NewLibraryFolder":
+                        {
+                            String fName = parameter1;
+                            string p = vm.GetPartsLibraryPath();
+
+                            p = System.IO.Path.GetDirectoryName(p);
+                            p = p + fName;
+                            try
+                            {
+                                Directory.CreateDirectory(p);
+                                BaseViewModel.PartLibraryProject.Save();
+                            }
+                            catch (Exception)
+                            {
+                            }
+                        }
+                        break;
+
+                    case "RenameFolder":
+                        {
+                            String fName = parameter1;
+                            string p = BaseViewModel.Project.BaseFolder;
+                            p = System.IO.Path.GetDirectoryName(p);
+                            string old = p + fName;
+
+                            string renamed = p + parameter2;
+                            try
+                            {
+                                // does the old directory contain the document we currently have open?
+                                // if so we need to tell the document to sort itself out
+                                BaseViewModel.Document.RenameFolder(old, renamed);
+
+                                Directory.Move(old, renamed);
+                            }
+                            catch (Exception)
+                            {
+                            }
+                        }
+                        break;
+
+                    case "RenameLibraryFolder":
+                        {
+                            String fName = parameter1;
+                            string p = vm.GetPartsLibraryPath();
+                            p = System.IO.Path.GetDirectoryName(p);
+                            string old = p + fName;
+
+                            string renamed = p + parameter2;
+                            try
+                            {
+                                Directory.Move(old, renamed);
+                                BaseViewModel.PartLibraryProject.Save();
+                            }
+                            catch (Exception)
+                            {
+                            }
+                        }
+                        break;
+
+                    case "NewFile":
+                        {
+                            string fName = parameter1;
+                            string fileTemplate = parameter2;
+                            string p = BaseViewModel.Project.BaseFolder;
+                            p = System.IO.Path.GetDirectoryName(p);
+                            p = p + fName;
+
+                            // is it a model file.
+                            if (System.IO.Path.GetExtension(p) == ".txt")
+                            {
+                                if (p != BaseViewModel.Document.FilePath)
+                                {
+                                    CheckSaveFirst(null);
+                                    BaseViewModel.Document.Clear();
+                                    BaseViewModel.Document.Save(p);
+                                    if (File.Exists(p))
                                     {
-                                        BaseViewModel.Document.Clear();
-                                        BaseViewModel.Document.Load(open);
+                                        BaseViewModel.Document.Load(p);
                                         NotificationManager.Notify("Refresh", null);
                                         NotificationManager.Notify("ObjectSelected", null);
                                         NotificationManager.Notify("GroupSelected", false);
                                     }
                                 }
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show(ex.Message);
-                        }
-                    }
-                    break;
-
-                case "DeleteLibraryFile":
-                    {
-                        string p = BaseViewModel.PartLibraryProject.BaseFolder;
-                        p = System.IO.Path.GetDirectoryName(p);
-                        String fName = p + parameter1;
-                        try
-                        {
-                            if (File.Exists(fName))
+                            else
                             {
-                                File.Delete(fName);
+                                if (fileTemplate != null)
+                                {
+                                    String templatePath = AppDomain.CurrentDomain.BaseDirectory + "templates\\" + fileTemplate;
+                                    if (File.Exists(templatePath))
+                                    {
+                                        try
+                                        {
+                                            File.Copy(templatePath, p);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            MessageBox.Show(ex.Message);
+                                        }
+                                    }
+                                }
                             }
-                            BaseViewModel.PartLibraryProject.Save();
-                            LibraryExplorer.ProjectChanged(BaseViewModel.PartLibraryProject, false);
                         }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show(ex.Message);
-                        }
-                    }
-                    break;
+                        break;
 
-                case "DragFile":
-                    {
-                        String fName = System.IO.Path.GetFileName(parameter1);
-                        string targetFile = parameter2;
-                        // if file is being dragged to the project root the target will end in \
-                        // but if its dragged to a subfolder it wont.
-                        if (targetFile.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
+                    case "CopyFile":
                         {
-                            targetFile += fName;
+                            string p = BaseViewModel.Project.BaseFolder;
+                            p = System.IO.Path.GetDirectoryName(p);
+                            string fname1 = p + parameter1;
+                            string fname2 = p + parameter2;
+
+                            if (fname1 == BaseViewModel.Document.FilePath)
+                            {
+                                CheckSaveFirst(null);
+                            }
+                            File.Copy(fname1, fname2);
                         }
-                        else
+                        break;
+
+                    case "RenameFile":
                         {
-                            targetFile += System.IO.Path.DirectorySeparatorChar + fName;
-                        }
-                        if (File.Exists(targetFile))
-                        {
-                            MessageBox.Show("Unable to move file. A file with the same name already exists.");
-                        }
-                        else
-                        {
+                            String fName = parameter1;
+                            string p = BaseViewModel.Project.BaseFolder;
+                            p = System.IO.Path.GetDirectoryName(p);
+                            string old = p + fName;
+                            // string ren = System.IO.Path.GetFileName( parameter2);
+                            string ren = p + parameter2;
                             try
                             {
-                                bool movingCurrent = false;
-                                if (parameter1 == BaseViewModel.Document.FilePath)
+                                if (System.IO.Path.GetExtension(old) == ".txt")
                                 {
-                                    movingCurrent = true;
-                                    CheckSaveFirst(null);
-                                }
-
-                                File.Move(parameter1, targetFile);
-
-                                // removee file reference from original projectfolderviewmodel
-                                BaseViewModel.Project.RemoveFileFromFolder(parameter1);
-
-                                // add file reference to the target folder
-                                BaseViewModel.Project.AddFileToFolder(parameter2, fName);
-
-                                if (movingCurrent)
-                                {
-                                    // open from the new location
-                                    String open = targetFile;
-                                    if (File.Exists(open))
+                                    if (old == BaseViewModel.Document.FilePath)
                                     {
-                                        BaseViewModel.Document.Clear();
-                                        BaseViewModel.Document.Load(open);
-                                        NotificationManager.Notify("Refresh", null);
+                                        CheckSaveFirst(null);
+                                        // just incase we are renaming the currently open doc
+                                        // make sure document knows the name has changed to avoid it saving back into the old
+                                        // file name
+                                        BaseViewModel.Document.RenameCurrent(old, ren);
+                                        BaseViewModel.Project.FirstFile = fName;
+                                    }
+                                    if (File.Exists(ren))
+                                    {
+                                        File.Delete(ren);
+                                    }
+                                    File.Move(old, ren);
+                                }
+                                else
+                                {
+                                    if (File.Exists(ren))
+                                    {
+                                        File.Delete(ren);
+                                    }
+                                    File.Move(old, ren);
+                                }
+                            }
+                            catch (Exception)
+                            {
+                            }
+                        }
+                        break;
+
+                    case "DeleteFile":
+                        {
+                            string p = BaseViewModel.Project.BaseFolder;
+                            p = System.IO.Path.GetDirectoryName(p);
+                            String fName = p + parameter1;
+                            try
+                            {
+                                bool deletingCurrent = false;
+                                if (fName == BaseViewModel.Document.FilePath)
+                                {
+                                    deletingCurrent = true;
+                                }
+                                if (File.Exists(fName))
+                                {
+                                    File.Delete(fName);
+                                    if (deletingCurrent)
+                                    {
+                                        String open = BaseViewModel.Project.DefaultFileToOpen();
+                                        if (File.Exists(open))
+                                        {
+                                            BaseViewModel.Document.Clear();
+                                            BaseViewModel.Document.Load(open);
+                                            NotificationManager.Notify("Refresh", null);
+                                            NotificationManager.Notify("ObjectSelected", null);
+                                            NotificationManager.Notify("GroupSelected", false);
+                                        }
                                     }
                                 }
                             }
@@ -915,18 +854,96 @@ namespace Barnacle.Views
                                 MessageBox.Show(ex.Message);
                             }
                         }
-                    }
-                    break;
+                        break;
 
-                case "AddObjectToLibrary":
-                    {
-                        NotificationManager.Notify("AddObjectToLibrary", parameter1);
-                        LibraryExplorer.ProjectChanged(BaseViewModel.PartLibraryProject, false);
-                    }
-                    break;
+                    case "DeleteLibraryFile":
+                        {
+                            string p = BaseViewModel.PartLibraryProject.BaseFolder;
+                            p = System.IO.Path.GetDirectoryName(p);
+                            String fName = p + parameter1;
+                            try
+                            {
+                                if (File.Exists(fName))
+                                {
+                                    File.Delete(fName);
+                                }
+                                BaseViewModel.PartLibraryProject.Save();
+                                LibraryExplorer.ProjectChanged(BaseViewModel.PartLibraryProject, false);
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show(ex.Message);
+                            }
+                        }
+                        break;
+
+                    case "DragFile":
+                        {
+                            String fName = System.IO.Path.GetFileName(parameter1);
+                            string targetFile = parameter2;
+                            // if file is being dragged to the project root the target will end in \
+                            // but if its dragged to a subfolder it wont.
+                            if (targetFile.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
+                            {
+                                targetFile += fName;
+                            }
+                            else
+                            {
+                                targetFile += System.IO.Path.DirectorySeparatorChar + fName;
+                            }
+                            if (File.Exists(targetFile))
+                            {
+                                MessageBox.Show("Unable to move file. A file with the same name already exists.");
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    bool movingCurrent = false;
+                                    if (parameter1 == BaseViewModel.Document.FilePath)
+                                    {
+                                        movingCurrent = true;
+                                        CheckSaveFirst(null);
+                                    }
+
+                                    File.Move(parameter1, targetFile);
+
+                                    // removee file reference from original projectfolderviewmodel
+                                    BaseViewModel.Project.RemoveFileFromFolder(parameter1);
+
+                                    // add file reference to the target folder
+                                    BaseViewModel.Project.AddFileToFolder(parameter2, fName);
+
+                                    if (movingCurrent)
+                                    {
+                                        // open from the new location
+                                        String open = targetFile;
+                                        if (File.Exists(open))
+                                        {
+                                            BaseViewModel.Document.Clear();
+                                            BaseViewModel.Document.Load(open);
+                                            NotificationManager.Notify("Refresh", null);
+                                        }
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show(ex.Message);
+                                }
+                            }
+                        }
+                        break;
+
+                    case "AddObjectToLibrary":
+                        {
+                            NotificationManager.Notify("AddObjectToLibrary", parameter1);
+                            LibraryExplorer.ProjectChanged(BaseViewModel.PartLibraryProject, false);
+                        }
+                        break;
+                }
+                BaseViewModel.Project.Save();
+                BaseViewModel.Document.SaveGlobalSettings();
             }
-            BaseViewModel.Project.Save();
-            BaseViewModel.Document.SaveGlobalSettings();
         }
 
         private void SwitchToObjectProperties(object param)

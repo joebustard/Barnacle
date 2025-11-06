@@ -825,8 +825,8 @@ namespace HalfEdgeLib
             TwinUp(ne0, ne2);
 
             // mark existing faces as dead
-            Faces[fe0].FirstEdge = -1;
-            Faces[ft0].FirstEdge = -1;
+            if (fe0 != -1) Faces[fe0].FirstEdge = -1;
+            if (ft0 != -1) Faces[ft0].FirstEdge = -1;
 
             CreateFace(e0, ne0, e2);
             CreateFace(t0, nt2, t2);
