@@ -9,12 +9,14 @@ Added
   When importing from a thingiverse zip file, auto suggest an output subfolder name
   First Version of a bevelled gear tool
   solid bounds functions Left(),Right(),Top(),Bottom(),Front(),Back() added to limpet
+  Offer to save current model file when switching to a script file
 
 Fixed
-  The number of vertices and faces shown for the selected object didn't update automaticall when the object was subdivided
-  Small bug were drop would sometimes ignore overlapping triangles which should have been considered
+  The number of vertices and faces shown for the selected object didn't update automatically when the object was subdivided
+  Small bug where drop would sometimes ignore overlapping triangles which should have been considered
   Sometimes clicking on a file in the solution explorer would cause the treeview to just scroll the current file name into focus but not
   change file.
+  Stonewall was producing walls with stones floating in mid air. Fixed
 
 Changed
   Paste path string in flexipath control now adjusts pasted coordinates so all path is in range

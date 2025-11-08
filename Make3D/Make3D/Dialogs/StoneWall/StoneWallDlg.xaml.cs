@@ -158,6 +158,7 @@ namespace Barnacle.Dialogs
             ClearShape();
             StoneWallMaker maker = new StoneWallMaker(wallLength, wallHeight, wallThickness, stoneSize);
             maker.Generate(Vertices, Faces);
+            CentreVertices();
         }
 
         private void LoadEditorParameters()

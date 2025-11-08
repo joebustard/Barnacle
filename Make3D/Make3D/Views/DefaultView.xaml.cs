@@ -630,6 +630,7 @@ namespace Barnacle.Views
                                 // if so change view and load it
                                 if (ext == ".lmp")
                                 {
+                                    CheckSaveFirst(null);
                                     vm.SwitchToView("Script");
                                     NotificationManager.Notify("LimpetLoaded", p);
                                 }
