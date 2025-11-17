@@ -6,6 +6,7 @@
     xmlns:Views="clr-namespace:Barnacle.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:s="clr-namespace:Barnacle.UserControls"
     d:DesignHeight="450"
     d:DesignWidth="800"
     Background="White"
@@ -26,13 +27,16 @@
         MouseMove="Grid_MouseMove"
         MouseUp="Grid_MouseUp"
         MouseWheel="Grid_MouseWheel">
+        <Image x:Name="BusyDisplay" Width="250" Height="250"
+        Source="/Images/Snooze.png" Stretch="UniformToFill"
+    Visibility="{Binding BusyVisible}" />
         <Viewport3D
             Name="viewport3D1"
             Width="{Binding ViewPortWidth}"
             Height="{Binding ViewPortHeight}"
             ClipToBounds="False"
             KeyDown="UserControl_KeyDown"
-            KeyUp="UserControl_KeyUp">
+            KeyUp="UserControl_KeyUp" Visibility="{Binding ViewportVisible}">
 
             <Viewport3D.Camera>
                 <PerspectiveCamera

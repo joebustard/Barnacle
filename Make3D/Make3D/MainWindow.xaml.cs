@@ -25,6 +25,7 @@ using Barnacle.Models;
 using Barnacle.Models.BufferedPolyline;
 using System.Collections.Generic;
 using System.Windows.Threading;
+using Barnacle.Views;
 
 namespace Barnacle
 {
@@ -57,7 +58,12 @@ namespace Barnacle
         {
             autoRunTimer?.Stop();
             AutoRunScript();
-            Application.Current.Shutdown();
+            int res = -1;
+            if (DefaultView.AutoRunResult)
+            {
+                res = 0;
+            }
+            Application.Current.Shutdown(res);
         }
 
         private void PrepareUndo()

@@ -81,6 +81,7 @@ namespace Barnacle.ViewModels
         private Bounds3D allBounds;
         private Axies axies;
         private double bendAngle;
+        private Visibility busyVisible = Visibility.Hidden;
         private PolarCamera camera;
         private Point3D CameraLookObject = new Point3D(0, 0, 0);
         private CameraModes cameraMode;
@@ -110,6 +111,7 @@ namespace Barnacle.ViewModels
         private int totalFaces;
         private int totalVertices;
         private double viewPortHeight;
+        private Visibility viewportVisible = Visibility.Visible;
         private double viewPortWidth;
         private double zoomPercent = 100;
 
@@ -151,6 +153,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "Fold", OnFold);
             NotificationManager.Subscribe("Editor", "Import", OnImport);
             NotificationManager.Subscribe("Editor", "Loading", LoadingNewFile);
+            NotificationManager.Subscribe("Editor", "LoadedNewFile", LoadedNewFile);
             NotificationManager.Subscribe("Editor", "LoopSmooth", OnLoopSmooth);
             NotificationManager.Subscribe("Editor", "ManifoldTest", OnManifoldTest);
             NotificationManager.Subscribe("Editor", "Marker", MoveToMarker);
@@ -231,6 +234,23 @@ namespace Barnacle.ViewModels
             y2,
             z1,
             z2
+        }
+
+        public Visibility BusyVisible
+        {
+            get
+            {
+                return busyVisible;
+            }
+            set
+            {
+                if (value != busyVisible)
+                {
+                    busyVisible = value;
+
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -355,6 +375,22 @@ namespace Barnacle.ViewModels
                 if (value != viewPortHeight)
                 {
                     viewPortHeight = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public Visibility ViewportVisible
+        {
+            get
+            {
+                return viewportVisible;
+            }
+            set
+            {
+                if (value != viewportVisible)
+                {
+                    viewportVisible = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -2685,6 +2721,12 @@ namespace Barnacle.ViewModels
             return handled;
         }
 
+        private void LoadedNewFile(object param)
+        {
+            BusyVisible = Visibility.Hidden;
+            ViewportVisible = Visibility.Visible;
+        }
+
         private void LoadingNewFile(object param)
         {
             // about to switch files dont leave the adorners hanging around
@@ -2698,6 +2740,8 @@ namespace Barnacle.ViewModels
             // dont leave obect palette show the details of an object whih doesn't exist in the new file
             NotificationManager.Notify("ObjectSelected", null);
             NotificationManager.Notify("GroupSelected", false);
+            BusyVisible = Visibility.Visible;
+            ViewportVisible = Visibility.Hidden;
         }
 
         private bool Loft(Object3D obj, string obType)

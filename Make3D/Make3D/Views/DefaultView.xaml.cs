@@ -26,6 +26,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using VisualSolutionExplorer;
 
 namespace Barnacle.Views
@@ -35,6 +36,10 @@ namespace Barnacle.Views
     /// </summary>
     public partial class DefaultView : UserControl
     {
+        public static bool AutoRunResult = false;
+        private DispatcherTimer loadingTimer;
+        private string nameOfNextFileToLoad;
+        private string pathOfNextFileToLoad;
         private DefaultViewModel vm;
 
         public DefaultView()
@@ -124,8 +129,10 @@ namespace Barnacle.Views
             {
                 // run the script without gathering any solids into a document
                 // because we don't have a document to use
+                AutoRunResult = false;
                 if (RunScript(p, false))
                 {
+                    AutoRunResult = true;
                 }
             }
         }
@@ -227,6 +234,19 @@ namespace Barnacle.Views
                     }
                 }
             }
+        }
+
+        private void LoadingTimerTick(object sender, EventArgs e)
+        {
+            loadingTimer.Stop();
+            BaseViewModel.Document.Load(pathOfNextFileToLoad);
+            undoer.ClearUndoFiles();
+            NotificationManager.Notify("Refresh", null);
+            BaseViewModel.Project.FirstFile = nameOfNextFileToLoad;
+            NotificationManager.Notify("ObjectSelected", null);
+            NotificationManager.Notify("GroupSelected", false);
+            NotificationManager.Notify("LoadedNewFile", null);
+            loadingTimer = null;
         }
 
         private void LoadNamedProject(string projName, bool loadLastFile = true)
@@ -480,6 +500,10 @@ namespace Barnacle.Views
             if (param == null)
             {
                 LibraryExplorer.LibraryAdd = false;
+                // this is actually an attempt to cope with some wierd behaviour.
+                // The combo box text doesn't clear just because you set the selected item name to ""
+                // The combos text filed needs to be specifically cleared
+                SelectObjectNames.Text = "";
             }
             else
             {
@@ -597,46 +621,53 @@ namespace Barnacle.Views
 
                     case "SelectFile":
                         {
-                            string fName = parameter1;
-                            string p = BaseViewModel.Project.BaseFolder;
-                            p = System.IO.Path.GetDirectoryName(p);
-                            p = p + fName;
-
-                            // is it a model file.
-                            string ext = System.IO.Path.GetExtension(p);
-                            ext = ext.ToLower();
-                            if (ext == ".txt")
+                            if (loadingTimer == null)
                             {
-                                vm.SwitchToView("Editor");
-                                if (p != BaseViewModel.Document.FilePath)
-                                {
-                                    CheckSaveFirst(null);
+                                string fName = parameter1;
+                                string p = BaseViewModel.Project.BaseFolder;
+                                p = System.IO.Path.GetDirectoryName(p);
+                                p = p + fName;
 
-                                    if (File.Exists(p))
+                                // is it a model file.
+                                string ext = System.IO.Path.GetExtension(p);
+                                ext = ext.ToLower();
+                                if (ext == ".txt")
+                                {
+                                    vm.SwitchToView("Editor");
+                                    if (p != BaseViewModel.Document.FilePath)
                                     {
-                                        NotificationManager.Notify("Loading", null);
-                                        BaseViewModel.Document.Load(p);
-                                        undoer.ClearUndoFiles();
-                                        NotificationManager.Notify("Refresh", null);
-                                        BaseViewModel.Project.FirstFile = fName;
-                                        NotificationManager.Notify("ObjectSelected", null);
-                                        NotificationManager.Notify("GroupSelected", false);
+                                        CheckSaveFirst(null);
+
+                                        if (File.Exists(p))
+                                        {
+                                            pathOfNextFileToLoad = p;
+                                            nameOfNextFileToLoad = fName;
+                                            // Let the editor view know we are loading a new file
+                                            NotificationManager.Notify("Loading", null);
+
+                                            // give it half a second to put up some loading indicator
+                                            loadingTimer = new DispatcherTimer();
+                                            loadingTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
+                                            loadingTimer.Tick += LoadingTimerTick;
+                                            loadingTimer.Start();
+                                            // load will happen when timer fires
+                                        }
                                     }
-                                }
-                            }
-                            else
-                            {
-                                // Is it a limpet script file
-                                // if so change view and load it
-                                if (ext == ".lmp")
-                                {
-                                    CheckSaveFirst(null);
-                                    vm.SwitchToView("Script");
-                                    NotificationManager.Notify("LimpetLoaded", p);
                                 }
                                 else
                                 {
-                                    OpenFileUsingOS(p);
+                                    // Is it a limpet script file
+                                    // if so change view and load it
+                                    if (ext == ".lmp")
+                                    {
+                                        CheckSaveFirst(null);
+                                        vm.SwitchToView("Script");
+                                        NotificationManager.Notify("LimpetLoaded", p);
+                                    }
+                                    else
+                                    {
+                                        OpenFileUsingOS(p);
+                                    }
                                 }
                             }
                         }

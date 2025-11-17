@@ -195,7 +195,7 @@ namespace Barnacle.Models
                     break;
 
                 case "SpurGear":
-                    res = new SpurGearDialog();
+                    res = new SpurGearDlg();
                     break;
 
                 case "Stadium":

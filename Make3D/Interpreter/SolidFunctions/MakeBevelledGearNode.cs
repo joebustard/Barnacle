@@ -68,7 +68,7 @@ namespace ScriptLanguage
                EvalExpression(baseThicknessExp, ref valBaseThickness, "BaseThickness", "MakeBevelledGear") &&
                EvalExpression(fillBaseExp, ref valFillBase, "FillBase", "MakeBevelledGear"))
             {
-                BevelledGearMaker maker = new BevelledGearMaker();
+                GearMaker maker = new GearMaker();
                 // check calculated values are in range
                 bool inRange = true;
 
@@ -91,7 +91,7 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     Point3DCollection tmp = new Point3DCollection();
-                    maker.SetValues(valBaseRadius, valGearHeight, valToothLength, valNumberOfTeeth, valBoreHoleRadius, valBaseThickness, valFillBase);
+                    maker.SetValues(valBaseRadius, valGearHeight, valToothLength, valNumberOfTeeth, valBoreHoleRadius, valBaseThickness, valFillBase, true);
 
                     maker.Generate(tmp, obj.TriangleIndices);
                     PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
@@ -156,7 +156,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private static bool RangeCheck(BevelledGearMaker maker, string paramName, double val)
+        private static bool RangeCheck(GearMaker maker, string paramName, double val)
         {
             bool inRange = maker.CheckLimits(paramName, val);
             if (!inRange)

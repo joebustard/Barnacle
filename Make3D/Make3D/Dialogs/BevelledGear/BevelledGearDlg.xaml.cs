@@ -21,7 +21,7 @@ namespace Barnacle.Dialogs
         private bool fillBase;
         private double gearHeight;
         private bool loaded;
-        private BevelledGearMaker maker;
+        private GearMaker maker;
         private int numberOfTeeth;
         private DispatcherTimer regenTimer;
         private Visibility showBaseThickness;
@@ -34,7 +34,7 @@ namespace Barnacle.Dialogs
             ToolName = "BevelledGear";
             DataContext = this;
             loaded = false;
-            maker = new BevelledGearMaker();
+            maker = new GearMaker();
             Properties.Settings.Default.Reload();
             regenTimer = new DispatcherTimer();
             regenTimer.Interval = new TimeSpan(0, 0, Properties.Settings.Default.RegenerationDelay);
@@ -121,7 +121,7 @@ namespace Barnacle.Dialogs
         {
             get
             {
-                return ConstructToolTip("boreHoleRadius");
+                return ConstructToolTip("boreHoleRadius") + ". Set to 0 if no hole is required.";
             }
         }
 
@@ -318,9 +318,8 @@ namespace Barnacle.Dialogs
         {
             Point3DCollection v1 = new Point3DCollection();
             Int32Collection i1 = new Int32Collection();
-            BevelledGearMaker maker = new BevelledGearMaker();
-            maker.SetValues(baseRadius, gearHeight, toothLength, numberOfTeeth, boreHoleRadius, baseThickness, fillBase
-                );
+            GearMaker maker = new GearMaker();
+            maker.SetValues(baseRadius, gearHeight, toothLength, numberOfTeeth, boreHoleRadius, baseThickness, fillBase, true);
             maker.Generate(v1, i1);
 
             AsyncGeneratorResult res = new AsyncGeneratorResult();

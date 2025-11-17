@@ -34,11 +34,17 @@ namespace Barnacle.UserControls.ObjectViewer
     public partial class ObjectView : UserControl, INotifyPropertyChanged
     {
         public UserKeyHandler OnPreviewUserKey;
+
         private const string cameraRecordFile = "viewcamerapos.txt";
+
         private Axies axies;
 
         private Bounds3D bounds;
+
         private Visibility busyVisible = Visibility.Hidden;
+
+        private CameraModes cameraMode;
+
         private Point3D cameraPosition;
 
         private double fieldOfView;
@@ -71,6 +77,7 @@ namespace Barnacle.UserControls.ObjectViewer
             DataContext = this;
             polarCamera = new PolarCamera(100);
             polarCamera.HomeFront();
+            cameraMode = CameraModes.Normal;
 
             LookDirection = new Vector3D(-polarCamera.CameraPos.X, -polarCamera.CameraPos.Y, -polarCamera.CameraPos.Z);
             FieldOfView = 45;
@@ -95,6 +102,12 @@ namespace Barnacle.UserControls.ObjectViewer
         public delegate bool ViewMouseUp(object sender, MouseEventArgs e);
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private enum CameraModes
+        {
+            Normal,
+            Pan
+        }
 
         public Visibility BusyVisible
         {
@@ -296,6 +309,11 @@ namespace Barnacle.UserControls.ObjectViewer
             BusyVisible = Visibility.Visible;
         }
 
+        public void Center_Clicked(object sender, RoutedEventArgs e)
+        {
+            LookToCenter();
+        }
+
         public void Clear()
         {
             Model = null;
@@ -330,6 +348,11 @@ namespace Barnacle.UserControls.ObjectViewer
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        public void Pan_Clicked(object sender, RoutedEventArgs e)
+        {
+            PanCamera();
         }
 
         public void Redisplay()
@@ -379,14 +402,28 @@ namespace Barnacle.UserControls.ObjectViewer
 
         public void UpdateCameraPos()
         {
-            lookDirection.X = -polarCamera.CameraPos.X;
-            lookDirection.Y = -polarCamera.CameraPos.Y;
-            lookDirection.Z = -polarCamera.CameraPos.Z;
+            switch (cameraMode)
+            {
+                case CameraModes.Normal:
+                    {
+                        lookDirection.X = -polarCamera.CameraPos.X;
+                        lookDirection.Y = -polarCamera.CameraPos.Y;
+                        lookDirection.Z = -polarCamera.CameraPos.Z;
 
-            CameraPosition = new Point3D(polarCamera.CameraPos.X, polarCamera.CameraPos.Y, polarCamera.CameraPos.Z);
-            LookDirection = new Vector3D(lookDirection.X, lookDirection.Y, lookDirection.Z);
-            NotifyPropertyChanged("LookDirection");
-            NotifyPropertyChanged("CameraPosition");
+                        CameraPosition = new Point3D(polarCamera.CameraPos.X, polarCamera.CameraPos.Y, polarCamera.CameraPos.Z);
+                        LookDirection = new Vector3D(lookDirection.X, lookDirection.Y, lookDirection.Z);
+                        NotifyPropertyChanged("LookDirection");
+                        NotifyPropertyChanged("CameraPosition");
+                    }
+                    break;
+
+                case CameraModes.Pan:
+                    {
+                        CameraPosition = new Point3D(polarCamera.CameraPos.X, polarCamera.CameraPos.Y, polarCamera.CameraPos.Z);
+                        NotifyPropertyChanged("CameraPosition");
+                    }
+                    break;
+            }
         }
 
         internal void Refresh()
@@ -404,6 +441,7 @@ namespace Barnacle.UserControls.ObjectViewer
         {
             GetBounds(model);
             polarCamera.HomeBack();
+            cameraMode = CameraModes.Normal;
             SetDistanceToFit();
             UpdateCameraPos();
         }
@@ -412,6 +450,7 @@ namespace Barnacle.UserControls.ObjectViewer
         {
             GetBounds(model);
             polarCamera.HomeBottom();
+            cameraMode = CameraModes.Normal;
             SetDistanceToFit();
             UpdateCameraPos();
         }
@@ -530,6 +569,7 @@ namespace Barnacle.UserControls.ObjectViewer
         {
             GetBounds(model);
             Camera.HomeFront();
+            cameraMode = CameraModes.Normal;
             SetDistanceToFit();
             UpdateCameraPos();
         }
@@ -538,6 +578,7 @@ namespace Barnacle.UserControls.ObjectViewer
         {
             GetBounds(model);
             polarCamera.HomeLeft();
+            cameraMode = CameraModes.Normal;
             SetDistanceToFit(true);
             UpdateCameraPos();
         }
@@ -549,12 +590,21 @@ namespace Barnacle.UserControls.ObjectViewer
             lookDirection.Z = -polarCamera.CameraPos.Z;
             lookDirection.Normalize();
             NotifyPropertyChanged("LookDirection");
+            cameraMode = CameraModes.Normal;
+        }
+
+        private void PanCamera()
+        {
+            GetBounds(model);
+            cameraMode = CameraModes.Pan;
+            UpdateCameraPos();
         }
 
         private void RightCamera()
         {
             GetBounds(model);
             polarCamera.HomeRight();
+            cameraMode = CameraModes.Normal;
             SetDistanceToFit(true);
             UpdateCameraPos();
         }
@@ -585,6 +635,7 @@ namespace Barnacle.UserControls.ObjectViewer
         {
             GetBounds(model);
             polarCamera.HomeTop();
+            cameraMode = CameraModes.Normal;
             SetDistanceToFit();
             UpdateCameraPos();
         }

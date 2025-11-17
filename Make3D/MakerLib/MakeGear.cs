@@ -7,17 +7,22 @@ using System.Windows.Media.Media3D;
 
 namespace MakerLib
 {
-    public class BevelledGearMaker : MakerBase
+    public class GearMaker : MakerBase
     {
         private double baseRadius;
         private double baseThickness;
+        private bool bevelled;
         private double boreHoleRadius;
+
         private bool fillBase;
         private double gearHeight;
         private int numberOfTeeth;
+
+        // need to make the base a smidge bigger than the toot radius to we can create triangles
+
         private double toothLength;
 
-        public BevelledGearMaker()
+        public GearMaker()
         {
             paramLimits = new ParamLimits();
             SetLimits();
@@ -32,6 +37,7 @@ namespace MakerLib
             double TwoPi = 2.0 * Math.PI;
             double baserad = baseRadius + toothLength;
             double toprad = (baseRadius - gearHeight) + toothLength;
+
             double basediameter = TwoPi * baserad;
             double topdiameter = TwoPi * toprad;
             // sweep of a single tooth
@@ -40,7 +46,8 @@ namespace MakerLib
             double topsweeplen = topdiameter / (2 * numberOfTeeth);
             double radoff = 0.1 * toothLength;
             double topy = gearHeight;
-
+            double by = -baseThickness;
+            double dt = sweepangle / 10;
             double theta = 0;
             Point3D p0;
             Point3D p1;
@@ -61,7 +68,7 @@ namespace MakerLib
                 double r2 = r1 + radoff;
                 double r3 = r1 + (toothLength - radoff);
                 double r4 = r1 + toothLength;
-                double dt = sweepangle / 10;
+
                 for (int i = 0; i < 11; i++)
                 {
                     double t = theta + (i * dt);
@@ -93,8 +100,15 @@ namespace MakerLib
                 baseTeethPoints.Add(t10);
 
                 // top
+                if (bevelled)
+                {
+                    r1 = baseRadius - gearHeight;
+                }
+                else
+                {
+                    r1 = baseRadius;
+                }
 
-                r1 = baseRadius - gearHeight;
                 r2 = r1 + radoff;
                 r3 = r1 + (toothLength - radoff);
                 r4 = r1 + toothLength;
@@ -125,6 +139,7 @@ namespace MakerLib
                 topTeethPoints.Add(t10);
                 theta += 11 * dt;
             }
+
             // triangulate top and bottom
             for (int index = 0; index < baseTeethPoints.Count - 1; index++)
             {
@@ -180,34 +195,34 @@ namespace MakerLib
                 AddFace(v0, v2, v1);
                 AddFace(v1, v2, v3);
             }
-
-            // close bore
-            for (int index = 0; index < borePoints.Count - 1; index++)
+            if (boreHoleRadius > 0)
             {
-                int j = index + 1;
-                if (j >= borePoints.Count)
+                // close bore
+                for (int index = 0; index < borePoints.Count - 1; index++)
                 {
-                    j = 0;
-                }
-                p0 = new Point3D(borePoints[index].X, 0, borePoints[index].Y);
-                p1 = new Point3D(borePoints[j].X, 0, borePoints[j].Y);
-                p2 = new Point3D(borePoints[index].X, topy, borePoints[index].Y);
-                p3 = new Point3D(borePoints[j].X, topy, borePoints[j].Y);
+                    int j = index + 1;
+                    if (j >= borePoints.Count)
+                    {
+                        j = 0;
+                    }
+                    p0 = new Point3D(borePoints[index].X, 0, borePoints[index].Y);
+                    p1 = new Point3D(borePoints[j].X, 0, borePoints[j].Y);
+                    p2 = new Point3D(borePoints[index].X, topy, borePoints[index].Y);
+                    p3 = new Point3D(borePoints[j].X, topy, borePoints[j].Y);
 
-                v0 = AddVertice(p0);
-                v1 = AddVertice(p1);
-                v2 = AddVertice(p2);
-                v3 = AddVertice(p3);
-                AddFace(v0, v1, v2);
-                AddFace(v1, v3, v2);
+                    v0 = AddVertice(p0);
+                    v1 = AddVertice(p1);
+                    v2 = AddVertice(p2);
+                    v3 = AddVertice(p3);
+                    AddFace(v0, v1, v2);
+                    AddFace(v1, v3, v2);
+                }
             }
 
             if (fillBase)
             {
-                theta = 0;
-                double dt = sweepangle / 10;
-                // need to make the base a smidge bigger than the toot radius to we can create triangles
                 double r = baserad + 0.05;
+                theta = 0;
                 while (theta < TwoPi)
                 {
                     Point pb = CalcPoint(theta, r);
@@ -215,7 +230,6 @@ namespace MakerLib
                     theta += dt;
                 }
 
-                double by = -baseThickness;
                 for (int index = 0; index < basePoints.Count - 1; index++)
                 {
                     int j = index + 1;
@@ -223,6 +237,7 @@ namespace MakerLib
                     {
                         j = 0;
                     }
+
                     // bottom of base
                     p0 = new Point3D(borePoints[index].X, by, borePoints[index].Y);
                     p1 = new Point3D(borePoints[j].X, by, borePoints[j].Y);
@@ -283,7 +298,8 @@ namespace MakerLib
                               int numberOfTeeth,
                               double boreHoleRadius,
                               double baseThickness,
-                              bool fillBase)
+                              bool fillBase,
+                              bool bevel)
         {
             this.baseRadius = baseRadius;
             this.gearHeight = gearHeight;
@@ -292,6 +308,7 @@ namespace MakerLib
             this.boreHoleRadius = boreHoleRadius;
             this.baseThickness = baseThickness;
             this.fillBase = fillBase;
+            this.bevelled = bevel;
         }
 
         private void SetLimits()

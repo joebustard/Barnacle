@@ -54,6 +54,7 @@ namespace Barnacle.Views
             NotificationManager.Subscribe("Editor", "KeyDown", OnKeyDown);
             NotificationManager.Subscribe("Editor", "Settings", OnSettings);
             NotificationManager.Subscribe("Editor", "ScreenShot", OnScreenShot);
+
             UpdateDisplay(null);
 
             vm = DataContext as EditorViewModel;

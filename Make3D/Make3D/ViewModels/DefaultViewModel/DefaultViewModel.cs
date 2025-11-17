@@ -2123,7 +2123,7 @@ namespace Barnacle.ViewModels
             }
             else
             {
-                selectedObjectName = "";
+                SelectedObjectName = "";
             }
             NotifyPropertyChanged("SelectedObjectName");
         }

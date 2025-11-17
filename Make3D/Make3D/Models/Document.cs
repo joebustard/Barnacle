@@ -819,6 +819,7 @@ namespace Barnacle.Models
             {
                 res.Add(ob.Name);
             }
+
             return res;
         }
 

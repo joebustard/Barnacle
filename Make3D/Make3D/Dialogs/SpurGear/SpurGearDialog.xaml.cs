@@ -1,421 +1,441 @@
-﻿// **************************************************************************
-// *   Copyright (c) 2024 Joe Bustard <barnacle3d@gmailcom>                  *
-// *                                                                         *
-// *   This file is part of the Barnacle 3D application.                     *
-// *                                                                         *
-// *   This application is free software. You can redistribute it and/or     *
-// *   modify it under the terms of the GNU Library General Public           *
-// *   License as published by the Free Software Foundation. Either          *
-// *   version 2 of the License, or (at your option) any later version.      *
-// *                                                                         *
-// *   This application is distributed in the hope that it will be useful,   *
-// *   but WITHOUT ANY WARRANTY. Without even the implied warranty of        *
-// *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
-// *   GNU Library General Public License for more details.                  *
-// *                                                                         *
-// *************************************************************************
-
-using PolygonTriangulationLib;
+﻿using MakerLib;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Shapes;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
+using System.Windows.Threading;
 
 namespace Barnacle.Dialogs
 {
     /// <summary>
-    /// Interaction logic for SpurGearDialog.xaml
+    /// Interaction logic for BevelledGear.xaml
     /// </summary>
-    public partial class SpurGearDialog : BaseModellerDialog, INotifyPropertyChanged
+    public partial class SpurGearDlg : BaseModellerDialog, INotifyPropertyChanged
     {
+        private double baseRadius;
+        private double baseThickness;
+        private double boreHoleRadius;
+        private bool fillBase;
+        private double gearHeight;
+        private bool loaded;
+        private GearMaker maker;
         private int numberOfTeeth;
-        private double outterRadius;
-        private List<System.Windows.Point> points;
-        private double teethBaseHeight;
-        private double teethBaseWidth;
-        private double teethTopHeight;
-        private double teethTopWidth;
-        private double thickness;
-        private bool updateDisplayWhenChanged;
+        private DispatcherTimer regenTimer;
+        private Visibility showBaseThickness;
+        private double toothLength;
+        private string warningText;
 
-        public SpurGearDialog()
+        public SpurGearDlg()
         {
             InitializeComponent();
-            DataContext = this;
             ToolName = "SpurGear";
-            // stops us trying to make a 3d model whie we are still just initialising
-            updateDisplayWhenChanged = false;
-            points = new List<System.Windows.Point>();
+            DataContext = this;
+            loaded = false;
+            maker = new GearMaker();
+            Properties.Settings.Default.Reload();
+            regenTimer = new DispatcherTimer();
+            regenTimer.Interval = new TimeSpan(0, 0, Properties.Settings.Default.RegenerationDelay);
+            regenTimer.Tick += RegenTimer_Tick;
+        }
+
+        public double BaseRadius
+        {
+            get
+            {
+                return baseRadius;
+            }
+            set
+            {
+                if (baseRadius != value)
+                {
+                    if (CheckRange(value))
+                    {
+                        baseRadius = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public String BaseRadiusToolTip
+        {
+            get
+            {
+                return ConstructToolTip("baseRadius");
+            }
+        }
+
+        public double BaseThickness
+        {
+            get
+            {
+                return baseThickness;
+            }
+            set
+            {
+                if (baseThickness != value)
+                {
+                    if (CheckRange(value))
+                    {
+                        baseThickness = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public String BaseThicknessToolTip
+        {
+            get
+            {
+                return ConstructToolTip("baseThickness");
+            }
+        }
+
+        public double BoreHoleRadius
+        {
+            get
+            {
+                return boreHoleRadius;
+            }
+            set
+            {
+                if (boreHoleRadius != value)
+                {
+                    if (CheckRange(value))
+                    {
+                        boreHoleRadius = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public String BoreHoleRadiusToolTip
+        {
+            get
+            {
+                return ConstructToolTip("boreHoleRadius") + ". Set to 0 if no hole is required.";
+            }
+        }
+
+        public bool FillBase
+        {
+            get
+            {
+                return fillBase;
+            }
+            set
+            {
+                if (fillBase != value)
+                {
+                    fillBase = value;
+                    if (fillBase)
+                    {
+                        ShowBaseThickness = Visibility.Visible;
+                    }
+                    else
+                    {
+                        ShowBaseThickness = Visibility.Hidden;
+                    }
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public String FillBaseToolTip
+        {
+            get
+            {
+                return ConstructToolTip("fillBase");
+            }
+        }
+
+        public double GearHeight
+        {
+            get
+            {
+                return gearHeight;
+            }
+            set
+            {
+                if (gearHeight != value)
+                {
+                    if (CheckRange(value))
+                    {
+                        gearHeight = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public String GearHeightToolTip
+        {
+            get
+            {
+                return ConstructToolTip("gearHeight");
+            }
         }
 
         public int NumberOfTeeth
         {
-            get => numberOfTeeth;
-
+            get
+            {
+                return numberOfTeeth;
+            }
             set
             {
                 if (numberOfTeeth != value)
                 {
-                    numberOfTeeth = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
+                    if (CheckRange(value))
+                    {
+                        numberOfTeeth = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
                 }
             }
         }
 
-        public double Radius
-        {
-            get => outterRadius;
-
-            set
-            {
-                if (outterRadius != value)
-                {
-                    outterRadius = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
-            }
-        }
-
-        public override bool ShowAxies
+        public String NumberOfTeethToolTip
         {
             get
             {
-                return showAxies;
-            }
-
-            set
-            {
-                if (showAxies != value)
-                {
-                    showAxies = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
+                return ConstructToolTip("numberOfTeeth");
             }
         }
 
-        public override bool ShowFloor
+        public Visibility ShowBaseThickness
         {
             get
             {
-                return showFloor;
+                return showBaseThickness;
             }
-
             set
             {
-                if (showFloor != value)
+                if (value != showBaseThickness)
                 {
-                    showFloor = value;
+                    showBaseThickness = value;
                     NotifyPropertyChanged();
-                    UpdateDisplay();
                 }
             }
         }
 
-        public double TeethBaseHeight
+        public double ToothLength
         {
-            get => teethBaseHeight;
-
+            get
+            {
+                return toothLength;
+            }
             set
             {
-                if (teethBaseHeight != value)
+                if (toothLength != value)
                 {
-                    teethBaseHeight = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
+                    if (CheckRange(value))
+                    {
+                        toothLength = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
                 }
             }
         }
 
-        public double TeethBaseWidth
+        public String ToothLengthToolTip
         {
-            get => teethBaseWidth;
-
-            set
+            get
             {
-                if (teethBaseWidth != value)
-                {
-                    teethBaseWidth = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
+                return ConstructToolTip("toothLength");
             }
         }
 
-        public double TeethTopHeight
+        public string WarningText
         {
-            get => teethTopHeight;
-
-            set
+            get
             {
-                if (teethTopHeight != value)
-                {
-                    teethTopHeight = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
+                return warningText;
             }
-        }
-
-        public double TeethTopWidth
-        {
-            get => teethTopWidth;
-
             set
             {
-                if (teethTopWidth != value)
+                if (warningText != value)
                 {
-                    teethTopWidth = value;
+                    warningText = value;
                     NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
-            }
-        }
-
-        public double Thickness
-        {
-            get => thickness;
-
-            set
-            {
-                if (thickness != value)
-                {
-                    thickness = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
                 }
             }
         }
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
-            EditorParameters.Set("Thickness", Thickness.ToString("F4"));
-            EditorParameters.Set("Radius", Radius.ToString("F4"));
-            EditorParameters.Set("NumberOfTeeth", NumberOfTeeth.ToString());
-            EditorParameters.Set("TeethBaseHeight", TeethBaseHeight.ToString("F4"));
-            EditorParameters.Set("TeethBaseWidth", TeethBaseWidth.ToString("F4"));
-            EditorParameters.Set("TeethTopHeight", TeethTopHeight.ToString("F4"));
-            EditorParameters.Set("TeethTopWidth", TeethTopWidth.ToString("F4"));
-            DialogResult = true;
-            Close();
-        }
-
-        private void BaseModellerDialog_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (EditorParameters.Get("Radius") == "")
+            if (regenTimer.IsEnabled)
             {
-                SetDefaults();
+                regenTimer.Stop();
+                Regenerate();
             }
             else
             {
-                Thickness = Convert.ToDouble(EditorParameters.Get("Thickness"));
-                Radius = Convert.ToDouble(EditorParameters.Get("Radius"));
-                NumberOfTeeth = Convert.ToInt16(EditorParameters.Get("NumberOfTeeth"));
-                TeethBaseHeight = Convert.ToDouble(EditorParameters.Get("TeethBaseHeight"));
-                TeethBaseWidth = Convert.ToDouble(EditorParameters.Get("TeethBaseWidth"));
-                TeethTopHeight = Convert.ToDouble(EditorParameters.Get("TeethTopHeight"));
-                TeethTopWidth = Convert.ToDouble(EditorParameters.Get("TeethTopWidth"));
+                base.SaveSizeAndLocation();
+                SaveEditorParmeters();
+                DialogResult = true;
+                Close();
             }
-
-            GenerateShape();
-            updateDisplayWhenChanged = true;
-            UpdateCameraPos();
         }
 
-        private void CreateSideFace(int i)
+        private bool CheckRange(double v, [CallerMemberName] String propertyName = "")
         {
-            int v = i + 1;
-            if (v == points.Count)
+            bool res = false;
+            if (maker != null)
             {
-                v = 0;
+                res = maker.CheckLimits(propertyName, v);
             }
-
-            int c0 = AddVertice(points[i].X, points[i].Y, 0.0);
-            int c1 = AddVertice(points[i].X, points[i].Y, thickness);
-            int c2 = AddVertice(points[v].X, points[v].Y, thickness);
-            int c3 = AddVertice(points[v].X, points[v].Y, 0.0);
-            Faces.Add(c0);
-            Faces.Add(c2);
-            Faces.Add(c1);
-
-            Faces.Add(c0);
-            Faces.Add(c3);
-            Faces.Add(c2);
+            return res;
         }
 
-        private void DisplayFlatView(List<System.Windows.Point> pnts)
+        private string ConstructToolTip(string p)
         {
-            FlatView.Children.Clear();
-            double cx = FlatView.ActualWidth / 2;
-            double cy = FlatView.ActualHeight / 2;
-            Polyline pl = new Polyline();
-            pl.Stroke = System.Windows.Media.Brushes.Blue;
-            pl.StrokeThickness = 1;
-            List<System.Windows.Point> canvasPnts = new List<System.Windows.Point>();
-            foreach (System.Windows.Point p in pnts)
+            string res = "";
+            if (maker != null)
             {
-                System.Windows.Point np = new System.Windows.Point(cx + p.X, cy + p.Y);
-                pl.Points.Add(np);
-            }
-            FlatView.Children.Add(pl);
-        }
-
-        private void GenerateShape()
-        {
-            if (numberOfTeeth > 2)
-            {
-                if (thickness > 0)
+                ParamLimit pl = maker.GetLimits(p);
+                if (pl != null)
                 {
-                    double actualOutterRadius = outterRadius;
-
-                    double circumference = Math.PI * 2 * outterRadius;
-                    double minTeethWidth = circumference / numberOfTeeth;
-                    double actualBaseWidth = teethBaseWidth;
-                    if (teethBaseWidth > minTeethWidth)
-                    {
-                        actualBaseWidth = minTeethWidth;
-                    }
-
-                    double totalGapLeft = circumference - (actualBaseWidth * numberOfTeeth);
-
-                    double gapPerTooth = totalGapLeft / numberOfTeeth;
-                    if (gapPerTooth <= 0)
-                    {
-                        gapPerTooth = 0.1;
-                    }
-                    double toothTopRadius = actualOutterRadius + teethBaseHeight + TeethTopHeight;
-                    double toothTopCircum = Math.PI * 2 * toothTopRadius;
-                    double toothTopDelta = (teethTopWidth / toothTopCircum) * Math.PI * 2;
-
-                    points.Clear();
-                    double gapDeltaTheta = gapPerTooth / circumference * Math.PI * 2;
-                    double toothDeltaTheta = teethBaseWidth / circumference * Math.PI * 2;
-
-                    double toothTopCenteringTheta = (toothDeltaTheta - toothTopDelta) / 2;
-
-                    double theta = 0;
-                    bool tooth = true;
-                    while (theta <= Math.PI * 2)
-                    {
-                        // 2 ---- 3 / \ / \ 1 4 ! ! ! ! 0 5 (Sort of)
-                        if (tooth && (Math.PI * 2 - theta > toothDeltaTheta))
-                        {
-                            // add a tooth 0
-                            double x = outterRadius * Math.Cos(theta);
-                            double y = outterRadius * Math.Sin(theta);
-                            points.Add(new System.Windows.Point(x, y));
-
-                            //1
-                            x = (outterRadius + teethBaseHeight) * Math.Cos(theta);
-                            y = (outterRadius + teethBaseHeight) * Math.Sin(theta);
-                            points.Add(new System.Windows.Point(x, y));
-
-                            //2
-                            theta += toothTopCenteringTheta;
-                            x = (toothTopRadius) * Math.Cos(theta);
-                            y = (toothTopRadius) * Math.Sin(theta);
-                            points.Add(new System.Windows.Point(x, y));
-
-                            //3
-                            theta += toothTopDelta;
-                            x = (toothTopRadius) * Math.Cos(theta);
-                            y = (toothTopRadius) * Math.Sin(theta);
-                            points.Add(new System.Windows.Point(x, y));
-
-                            // 4
-                            theta += toothTopCenteringTheta;
-                            x = (outterRadius + teethBaseHeight) * Math.Cos(theta);
-                            y = (outterRadius + teethBaseHeight) * Math.Sin(theta);
-                            points.Add(new System.Windows.Point(x, y));
-
-                            // 5
-                            x = outterRadius * Math.Cos(theta);
-                            y = outterRadius * Math.Sin(theta);
-                            points.Add(new System.Windows.Point(x, y));
-                        }
-                        else
-                        {
-                            // Add a gap
-                            theta += gapDeltaTheta;
-                            if (theta < Math.PI * 2)
-                            {
-                                double x = outterRadius * Math.Cos(theta);
-                                double y = outterRadius * Math.Sin(theta);
-                                points.Add(new System.Windows.Point(x, y));
-                            }
-                        }
-                        tooth = !tooth;
-                    }
-                    // DisplayFlatView(points);
-
-                    ClearShape();
-
-                    // generate side triangles so original points are already in list
-                    for (int i = 0; i < points.Count; i++)
-                    {
-                        CreateSideFace(i);
-                    }
-                    // triangulate the basic polygon
-                    TriangulationPolygon ply = new TriangulationPolygon();
-                    List<PointF> pf = new List<PointF>();
-                    foreach (System.Windows.Point p in points)
-                    {
-                        pf.Add(new PointF((float)p.X, (float)p.Y));
-                    }
-                    ply.Points = pf.ToArray();
-                    List<Triangle> tris = ply.Triangulate();
-                    foreach (Triangle t in tris)
-                    {
-                        int c0 = AddVertice(t.Points[0].X, t.Points[0].Y, 0.0);
-                        int c1 = AddVertice(t.Points[1].X, t.Points[1].Y, 0.0);
-                        int c2 = AddVertice(t.Points[2].X, t.Points[2].Y, 0.0);
-                        Faces.Add(c0);
-                        Faces.Add(c2);
-                        Faces.Add(c1);
-
-                        c0 = AddVertice(t.Points[0].X, t.Points[0].Y, thickness);
-                        c1 = AddVertice(t.Points[1].X, t.Points[1].Y, thickness);
-                        c2 = AddVertice(t.Points[2].X, t.Points[2].Y, thickness);
-                        Faces.Add(c0);
-                        Faces.Add(c1);
-                        Faces.Add(c2);
-                    }
-
-                    CentreVertices();
+                    res = $"{p} must be in the range {pl.Low} to {pl.High}";
                 }
             }
+            return res;
+        }
+
+        private AsyncGeneratorResult GenerateAsync()
+        {
+            Point3DCollection v1 = new Point3DCollection();
+            Int32Collection i1 = new Int32Collection();
+            GearMaker maker = new GearMaker();
+            maker.SetValues(baseRadius, gearHeight, toothLength, numberOfTeeth, boreHoleRadius, baseThickness, fillBase, false);
+            maker.Generate(v1, i1);
+
+            AsyncGeneratorResult res = new AsyncGeneratorResult();
+            // extract the vertices and indices to thread safe arrays
+            // while still in the async function
+            res.points = new Point3D[v1.Count];
+            for (int i = 0; i < v1.Count; i++)
+            {
+                res.points[i] = new Point3D(v1[i].X, v1[i].Y, v1[i].Z);
+            }
+            res.indices = new int[i1.Count];
+            for (int i = 0; i < i1.Count; i++)
+            {
+                res.indices[i] = i1[i];
+            }
+            v1.Clear();
+            i1.Clear();
+            return (res);
+        }
+
+        private async void GenerateShape()
+        {
+            ClearShape();
+            Viewer.Busy();
+            EditingEnabled = false;
+            AsyncGeneratorResult result;
+            result = await Task.Run(() => GenerateAsync());
+            GetVerticesFromAsyncResult(result);
+            CentreVertices();
+            Viewer.NotBusy();
+            EditingEnabled = true;
+        }
+
+        private void LoadEditorParameters()
+        {
+            // load back the tool specific parametes
+            BaseRadius = EditorParameters.GetDouble("BaseRadius", 10);
+            GearHeight = EditorParameters.GetDouble("GearHeight", 5);
+            ToothLength = EditorParameters.GetDouble("ToothLength", 5);
+            NumberOfTeeth = EditorParameters.GetInt("NumberOfTeeth", 10);
+            BoreHoleRadius = EditorParameters.GetDouble("BoreHoleRadius", 2);
+            BaseThickness = EditorParameters.GetDouble("BaseThickness", 1);
+            FillBase = EditorParameters.GetBoolean("FillBase", false);
+            if (fillBase)
+            {
+                ShowBaseThickness = Visibility.Visible;
+            }
+            else
+            {
+                ShowBaseThickness = Visibility.Hidden;
+            }
+        }
+
+        private void Regenerate()
+        {
+            if (loaded)
+            {
+                GenerateShape();
+                Viewer.Model = GetModel();
+            }
+        }
+
+        private void RegenTimer_Tick(object sender, EventArgs e)
+        {
+            regenTimer.Stop();
+            Regenerate();
         }
 
         private void ResetDefaults(object sender, RoutedEventArgs e)
         {
-            updateDisplayWhenChanged = false;
             SetDefaults();
-            updateDisplayWhenChanged = true;
             UpdateDisplay();
+        }
+
+        private void SaveEditorParmeters()
+        {
+            // save the parameters for the tool
+            EditorParameters.Set("BaseRadius", BaseRadius.ToString());
+            EditorParameters.Set("GearHeight", GearHeight.ToString());
+            EditorParameters.Set("ToothLength", ToothLength.ToString());
+            EditorParameters.Set("NumberOfTeeth", NumberOfTeeth.ToString());
+            EditorParameters.Set("BoreHoleRadius", BoreHoleRadius.ToString());
+            EditorParameters.Set("BaseThickness", BaseThickness.ToString());
+            EditorParameters.Set("FillBase",
+            FillBase.ToString());
         }
 
         private void SetDefaults()
         {
-            Thickness = 2;
-            Radius = 10;
-            NumberOfTeeth = 15;
-            TeethBaseHeight = 2;
-            TeethBaseWidth = 2;
-            TeethTopHeight = 1;
-            TeethTopWidth = 1;
+            loaded = false;
+            BaseRadius = 10;
+            GearHeight = 5;
+            ToothLength = 5;
+            NumberOfTeeth = 10;
+            BoreHoleRadius = 2;
+            BaseThickness = 1;
+            FillBase = false;
+
+            loaded = true;
         }
 
         private void UpdateDisplay()
         {
-            if (updateDisplayWhenChanged)
-            {
-                GenerateShape();
-            }
-            Viewer.Model = GetModel();
+            regenTimer.Stop();
+            regenTimer.Start();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            WarningText = "";
+            LoadEditorParameters();
+
+            Viewer.Clear();
+            loaded = true;
+
+            UpdateDisplay();
         }
     }
 }

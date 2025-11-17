@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:Barnacle.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
-    Title=""
+    Title="Bevelled Gear"
     Width="1000"
     Height="450"
     Background="{StaticResource WindowBackBrush}"

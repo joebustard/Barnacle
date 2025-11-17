@@ -1469,6 +1469,7 @@
     <Resource Include="Images\Buttons\SdfModel.png" />
     <Resource Include="Images\Buttons\PieSlice.png" />
     <Resource Include="Images\Buttons\Tetrahedron.png" />
+    <Resource Include="Images\Snooze.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
