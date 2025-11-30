@@ -87,30 +87,37 @@ namespace ScriptLanguage
                         {
                             if (CheckSolidExists(label, expressions.Get(0).ToString(), objectIndex))
                             {
-                                switch (direction)
+                                if (Script.ResultArtefacts[objectIndex].PrimType != "Mesh")
                                 {
-                                    case Directions.H:
-                                        {
-                                            Script.ResultArtefacts[objectIndex].FlipX();
-                                        }
-                                        break;
-
-                                    case Directions.V:
-                                        {
-                                            Script.ResultArtefacts[objectIndex].FlipY();
-                                        }
-                                        break;
-
-                                    case Directions.D:
-                                        {
-                                            Script.ResultArtefacts[objectIndex].FlipZ();
-                                        }
-                                        break;
+                                    ReportStatement($"Run Time Error : {label} Can't flip a group");
                                 }
-                                Script.ResultArtefacts[objectIndex].FlipInside();
-                                Script.ResultArtefacts[objectIndex].CalculateAbsoluteBounds();
-                                GC.Collect();
-                                result = true;
+                                else
+                                {
+                                    switch (direction)
+                                    {
+                                        case Directions.H:
+                                            {
+                                                Script.ResultArtefacts[objectIndex].FlipX();
+                                            }
+                                            break;
+
+                                        case Directions.V:
+                                            {
+                                                Script.ResultArtefacts[objectIndex].FlipY();
+                                            }
+                                            break;
+
+                                        case Directions.D:
+                                            {
+                                                Script.ResultArtefacts[objectIndex].FlipZ();
+                                            }
+                                            break;
+                                    }
+                                    Script.ResultArtefacts[objectIndex].FlipInside();
+                                    Script.ResultArtefacts[objectIndex].CalculateAbsoluteBounds();
+                                    GC.Collect();
+                                    result = true;
+                                }
                             }
                         }
                     }

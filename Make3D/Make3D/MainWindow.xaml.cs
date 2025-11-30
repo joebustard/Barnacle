@@ -26,6 +26,7 @@ using Barnacle.Models.BufferedPolyline;
 using System.Collections.Generic;
 using System.Windows.Threading;
 using Barnacle.Views;
+using FileUtils;
 
 namespace Barnacle
 {
@@ -58,6 +59,8 @@ namespace Barnacle
         {
             autoRunTimer?.Stop();
             AutoRunScript();
+
+            // set the exit code so any batch program knows if autorun succeeded
             int res = -1;
             if (DefaultView.AutoRunResult)
             {
@@ -79,7 +82,12 @@ namespace Barnacle
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            this.SaveSizeAndLocation();
+            // save the current window state IF we are not auto running
+            // i.e. only record the size and position selected by the user if we are not autorunning
+            if (autoRunTimer == null)
+            {
+                this.SaveSizeAndLocation();
+            }
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -98,6 +106,9 @@ namespace Barnacle
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            // create the default folders if needed
+            PathManager.CreateDefaultFolders();
+
             // check if we have been opened with a project file name on the command line
             string[] args = Environment.GetCommandLineArgs();
 

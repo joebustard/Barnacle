@@ -10,7 +10,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         WindowStartupLocation="CenterOwner"
         Width="400"
-        Height="180">
+        Height="200"
+        Loaded="Window_Loaded">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
@@ -18,27 +19,39 @@
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="10" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
             <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
+            <RowDefinition Height="10" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Column="1"
                     Grid.Row="1"
                     Orientation="Horizontal">
-            <Label VerticalAlignment="Center">
+            <Label VerticalAlignment="Center" Content="File" Width="60">
             </Label>
-            <TextBox Margin="8,0,0,0"
+            <TextBox Margin="8,4,0,4"
                      Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"
                      VerticalAlignment="Stretch"
                      Width="220" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="1"
+            Grid.Row="2"
+            Orientation="Horizontal" Visibility="{Binding TemplatesVisible}">
+            <Label VerticalAlignment="Center" Content="Template" Width="60" Visibility="{Binding TemplatesVisible}">
+            </Label>
+            <ComboBox Margin="8,4,0,4" Text="{Binding SelectedTemplateName}"
+             ItemsSource ="{Binding TemplateNames}"
+             VerticalAlignment="Stretch"
+             Width="220" Visibility="{Binding TemplatesVisible}" />
         </StackPanel>
         <Button Click="Button_Click"
                 Content="OK"
                 Grid.Column="1"
                 Grid.Row="3"
                 Visibility="{Binding OKVisible}"
-                Width="80" />
+                Width="80" Margin="0,4,0,4" />
     </Grid>
 </Window>

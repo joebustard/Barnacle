@@ -1403,6 +1403,14 @@
                             Header="Duplicate or Unreferenced Vertices"
                             ImageSource="/Barnacle;component/Images/Buttons/copy.png"
                             ToolTip="Remove Duplicate/Unreferenced Vertex" />
+                        <Custom:RibbonMenuItem
+     x:Name="DupFaceButton"
+     HorizontalAlignment="Stretch"
+     VerticalAlignment="Top"
+     Command="{Binding DupFaceCommand}"
+     Header="Duplicate Faces"
+     ImageSource="/Barnacle;component/Images/Buttons/copy.png"
+     ToolTip="Remove Duplicate Faces" />
 
                         <Custom:RibbonMenuItem
                             x:Name="FixHolesButton"

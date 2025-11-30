@@ -17,9 +17,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace FileUtils
 {
@@ -33,6 +35,15 @@ namespace FileUtils
         public static string CommonAppDataFolder()
         {
             return System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Barnacle");
+        }
+
+        public static void CreateDefaultFolders()
+        {
+            CreateIfNeeded(LibraryFolder());
+            CreateIfNeeded(PrinterProfileFolder());
+            CreateIfNeeded(UserPresetsPath());
+            CreateIfNeeded(UserScriptTemplatesFolder());
+            CreateIfNeeded(UserTemplatesFolder());
         }
 
         public static string LibraryFolder()
@@ -55,11 +66,33 @@ namespace FileUtils
             return pth;
         }
 
+        public static string UserScriptTemplatesFolder()
+        {
+            string pth = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Barnacle");
+            pth += "//UserScriptTemplates";
+            return pth;
+        }
+
         public static string UserTemplatesFolder()
         {
-            string pth = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Barnacle");
+            string pth = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Barnacle");
             pth += "//UserTemplates";
             return pth;
+        }
+
+        private static void CreateIfNeeded(string fld)
+        {
+            if (!Directory.Exists(fld))
+            {
+                try
+                {
+                    Directory.CreateDirectory(fld);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
         }
     }
 }

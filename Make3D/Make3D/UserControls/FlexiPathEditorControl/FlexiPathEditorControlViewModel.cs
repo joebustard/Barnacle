@@ -124,6 +124,7 @@ namespace Barnacle.UserControls
             OrthoLockCommand = new RelayCommand(OnToggleOrthoLock);
             LineStyleCommand = new RelayCommand(OnLineStyle);
             SavePresetCommand = new RelayCommand(OnSavePreset);
+            SizeCommand = new RelayCommand(OnSize);
             HoleCommand = new RelayCommand(OnHoleCommand);
             FlipCommand = new RelayCommand(OnFlip);
             AntiClockwiseArcCommand = new RelayCommand(OnAntiClockwiseArc);
@@ -914,6 +915,11 @@ namespace Barnacle.UserControls
             }
         }
 
+        public ICommand SizeCommand
+        {
+            get; set;
+        }
+
         public bool Snap
         {
             get
@@ -1561,6 +1567,15 @@ namespace Barnacle.UserControls
             }
         }
 
+        private void ChangePathSize(double sd)
+        {
+            selectedFlexiPath.ChangeSize(sd);
+            PathText = selectedFlexiPath.ToPath(absolutePaths);
+            PointsDirty = true;
+            selectedPoint = -1;
+            NotifyPropertyChanged("Points");
+        }
+
         private void CheckEnableSavePreset()
         {
             bool enable = false;
@@ -1617,6 +1632,11 @@ namespace Barnacle.UserControls
             ps.DashPattern.Add(2);
             ps.DashPattern.Add(2);
             linePen = ps;
+        }
+
+        private void DecreasePathSize()
+        {
+            ChangePathSize(-0.1);
         }
 
         private void DeselectAll()
@@ -1732,6 +1752,11 @@ namespace Barnacle.UserControls
             }
 
             return updateRequired;
+        }
+
+        private void IncreasePathSize()
+        {
+            ChangePathSize(0.1);
         }
 
         private void LoadPresetFile(string dataPath, bool user)
@@ -2276,6 +2301,20 @@ namespace Barnacle.UserControls
             }
 
             NotifyPropertyChanged("Points");
+        }
+
+        private void OnSize(object obj)
+        {
+            String s = obj.ToString();
+            if (s == "+")
+            {
+                IncreasePathSize();
+            }
+
+            if (s == "-")
+            {
+                DecreasePathSize();
+            }
         }
 
         private void OnSplitQuad(object obj)

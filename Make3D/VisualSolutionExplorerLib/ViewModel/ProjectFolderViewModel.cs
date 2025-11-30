@@ -11,7 +11,6 @@ namespace VisualSolutionExplorer
         private readonly ProjectFolder _folder;
         private List<ProjectFolderViewModel> _folders;
         private FolderContextMenuViewModel contextMenu;
-        public Project ParentProject { get; set; }
         private bool isEditing;
 
         public ProjectFolderViewModel(ProjectFolder folder)
@@ -23,26 +22,6 @@ namespace VisualSolutionExplorer
             ParentProject = folder.ParentProject;
             isEditing = false;
             StopEditing = new RelayCommand(OnStopEditing);
-        }
-
-        private void MakeContextMenu(ProjectFolder folder)
-        {
-            contextMenu = new FolderContextMenuViewModel(folder.SupportsSubFolders,
-                                                            folder.SupportsFiles,
-                                                            folder.CanBeRenamed,
-                                                            folder.Explorer, folder.CanAddToLibrary && folder.IsInLibrary);
-            contextMenu.OnAddExistingFile = AddExistingFile;
-            contextMenu.OnCreateFolder = CreateNewFolder;
-            contextMenu.OnCreateFile = CreateNewFile;
-            contextMenu.OnRenameFolder = RenameFolder;
-            contextMenu.OnExploreFolder = ExploreFolder;
-            contextMenu.OnAddObjectToLibrary = AddObjectToLibrary;
-            OnPropertyChanged("ContextMenu");
-        }
-
-        private void AddObjectToLibrary()
-        {
-            NotifySolutionChanged("AddObjectToLibrary", FolderPath, "");
         }
 
         public delegate void SolutionChangedDelegate(string changeEvent, string parameter1, string parameter2);
@@ -104,11 +83,6 @@ namespace VisualSolutionExplorer
             }
         }
 
-        internal void UpdateMenu()
-        {
-            MakeContextMenu(_folder);
-        }
-
         public bool IsEditing
         {
             get
@@ -125,8 +99,20 @@ namespace VisualSolutionExplorer
             }
         }
 
-        public SolutionChangedDelegate SolutionChanged { get; set; }
-        public ICommand StopEditing { get; set; }
+        public Project ParentProject
+        {
+            get; set;
+        }
+
+        public SolutionChangedDelegate SolutionChanged
+        {
+            get; set;
+        }
+
+        public ICommand StopEditing
+        {
+            get; set;
+        }
 
         public void AddExistingFile()
         {
@@ -154,17 +140,14 @@ namespace VisualSolutionExplorer
             }
         }
 
-        internal bool FolderMatch(ProjectFolder fld)
-        {
-            return _folder.FolderPath == fld.FolderPath;
-        }
-
         public void CreateNewFile()
         {
-            string f = _folder.CreateNewFile();
-            if (f != "")
+            string fileTemplate = _folder.FileTemplate;
+            string fileName = "";
+            _folder.CreateNewFile(out fileName, out fileTemplate);
+            if (fileName != "")
             {
-                NotifySolutionChanged("NewFile", f, _folder.FileTemplate);
+                NotifySolutionChanged("NewFile", fileName, fileTemplate);
                 IsExpanded = true;
                 LoadChildren();
             }
@@ -204,16 +187,6 @@ namespace VisualSolutionExplorer
             }
         }
 
-        public override void StopAllEditing()
-        {
-            IsEditing = false;
-
-            foreach (TreeViewItemViewModel it in Children)
-            {
-                it.StopAllEditing();
-            }
-        }
-
         public void NotifySolutionChanged(string e, string p1, string p2)
         {
             if (e == "RemoveFile")
@@ -244,6 +217,16 @@ namespace VisualSolutionExplorer
             if (SolutionChanged != null)
             {
                 SolutionChanged(e, p1, p2);
+            }
+        }
+
+        public override void StopAllEditing()
+        {
+            IsEditing = false;
+
+            foreach (TreeViewItemViewModel it in Children)
+            {
+                it.StopAllEditing();
             }
         }
 
@@ -289,6 +272,11 @@ namespace VisualSolutionExplorer
             }
         }
 
+        internal bool FolderMatch(ProjectFolder fld)
+        {
+            return _folder.FolderPath == fld.FolderPath;
+        }
+
         internal void RemoveFileFromFolder(ProjectFile file)
         {
             _folder.ProjectFiles.Remove(file);
@@ -299,6 +287,11 @@ namespace VisualSolutionExplorer
             _folder.ProjectFiles.Sort();
 
             LoadChildren();
+        }
+
+        internal void UpdateMenu()
+        {
+            MakeContextMenu(_folder);
         }
 
         protected override void LoadChildren()
@@ -319,6 +312,26 @@ namespace VisualSolutionExplorer
                 pfi.SolutionChanged = NotifySolutionChanged;
                 base.Children.Add(pfi);
             }
+        }
+
+        private void AddObjectToLibrary()
+        {
+            NotifySolutionChanged("AddObjectToLibrary", FolderPath, "");
+        }
+
+        private void MakeContextMenu(ProjectFolder folder)
+        {
+            contextMenu = new FolderContextMenuViewModel(folder.SupportsSubFolders,
+                                                            folder.SupportsFiles,
+                                                            folder.CanBeRenamed,
+                                                            folder.Explorer, folder.CanAddToLibrary && folder.IsInLibrary);
+            contextMenu.OnAddExistingFile = AddExistingFile;
+            contextMenu.OnCreateFolder = CreateNewFolder;
+            contextMenu.OnCreateFile = CreateNewFile;
+            contextMenu.OnRenameFolder = RenameFolder;
+            contextMenu.OnExploreFolder = ExploreFolder;
+            contextMenu.OnAddObjectToLibrary = AddObjectToLibrary;
+            OnPropertyChanged("ContextMenu");
         }
 
         private void OnStopEditing(object obj)

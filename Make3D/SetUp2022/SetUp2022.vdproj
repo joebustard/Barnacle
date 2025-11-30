@@ -147,6 +147,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_310D8AE72FF14295885C027B1B1F9512"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_32FB4827867B47C2A71D74F3BF1DFAE4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -202,6 +208,12 @@
         "Entry"
         {
         "MsmKey" = "8:_3BAD130B09344F949489D0821585387D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3C3976BC65674F4CABCB6CAF2B419B10"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -281,6 +293,12 @@
         {
         "MsmKey" = "8:_576ABB3A214CCF22264D68C7C0407D70"
         "OwnerKey" = "8:_7DD462CEB26E269C1A7F01A1C7E7427B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5A6440D3AAA64814AE14CBE4F138C869"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -387,6 +405,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_8EA0558B794A40729225166A7C884787"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_906D09F8CB1B451ABF5AA8CB8BEBB76D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_91A6FAC4E476491EA32D23E5CDCDDD33"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -435,12 +465,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_97201C5E63604119AB0D05F75DD911DA"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_9836F1CE4055445F9531BB3291D16592"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -483,6 +507,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_A2B473A229CC425FBB172145774A86DF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_A73DDCE3E90DCFBC69DD827BDFAE5559"
         "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
         "MsmSig" = "8:_UNDEFINED"
@@ -496,6 +526,12 @@
         "Entry"
         {
         "MsmKey" = "8:_AE68C61ABE704987BF0DC3F12BAE282F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AF888E9FDD734BCEAE56B303A8E61D7B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -639,7 +675,19 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_DD62B7B3CB864CAFA2A36556CF23F131"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_E20844379C564DA289D23CF80E97142A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E5D704141A7E405EA9C4453514BA5241"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1090,7 +1138,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ManifoldLib, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:ManifoldLib, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_01418B4A9A029136DFFB3D967FCD5091"
@@ -1181,7 +1229,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:SimpleSmoothLib, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:SimpleSmoothLib, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_0FF4C7205DDDB52948E496DB516A00EC"
@@ -1272,7 +1320,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:PlacementLib, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:PlacementLib, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_169267841F562B2F1FC05E8DE3C042CC"
@@ -1363,7 +1411,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:LoggerLib, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:LoggerLib, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_25FB70EBDC0833ADE71B5627B267CA69"
@@ -1425,7 +1473,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:HullLibrary, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:HullLibrary, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_2CCC5ECDD28E7D8623D7CCA6B3149126"
@@ -1456,7 +1504,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Workflow, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Workflow, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_2DA8ADFF98CB98A96664E3C578E5DC90"
@@ -1481,6 +1529,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_310D8AE72FF14295885C027B1B1F9512"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\Tank\\Scale.txt"
+            "TargetName" = "8:Scale.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_32FB4827867B47C2A71D74F3BF1DFAE4"
@@ -1558,7 +1626,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Object3DLib, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Object3DLib, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_34A63051F8BAD4C96FF7D079E1461CB5"
@@ -1589,7 +1657,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:HoleLibrary, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:HoleLibrary, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_366AF1D24E40E86A7D02F6ED68C5EECD"
@@ -1622,6 +1690,26 @@
             "TargetName" = "8:blankmodel1_35.txt"
             "Tag" = "8:"
             "Folder" = "8:_23862707349949B195647F45758B8C14"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3C3976BC65674F4CABCB6CAF2B419B10"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\Tank\\GlobalDefinitions.txt"
+            "TargetName" = "8:GlobalDefinitions.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1760,7 +1848,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:sdflib, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:sdflib, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_523D894FF9FDD1F61EBA25CCF0F1BF8F"
@@ -1831,7 +1919,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:OctTreeLib, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:OctTreeLib, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_576ABB3A214CCF22264D68C7C0407D70"
@@ -1856,6 +1944,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5A6440D3AAA64814AE14CBE4F138C869"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\Tank\\Tanklib.lmp"
+            "TargetName" = "8:Tanklib.lmp"
+            "Tag" = "8:"
+            "Folder" = "8:_ABE76DA878F74A7CB17154024B220A11"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_5A664C01C81F1AD974CFABEF4067D427"
@@ -1953,7 +2061,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ImageUtils, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:ImageUtils, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_627371296D6B6CCECA2EADBFD38B7AF3"
@@ -2064,7 +2172,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:FixLib, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:FixLib, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_7DD462CEB26E269C1A7F01A1C7E7427B"
@@ -2126,7 +2234,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:EarClipperLib, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:EarClipperLib, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_845847A87221D417A87D171F91DC7E16"
@@ -2224,6 +2332,46 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8EA0558B794A40729225166A7C884787"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\Tank\\Scale.txt"
+            "TargetName" = "8:Scale.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_ABE76DA878F74A7CB17154024B220A11"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_906D09F8CB1B451ABF5AA8CB8BEBB76D"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\ScriptTemplates\\MakePartFromSubParts.lmp"
+            "TargetName" = "8:MakePartFromSubParts.lmp"
+            "Tag" = "8:"
+            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_91A6FAC4E476491EA32D23E5CDCDDD33"
             {
             "SourcePath" = "8:..\\Make3D\\Data\\Textures\\Spot1.png"
@@ -2299,7 +2447,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MakerLib, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:MakerLib, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_93282F906FBDD3FEBEE7615D829D1D60"
@@ -2366,26 +2514,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_97201C5E63604119AB0D05F75DD911DA"
-            {
-            "SourcePath" = "8:..\\Make3D\\templates\\Tank\\TankGlobals.txt"
-            "TargetName" = "8:TankGlobals.txt"
-            "Tag" = "8:"
-            "Folder" = "8:_ABE76DA878F74A7CB17154024B220A11"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9836F1CE4055445F9531BB3291D16592"
             {
             "SourcePath" = "8:..\\Make3D\\Data\\appicon2.ico"
@@ -2430,7 +2558,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:HalfEdgeLib, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:HalfEdgeLib, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_9BD0F0D05F9D420B442A0E027B2042A5"
@@ -2481,7 +2609,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:CSGLib, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:CSGLib, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_9D7C551859560961684B7BA19112C306"
@@ -2508,11 +2636,31 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A2B473A229CC425FBB172145774A86DF"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\ScriptTemplates\\MakeAssemblyFromParts.lmp"
+            "TargetName" = "8:MakeAssemblyFromParts.lmp"
+            "Tag" = "8:"
+            "Folder" = "8:_BFBEA47797CB45ECA8909DC871EE1E95"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A73DDCE3E90DCFBC69DD827BDFAE5559"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:EditorParameterLib, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:EditorParameterLib, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_A73DDCE3E90DCFBC69DD827BDFAE5559"
@@ -2559,11 +2707,31 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AF888E9FDD734BCEAE56B303A8E61D7B"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\ScriptTemplates\\MakeAssemblyFromParts.lmp"
+            "TargetName" = "8:MakeAssemblyFromParts.lmp"
+            "Tag" = "8:"
+            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_B06A75AE8717ACC8D006DC9D632DDB33"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:PrintPlacementLib, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:PrintPlacementLib, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_B06A75AE8717ACC8D006DC9D632DDB33"
@@ -2594,7 +2762,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:asdflibrary, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:asdflibrary, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_B233DE873D0C94965E5F8EE3329C295F"
@@ -2716,7 +2884,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:TemplateLib, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:TemplateLib, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_BB7464F8E71D0F82F41CEF05D8A4AAB2"
@@ -2967,12 +3135,52 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DD62B7B3CB864CAFA2A36556CF23F131"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\Tank\\GlobalDefinitions.txt"
+            "TargetName" = "8:GlobalDefinitions.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_ABE76DA878F74A7CB17154024B220A11"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E20844379C564DA289D23CF80E97142A"
             {
             "SourcePath" = "8:..\\Make3D\\Data\\Textures\\Squirkle1.png"
             "TargetName" = "8:Squirkle1.png"
             "Tag" = "8:"
             "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E5D704141A7E405EA9C4453514BA5241"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\ScriptTemplates\\MakePartFromSubParts.lmp"
+            "TargetName" = "8:MakePartFromSubParts.lmp"
+            "Tag" = "8:"
+            "Folder" = "8:_BFBEA47797CB45ECA8909DC871EE1E95"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -3082,7 +3290,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:LineLib, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:LineLib, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_ED26C1E267B523D1AC028C44F6DB14FF"
@@ -3133,7 +3341,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:InterpreterLib, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:InterpreterLib, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_F28E8270355FB0B3A876A6C5019C471F"
@@ -3195,7 +3403,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:PolygonLibrary, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:PolygonLibrary, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_F3E26C5A968C4A121B87649DDF5D4E49"
@@ -3226,7 +3434,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:VisualSolutionExplorerLib, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:VisualSolutionExplorerLib, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_F74EF80B11875A6760AE8B042A766F4E"
@@ -3257,7 +3465,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:PolygonTriangulationLib, Version=1.0.8.5142, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:PolygonTriangulationLib, Version=1.0.9.5142, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_F7CF646CD604A0BA0E3076F2D2E3EF5F"
@@ -3428,6 +3636,17 @@
                                 {
                                 }
                             }
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_BFBEA47797CB45ECA8909DC871EE1E95"
+                            {
+                            "Name" = "8:ScriptTemplates"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_2A4A3F0B012042D9B2ED9F8DD02C15FF"
+                                "Folders"
+                                {
+                                }
+                            }
                             "{9EF0B969-E518-4E46-987F-47570745A589}:_F92FB0A888DC435CAB88E962FA57F7F4"
                             {
                             "Name" = "8:TankTrackLinks"
@@ -3460,7 +3679,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Barnacle3D"
         "ProductCode" = "8:{D883FA74-3204-4222-8E48-9CBF5E7E063F}"
-        "PackageCode" = "8:{B559B12D-D0BD-402C-A5E0-556FF563125C}"
+        "PackageCode" = "8:{1D3F6764-55BE-4B9F-B2A4-300EB51AE353}"
         "UpgradeCode" = "8:{6F2FD966-929F-4C74-8C4C-BF438CF79394}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

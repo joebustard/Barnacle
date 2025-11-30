@@ -177,6 +177,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "RefreshAdorners", OnRefreshAdorners);
             NotificationManager.Subscribe("Editor", "Remesh", OnRemesh);
             NotificationManager.Subscribe("Editor", "RemoveDupVertices", OnRemoveDupVertices);
+            NotificationManager.Subscribe("Editor", "RemoveDupFaces", OnRemoveDupFaces);
             NotificationManager.Subscribe("Editor", "Reorigin", OnReorigin);
             NotificationManager.Subscribe("Editor", "Select", Select);
             NotificationManager.Subscribe("Editor", "SelectObjectName", SelectObjectByName);
@@ -3781,6 +3782,24 @@ namespace Barnacle.ViewModels
 
         private void OnRemesh(object param)
         {
+        }
+
+        private void OnRemoveDupFaces(object param)
+        {
+            if (selectedObjectAdorner == null || selectedObjectAdorner.SelectedObjects.Count == 0)
+            {
+                MessageBox.Show("Nothing selected to check");
+            }
+            else
+            {
+                int totalRemoved = 0;
+                foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+                {
+                    totalRemoved += DuplicateTriangles.RemoveDuplicateTriangles(ob.RelativeObjectVertices.Count, ob.TriangleIndices);
+                }
+                Document.Dirty = true;
+                MessageBox.Show($"Removed {totalRemoved} duplicate vertices");
+            }
         }
 
         private void OnRemoveDupVertices(object param)

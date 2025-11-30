@@ -2,6 +2,7 @@
     x:Class="Barnacle.Views.ScriptView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Custom="clr-namespace:System.Windows.Controls.Ribbon;assembly=System.Windows.Controls.Ribbon"
     xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
     xmlns:Views="clr-namespace:Barnacle.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -106,13 +107,30 @@
                                 IsEnabled="{Binding EnableRun}"
                                 ToolTip="Clear results log" />
 
+                            <!--
+                            <Custom:RibbonSplitButton
+                            Style="{StaticResource RibbonSplitButtonStyle}"
+                                IsEnabled="{Binding EnableRun}"
+                                Label="Save">
+                                <Custom:RibbonSplitMenuItem
+                                    Command="{Binding ScriptCommand}"
+                                    CommandParameter="Save"
+                                    Header="Save"
+                                    IsEnabled="{Binding EnableRun}" />
+                                <Custom:RibbonSplitMenuItem
+                                    Command="{Binding ScriptCommand}"
+                                    CommandParameter="SaveTemplate"
+                                    Header="Save As Template"
+                                    IsEnabled="{Binding EnableRun}" />
+                            </Custom:RibbonSplitButton>
+                            -->
+
                             <Button
                                 x:Name="SaveBut"
                                 Command="{Binding ScriptCommand}"
                                 CommandParameter="Save"
                                 Content="Save"
                                 IsEnabled="{Binding EnableRun}" />
-
                             <Button
                                 x:Name="CloseBut"
                                 Command="{Binding ScriptCommand}"

@@ -63,6 +63,7 @@ namespace ScriptLanguage
                 "rmove",
                 "run",
                 "savesolids",
+                "savesolid",
                 "setcolour",
                 "setname",
                 "solid",
@@ -2384,6 +2385,12 @@ namespace ScriptLanguage
                 case "savesolids":
                     {
                         result = ParseSaveSolidsStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "savesolid":
+                    {
+                        result = ParseSaveSolidStatement(parentNode, parentName);
                     }
                     break;
 
@@ -5941,6 +5948,15 @@ namespace ScriptLanguage
             string label = "SaveSolids";
             SaveSolidsNode asn = new SaveSolidsNode();
             result = ParseSolidStatement(parentNode, parentName, label, 1, asn);
+            return result;
+        }
+
+        private bool ParseSaveSolidStatement(CompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+            string label = "SaveSolid";
+            SaveSolidNode asn = new SaveSolidNode();
+            result = ParseSolidStatement(parentNode, parentName, label, 2, asn);
             return result;
         }
 

@@ -971,6 +971,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Data\ScriptTemplates\MakeAssemblyFromParts.lmp" />
+    <None Include="Data\ScriptTemplates\MakePartFromSubParts.lmp" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -1470,6 +1472,8 @@
     <Resource Include="Images\Buttons\PieSlice.png" />
     <Resource Include="Images\Buttons\Tetrahedron.png" />
     <Resource Include="Images\Snooze.png" />
+    <Resource Include="Images\Buttons\DecreaseSize.png" />
+    <Resource Include="Images\Buttons\IncreaseSize.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
@@ -1488,6 +1492,7 @@ mkdir "$(TargetDir)data"
 mkdir "$(TargetDir)data\Textures"
 mkdir "$(TargetDir)data\figure"
 mkdir "$(TargetDir)data\TankTrackLinks"
+mkdir "$(TargetDir)data\ScriptTemplates"
 mkdir "$(TargetDir)data\Textures"
 del   /q $(TargetDir)data\Links\*.txt
 mkdir "$(TargetDir)libs"
@@ -1496,6 +1501,7 @@ copy /Y "$(SolutionDir)make3d\Dialogs\Wing\Airfoils\*.*" "$(TargetDir)data"
 copy /Y "$(SolutionDir)make3d\Data\*.*" "$(TargetDir)data"
 copy /Y "$(SolutionDir)make3d\Data\Textures\*.*" "$(TargetDir)data\textures"
 copy /Y "$(SolutionDir)make3d\Data\TankTrackLinks\*.*" "$(TargetDir)data\TankTrackLinks"
+copy /Y "$(SolutionDir)make3d\Data\ScriptTemplates\*.*" "$(TargetDir)data\ScriptTemplates"
 copy /Y "$(SolutionDir)Interpreter\Libs\*.*" "$(TargetDir)libs"
 del   /q "$(TargetDir)data\figure\*.txt"
 copy /Y "$(SolutionDir)make3d\Dialogs\Figure\FigureData\*.txt" "$(TargetDir)data\figure"

@@ -778,7 +778,9 @@ namespace Barnacle.Views
                             {
                                 if (fileTemplate != null)
                                 {
-                                    String templatePath = AppDomain.CurrentDomain.BaseDirectory + "templates\\" + fileTemplate;
+                                    //  String templatePath = AppDomain.CurrentDomain.BaseDirectory + "templates\\" + fileTemplate;
+                                    string templatePath = fileTemplate;
+
                                     if (File.Exists(templatePath))
                                     {
                                         try

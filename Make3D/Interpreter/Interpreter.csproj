@@ -129,6 +129,7 @@
     <Compile Include="SolidFunctions\MakeWagonWheelNode.cs" />
     <Compile Include="SolidFunctions\UnionAllNode.cs" />
     <Compile Include="SolidFunctions\ValidSolidNode.cs" />
+    <Compile Include="SolidStatements\SaveSolidNode.cs" />
     <Compile Include="SolidStatements\SaveSolidsNode.cs" />
     <Compile Include="SolidStatements\SolidCentre.cs" />
     <Compile Include="SolidStatements\SolidDrop.cs" />

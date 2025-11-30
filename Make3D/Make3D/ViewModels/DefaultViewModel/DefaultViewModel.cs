@@ -118,6 +118,8 @@ namespace Barnacle.ViewModels
             DistributeCommand = new RelayCommand(OnDistribute);
             DropCommand = new RelayCommand(OnDrop);
             DupVertexCommand = new RelayCommand(OnDupVertex);
+            DupFaceCommand = new RelayCommand(OnDupFace);
+
             ExitCommand = new RelayCommand(OnExit);
             ExportCommand = new RelayCommand(OnExport);
             ExportPartsCommand = new RelayCommand(OnExportParts);
@@ -480,6 +482,11 @@ namespace Barnacle.ViewModels
         }
 
         public ICommand DropCommand
+        {
+            get; set;
+        }
+
+        public ICommand DupFaceCommand
         {
             get; set;
         }
@@ -1982,6 +1989,11 @@ namespace Barnacle.ViewModels
         {
             String param = obj.ToString();
             NotificationManager.Notify("Drop", param);
+        }
+
+        private void OnDupFace(object obj)
+        {
+            NotificationManager.Notify("RemoveDupFaces", null);
         }
 
         private void OnDupVertex(object obj)

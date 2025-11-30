@@ -1,0 +1,21 @@
+Program  "Assemble Model"
+{
+   Include "libs\limplib.txt" ;
+   Include "..\Scale.txt" ;
+   Include "..\GlobalDefinitions.txt" ;
+
+   // local declarations
+   // set this first
+   String assemblyname = "" ;
+
+   // the folder where the assemblies are stored
+   String outputfolder = projectpath + "\Assemblies" ;
+
+   // the folder where the parts are stored
+   String src = projectpath + "\Parts" ;
+
+   // Insert the parts and move to the right places
+
+   // save results
+   SaveSolids outputfolder + "\" + assemblyname + "assembly.txt" ;
+}

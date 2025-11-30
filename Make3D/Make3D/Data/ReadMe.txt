@@ -12,6 +12,9 @@ Added
   Offer to save current model file when switching to a script file
   When running a limpet script from the command line return an exit code, 0 for success, -1 for fail. Allows for error checking in cmd and make files.
   Added camera pan and camera point to centre buttons to object view used in dialogs
+  Added increase/decrease size of path to common flexipath control
+  Added choice of templates to nw script file name dialog. User scripts can be stored in app data subfolder
+  Remove duplicate triangles, that is triangles that have the same vertices but in a different order.
 
 Fixed
   The number of vertices and faces shown for the selected object didn't update automatically when the object was subdivided
@@ -20,12 +23,13 @@ Fixed
   change file.
   Stonewall was producing walls with stones floating in mid air. Fixed
   Selected Item name in combo box was not cleared when the object was deselected by clicking away. Fixed
+  Report run time error if flip function is used on a group.
 
 Changed
   Paste path string in flexipath control now adjusts pasted coordinates so all path is visible
   Modified focus handling in the solution tree view
   Don't allow user to load a new Limpet script if current one is executing
-  Spur Gear uses the same tooth generation as the new bevelled gear
+  Spur Gear uses the same tooth generation as the new bevelled gear so gears are compatible.
 
 
 v1.0.9

@@ -1,0 +1,26 @@
+Program  "Make Part"
+{
+   Include "libs\limplib.txt" ;
+   include "..\scale.txt";
+   Include "..\GlobalDefinitions.txt" ;
+   Include "..\tanklib.lmp" ;
+
+   // local declarations
+   // define the part name. This will be used to generate the other file names
+   String partname = "" ;
+
+   // folder where we'll find the components of the part
+   String subpartfolder = projectpath + "\Subparts" ;
+
+   // folder where the part will be saved    
+   String outputfolder = projectpath + "\Parts" ;
+
+   // full path of the components file
+   String src = subpartfolder + "\" + partname + "SubParts.txt" ;
+
+   // Start building the part
+   Solid part ;
+
+   // save the part we made
+   Savepartmodel( part, outputfolder, partname ) ;
+}

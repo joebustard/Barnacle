@@ -119,19 +119,25 @@ namespace HalfEdgeLib
             }
         }
 
-        public void AddFacePoint(int e, Int32Collection faces)
+        /// <summary>
+        /// Adds a new face that starts with the given halfedge
+        /// as long as there isn't already one
+        /// </summary>
+        /// <param name="halfEdgeIndex"></param>
+        /// <param name="faces"></param>
+        public void AddFacePoint(int halfEdgeIndex, Int32Collection faces)
         {
-            if (e < 0 || e >= HalfEdges.Count())
+            if (halfEdgeIndex < 0 || halfEdgeIndex >= HalfEdges.Count())
             {
-                Logger.LogLine($"Edge {e} is not valid");
+                Logger.LogLine($"Edge {halfEdgeIndex} is not valid");
             }
-            else if (this.HalfEdges[e].StartVertex < 0 || this.HalfEdges[e].StartVertex >= Vertices.Count)
+            else if (this.HalfEdges[halfEdgeIndex].StartVertex < 0 || this.HalfEdges[halfEdgeIndex].StartVertex >= Vertices.Count)
             {
-                Logger.LogLine($"Vertex {this.HalfEdges[e].StartVertex} is not valid");
+                Logger.LogLine($"Vertex {this.HalfEdges[halfEdgeIndex].StartVertex} is not valid");
             }
             else
             {
-                faces.Add(this.HalfEdges[e].StartVertex);
+                faces.Add(this.HalfEdges[halfEdgeIndex].StartVertex);
             }
         }
 
@@ -390,7 +396,7 @@ namespace HalfEdgeLib
             }
             /*
             int s = -1;
-            int e = -1;
+            int halfEdgeIndex = -1;
 
             List<int> edgesToFlip = new List<int>();
             foreach (int edge in allNewEdges)
@@ -398,8 +404,8 @@ namespace HalfEdgeLib
                 int twin = HalfEdges[edge].Twin;
                 if (!edgesToFlip.Contains(edge) && !edgesToFlip.Contains(twin))
                 {
-                    GetEdgeVertices(edge, out s, out e);
-                    if (s <= lastOldVertex && e > lastOldVertex)
+                    GetEdgeVertices(edge, out s, out halfEdgeIndex);
+                    if (s <= lastOldVertex && halfEdgeIndex > lastOldVertex)
                     {
                         edgesToFlip.Add(edge);
                     }

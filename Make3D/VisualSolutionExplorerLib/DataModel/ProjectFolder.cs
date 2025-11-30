@@ -221,7 +221,7 @@ namespace VisualSolutionExplorer
 
         public string CreateNewFile()
         {
-            string fileName = GetNextFileName("New File", SupportedFileExtension);
+            string fileName = GetNextFileName("NewFile", SupportedFileExtension);
             ConfirmName dlg = new ConfirmName();
             dlg.FileName = fileName;
             dlg.FolderPath = ParentProject.ProjectPathToAbsPath(FolderPath);
@@ -241,6 +241,37 @@ namespace VisualSolutionExplorer
             else
             {
                 return "";
+            }
+        }
+
+        public void CreateNewFile(out string fileName, out string fileTemplate)
+        {
+            fileName = GetNextFileName("NewFile", SupportedFileExtension);
+            fileTemplate = FileTemplate;
+            ConfirmName dlg = new ConfirmName();
+            dlg.FileName = fileName;
+            dlg.FolderPath = ParentProject.ProjectPathToAbsPath(FolderPath);
+            dlg.Extension = SupportedFileExtension;
+            dlg.SelectedTemplate = fileTemplate;
+            if (SupportedFileExtension != "txt")
+            {
+                dlg.SetFileTemplates(FileTemplate, SupportedFileExtension);
+            }
+            if (dlg.ShowDialog() == true)
+            {
+                fileName = dlg.FileName;
+                ProjectFile fi = new ProjectFile(fileName);
+                fi.EditFile = EditFile;
+                fi.RunFile = RunFile;
+                _projectFiles.Add(fi);
+                _projectFiles.Sort();
+                fi.FilePath = FolderPath + System.IO.Path.DirectorySeparatorChar + fileName;
+                fileName = fi.FilePath;
+                fileTemplate = dlg.SelectedTemplate;
+            }
+            else
+            {
+                fileName = "";
             }
         }
 

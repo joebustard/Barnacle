@@ -390,9 +390,9 @@ function solid HollowVertical( solid sl, double skinThickness)
 
 		// shrink it by the skin thickness
 		double nl = length(sl) - (2 * skinthickness);
-		double nh = height(sl) *2;
+		double nh = height(sl) * 2;
 		double nw = width(sl) - (2 * skinthickness);
-		double dy = nh *0.25;
+		double dy = nh * 0.25;
 		resize cutter,nl,nh,nw;
 
 		//move to ensure a good overlap
@@ -528,7 +528,7 @@ function solid ClipRight( solid sl, double l)
 
 
  // Name          : Sgn
- // Does          : Resturns the sign of paramte 
+ // Does          : Resturns the sign of parameter 
  // Parameters    : The value to check
  // returns       : -1 if  the value is less than 0, 
  //                  1 if its 0 or greater
@@ -541,6 +541,32 @@ function solid ClipRight( solid sl, double l)
     }
     return res;
  }
+
+   // Name          : Savepartmodel
+   // Does          : Saves specific model in  a file in the given director
+   // Parameters    : The solid to save
+   //                 The folder
+   //                 The part name
+   //              
+   //                 The file must exist before hand
+   Procedure Savepartmodel( Solid  whole, String  partfolder, String  partname )
+   {
+
+       // if the part is valid centre and floor it
+       If ( IsSolid ( whole )) 
+       {
+           Centre whole ;
+           Floor whole ;
+           SetName whole, partname ;
+       }
+       // save it
+       If ( partfolder != "" && partname != "" ) 
+       {
+      
+           String outfile = partfolder + "\" + partname + ".txt" ;
+           SaveSolid whole,outfile ;
+       }
+   }
 
  //
  procedure InitialiseLimpLib()

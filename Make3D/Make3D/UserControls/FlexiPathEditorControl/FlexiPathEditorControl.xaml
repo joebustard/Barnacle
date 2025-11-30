@@ -291,6 +291,23 @@
                             ToolTip="Flip the points in the current path vertically">
                             <Image Source="/Barnacle;component/Images/Buttons/FLipV.png" />
                         </Button>
+
+                        <Button
+                            x:Name="IncreaseSizeButton"
+                            Command="{Binding SizeCommand}"
+                            CommandParameter="+"
+                            Style="{StaticResource SmallButton}"
+                            ToolTip="Increase the size of the path">
+                            <Image Source="/Barnacle;component/Images/Buttons/IncreaseSize.png" />
+                        </Button>
+                        <Button
+                            x:Name="DecreaseSizeButton"
+                            Command="{Binding SizeCommand}"
+                            CommandParameter="-"
+                            Style="{StaticResource SmallButton}"
+                            ToolTip="Decrease the size of the path">
+                            <Image Source="/Barnacle;component/Images/Buttons/DecreaseSize.png" />
+                        </Button>
                     </UniformGrid>
                 </Border>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">

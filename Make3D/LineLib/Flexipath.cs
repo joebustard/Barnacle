@@ -330,6 +330,48 @@ namespace Barnacle.LineLib
             }
         }
 
+        public void ChangeSize(double sd)
+        {
+            double minx = double.MaxValue;
+            double miny = double.MaxValue;
+
+            if (flexiPoints.Count > 2)
+            {
+                FlexiPoint origin = flexiPoints[0];
+                minx = Math.Min(minx, origin.X);
+                miny = Math.Min(miny, origin.Y);
+                for (int i = 1; i < flexiPoints.Count; i++)
+                {
+                    double dx = flexiPoints[i].X - origin.X;
+                    double dy = flexiPoints[i].Y - origin.Y;
+                    dx = dx + (sd * dx);
+                    dy = dy + (sd * dy);
+                    flexiPoints[i].X = dx + origin.X;
+                    flexiPoints[i].Y = dy + origin.Y;
+
+                    minx = Math.Min(minx, flexiPoints[i].X);
+                    miny = Math.Min(miny, flexiPoints[i].Y);
+                }
+
+                if (minx < 0)
+                {
+                    minx = Math.Abs(minx);
+                    for (int i = 0; i < flexiPoints.Count; i++)
+                    {
+                        flexiPoints[i].X += minx;
+                    }
+                }
+                if (miny < 0)
+                {
+                    miny = Math.Abs(miny);
+                    for (int i = 0; i < flexiPoints.Count; i++)
+                    {
+                        flexiPoints[i].Y += miny;
+                    }
+                }
+            }
+        }
+
         public virtual void Clear()
         {
             segs.Clear();

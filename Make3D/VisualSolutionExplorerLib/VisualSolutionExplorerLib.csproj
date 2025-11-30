@@ -135,6 +135,10 @@
     <Resource Include="Images\Insert.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FileUtils\FileUtils.csproj">
+      <Project>{6EE47C70-2F51-490A-B50C-97FBAD59A0E7}</Project>
+      <Name>FileUtils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LoggerLib\LoggerLib.csproj">
       <Project>{5c3b73af-9055-4e73-be4a-30b4ee4a3c41}</Project>
       <Name>LoggerLib</Name>

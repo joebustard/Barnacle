@@ -91,6 +91,56 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <!--
+        <Style x:Key="RibbonSplitButtonStyle" TargetType="RibbonSplitButton">
+            <Setter Property="Background" Value="{StaticResource ControlBackBrush}" />
+            <Setter Property="TextBlock.TextAlignment" Value="Center" />
+            <Setter Property="TextBlock.FontSize" Value="14" />
+            <Setter Property="TextBlock.Foreground" Value="Black" />
+
+            <Setter Property="MaxHeight" Value="75" />
+            <Setter Property="Button.Effect">
+                <Setter.Value>
+                    <DropShadowEffect
+                        BlurRadius="5"
+                        Direction="320"
+                        Opacity="0.5"
+                        ShadowDepth="3"
+                        Color="Black" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+
+                <Setter.Value>
+                    <ControlTemplate TargetType="RibbonSplitButton">
+                        <Border
+                            Background="White"
+                            BorderBrush="#ccc"
+                            BorderThickness="0,2,3,0"
+                            CornerRadius="2,0,0,2">
+                            <ContentPresenter
+                                x:Name="contentPresenter"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Button.IsDefaulted" Value="True">
+                                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                            </Trigger>
+
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#FFF4F4F4" />
+                                <Setter Property="BorderBrush" Value="#FFADB2B5" />
+                                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="Red" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        -->
         <Style
             x:Key="LargeImageButton"
             BasedOn="{StaticResource RoundedButton}"
