@@ -22,9 +22,14 @@ namespace Barnacle.Models
 {
     public class Axies
     {
-        public double Size { get; set; }
-
         private Model3DGroup group;
+
+        public Axies()
+        {
+            Size = 210;
+            group = new Model3DGroup();
+            DefineModel(group);
+        }
 
         public Model3DGroup Group
         {
@@ -34,11 +39,22 @@ namespace Barnacle.Models
             }
         }
 
-        public Axies()
+        public double Size
         {
-            Size = 210;
-            group = new Model3DGroup();
-            DefineModel(group);
+            get; set;
+        }
+
+        internal bool Matches(GeometryModel3D geo)
+        {
+            bool match = false;
+            foreach (GeometryModel3D gm in group.Children)
+            {
+                if (geo == gm)
+                {
+                    match = true;
+                }
+            }
+            return match;
         }
 
         private void DefineModel(Model3DGroup group)
@@ -54,7 +70,7 @@ namespace Barnacle.Models
 
             // X axis.
             MeshGeometry3D xmesh = MeshUtils.MakeBorder(0, 0, 0, 1);
-            xmesh.ApplyTransformation(new ScaleTransform3D(length, thickness+0.1, thickness));
+            xmesh.ApplyTransformation(new ScaleTransform3D(length, thickness + 0.1, thickness));
             xmesh.ApplyTransformation(new TranslateTransform3D(length / 2, 0.1, 0));
             Material xmaterial = new DiffuseMaterial(Brushes.Red);
             GeometryModel3D xmodel = new GeometryModel3D(xmesh, xmaterial);
@@ -71,7 +87,7 @@ namespace Barnacle.Models
             // Z axis cube.
             MeshGeometry3D zmesh = MeshUtils.MakeBorder(0, 0, 0, 1);
             Transform3DGroup zgroup = new Transform3DGroup();
-            zgroup.Children.Add(new ScaleTransform3D(thickness, thickness+.1, length));
+            zgroup.Children.Add(new ScaleTransform3D(thickness, thickness + .1, length));
             zgroup.Children.Add(new TranslateTransform3D(0, 0.1, length / 2));
             zmesh.ApplyTransformation(zgroup);
             Material zmaterial = new DiffuseMaterial(Brushes.Blue);

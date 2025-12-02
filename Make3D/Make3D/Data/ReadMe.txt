@@ -15,6 +15,7 @@ Added
   Added increase/decrease size of path to common flexipath control
   Added choice of templates to nw script file name dialog. User scripts can be stored in app data subfolder
   Remove duplicate triangles, that is triangles that have the same vertices but in a different order.
+  First cut of point hull tool
 
 Fixed
   The number of vertices and faces shown for the selected object didn't update automatically when the object was subdivided

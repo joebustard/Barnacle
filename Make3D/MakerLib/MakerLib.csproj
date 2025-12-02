@@ -128,11 +128,16 @@
     <Compile Include="TorusMaker.cs" />
     <Compile Include="TrapezoidMaker.cs" />
     <Compile Include="TubeMaker.cs" />
+    <Compile Include="VoxelHull\MakeVoxelHull.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\asdflibrary\asdflibrary.csproj">
       <Project>{2557B21C-FE6C-4B1D-8DAB-AD7D8404FD56}</Project>
       <Name>asdflibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ClassLibrary1\HullLIbrary.csproj">
+      <Project>{8FFB3AA5-559D-4880-A4A3-8859C0D30D8E}</Project>
+      <Name>HullLIbrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\EarClipperLib\EarClipperLib.csproj">
       <Project>{DEB59262-3D4D-46B1-9934-71AA91C92714}</Project>

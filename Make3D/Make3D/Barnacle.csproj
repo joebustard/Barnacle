@@ -179,6 +179,7 @@
     <Compile Include="Dialogs\TankTrack\TankDialog2.xaml.cs">
       <DependentUpon>TankDialog2.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\PointHull\PointHullDlg.xaml.cs" />
     <Compile Include="Models\Bounds2D.cs" />
     <Compile Include="Models\ObjectSplitterAndSeamer\EdgeProcessor.cs" />
     <Compile Include="Models\ObjectSplitterAndSeamer\EdgeRecord.cs" />
@@ -388,6 +389,9 @@
     <Compile Include="UserControls\SymbolGridControl\SymbolSelector.xaml.cs" />
     <Compile Include="UserControls\SpinControl\SpinControl.xaml.cs">
       <DependentUpon>SpinControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\PointGrid\PointGrid.xaml.cs">
+      <DependentUpon>PointGrid.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="UserControls\ColourPicker\AvailableColour.cs" />
@@ -843,6 +847,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Dialogs\PointHull\PointHullDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Dialogs\WagonWheelDlg\WagonWheelDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -900,6 +908,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\SpinControl\SpinControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\PointGrid\PointGrid.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1474,6 +1486,8 @@
     <Resource Include="Images\Snooze.png" />
     <Resource Include="Images\Buttons\DecreaseSize.png" />
     <Resource Include="Images\Buttons\IncreaseSize.png" />
+    <Resource Include="Images\Buttons\Minus.png" />
+    <Resource Include="Images\Buttons\Plus.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

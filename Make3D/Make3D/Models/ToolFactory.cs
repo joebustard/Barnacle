@@ -138,7 +138,6 @@ namespace Barnacle.Models
                     break;
 
                 case "ProfileFuselage":
-                    // res = new ProfileFuselageDlg();
                     res = new RibbedFuselageDlg();
                     break;
 
@@ -269,6 +268,10 @@ namespace Barnacle.Models
 
                 case "VaseLoft":
                     res = new VaseLoftDlg();
+                    break;
+
+                case "PointHull":
+                    res = new PointHullDlg();
                     break;
 
                 case "WagonWheel":
