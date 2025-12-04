@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Windows.Threading;
 using Barnacle.Views;
 using FileUtils;
+using Barnacle.ViewModels;
 
 namespace Barnacle
 {
@@ -35,10 +36,14 @@ namespace Barnacle
     /// </summary>
     public partial class MainWindow : Window
     {
+        private string autoModelFile = "";
         private DispatcherTimer autoRunTimer = null;
 
         private string autoScriptToRun = "";
 
+        private bool autoSlice = false;
+        private string autoSlicePrinter = "";
+        private string autoSliceProfile = "";
         private string autoStartProject = "";
         //        private bool minimiseOnStart = false;
 
@@ -59,6 +64,27 @@ namespace Barnacle
         {
             autoRunTimer?.Stop();
             AutoRunScript();
+
+            // set the exit code so any batch program knows if autorun succeeded
+            int res = -1;
+            if (DefaultView.AutoRunResult)
+            {
+                res = 0;
+            }
+            Application.Current.Shutdown(res);
+        }
+
+        private void AutoSlice()
+        {
+            NotificationManager.Notify("StartWithOldProjectNoLoad", autoStartProject);
+            int res = (this.DataContext as MainWindowViewModel).AutoSlice(autoSlicePrinter, autoSliceProfile, autoModelFile);
+            Application.Current.Shutdown(res);
+        }
+
+        private void AutoSliceTimer_Tick(object sender, EventArgs e)
+        {
+            autoRunTimer?.Stop();
+            AutoSlice();
 
             // set the exit code so any batch program knows if autorun succeeded
             int res = -1;
@@ -111,10 +137,11 @@ namespace Barnacle
 
             // check if we have been opened with a project file name on the command line
             string[] args = Environment.GetCommandLineArgs();
-
-            foreach (string s in args)
+            for (int i = 0; i < args.Length; i++)
             {
-                if (s.ToLower() == "-m")
+                string s = args[i];
+                string l = s.ToLower();
+                if (l == "-m")
                 {
                     //minimiseOnStart = true;
                     Application.Current.MainWindow.WindowState = WindowState.Minimized;
@@ -127,6 +154,22 @@ namespace Barnacle
                 {
                     autoScriptToRun = s;
                 }
+                if (s.EndsWith(".txt") && autoModelFile == "")
+                {
+                    autoModelFile = s;
+                }
+                if (l == "-slice")
+                {
+                    autoSlice = true;
+                }
+                if (l == "-profile")
+                {
+                    autoSliceProfile = args[++i];
+                }
+                if (l == "-printer")
+                {
+                    autoSlicePrinter = args[++i];
+                }
             }
             if (autoStartProject != "" && autoScriptToRun != "")
             {
@@ -136,6 +179,17 @@ namespace Barnacle
                 autoRunTimer = new DispatcherTimer();
                 autoRunTimer.Interval = new TimeSpan(0, 0, 1);
                 autoRunTimer.Tick += AutoRunTimer_Tick;
+                autoRunTimer.Start();
+            }
+            else
+            if (autoStartProject != "" && autoSlice && autoModelFile != "")
+            {
+                // command line is asking us to load a project and file and to slice it
+                // We can't do that from here as things haven't fully started yet
+                // so delay for a few seconds
+                autoRunTimer = new DispatcherTimer();
+                autoRunTimer.Interval = new TimeSpan(0, 0, 1);
+                autoRunTimer.Tick += AutoSliceTimer_Tick;
                 autoRunTimer.Start();
             }
 

@@ -97,14 +97,13 @@
                                     FontWeight="Bold"
                                     Text="Recent Projects" />
                             </Border>
-                            <ItemsControl Grid.Row="1" ItemsSource="{Binding RecentFilesList}">
+                            <ItemsControl Grid.Row="1" ItemsSource="{Binding RecentFilesList}" IsEnabled="{Binding EditingActive}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Custom:RibbonApplicationMenuItem
                                             Command="{Binding DataContext.OpenRecentFileCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                             CommandParameter="{Binding Path}"
-                                            Header="{Binding Name}"
-                                            IsEnabled="{Binding EditingActive}" />
+                                            Header="{Binding Name}" />
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>

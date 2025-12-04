@@ -15,9 +15,16 @@
 // *                                                                         *
 // *************************************************************************
 
+using Barnacle.Models;
+using Barnacle.Object3DLib;
 using Barnacle.Views;
+using FileUtils;
+using System;
 using System.ComponentModel;
+using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Controls;
+using Workflow;
 
 namespace Barnacle.ViewModels
 {
@@ -70,6 +77,100 @@ namespace Barnacle.ViewModels
             }
         }
 
+        internal int AutoSlice(string autoSlicePrinter, string autoSliceProfile, string autoModelFile)
+        {
+            int res = -1;
+            if (!String.IsNullOrEmpty(autoModelFile))
+            {
+                BarnaclePrinterManager printerManager;
+                printerManager = new BarnaclePrinterManager();
+
+                Document exportDoc = new Document();
+                exportDoc.ParentProject = BaseViewModel.Project;
+                string fullPath = BaseViewModel.Project.BaseFolder + "\\" + autoModelFile;
+                exportDoc.Load(fullPath);
+
+                exportDoc.ProjectSettings = BaseViewModel.Project.SharedProjectSettings;
+
+                exportDoc.LoadGlobalSettings();
+
+                // if the caller hasn't supplied the printer name or the profile name just use the
+                // last one used as per the settings
+                if (String.IsNullOrEmpty(autoSlicePrinter))
+                {
+                    autoSlicePrinter = Properties.Settings.Default.SlicerPrinter;
+                }
+
+                if (String.IsNullOrEmpty(autoSliceProfile))
+                {
+                    autoSliceProfile = Properties.Settings.Default.SlicerProfileName;
+                }
+
+                // can only slice if we have a printer name. profile name and a path to the slicer
+                if (!String.IsNullOrEmpty(autoSlicePrinter) &&
+                     !String.IsNullOrEmpty(autoSliceProfile) &&
+                     !String.IsNullOrEmpty(BaseViewModel.Project.SharedProjectSettings.SlicerPath)
+                     )
+                {
+                    String slicerPath = BaseViewModel.Project.SharedProjectSettings.SlicerPath;
+                    String exportPath = BaseViewModel.Project.BaseFolder + "\\export";
+                    if (!Directory.Exists(exportPath))
+                    {
+                        Directory.CreateDirectory(exportPath);
+                    }
+                    string printerPath = BaseViewModel.Project.BaseFolder + "\\printer";
+                    if (!Directory.Exists(printerPath))
+                    {
+                        Directory.CreateDirectory(printerPath);
+                    }
+                    string modelName = Path.GetFileNameWithoutExtension(autoModelFile);
+                    fullPath = Path.GetDirectoryName(fullPath);
+                    Bounds3D allBounds = RecalculateAllBounds(exportDoc);
+
+                    string exportedPath = exportDoc.ExportAll("STLSLICE", allBounds, exportPath);
+                    exportedPath = Path.Combine(exportPath, modelName + ".stl");
+
+                    string gcodePath = Path.Combine(printerPath, modelName + ".gcode");
+
+                    string logPath = Path.GetTempPath() + modelName + "_slicelog.log";
+                    string lastLog = logPath;
+
+                    string prf = PathManager.PrinterProfileFolder() + "\\" + autoSliceProfile + ".profile";
+
+                    string curaPrinterName;
+                    string curaExtruderName;
+                    BarnaclePrinter bp = printerManager.FindPrinter(autoSlicePrinter);
+                    curaPrinterName = bp.CuraPrinterFile + ".def.json";
+                    curaExtruderName = bp.CuraExtruderFile + ".def.json";
+
+                    // start and end gcode may have a macro $NAME in it.
+                    //Both must be a single line of text when passed to cura engine
+                    string sg = bp.StartGCode.Replace("$NAME", modelName);
+                    sg = sg.Replace("\r\n", "\\n");
+                    sg = sg.Replace("\n", "\\n");
+
+                    string eg = bp.EndGCode.Replace("$NAME", modelName);
+                    eg = eg.Replace("\r\n", "\\n");
+                    eg = eg.Replace("\n", "\\n");
+
+                    SliceResult sliceRes = CuraEngineInterface.SliceFile(exportedPath, gcodePath, logPath,
+                                                                               slicerPath,
+                                                                               curaPrinterName,
+                                                                               curaExtruderName,
+                                                                               prf, sg, eg);
+
+                    if (sliceRes != null)
+                    {
+                        if (sliceRes.Result)
+                        {
+                            res = 0;
+                        }
+                    }
+                }
+            }
+            return res;
+        }
+
         private void MainWindowViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Caption")
@@ -81,6 +182,23 @@ namespace Barnacle.ViewModels
         private void NewProjectBack(object param)
         {
             SubView = new StartupView();
+        }
+
+        private Bounds3D RecalculateAllBounds(Document doc)
+        {
+            Bounds3D allBounds = new Bounds3D();
+            if (doc.Content.Count == 0)
+            {
+                allBounds.Zero();
+            }
+            else
+            {
+                foreach (Object3D ob in doc.Content)
+                {
+                    allBounds += ob.AbsoluteBounds;
+                }
+            }
+            return allBounds;
         }
 
         private void ShowEditor(object param)

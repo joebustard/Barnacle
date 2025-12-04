@@ -746,7 +746,7 @@ M84 ; Disable stepper motors
                 string fullPath = modelPath;
                 if (!String.IsNullOrEmpty(fullPath))
                 {
-                    await Task.Run(() => SliceSingleModel(fullPath, exportPath, printerPath));
+                    await Task.Run(() => SliceSingleModel(fullPath, exportPath, printerPath, selectedUserProfile));
                 }
             }
             else
@@ -755,7 +755,7 @@ M84 ; Disable stepper motors
                 String pth = BaseViewModel.Project.BaseFolder;
                 foreach (string fullPath in filenames)
                 {
-                    await Task.Run(() => SliceSingleModel(fullPath, exportPath, printerPath));
+                    await Task.Run(() => SliceSingleModel(fullPath, exportPath, printerPath, selectedUserProfile));
                 }
             }
             // Make the solution show the newly exported stl & g-code
@@ -772,7 +772,7 @@ M84 ; Disable stepper motors
             AppendResults("Slice complete");
         }
 
-        private async Task SliceSingleModel(string fullPath, string exportPath, string printerPath)
+        private async Task SliceSingleModel(string fullPath, string exportPath, string printerPath, string printerProfile)
         {
             exportDoc = new Document();
             exportDoc.ParentProject = BaseViewModel.Project;
@@ -790,7 +790,7 @@ M84 ; Disable stepper motors
             string logPath = Path.GetTempPath() + modelName + "_slicelog.log";
             lastLog = logPath;
 
-            string prf = PathManager.PrinterProfileFolder() + "\\" + selectedUserProfile + ".profile";
+            string prf = PathManager.PrinterProfileFolder() + "\\" + printerProfile + ".profile";
 
             AppendResults(modelName.PadRight(16) + ", ", false);
             string curaPrinterName;

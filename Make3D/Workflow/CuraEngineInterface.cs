@@ -423,6 +423,153 @@ exit 0
             return res;
         }
 
+        public static SliceResult SliceFile(string stlPath, string gcodePath, string logPath, string slicerPath, string printer, string extruder, string userProfile, String startG, string endG)
+        {
+            SliceResult res = new SliceResult();
+            res.Result = false;
+            try
+            {
+                // we need to construct a cmd file to run the slice Work out where it should be. use
+                // different temp names, because we will have async tasks going and we dont want two
+                // trying to write to the same cmd or log file
+                string tmpCmdFile = Path.GetTempFileName();
+                tmpCmdFile = Path.ChangeExtension(tmpCmdFile, "cmd");
+                if (File.Exists(tmpCmdFile))
+                {
+                    File.Delete(tmpCmdFile);
+                }
+
+                string tmpFile = Path.GetTempFileName();
+                tmpFile = Path.ChangeExtension(tmpFile, "gcode");
+                if (File.Exists(tmpFile))
+                {
+                    File.Delete(tmpFile);
+                }
+
+                // We need a slicer profile. The profile is based on the ones supplied with Cura BUT
+                // it doesn't use Cura's ones directly
+                String settingoverrides = "";
+
+                CuraDefinitionFile curaDataForPrinter = new CuraDefinitionFile();
+
+                if (slicerPath != null && slicerPath != "")
+                {
+                    string curaPrinterName = slicerPath + @"\share\cura\Resources\definitions\" + printer;
+                    string curaExtruderName = slicerPath + @"\share\cura\Resources\definitions\" + extruder;
+
+                    curaDataForPrinter.Load(curaPrinterName);
+                    curaDataForPrinter.Load(curaExtruderName);
+                    curaDataForPrinter.ProcessSettings();
+                    curaDataForPrinter.SetUserValues();
+
+                    if (File.Exists(userProfile))
+                    {
+                        String[] content = File.ReadAllLines(userProfile);
+                        for (int i = 0; i < content.GetLength(0); i += 2)
+                        {
+                            string key = content[i];
+                            string val = content[i + 1];
+                            foreach (SettingDefinition sd in curaDataForPrinter.Overrides)
+                            {
+                                if (sd.Name == key)
+                                {
+                                    sd.UserValue = val;
+                                    sd.ModifiedByUser = true;
+                                }
+                            }
+                        }
+                    }
+
+                    if (curaDataForPrinter.Overrides != null)
+                    {
+                        foreach (SettingDefinition sd in curaDataForPrinter.Overrides)
+                        {
+                            if (sd.ModifiedByUser || sd.Calculated || mustAlwaysSend.Contains(sd.Name))
+                            {
+                                settingoverrides += $"-s {sd.Name}=\"{sd.UserValue}\" ^\n";
+                            }
+                        }
+                    }
+                    if (settingoverrides.EndsWith("\n"))
+                    {
+                        settingoverrides = settingoverrides.Substring(0, settingoverrides.Length - 1);
+                    }
+                    string n = System.IO.Path.GetFileNameWithoutExtension(stlPath);
+                    if (File.Exists(logPath))
+                    {
+                        File.Delete(logPath);
+                    }
+                    WriteSliceFileCmd(tmpCmdFile,
+                                      slicerPath,
+                                      slicerPath + @"\share\cura\resources\definitions\" + printer,
+                                      slicerPath + @"\share\cura\resources\extruders\" + extruder,
+                                      settingoverrides,
+                                      startG,
+                                      endG,
+                                      stlPath,
+                                      tmpFile,
+                                      logPath);
+
+                    bool result = ExecuteCmds(tmpCmdFile);
+                    if (result)
+                    {
+                        result = ReplaceNewLines(tmpFile, gcodePath);
+                        res.Result = true;
+                    }
+                    else
+                    {
+                        res.Result = false;
+                    }
+                    if (File.Exists(tmpCmdFile))
+                    {
+                        File.Delete(tmpCmdFile);
+                    }
+
+                    if (File.Exists(tmpFile))
+                    {
+                        File.Delete(tmpFile);
+                    }
+                    if (res.Result && File.Exists(logPath))
+                    {
+                        string[] logLines = File.ReadAllLines(logPath);
+                        int len = logLines.GetLength(0);
+                        // if the log has something in it we can try extracting the print duration
+                        // etc. if its empty then we can't do anything with it
+                        if (len > 0)
+                        {
+                            for (int lineIndex = 0; lineIndex < len; lineIndex++)
+                            {
+                                int timeIndex = logLines[lineIndex].IndexOf("Print time (s):");
+                                if (timeIndex > -1)
+                                {
+                                    string dummy = logLines[lineIndex].Substring(timeIndex + 16).Trim();
+                                    res.TotalSeconds = Convert.ToInt32(dummy);
+
+                                    TimeSpan ts = new TimeSpan(0, 0, res.TotalSeconds);
+                                    res.Days = ts.Days;
+                                    res.Hours = ts.Hours;
+                                    res.Minutes = ts.Minutes;
+                                    res.Seconds = ts.Seconds;
+                                }
+                                int filamentIndex = logLines[lineIndex].IndexOf("Filament (mm^3):");
+                                if (filamentIndex > -1)
+                                {
+                                    string dummy = logLines[lineIndex].Substring(filamentIndex + 17).Trim();
+                                    res.Filament = Convert.ToInt32(dummy);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                Logger.LogException(ex);
+            }
+            return res;
+        }
+
         // examples $Printer =".\resources\definitions\creality_ender3pro.def.json" $Extruder
         // =".\resources\definitions\fdmextruder.def.json" $SettingOverrides = -s
         // material_print_temperature = "200" ^
