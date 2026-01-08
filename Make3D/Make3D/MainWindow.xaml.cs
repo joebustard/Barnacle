@@ -28,6 +28,7 @@ using System.Windows.Threading;
 using Barnacle.Views;
 using FileUtils;
 using Barnacle.ViewModels;
+using System.IO;
 
 namespace Barnacle
 {

@@ -33,10 +33,8 @@ namespace MakerLib.Mirror
 {
     public class Mirror
     {
-
         public static void Reflect(Object3D ob, string direction)
         {
-
             Bounds3D bnds = new Bounds3D();
 
             foreach (P3D p in ob.RelativeObjectVertices)
@@ -140,11 +138,15 @@ namespace MakerLib.Mirror
             }
             RemoveDuplicateVertices(ob);
             ob.Remesh();
-
+            RemoveDuplicateFaces(ob);
+            ob.Remesh();
             ob.CalcScale(false);
-
         }
 
+        private static void RemoveDuplicateFaces(Object3D ob)
+        {
+            DuplicateTriangles.RemoveBothDuplicateTriangles(ob.RelativeObjectVertices.Count, ob.TriangleIndices);
+        }
 
         private static void RemoveDuplicateVertices(Object3D ob)
         {
@@ -156,7 +158,6 @@ namespace MakerLib.Mirror
             PointUtils.PointCollectionToP3D(checker.Vertices, ob.RelativeObjectVertices);
             ob.TriangleIndices = checker.Faces;
             ob.Remesh();
-
         }
     }
 }

@@ -67,6 +67,7 @@
     <Compile Include="IntrinsicFunctions\RndNode.cs" />
     <Compile Include="Parser\ExtraParsingFunctions\ParseBevelledGearNode.cs" />
     <Compile Include="Parser\ExtraParsingFunctions\ParseGeneralStatement.cs" />
+    <Compile Include="Parser\ExtraParsingFunctions\ParseHoneyCombGrilleNode.cs" />
     <Compile Include="Parser\ExtraParsingFunctions\ParseMakeTrayNode.cs" />
     <Compile Include="Parser\ExtraParsingFunctions\ParsePiercedDiskNode.cs" />
     <Compile Include="Parser\ExtraParsingFunctions\ParsePiercedRingNode.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="SolidFunctions\MakeConstructionStripNode.cs" />
     <Compile Include="SolidFunctions\MakeCrossGrillNode.cs" />
     <Compile Include="SolidFunctions\MakeDripTrayNode.cs" />
+    <Compile Include="SolidFunctions\MakeHoneyCombGrilleNode.cs" />
     <Compile Include="SolidFunctions\MakeImagePlaqueNode.cs" />
     <Compile Include="SolidFunctions\MakeObliqueEndCylinderNode.cs" />
     <Compile Include="SolidFunctions\MakePathLoftNode.cs" />

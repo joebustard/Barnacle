@@ -898,6 +898,7 @@ namespace Barnacle.UserControls
             DoButtonBorder(src, MovePathBorder);
             DoButtonBorder(src, AppendBorder);
             DoButtonBorder(src, AntiClockwiseArcBorder);
+            DoButtonBorder(src, DragSegmentBorder);
         }
 
         private void FlexiUserActive()
@@ -996,6 +997,20 @@ namespace Barnacle.UserControls
                         {
                             found = vm.ConvertToArc(position, true);
                             vm.SelectionMode = FlexiPathEditorControlViewModel.SelectionModeType.SelectSegmentAtPoint;
+                        }
+                        break;
+
+                    case FlexiPathEditorControlViewModel.SelectionModeType.DragSegment:
+                        {
+                            bool shiftDown = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+                            found = vm.SelectLineFromPoint(position, shiftDown);
+                        }
+                        break;
+
+                    case FlexiPathEditorControlViewModel.SelectionModeType.ExpandDragSegment:
+                        {
+                            bool shiftDown = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+                            found = vm.SelectLineFromPoint(position, shiftDown);
                         }
                         break;
                 }
@@ -1227,6 +1242,18 @@ namespace Barnacle.UserControls
                 case FlexiPathEditorControlViewModel.SelectionModeType.DeleteSegment:
                     {
                         EnableSelectionModeBorder(DelSegBorder);
+                    }
+                    break;
+
+                case FlexiPathEditorControlViewModel.SelectionModeType.DragSegment:
+                    {
+                        EnableSelectionModeBorder(DragSegmentBorder);
+                    }
+                    break;
+
+                case FlexiPathEditorControlViewModel.SelectionModeType.ExpandDragSegment:
+                    {
+                        EnableSelectionModeBorder(ExpandDragSegmentBorder);
                     }
                     break;
 

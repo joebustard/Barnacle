@@ -70,6 +70,7 @@
     <Compile Include="ExtraPrimitives\RightBracket.cs" />
     <Compile Include="ExtraPrimitives\ScrewDriverBit.cs" />
     <Compile Include="ExtraPrimitives\PieSlice.cs" />
+  <Compile Include="ExtraPrimitives\ConCave.cs" />
     <!-- ExtraHere -->
     <Compile Include="Group3D.cs" />
     <Compile Include="IcoSphereCreator.cs" />

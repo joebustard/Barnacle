@@ -79,14 +79,45 @@ namespace Barnacle.Models
             Distal
         }
 
-        public SplitterOrientation Orientation { get; set; }
-        public Int32Collection OriginalFaces { get; set; }
-        public Point3DCollection OriginalVertices { get; set; }
-        public double Plane { get; set; }
-        public Int32Collection Result1Faces { get; set; }
-        public Point3DCollection Result1Vertices { get; set; }
-        public Int32Collection Result2Faces { get; set; }
-        public Point3DCollection Result2Vertices { get; set; }
+        public SplitterOrientation Orientation
+        {
+            get; set;
+        }
+
+        public Int32Collection OriginalFaces
+        {
+            get; set;
+        }
+
+        public Point3DCollection OriginalVertices
+        {
+            get; set;
+        }
+
+        public double Plane
+        {
+            get; set;
+        }
+
+        public Int32Collection Result1Faces
+        {
+            get; set;
+        }
+
+        public Point3DCollection Result1Vertices
+        {
+            get; set;
+        }
+
+        public Int32Collection Result2Faces
+        {
+            get; set;
+        }
+
+        public Point3DCollection Result2Vertices
+        {
+            get; set;
+        }
 
         public bool Split()
         {
@@ -109,9 +140,10 @@ namespace Barnacle.Models
                     SeperateSurfaces(edgeProc);
 
                     CloseEnds(edgeProc);
+                    result = true;
                 }
             }
-            return false;
+            return result;
         }
 
         /// <summary>

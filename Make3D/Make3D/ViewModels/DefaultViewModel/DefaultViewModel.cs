@@ -1708,6 +1708,7 @@ namespace Barnacle.ViewModels
             grilleToolsToShow.Add(new ToolDef("Cross Grille", true, "CrossGrille", "Create a cross grille."));
             grilleToolsToShow.Add(new ToolDef("Rect Grille", true, "RectGrille", "Create a rectangular grille."));
             grilleToolsToShow.Add(new ToolDef("Round Grille", true, "RoundGrille", "Create a round grille."));
+            grilleToolsToShow.Add(new ToolDef("Honeycomb Grille", true, "HoneycombGrille", "Create a honeycomb grille."));
             SortMenu(mechanicalToolsToShow);
             NotifyPropertyChanged("GrilleToolsToShow");
         }

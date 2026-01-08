@@ -68,9 +68,6 @@ namespace Barnacle.Dialogs
         private double vTextureResolution;
         private double wallWidth;
         private string warningText;
-        private System.Drawing.Bitmap workingImage;
-        private double xExtent;
-        private double yExtent;
 
         public Platelet()
         {
@@ -778,8 +775,6 @@ namespace Barnacle.Dialogs
                 by = Math.Min(tmp[i].Y, by);
                 ty = Math.Max(tmp[i].Y, ty);
             }
-            xExtent = rx - lx;
-            yExtent = ty - by;
         }
 
         private void CloseEdge(double lx, double by, double rx, double ty, List<Point> tmp, double sz)
@@ -1349,7 +1344,6 @@ namespace Barnacle.Dialogs
           new Point3D(+rx, +ty, 1.5 * (plateWidth + textureDepth)));
 
                 // generate side triangles so original points are already in list
-
                 for (int i = 0; i < outLineTmp.Count; i++)
                 {
                     CreateSideFace(outLineTmp, i);

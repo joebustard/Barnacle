@@ -1727,7 +1727,7 @@ namespace Barnacle.ViewModels
         private void FixHolesHalfEdge(Object3D ob, CancellationToken token)
         {
             int totalFixed = 0;
-            int totalFound = -1;
+
             Point3DCollection vertices = new Point3DCollection();
             Int32Collection tris = ob.TriangleIndices;
             Point3DCollection vertices2 = new Point3DCollection();
@@ -3798,7 +3798,7 @@ namespace Barnacle.ViewModels
                     totalRemoved += DuplicateTriangles.RemoveDuplicateTriangles(ob.RelativeObjectVertices.Count, ob.TriangleIndices);
                 }
                 Document.Dirty = true;
-                MessageBox.Show($"Removed {totalRemoved} duplicate vertices");
+                MessageBox.Show($"Removed {totalRemoved} duplicate faces");
             }
         }
 

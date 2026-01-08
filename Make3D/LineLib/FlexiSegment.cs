@@ -78,6 +78,14 @@ namespace Barnacle.LineLib
             return -1;
         }
 
+        internal virtual void Expand(List<FlexiSegment> segs, ObservableCollection<FlexiPoint> flexiPoints)
+        {
+        }
+
+        internal virtual void MoveSegment(ObservableCollection<FlexiPoint> pnts, double dx, double dy)
+        {
+        }
+
         internal virtual string ToOutline(ObservableCollection<FlexiPoint> flexiPoints)
         {
             return " ";

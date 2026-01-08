@@ -366,6 +366,15 @@
                 ToolTip="Add a Tetrahedron">
                 <Image Source="/Barnacle;component/Images/Buttons/Tetrahedron.png" />
             </Button>
+
+            <Button
+                Command="{Binding AddCommand}"
+                CommandParameter="Concave"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource PrimitiveImageButton}"
+                ToolTip="Add a Concave dip in a block">
+                <Image Source="/Barnacle;component/Images/Buttons/Concave.png" />
+            </Button>
         </UniformGrid>
     </Grid>
 </UserControl>

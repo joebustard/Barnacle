@@ -110,5 +110,11 @@ namespace Barnacle.LineLib
             s += Mode.ToString();
             return s;
         }
+
+        internal void Offset(double dx, double dy)
+        {
+            X += dx;
+            Y += dy;
+        }
     }
 }

@@ -942,7 +942,6 @@ namespace Barnacle.UserControls.VoxelGridControl
 
         private void SelectVoxel()
         {
-            bool found = false;
             selectedVoxel = -1;
             for (int i = 0; i < theVoxels.Count; i++)
             {
@@ -953,7 +952,6 @@ namespace Barnacle.UserControls.VoxelGridControl
                     v.Selected = true;
                     v.Geometry = GetMesh(v.ob, true);
                     selectedVoxel = i;
-                    found = true;
                 }
                 else
                 {

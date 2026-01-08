@@ -28,7 +28,7 @@
                 <Border Grid.Row="0" Style="{StaticResource ControlBorder}">
                     <UniformGrid
                         VerticalAlignment="Top"
-                        Columns="9"
+                        Columns="10"
                         Rows="3">
                         <Border
                             x:Name="ShowPointsBorder"
@@ -157,6 +157,31 @@
                                 <Image Source="/Barnacle;component/Images/Buttons/DeleteSegment.png" />
                             </Button>
                         </Border>
+
+                        <Border
+                            x:Name="DragSegmentBorder"
+                            BorderThickness="4"
+                            CornerRadius="2">
+                            <Button
+                                x:Name="DragSegmentButton"
+                                Command="{Binding DragSegmentCommand}"
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Drag the selected segment">
+                                <Image Source="/Barnacle;component/Images/Buttons/DragSegment.png" />
+                            </Button>
+                        </Border>
+                        <Border
+     x:Name="ExpandDragSegmentBorder"
+     BorderThickness="4"
+     CornerRadius="2">
+                            <Button
+         x:Name="ExpandDragSegmentButton"
+         Command="{Binding ExpandDragSegmentCommand}"
+         Style="{StaticResource SmallButton}"
+         ToolTip="Drag the selected segment">
+                                <Image Source="/Barnacle;component/Images/Buttons/ExpandDragSegment.png" />
+                            </Button>
+                        </Border>
                         <Border
                             x:Name="MovePathBorder"
                             BorderThickness="4"
@@ -169,6 +194,7 @@
                                 <Image Source="/Barnacle;component/Images/Buttons/MovePath.png" />
                             </Button>
                         </Border>
+
                         <Border
                             x:Name="ResetPathBorder"
                             BorderThickness="4"
@@ -181,7 +207,7 @@
                                 <Image Source="/Barnacle;component/Images/Buttons/ResetPath.png" />
                             </Button>
                         </Border>
-
+                        <Button Style="{StaticResource SmallButton}" Visibility="Hidden" />
                         <Border
                             x:Name="GridBorder"
                             BorderThickness="4"
@@ -214,45 +240,10 @@
                             ToolTip="Change the grid and line settings">
                             <Image Source="/Barnacle;component/Images/Buttons/Settings.png" />
                         </Button>
-                        <Border
-                            x:Name="ZoomOutBorder"
-                            BorderThickness="4"
-                            CornerRadius="2">
-                            <Button
-                                x:Name="ZoomOutButton"
-                                Command="{Binding ZoomCommand}"
-                                CommandParameter="Out"
-                                Style="{StaticResource SmallButton}"
-                                ToolTip="Zoom Out">
-                                <Image Source="/Barnacle;component/Images/Buttons/ZoomMinus.png" />
-                            </Button>
-                        </Border>
-                        <Border
-                            x:Name="ZoomResetBorder"
-                            BorderThickness="4"
-                            CornerRadius="2">
-                            <Button
-                                x:Name="ZoomResetButton"
-                                Command="{Binding ZoomCommand}"
-                                CommandParameter="Reset"
-                                Style="{StaticResource SmallButton}"
-                                ToolTip="Zoom Reset">
-                                <Image Source="/Barnacle;component/Images/Buttons/Zoom.png" />
-                            </Button>
-                        </Border>
-                        <Border
-                            x:Name="ZoomInBorder"
-                            BorderThickness="4"
-                            CornerRadius="2">
-                            <Button
-                                x:Name="ZoomInButton"
-                                Command="{Binding ZoomCommand}"
-                                CommandParameter="In"
-                                Style="{StaticResource SmallButton}"
-                                ToolTip="Zoom In">
-                                <Image Source="/Barnacle;component/Images/Buttons/ZoomPlus.png" />
-                            </Button>
-                        </Border>
+                        <Button
+                            x:Name="Seperator1"
+                            Style="{StaticResource SmallButton}"
+                            Visibility="Hidden" />
 
                         <Button
                             x:Name="ImageButton"
@@ -308,6 +299,45 @@
                             ToolTip="Decrease the size of the path">
                             <Image Source="/Barnacle;component/Images/Buttons/DecreaseSize.png" />
                         </Button>
+                        <Border
+                            x:Name="ZoomOutBorder"
+                            BorderThickness="4"
+                            CornerRadius="2">
+                            <Button
+                                x:Name="ZoomOutButton"
+                                Command="{Binding ZoomCommand}"
+                                CommandParameter="Out"
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Zoom Out">
+                                <Image Source="/Barnacle;component/Images/Buttons/ZoomMinus.png" />
+                            </Button>
+                        </Border>
+                        <Border
+                            x:Name="ZoomResetBorder"
+                            BorderThickness="4"
+                            CornerRadius="2">
+                            <Button
+                                x:Name="ZoomResetButton"
+                                Command="{Binding ZoomCommand}"
+                                CommandParameter="Reset"
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Zoom Reset">
+                                <Image Source="/Barnacle;component/Images/Buttons/Zoom.png" />
+                            </Button>
+                        </Border>
+                        <Border
+                            x:Name="ZoomInBorder"
+                            BorderThickness="4"
+                            CornerRadius="2">
+                            <Button
+                                x:Name="ZoomInButton"
+                                Command="{Binding ZoomCommand}"
+                                CommandParameter="In"
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Zoom In">
+                                <Image Source="/Barnacle;component/Images/Buttons/ZoomPlus.png" />
+                            </Button>
+                        </Border>
                     </UniformGrid>
                 </Border>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">

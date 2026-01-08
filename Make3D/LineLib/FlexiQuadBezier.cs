@@ -214,6 +214,47 @@ namespace Barnacle.LineLib
             return s;
         }
 
+        internal override void Expand(List<FlexiSegment> segs, ObservableCollection<FlexiPoint> flexiPoints)
+        {
+            int np0 = P0 + 1;
+            int np1 = np0 + 1;
+            int np2 = np1 + 1;
+            int np3 = np2 + 1;
+            FlexiPoint fp0 = new FlexiPoint(flexiPoints[P0].X, flexiPoints[P0].Y);
+            FlexiPoint fp1 = new FlexiPoint(flexiPoints[P2].X, flexiPoints[P2].Y);
+            flexiPoints.Insert(P2, fp1);
+            flexiPoints.Insert(np0, fp0);
+            int index = segs.IndexOf(this);
+            if (index >= 0 && index < segs.Count)
+            {
+                for (int i = index + 1; i < segs.Count; i++)
+                {
+                    segs[i].PointInserted(P2, 2);
+                }
+                LineSegment preSeg = new LineSegment(P0, np0);
+                LineSegment postSeg = new LineSegment(np2, np3);
+
+                segs.Insert(index + 1, postSeg);
+                segs.Insert(index, preSeg);
+                P0 = np0;
+                P1 = np1;
+                P2 = np2;
+            }
+            // renumber the points
+            // might as well just do all of them
+            for (int ind = 0; ind < flexiPoints.Count; ind++)
+            {
+                flexiPoints[ind].Id = ind;
+            }
+        }
+
+        internal override void MoveSegment(ObservableCollection<FlexiPoint> points, double dx, double dy)
+        {
+            points[P0].Offset(dx, dy);
+            points[P1].Offset(dx, dy);
+            points[P2].Offset(dx, dy);
+        }
+
         internal override string ToOutline(ObservableCollection<FlexiPoint> flexiPoints)
         {
             return $"Q {flexiPoints[P1].X:F07},{flexiPoints[P1].Y:F07} {flexiPoints[P2].X:F07},{flexiPoints[P2].Y:F07}  ";

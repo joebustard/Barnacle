@@ -13,15 +13,31 @@ namespace Barnacle.LineLib
         protected List<FlexiSegment> segs;
         private const double selectionDistance = 2;
         private double brx;
+
         private double bry;
+
         private bool clipAgainstBounds;
+
         private bool closed;
+
+        // used for dragging segments
+        private System.Windows.Point oldSelectionPoint;
+
         private bool openEndedPath;
+        /// <summary>
+        ///
+        ///  if the path is not open ended we should not allow the user to start tweaking it until its
+        ///  completely closed
+        /// </summary>
 
         private double pathHeight;
+
         private double pathWidth;
 
+        private FlexiSegment selectedSegment;
+
         private double tlx;
+
         private double tly;
 
         public FlexiPath()
@@ -31,6 +47,7 @@ namespace Barnacle.LineLib
             closed = true;
             openEndedPath = false;
             clipAgainstBounds = false;
+            PathComplete = false;
         }
 
         public bool ClipAgainstBounds
@@ -80,6 +97,12 @@ namespace Barnacle.LineLib
             {
                 openEndedPath = value;
             }
+        }
+
+        public bool PathComplete
+        {
+            get;
+            set;
         }
 
         public FlexiPoint Start
@@ -376,6 +399,10 @@ namespace Barnacle.LineLib
         {
             segs.Clear();
             flexiPoints.Clear();
+            if (!openEndedPath)
+            {
+                PathComplete = false;
+            }
         }
 
         public void ClosePath()
@@ -385,6 +412,7 @@ namespace Barnacle.LineLib
                 // create a separate segment that goes back to point zero
                 LineSegment sq = new LineSegment(flexiPoints.Count - 1, 0);
                 segs.Add(sq);
+                PathComplete = true;
             }
         }
 
@@ -697,6 +725,14 @@ namespace Barnacle.LineLib
                 res = tmp;
             }
             return res;
+        }
+
+        public void Expand()
+        {
+            if (selectedSegment != null)
+            {
+                selectedSegment.Expand(segs, flexiPoints);
+            }
         }
 
         public FlexiSegment FirstSelectedSegment()
@@ -1224,6 +1260,7 @@ namespace Barnacle.LineLib
                 }
                 segs.Clear();
                 segs.AddRange(segments);
+                PathComplete = true;
             }
             return valid;
         }
@@ -1234,6 +1271,20 @@ namespace Barnacle.LineLib
             {
                 p.X += offset.X;
                 p.Y += offset.Y;
+            }
+        }
+
+        public void MoveSegmentTo(System.Windows.Point position)
+        {
+            if (selectedSegment != null)
+            {
+                double dx = position.X - oldSelectionPoint.X;
+                double dy = position.Y - oldSelectionPoint.Y;
+                if (Math.Abs(dx) > 0.1 || Math.Abs(dy) > 0.1)
+                {
+                    selectedSegment.MoveSegment(flexiPoints, dx, dy);
+                    oldSelectionPoint = position;
+                }
             }
         }
 
@@ -1331,6 +1382,8 @@ namespace Barnacle.LineLib
                 {
                     closest.Select(flexiPoints);
                     closest.Selected = true;
+                    oldSelectionPoint = position;
+                    selectedSegment = closest;
                 }
             }
             return found;

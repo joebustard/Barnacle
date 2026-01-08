@@ -2,7 +2,7 @@
 v1.0.10
 ===========
 Added
-  Extra primitive tetrahedron
+  Extra primitives tetrahedron, concave
   Drop from left, right, front and back added to editor.
   dropabove, dropbelow, dropfront, dropback, dropleft, dropright added to limpet
   Addeded sgn() and Cenflo() to standard limpet lib
@@ -16,6 +16,8 @@ Added
   Added choice of templates to nw script file name dialog. User scripts can be stored in app data subfolder
   Remove duplicate triangles, that is triangles that have the same vertices but in a different order.
   First cut of point hull tool
+  Drag segment in flexipathcontrol, two verions. One drags the original points, the second inserts two extra connecting segments.
+  First cut of Senilias make file tool
 
 Fixed
   The number of vertices and faces shown for the selected object didn't update automatically when the object was subdivided
@@ -31,6 +33,7 @@ Changed
   Modified focus handling in the solution tree view
   Don't allow user to load a new Limpet script if current one is executing
   Spur Gear uses the same tooth generation as the new bevelled gear so gears are compatible.
+  Made all mirror operations remove the internal "interface" triangles
 
 
 v1.0.9

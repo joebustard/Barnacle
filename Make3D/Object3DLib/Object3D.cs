@@ -102,6 +102,8 @@ namespace Barnacle.Object3DLib
              new PrimTableEntry( "screwdriverbit", PrimitiveGenerator.GenerateScrewDriverBit,Colors.Teal),
              new PrimTableEntry( "pie", PrimitiveGenerator.GeneratePie,Colors.SpringGreen),
              new PrimTableEntry( "tetrahedron", PrimitiveGenerator.GenerateTetrahedron,Colors.CadetBlue),
+
+             new PrimTableEntry( "concave", PrimitiveGenerator.GenerateConcave,Colors.Orchid),
             //Next_Primitive_Table_Entry
         };
 

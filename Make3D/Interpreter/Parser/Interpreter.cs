@@ -135,6 +135,7 @@ namespace ScriptLanguage
                 "makereuleaux",
                 "makerectgrille",
                 "makeroundgrille",
+                "makehoneycombgrille",
                 "makeroofridge",
                 "makeshapedbrickwall",
                 "makespring",
@@ -2945,6 +2946,12 @@ namespace ScriptLanguage
                         case "makerectgrille":
                             {
                                 exp = ParseMakeRectGrilleFunction(parentName);
+                            }
+                            break;
+
+                        case "makehoneycombgrille":
+                            {
+                                exp = ParseMakeHoneyCombGrilleFunction(parentName);
                             }
                             break;
 

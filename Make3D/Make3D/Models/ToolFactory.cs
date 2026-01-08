@@ -89,6 +89,10 @@ namespace Barnacle.Models
                     res = new DualProfileDlg();
                     break;
 
+                case "HoneycombGrille":
+                    res = new HoneyCombGrilleDlg();
+                    break;
+
                 case "ImagePlaque":
                     res = new ImagePlaqueDlg();
                     break;

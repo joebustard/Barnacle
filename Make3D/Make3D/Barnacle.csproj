@@ -133,6 +133,7 @@
     <Compile Include="Dialogs\CutVPlane\CutVerticalPlaneDlg.xaml.cs">
       <DependentUpon>CutVerticalPlaneDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\HoneycombGrille\HoneyCombGrilleDlg.xaml.cs" />
     <Compile Include="Dialogs\NewUserTemplate.xaml.cs">
       <DependentUpon>NewUserTemplate.xaml</DependentUpon>
     </Compile>
@@ -570,6 +571,10 @@
     <Page Include="Dialogs\DecimatorSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\HoneycombGrille\HoneyCombGrilleDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\NewUserTemplate.xaml">
       <SubType>Designer</SubType>
@@ -1488,6 +1493,10 @@
     <Resource Include="Images\Buttons\IncreaseSize.png" />
     <Resource Include="Images\Buttons\Minus.png" />
     <Resource Include="Images\Buttons\Plus.png" />
+    <Resource Include="Images\Buttons\DragSegment.png" />
+    <Resource Include="Images\Buttons\Concave.png" />
+    <Resource Include="Images\Buttons\ExpandDragSegment.png" />
+    <Resource Include="Images\Buttons\PiercedDisk.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

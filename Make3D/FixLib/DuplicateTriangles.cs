@@ -28,6 +28,124 @@ namespace FixLib
 {
     public class DuplicateTriangles
     {
+        /// <summary>
+        /// Removes any duplicate triangles AND the original copy
+        /// </summary>
+        /// <param name="count"></param>
+        /// <param name="triangleIndices"></param>
+        public static int RemoveBothDuplicateTriangles(int totalPoints, Int32Collection tris)
+        {
+            int maxSum = 3 * totalPoints;
+            int numBuckets = 200;
+            int bucketSize = (maxSum / (numBuckets - 1)) + 1;
+            int duplicatesFound = 0;
+            // initialise the storeage buckets
+            List<faceRecord>[] buckets = new List<faceRecord>[numBuckets];
+            for (int i = 0; i < numBuckets; i++)
+            {
+                buckets[i] = new List<faceRecord>();
+            }
+
+            // go through each original triangle
+            for (int t = 0; t < tris.Count / 3; t++)
+            {
+                int findex = t * 3;
+                if (findex + 2 < tris.Count)
+                {
+                    int sum = tris[findex] + tris[findex + 1] + tris[findex + 2];
+                    int b = sum / bucketSize;
+                    System.Diagnostics.Debug.WriteLine($"tri {t} =  {tris[findex]}, {tris[findex + 1]}, {tris[findex + 2]} sum {sum} bucket {b}");
+                    // which bucket would it be in
+
+                    if (b < 0 || b >= buckets.GetLength(0))
+                    {
+                        bool bBuggered = true;
+                    }
+                    else
+                    {
+                        if (buckets[b].Count == 0)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"first in bucket");
+                            faceRecord fr = new faceRecord();
+                            fr.Index = t;
+                            fr.Sum = sum;
+                            fr.V0 = tris[findex];
+                            fr.V1 = tris[findex + 1];
+                            fr.V2 = tris[findex + 2];
+                            fr.dead = false;
+                            buckets[b].Add(fr);
+                        }
+                        else
+                        {
+                            bool found = false;
+                            for (int j = 0; j < buckets[b].Count && found == false; j++)
+                            {
+                                // look for a rough match
+                                if (buckets[b][j].Sum == sum)
+                                {
+                                    int matches = 0;
+                                    if ((tris[findex] == buckets[b][j].V0) ||
+                                        (tris[findex] == buckets[b][j].V1) ||
+                                        (tris[findex] == buckets[b][j].V2))
+                                    {
+                                        matches++;
+                                    }
+
+                                    if ((tris[findex + 1] == buckets[b][j].V0) ||
+                                        (tris[findex + 1] == buckets[b][j].V1) ||
+                                        (tris[findex + 1] == buckets[b][j].V2))
+                                    {
+                                        matches++;
+                                    }
+
+                                    if ((tris[findex + 2] == buckets[b][j].V0) ||
+                                        (tris[findex + 2] == buckets[b][j].V1) ||
+                                        (tris[findex + 2] == buckets[b][j].V2))
+                                    {
+                                        matches++;
+                                    }
+                                    if (matches == 3)
+                                    {
+                                        // this is a duplicate
+                                        found = true;
+                                        duplicatesFound++;
+                                        faceRecord fr = buckets[b][j];
+                                        fr.dead = true;
+                                        buckets[b][j] = fr;
+                                    }
+                                }
+                            }
+                            if (!found)
+                            {
+                                faceRecord fr = new faceRecord();
+                                fr.Index = t;
+                                fr.Sum = sum;
+                                fr.V0 = tris[findex];
+                                fr.V1 = tris[findex + 1];
+                                fr.V2 = tris[findex + 2];
+                                fr.dead = false;
+                                buckets[b].Add(fr);
+                            }
+                        }
+                    }
+                }
+            }
+            tris.Clear();
+            for (int buck = 0; buck < buckets.Length; buck++)
+            {
+                for (int fi = 0; fi < buckets[buck].Count; fi++)
+                {
+                    if (buckets[buck][fi].dead == false)
+                    {
+                        tris.Add(buckets[buck][fi].V0);
+                        tris.Add(buckets[buck][fi].V1);
+                        tris.Add(buckets[buck][fi].V2);
+                    }
+                }
+            }
+            return duplicatesFound;
+        }
+
         public static int RemoveDuplicateTriangles(int totalPoints, Int32Collection tris)
         {
             int maxSum = 3 * totalPoints;
@@ -135,6 +253,7 @@ namespace FixLib
 
         private struct faceRecord
         {
+            public bool dead;
             public int Index;
             public int Sum;
             public int V0;
