@@ -40,6 +40,7 @@
                         <RowDefinition Height="5" />
                     </Grid.RowDefinitions>
                     <Grid Grid.Column="1" Grid.Row="1">
+
                         <Grid.RowDefinitions>
                             <RowDefinition Height="25" />
                             <RowDefinition Height="25" />
@@ -49,6 +50,7 @@
                         <StackPanel Orientation="Horizontal" Grid.Row="0">
                             <Label VerticalAlignment="Center" Content="Project Folder" Width="100" />
                             <TextBox VerticalAlignment="Center" Text="{Binding ProjectFolder}" Width="400" />
+                            <Button Content="..." Margin="4,0,0,0" Click="Browse_Project" Width="25" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Grid.Row="1">
                             <Label VerticalAlignment="Center" Content="Project Name" Width="100" />

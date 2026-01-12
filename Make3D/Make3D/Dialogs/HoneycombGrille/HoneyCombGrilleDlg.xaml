@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:Barnacle.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
-    Title=""
+    Title="Honeycomb Grille"
     Width="1000"
     Height="450"
     Background="{StaticResource WindowBackBrush}"
@@ -44,8 +44,8 @@
                     <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
-                                    <Label VerticalAlignment="Center" Width="100" Content="GrilleLength"/>
-                 <TextBox Margin="8,0,0,0" Text="{Binding GrilleLength}" Width="150" ToolTip="{Binding GrilleLengthToolTip}"/>
+                    <Label VerticalAlignment="Center" Width="100" Content="Grille Length" />
+                    <TextBox Margin="8,0,0,0" Text="{Binding GrilleLength}" Width="150" ToolTip="{Binding GrilleLengthToolTip}" />
 
                     <Button
                         Margin="8,0,0,0"
@@ -54,36 +54,32 @@
                         ToolTip="Restore parameters to their defaults" />
                 </StackPanel>
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
-                                    <Label VerticalAlignment="Center" Width="100" Content="GrillHeight"/>
-                 <TextBox Margin="8,0,0,0" Text="{Binding GrillHeight}" Width="150" ToolTip="{Binding GrillHeightToolTip}"/>
-
+                    <Label VerticalAlignment="Center" Width="100" Content="Grille Height" />
+                    <TextBox Margin="8,0,0,0" Text="{Binding GrillHeight}" Width="150" ToolTip="{Binding GrillHeightToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="3" Orientation="Horizontal">
-                                    <Label VerticalAlignment="Center" Width="100" Content="GrillThickness"/>
-                 <TextBox Margin="8,0,0,0" Text="{Binding GrillThickness}" Width="150" ToolTip="{Binding GrillThicknessToolTip}"/>
-
+                    <Label VerticalAlignment="Center" Width="100" Content="Grille Thickness" />
+                    <TextBox Margin="8,0,0,0" Text="{Binding GrillThickness}" Width="150" ToolTip="{Binding GrillThicknessToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="4" Orientation="Horizontal">
-                                    <Label VerticalAlignment="Center" Width="100" Content="BeamLength"/>
-                 <TextBox Margin="8,0,0,0" Text="{Binding BeamLength}" Width="150" ToolTip="{Binding BeamLengthToolTip}"/>
-
+                    <Label VerticalAlignment="Center" Width="100" Content="Beam Length" />
+                    <TextBox Margin="8,0,0,0" Text="{Binding BeamLength}" Width="150" ToolTip="{Binding BeamLengthToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="5" Orientation="Horizontal">
-                                    <Label VerticalAlignment="Center" Width="100" Content="EdgeSize"/>
-                 <TextBox Margin="8,0,0,0" Text="{Binding EdgeSize}" Width="150" ToolTip="{Binding EdgeSizeToolTip}"/>
-
+                    <Label VerticalAlignment="Center" Width="100" Content="Beam Width" />
+                    <TextBox Margin="8,0,0,0" Text="{Binding BeamWidth}" Width="150" ToolTip="{Binding BeamWidthToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="6" Orientation="Horizontal">
-                                    <Label VerticalAlignment="Center" Width="100" Content="ShowEdge"/>
-                 <TextBox Margin="8,0,0,0" Text="{Binding ShowEdge}" Width="150" ToolTip="{Binding ShowEdgeToolTip}"/>
+                    <Label VerticalAlignment="Center" Width="100" Content="Edge Size" />
+                    <TextBox Margin="8,0,0,0" Text="{Binding EdgeSize}" Width="150" ToolTip="{Binding EdgeSizeToolTip}" />
+                </StackPanel>
+                <!--
+                <StackPanel Grid.Row="6" Orientation="Horizontal">
+                                    <Label VerticalAlignment="Center" Width="100" Content="ShowEdge" />
+                 <TextBox Margin="8,0,0,0" Text="{Binding ShowEdge}" Width="150" ToolTip="{Binding ShowEdgeToolTip}" />
+                </StackPanel>
+                -->
 
-                </StackPanel>
-                <StackPanel Grid.Row="7" Orientation="Horizontal">
-                    
-                </StackPanel>
-                <StackPanel Grid.Row="8" Orientation="Horizontal">
-                    
-                </StackPanel>
                 <StackPanel Grid.Row="9" Orientation="Horizontal">
                     <Label
                         VerticalAlignment="Center"
@@ -122,4 +118,4 @@
                 IsDefault="True" />
         </Grid>
     </Grid>
-</local:BaseModellerDialog> 
+</local:BaseModellerDialog>

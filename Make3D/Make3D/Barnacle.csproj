@@ -343,7 +343,6 @@
     <Compile Include="Models\BufferedPolyline\BufferedPolyline.cs" />
     <Compile Include="Models\BufferedPolyline\CoreSegment.cs" />
     <Compile Include="Models\BufferedPolyline\Segment.cs" />
-    <Compile Include="Models\CohenSutherland.cs" />
     <Compile Include="Models\GridData.cs" />
     <Compile Include="Models\Planes\HorizontalPlane.cs" />
     <Compile Include="Models\MeshSubdivider.cs" />

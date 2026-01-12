@@ -329,11 +329,13 @@ namespace SeniliasLib
         public void SetProjectName(string v)
         {
             projectName = v;
+            Dirty = true;
         }
 
         public void SetProjectPath(string v)
         {
             Utils.Utils.ProjectPath = v;
+            Dirty = true;
         }
 
         public List<string> ToDo()

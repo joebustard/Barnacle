@@ -29,7 +29,7 @@ Fixed
   Report run time error if flip function is used on a group.
 
 Changed
-  Paste path string in flexipath control now adjusts pasted coordinates so all path is visible
+  Paste path string in flexipath control now adjusts pasted coordinates so all path is vis-ible
   Modified focus handling in the solution tree view
   Don't allow user to load a new Limpet script if current one is executing
   Spur Gear uses the same tooth generation as the new bevelled gear so gears are compatible.

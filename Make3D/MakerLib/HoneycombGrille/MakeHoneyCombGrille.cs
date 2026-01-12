@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace MakerLib
 {
@@ -20,8 +21,11 @@ namespace MakerLib
         private double grilleHeight;
         private double grilleLength;
         private double grilleThickness;
+        private double leftThicknessAdjustment = 0.002;
+        private double rightThicknessAdjustment = 0.003;
         private bool showEdge;
         private List<SkeletonSegment> skeletonSegments;
+        private double straightThicknessAdjustment = 0.001;
         private List<Point> visited;
 
         public HoneyCombGrilleMaker()
@@ -46,7 +50,9 @@ namespace MakerLib
             faces.Clear();
             Vertices = pnts;
             Faces = faces;
-
+            Point3D minPoint = new Point3D(-1, -1, -1);
+            Point3D maxPoint = new Point3D(grilleLength + 1, grilleHeight + 1, grilleThickness + 1);
+            CreateOctree(minPoint, maxPoint);
             // calculate offsets to fork points
             double forkOff = beamLength * Math.Sin(Math.PI / 4.0);
 
@@ -62,7 +68,7 @@ namespace MakerLib
                     Point p0 = new Point(cp.X, cp.Y - beamLength);
                     Point p1 = new Point(cp.X - forkOff, cp.Y + forkOff);
                     Point p2 = new Point(cp.X + forkOff, cp.Y + forkOff);
-                    AddSkeletonSegment(cp, p0, SegIncline.Straight);
+                    AddSkeletonSegment(p0, cp, SegIncline.Straight);
                     AddSkeletonSegment(cp, p1, SegIncline.Left);
                     AddSkeletonSegment(cp, p2, SegIncline.Right);
                     visited.Add(cp);
@@ -73,7 +79,7 @@ namespace MakerLib
                     Point ncp2 = new Point(p1.X, p1.Y + beamLength);
                     Point ncp3 = new Point(p2.X, p2.Y + beamLength);
                     // if any of these are inside the shape then add them to the queue
-                    if (Inside(ncp0) || Inside(ncp0) || Inside(ncp0) || Inside(ncp0))
+                    if (Inside(ncp0) || Inside(ncp1) || Inside(ncp2) || Inside(ncp3))
                     {
                         AddForkCentre(ncp0.X, ncp0.Y);
                         AddForkCentre(ncp1.X, ncp1.Y);
@@ -84,6 +90,10 @@ namespace MakerLib
             } while (centreStack.Count > 0);
 
             SolidsFromSegments(skeletonSegments, beamWidth);
+            if (showEdge)
+            {
+                CreateEdge();
+            }
         }
 
         public void SetValues(double grilleLength,
@@ -101,6 +111,10 @@ namespace MakerLib
             this.beamWidth = beamWidth;
             this.edgeSize = edgeSize;
             this.showEdge = showEdge;
+            if (this.edgeSize < beamWidth + 0.1)
+            {
+                this.edgeSize = beamWidth + 0.1;
+            }
         }
 
         private void AddForkCentre(double x, double y)
@@ -140,6 +154,95 @@ namespace MakerLib
             }
         }
 
+        private void CreateEdge()
+        {
+            Point p0 = new Point(0, 0);
+            Point p1 = new Point(0, grilleHeight);
+            Point p2 = new Point(grilleLength, grilleHeight);
+            Point p3 = new Point(grilleLength, 0);
+
+            Point p4 = new Point(edgeSize, edgeSize);
+            Point p5 = new Point(edgeSize, grilleHeight - edgeSize);
+            Point p6 = new Point(grilleLength - edgeSize, grilleHeight - edgeSize);
+            Point p7 = new Point(grilleLength - edgeSize, edgeSize);
+
+            int v0 = AddVerticeOctTree(p0.X, p0.Y, 0);
+            int v1 = AddVerticeOctTree(p1.X, p1.Y, 0);
+            int v2 = AddVerticeOctTree(p2.X, p2.Y, 0);
+            int v3 = AddVerticeOctTree(p3.X, p3.Y, 0);
+
+            int v4 = AddVerticeOctTree(p4.X, p4.Y, 0);
+            int v5 = AddVerticeOctTree(p5.X, p5.Y, 0);
+            int v6 = AddVerticeOctTree(p6.X, p6.Y, 0);
+            int v7 = AddVerticeOctTree(p7.X, p7.Y, 0);
+
+            AddFace(v0, v1, v4);
+            AddFace(v4, v1, v5);
+
+            AddFace(v5, v1, v6);
+            AddFace(v6, v1, v2);
+
+            AddFace(v7, v6, v2);
+            AddFace(v7, v2, v3);
+
+            AddFace(v0, v4, v7);
+            AddFace(v3, v0, v7);
+
+            int v8 = AddVerticeOctTree(p0.X, p0.Y, grilleThickness);
+            int v9 = AddVerticeOctTree(p1.X, p1.Y, grilleThickness);
+            int v10 = AddVerticeOctTree(p2.X, p2.Y, grilleThickness);
+            int v11 = AddVerticeOctTree(p3.X, p3.Y, grilleThickness);
+
+            int v12 = AddVerticeOctTree(p4.X, p4.Y, grilleThickness);
+            int v13 = AddVerticeOctTree(p5.X, p5.Y, grilleThickness);
+            int v14 = AddVerticeOctTree(p6.X, p6.Y, grilleThickness);
+            int v15 = AddVerticeOctTree(p7.X, p7.Y, grilleThickness);
+
+            AddFace(v8, v12, v9);
+            AddFace(v12, v13, v9);
+
+            AddFace(v13, v14, v9);
+            AddFace(v14, v10, v9);
+
+            AddFace(v15, v10, v14);
+            AddFace(v15, v11, v10);
+
+            AddFace(v8, v15, v12);
+            AddFace(v11, v15, v8);
+
+            // close left outside
+            AddFace(v0, v8, v1);
+            AddFace(v8, v9, v1);
+
+            // left inside'
+            AddFace(v4, v5, v12);
+            AddFace(v12, v5, v13);
+
+            // top outside
+            AddFace(v1, v9, v2);
+            AddFace(v9, v10, v2);
+
+            // top inside
+            AddFace(v13, v5, v6);
+            AddFace(v13, v6, v14);
+
+            // Right outside
+            AddFace(v2, v10, v3);
+            AddFace(v3, v10, v11);
+
+            // right inside
+            AddFace(v6, v7, v15);
+            AddFace(v6, v15, v14);
+
+            // bottom outside
+            AddFace(v3, v11, v12);
+            AddFace(v3, v12, v0);
+
+            // bottom inside
+            AddFace(v12, v7, v4);
+            AddFace(v12, v11, v7);
+        }
+
         private bool dequals(double d1, double d2)
         {
             bool res = false;
@@ -147,6 +250,7 @@ namespace MakerLib
             {
                 res = true;
             }
+            //  System.Diagnostics.Debug.WriteLine($" {Math.Abs(d1-d2)}");
             return res;
         }
 
@@ -183,35 +287,76 @@ namespace MakerLib
         private void SolidsFromSegments(List<SkeletonSegment> skeletonSegments, double segWidth)
         {
             double segoff = segWidth * Math.Sin(Math.PI / 4.0);
-            Point3D minPoint = new Point3D(-1, -1, -1);
-            Point3D maxPoint = new Point3D(grilleLength + 1, grilleHeight + 1, grilleThickness + 1);
-            CreateOctree(minPoint, maxPoint);
+            Extents bounds = new Extents();
+            bounds.Left = segoff;
+            bounds.Right = grilleLength - segoff;
+            bounds.Top = grilleHeight - segoff;
+            bounds.Bottom = segoff;
+            List<SkeletonSegment> clippedSegs = new List<SkeletonSegment>();
             foreach (SkeletonSegment s in skeletonSegments)
             {
+                var v = CohenSutherland.CohenSutherlandLineClip(bounds, s.start, s.end);
+                if (v != null)
+                {
+                    double sx = v.Item1.X;
+                    double sy = v.Item1.Y;
+                    double ex = v.Item2.X;
+                    double ey = v.Item2.Y;
+                    SkeletonSegment ns = new SkeletonSegment();
+                    ns.start = new Point(sx, sy);
+                    ns.closeStart = true;
+                    ns.end = new Point(ex, ey);
+                    ns.closeEnd = true;
+                    ns.incline = s.incline;
+                    for (int i = 0; i < clippedSegs.Count; i++)
+                    {
+                        if (dequals(ns.start.X, clippedSegs[i].end.X) &&
+                            dequals(ns.start.Y, clippedSegs[i].end.Y))
+                        {
+                            clippedSegs[i].DontCloseEnd();
+                            ns.DontCloseStart();
+                        }
+
+                        if (dequals(ns.end.X, clippedSegs[i].start.X) &&
+                            dequals(ns.end.Y, clippedSegs[i].start.Y))
+                        {
+                            clippedSegs[i].DontCloseStart();
+                            ns.DontCloseEnd();
+                        }
+                    }
+                    clippedSegs.Add(ns);
+                }
+            }
+            foreach (SkeletonSegment s in clippedSegs)
+            {
+                double sx = s.start.X;
+                double sy = s.start.Y;
+                double ex = s.end.X;
+                double ey = s.end.Y;
                 switch (s.incline)
                 {
                     case SegIncline.Straight:
                         {
                             // Straights always run vertically down.
                             // Bottom (i.e. end ) is always flat, top is point
-                            Point p0 = new Point(s.end.X - segoff, s.end.Y);
-                            Point p1 = new Point(s.start.X - segoff, s.start.Y);
+                            Point p0 = new Point(sx - segoff, sy);
+                            Point p1 = new Point(ex - segoff, ey);
                             // pointy bit
-                            Point p2 = new Point(s.start.X, s.start.Y + segoff);
-                            Point p3 = new Point(s.start.X + segoff, s.start.Y);
-                            Point p4 = new Point(s.end.X + segoff, s.end.Y);
+                            Point p2 = new Point(ex, ey + segoff);
+                            Point p3 = new Point(ex + segoff, ey);
+                            Point p4 = new Point(sx + segoff, sy);
 
-                            int v0 = AddVerticeOctTree(p0.X, p0.Y, 0);
-                            int v1 = AddVerticeOctTree(p1.X, p1.Y, 0);
-                            int v2 = AddVerticeOctTree(p2.X, p2.Y, 0);
-                            int v3 = AddVerticeOctTree(p3.X, p3.Y, 0);
-                            int v4 = AddVerticeOctTree(p4.X, p4.Y, 0);
+                            int v0 = AddVerticeOctTree(p0.X, p0.Y, straightThicknessAdjustment);
+                            int v1 = AddVerticeOctTree(p1.X, p1.Y, straightThicknessAdjustment);
+                            int v2 = AddVerticeOctTree(p2.X, p2.Y, straightThicknessAdjustment);
+                            int v3 = AddVerticeOctTree(p3.X, p3.Y, straightThicknessAdjustment);
+                            int v4 = AddVerticeOctTree(p4.X, p4.Y, straightThicknessAdjustment);
 
-                            int v5 = AddVerticeOctTree(p0.X, p0.Y, grilleThickness);
-                            int v6 = AddVerticeOctTree(p1.X, p1.Y, grilleThickness);
-                            int v7 = AddVerticeOctTree(p2.X, p2.Y, grilleThickness);
-                            int v8 = AddVerticeOctTree(p3.X, p3.Y, grilleThickness);
-                            int v9 = AddVerticeOctTree(p4.X, p4.Y, grilleThickness);
+                            int v5 = AddVerticeOctTree(p0.X, p0.Y, grilleThickness - straightThicknessAdjustment);
+                            int v6 = AddVerticeOctTree(p1.X, p1.Y, grilleThickness - straightThicknessAdjustment);
+                            int v7 = AddVerticeOctTree(p2.X, p2.Y, grilleThickness - straightThicknessAdjustment);
+                            int v8 = AddVerticeOctTree(p3.X, p3.Y, grilleThickness - straightThicknessAdjustment);
+                            int v9 = AddVerticeOctTree(p4.X, p4.Y, grilleThickness - straightThicknessAdjustment);
                             // left
                             AddFace(v0, v5, v1);
                             AddFace(v5, v6, v1);
@@ -226,6 +371,21 @@ namespace MakerLib
                             AddFace(v5, v8, v6);
                             AddFace(v5, v9, v8);
                             AddFace(v8, v7, v6);
+
+                            if (s.closeStart)
+                            {
+                                AddFace(v0, v4, v5);
+                                AddFace(v4, v9, v5);
+                            }
+
+                            if (s.closeEnd)
+                            {
+                                AddFace(v1, v6, v2);
+                                AddFace(v2, v6, v7);
+
+                                AddFace(v2, v7, v3);
+                                AddFace(v3, v7, v8);
+                            }
                         }
                         break;
 
@@ -233,21 +393,21 @@ namespace MakerLib
                         {
                             // start is at the bottom
 
-                            Point p0 = new Point(s.start.X - segoff, s.start.Y);
-                            Point p1 = new Point(s.end.X - segoff, s.end.Y - segoff);
+                            Point p0 = new Point(sx - segoff, sy);
+                            Point p1 = new Point(ex - segoff, ey);
 
-                            Point p2 = new Point(s.end.X + segoff, s.end.Y);
-                            Point p3 = new Point(s.start.X, s.start.Y + segoff);
+                            Point p2 = new Point(ex + segoff, ey);
+                            Point p3 = new Point(sx, sy + segoff);
 
-                            int v0 = AddVerticeOctTree(p0.X, p0.Y, 0);
-                            int v1 = AddVerticeOctTree(p1.X, p1.Y, 0);
-                            int v2 = AddVerticeOctTree(p2.X, p2.Y, 0);
-                            int v3 = AddVerticeOctTree(p3.X, p3.Y, 0);
+                            int v0 = AddVerticeOctTree(p0.X, p0.Y, leftThicknessAdjustment);
+                            int v1 = AddVerticeOctTree(p1.X, p1.Y, leftThicknessAdjustment);
+                            int v2 = AddVerticeOctTree(p2.X, p2.Y, leftThicknessAdjustment);
+                            int v3 = AddVerticeOctTree(p3.X, p3.Y, leftThicknessAdjustment);
 
-                            int v4 = AddVerticeOctTree(p0.X, p0.Y, grilleThickness);
-                            int v5 = AddVerticeOctTree(p1.X, p1.Y, grilleThickness);
-                            int v6 = AddVerticeOctTree(p2.X, p2.Y, grilleThickness);
-                            int v7 = AddVerticeOctTree(p3.X, p3.Y, grilleThickness);
+                            int v4 = AddVerticeOctTree(p0.X, p0.Y, grilleThickness - leftThicknessAdjustment);
+                            int v5 = AddVerticeOctTree(p1.X, p1.Y, grilleThickness - leftThicknessAdjustment);
+                            int v6 = AddVerticeOctTree(p2.X, p2.Y, grilleThickness - leftThicknessAdjustment);
+                            int v7 = AddVerticeOctTree(p3.X, p3.Y, grilleThickness - leftThicknessAdjustment);
 
                             // left
                             AddFace(v0, v4, v1);
@@ -262,6 +422,66 @@ namespace MakerLib
                             // front
                             AddFace(v5, v4, v7);
                             AddFace(v5, v7, v6);
+
+                            if (s.closeStart)
+                            {
+                                AddFace(v0, v3, v4);
+                                AddFace(v3, v7, v4);
+                            }
+
+                            if (s.closeEnd)
+                            {
+                                AddFace(v1, v5, v2);
+                                AddFace(v2, v5, v6);
+                            }
+                        }
+                        break;
+
+                    case SegIncline.Right:
+                        {
+                            // start is at the bottom
+
+                            Point p0 = new Point(sx - segoff, sy);
+                            Point p1 = new Point(ex - segoff, ey);
+
+                            Point p2 = new Point(ex + segoff, ey);
+                            Point p3 = new Point(sx + segoff, sy);
+
+                            int v0 = AddVerticeOctTree(p0.X, p0.Y, rightThicknessAdjustment);
+                            int v1 = AddVerticeOctTree(p1.X, p1.Y, rightThicknessAdjustment);
+                            int v2 = AddVerticeOctTree(p2.X, p2.Y, rightThicknessAdjustment);
+                            int v3 = AddVerticeOctTree(p3.X, p3.Y, rightThicknessAdjustment);
+
+                            int v4 = AddVerticeOctTree(p0.X, p0.Y, grilleThickness - rightThicknessAdjustment);
+                            int v5 = AddVerticeOctTree(p1.X, p1.Y, grilleThickness - rightThicknessAdjustment);
+                            int v6 = AddVerticeOctTree(p2.X, p2.Y, grilleThickness - rightThicknessAdjustment);
+                            int v7 = AddVerticeOctTree(p3.X, p3.Y, grilleThickness - rightThicknessAdjustment);
+
+                            // left
+                            AddFace(v0, v4, v1);
+                            AddFace(v4, v5, v1);
+                            // right
+                            AddFace(v2, v7, v3);
+                            AddFace(v2, v6, v7);
+                            // back
+                            AddFace(v0, v1, v3);
+                            AddFace(v1, v2, v3);
+
+                            // front
+                            AddFace(v5, v4, v7);
+                            AddFace(v5, v7, v6);
+
+                            if (s.closeStart)
+                            {
+                                AddFace(v0, v3, v4);
+                                AddFace(v3, v7, v4);
+                            }
+
+                            if (s.closeEnd)
+                            {
+                                AddFace(v1, v5, v2);
+                                AddFace(v2, v5, v6);
+                            }
                         }
                         break;
                 }
@@ -271,9 +491,21 @@ namespace MakerLib
         private struct SkeletonSegment
         {
             public bool clipped;
+            public bool closeEnd;
+            public bool closeStart;
             public Point end;
             public SegIncline incline;
             public Point start;
+
+            internal void DontCloseEnd()
+            {
+                closeEnd = false;
+            }
+
+            internal void DontCloseStart()
+            {
+                closeStart = false;
+            }
         }
     }
 }

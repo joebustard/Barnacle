@@ -15,8 +15,9 @@
 *                                                                         *
 **************************************************************************/
 
-using Barnacle.Models;
+using MakerLib;
 using MakerLib.TextureUtils;
+using Barnacle.Models;
 using OctTreeLib;
 using PolygonLibrary;
 using PolygonTriangulationLib;
@@ -35,12 +36,13 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class Platelet : BaseModellerDialog, INotifyPropertyChanged
     {
-        private const byte bottomMask = 0x08;
-        private const byte frontMask = 0x10;
-        private const byte leftMask = 0x01;
-        private const byte rightMask = 0x02;
-        private const byte topMask = 0x04;
+        //private const byte bottomMask = 0x08;
+        //private const byte frontMask = 0x10;
+        //private const byte leftMask = 0x01;
+        //private const byte rightMask = 0x02;
+        //private const byte topMask = 0x04;
         private double baseWidth;
+
         private bool boxShape;
         private bool clippedSingle;
         private bool clippedTile;

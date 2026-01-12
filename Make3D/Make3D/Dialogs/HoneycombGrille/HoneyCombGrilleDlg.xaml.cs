@@ -30,7 +30,7 @@ namespace Barnacle.Dialogs
         public HoneyCombGrilleDlg()
         {
             InitializeComponent();
-            ToolName = "HoneyCombGrille";
+            ToolName = "HoneycombGrille";
             DataContext = this;
             loaded = false;
             maker = new HoneyCombGrilleMaker();
@@ -334,10 +334,10 @@ namespace Barnacle.Dialogs
             // load back the tool specific parameters
             GrilleLength = EditorParameters.GetDouble("GrilleLength", 100);
             GrillHeight = EditorParameters.GetDouble("GrillHeight", 50);
-            GrillThickness = EditorParameters.GetDouble("GrillThickness", 1);
+            GrillThickness = EditorParameters.GetDouble("GrillThickness", 2);
             BeamLength = EditorParameters.GetDouble("BeamLength", 10);
             BeamWidth = EditorParameters.GetDouble("BeamWidth", 2);
-            EdgeSize = EditorParameters.GetDouble("EdgeSize", 2);
+            EdgeSize = EditorParameters.GetDouble("EdgeSize", 3);
             ShowEdge = EditorParameters.GetBoolean("ShowEdge", true);
         }
 
@@ -379,10 +379,10 @@ namespace Barnacle.Dialogs
             loaded = false;
             GrilleLength = 100;
             GrillHeight = 50;
-            GrillThickness = 1;
+            GrillThickness = 2;
             BeamLength = 10;
-            BeamWidth = 5;
-            EdgeSize = 2;
+            BeamWidth = 2;
+            EdgeSize = 3;
             ShowEdge = true;
 
             loaded = true;

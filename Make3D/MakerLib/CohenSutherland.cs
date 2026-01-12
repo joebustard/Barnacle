@@ -22,22 +22,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Barnacle.Models
+namespace MakerLib
 {
-    public class Extents
-    {
-        public double Left;
-        public double Right;
-        public double Top;
-        public double Bottom;
-    }
-
     // <summary>
     /// The Cohen Sutherland line clipping algorithm
     /// http://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm
     /// </summary>
     public class CohenSutherland
     {
+        private const byte BOTTOM = 4;
+
         /// <summary>
         /// Bitfields used to partition the space into 9 regiond
         /// </summary>
@@ -45,33 +39,9 @@ namespace Barnacle.Models
 
         private const byte LEFT = 1;   // 0001
         private const byte RIGHT = 2;  // 0010
-        private const byte BOTTOM = 4; // 0100
+
+        // 0100
         private const byte TOP = 8;    // 1000
-
-        /// <summary>
-        /// Compute the bit code for a point (x, y) using the clip rectangle
-        /// bounded diagonally by (xmin, ymin), and (xmax, ymax)
-        /// ASSUME THAT xmax , xmin , ymax and ymin are global constants.
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        private static byte ComputeOutCode(Extents extents, double x, double y)
-        {
-            // initialised as being inside of clip window
-            byte code = INSIDE;
-
-            if (x < extents.Left)           // to the left of clip window
-                code |= LEFT;
-            else if (x > extents.Right)     // to the right of clip window
-                code |= RIGHT;
-            if (y < extents.Bottom)         // below the clip window
-                code |= BOTTOM;
-            else if (y > extents.Top)       // above the clip window
-                code |= TOP;
-
-            return code;
-        }
 
         /// <summary>
         /// Cohen–Sutherland clipping algorithm clips a line from
@@ -167,5 +137,38 @@ namespace Barnacle.Models
             // return the clipped line
             return (accept) ? new Tuple<Point, Point>(new Point(x0, y0), new Point(x1, y1)) : null;
         }
+
+        /// <summary>
+        /// Compute the bit code for a point (x, y) using the clip rectangle
+        /// bounded diagonally by (xmin, ymin), and (xmax, ymax)
+        /// ASSUME THAT xmax , xmin , ymax and ymin are global constants.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        private static byte ComputeOutCode(Extents extents, double x, double y)
+        {
+            // initialised as being inside of clip window
+            byte code = INSIDE;
+
+            if (x < extents.Left)           // to the left of clip window
+                code |= LEFT;
+            else if (x > extents.Right)     // to the right of clip window
+                code |= RIGHT;
+            if (y < extents.Bottom)         // below the clip window
+                code |= BOTTOM;
+            else if (y > extents.Top)       // above the clip window
+                code |= TOP;
+
+            return code;
+        }
+    }
+
+    public class Extents
+    {
+        public double Bottom;
+        public double Left;
+        public double Right;
+        public double Top;
     }
 }

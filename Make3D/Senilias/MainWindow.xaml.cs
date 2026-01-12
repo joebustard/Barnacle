@@ -22,6 +22,7 @@ using SeniliasLib;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -292,6 +293,23 @@ namespace Senilias
             }
         }
 
+        private void Browse_Project(object sender, RoutedEventArgs e)
+        {
+            OpenFolderDialog dlg = new OpenFolderDialog();
+            if (!String.IsNullOrEmpty(seniliaFile.GetProjectPath()))
+            {
+                dlg.InitialDirectory = seniliaFile.GetProjectPath();
+            }
+            if (dlg.ShowDialog() == true)
+            {
+                if (Directory.Exists(dlg.FolderName))
+                {
+                    seniliaFile.SetProjectPath(dlg.FolderName);
+                    ProjectFolder = dlg.FolderName;
+                }
+            }
+        }
+
         private void Browse_Source(object sender, RoutedEventArgs e)
         {
             if (selectedStep != -1)
@@ -386,7 +404,24 @@ namespace Senilias
 
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
+            if (seniliaFile.Dirty)
+            {
+                if (MessageBox.Show("Document has changed. Save before exit?", "Warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    Save();
+                }
+            }
+
             Application.Current.Shutdown();
+        }
+
+        private void LoadAndUpdate(string fn)
+        {
+            seniliaFile.LoadFile(fn);
+            ProjectFolder = seniliaFile.GetProjectPath();
+            ProjectName = seniliaFile.GetProjectName();
+            UpdateTargets();
+            filePath = fn;
         }
 
         private void Open_Click(object sender, RoutedEventArgs e)
@@ -397,11 +432,8 @@ namespace Senilias
             {
                 if (File.Exists(ofd.FileName))
                 {
-                    seniliaFile.LoadFile(ofd.FileName);
-                    ProjectFolder = seniliaFile.GetProjectPath();
-                    ProjectName = seniliaFile.GetProjectName();
-                    UpdateTargets();
-                    filePath = ofd.FileName;
+                    string fn = ofd.FileName;
+                    LoadAndUpdate(fn);
                 }
             }
         }
@@ -526,7 +558,7 @@ namespace Senilias
             return res;
         }
 
-        private void Save_Click(object sender, RoutedEventArgs e)
+        private void Save()
         {
             if (filePath == "")
             {
@@ -536,6 +568,11 @@ namespace Senilias
             {
                 seniliaFile.SaveFile(filePath);
             }
+        }
+
+        private void Save_Click(object sender, RoutedEventArgs e)
+        {
+            Save();
         }
 
         private void SaveAs()
@@ -597,41 +634,14 @@ namespace Senilias
             seniliaFile = new SeniliaFile();
             selectedStep = -1;
             DeleteStepVisible = Visibility.Hidden;
-            /*
-            seniliaFile.SetProjectPath("C:\\Users\\joe Bustard\\Documents\\Barnacle\\CrusaderMKIII");
-            seniliaFile.SetProjectName("CrusaderMKIII.bmf");
-
-            seniliaFile.Add(TargetDependency.TypeOfDependency.File,
-"parts\\RoadWheelFront.txt",
-"parts\\RoadWheel.txt",
-StepType.TypeOfStep.Script,
-"scripts\\PartMakers\\MakeRoadWheel.lmp");
-
-            seniliaFile.Add(TargetDependency.TypeOfDependency.File,
-            "parts\\RoadWheelback.txt",
-            "parts\\RoadWheel.txt",
-            StepType.TypeOfStep.Script,
-            "scripts\\PartMakers\\MakeRoadWheel.lmp");
-
-            seniliaFile.Add(TargetDependency.TypeOfDependency.File,
-                       "parts\\IdlerWheelback.txt",
-                       "parts\\IdlerWheel.txt",
-                       StepType.TypeOfStep.Script,
-                       "scripts\\PartMakers\\MakeIdlerWheel.lmp");
-
-            seniliaFile.Add(TargetDependency.TypeOfDependency.File,
-                       "parts\\DriveWheelback.txt",
-                       "parts\\DriveWheel.txt",
-                       StepType.TypeOfStep.Script,
-                       "scripts\\PartMakers\\MakeDriveWheel.lmp");
-
-            seniliaFile.Add(TargetDependency.TypeOfDependency.File,
-           "subparts\\*subparts.txt",
-           "parts\\*.txt",
-           StepType.TypeOfStep.Script,
-           "scripts\\PartMakers\\Make*.lmp");
-           */
-            // seniliaFile.SaveGraph("C:\\tmp\\sen2.sin");
+            foreach (var a in Environment.GetCommandLineArgs())
+            {
+                if (a.ToLower().EndsWith(".sen"))
+                {
+                    LoadAndUpdate(a);
+                    break;
+                }
+            }
             ProjectFolder = seniliaFile.GetProjectPath();
             ProjectName = seniliaFile.GetProjectName();
         }

@@ -18,6 +18,7 @@
 using Barnacle.Dialogs;
 using Barnacle.Object3DLib;
 using Barnacle.ViewModels;
+using FileUtils;
 using Microsoft.Win32;
 using ScriptLanguage;
 using System;
@@ -190,6 +191,26 @@ namespace Barnacle.Views
             SelectionGroup.IsEnabled = b;
             ObjectPanel.IsEnabled = b;
             EditPanel.IsEnabled = b;
+        }
+
+        private string FindLimpetTemplate(string fileTemplate)
+        {
+            string res = "";
+            String defaultTemplatePath = AppDomain.CurrentDomain.BaseDirectory + "templates\\";
+            var t = Path.Combine(defaultTemplatePath, fileTemplate);
+            if (File.Exists(t))
+            {
+                res = t;
+            }
+            else
+            {
+                t = Path.Combine(PathManager.UserScriptTemplatesFolder(), fileTemplate);
+                if (File.Exists(t))
+                {
+                    res = t;
+                }
+            }
+            return res;
         }
 
         private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -778,8 +799,7 @@ namespace Barnacle.Views
                             {
                                 if (fileTemplate != null)
                                 {
-                                    //  String templatePath = AppDomain.CurrentDomain.BaseDirectory + "templates\\" + fileTemplate;
-                                    string templatePath = fileTemplate;
+                                    string templatePath = FindLimpetTemplate(fileTemplate);
 
                                     if (File.Exists(templatePath))
                                     {
