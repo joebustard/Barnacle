@@ -1,7 +1,7 @@
 ﻿<Defs>
-	<!--   Basic Template -->
-	<ProjectDefinition Name="Basic">
-		<Description>
+  <!--   Basic Template -->
+  <ProjectDefinition Name="Basic">
+    <Description>
       A basic folder structure with a single empty model file called untitled.txt.
       You can add as many more models as you like.
       The folders are
@@ -13,24 +13,24 @@
       /scripts, A place to save any limpet scripts
       These folders are simply placeholders.
     </Description>
-		<Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
-			<File Name="Untitled.txt" Source="templates/blankmodel1_35.txt" />
-			<Folder Name="Backup" AddSubs="True" AddFiles="False" Explorer="True" Clean="False" Export="False" />
-			<Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
-			<Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
-			<Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
-			<Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt" Run="True" Edit="True"/>
-			<Folder Name="Docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
-				<File Name="BillOfMaterials.xlsx" Source="templates/BillOfMaterials.xlsx" />
-			</Folder>
-		</Folder>
-		<InitialFile>
+    <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
+      <File Name="Untitled.txt" Source="templates/blankmodel1_35.txt" />
+      <Folder Name="Backup" AddSubs="True" AddFiles="False" Explorer="True" Clean="False" Export="False" />
+      <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
+      <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
+      <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
+      <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt" Run="True" Edit="True" />
+      <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
+        <File Name="BillOfMaterials.xlsx" Source="templates/BillOfMaterials.xlsx" />
+      </Folder>
+    </Folder>
+    <InitialFile>
       Untitled.txt
     </InitialFile>
-	</ProjectDefinition>
-	<!--  Tank Model Template -->
-	<ProjectDefinition Name="Tank Model">
-		<Description>
+  </ProjectDefinition>
+  <!--  Tank Model Template -->
+  <ProjectDefinition Name="Tank Model">
+    <Description>
       A folder structure with empty 1/35 scale models for a typical tank model kit.
       These are empty but are a good starting point for your tank project.
       The folders are
@@ -44,147 +44,160 @@
       /subparts,   A place to save the subparts that are used to create the parts
       /parts,      A place to save the parts that make the tanks
     </Description>
-		<Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
-			<Folder Name="Parts" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
-				<File Name="Bogie.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="AirFilter.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="CannonBarrel.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="CannonMantel.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Details.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Differential.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="DriveWheel.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="DriveWheelFront.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="DriveWheelBack.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="DoorsAndHatches.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Engine.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Hull.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="LowerHull.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="UpperHull.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="IdlerWheel.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="IdlerWheelFront.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="IdlerWheelBack.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="LeftRunningGear.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Lights.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="LightGuards.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="ReturnRoller.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RightRunningGear.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RoadWheel.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RoadWheelFront.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RoadWheelBack.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Suspension.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Track.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Turret.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="TowingHook.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Weapons.txt" Source="templates/blankmodel1_35.txt" />
-			</Folder>
-			<Folder Name="SubParts" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
-				<File Name="BogieSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="AirFilterSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="CannonBarrelSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="CannonMantelSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="DetailsSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="DifferentialSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="DriveWheelSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="DriveWheelFrontSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="DriveWheelBackSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="DoorsAndHatchesSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="EngineSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="HullSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="LowerHullSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="UpperHullSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="IdlerWheelSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="IdlerWheelFrontSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="IdlerWheelBackSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="LeftRunningGearSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="LightsSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="LightGuardsSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="ReturnRollerSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RightRunningGearSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RoadWheelFrontSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RoadWheelBackSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="SuspensionSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="TrackSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="TurretSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="TowingHookSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="WeaponsSubParts.txt" Source="templates/blankmodel1_35.txt" />
-			</Folder>
-			<Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
-				<File Name="CannonAssembly.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="BogieAssembly.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="EngineAssembly.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="HullAssembly.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="LeftRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RightRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="SplitRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="TurretAssembly.txt" Source="templates/Tank/TurretAssembly1_35.txt" />
-				<File Name="WholeTankAssembly.txt" Source="templates/Tank/WholeTankAssembly1_35.txt" />
-			</Folder>
-			<Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" />
-			<Folder Name="Docs" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True" AutoLoad="True">
-				<File Name="BillOfMaterials.xlsx" Source="templates/Tank/tankbom.xlsx" />
-				<File Name="BuildInstructions.docx" Source="templates/Tank/TankBuildInstructions.docx" />
-			</Folder>
-			<Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
-			<Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
-			<Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
-			<Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
-				<Folder Name="PartMakers" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
-					<File Name="MakeBogie.txt" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeAirFilter.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeCannonBarrel.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeCannonMantel.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeDetails.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeDifferential.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeDriveWheel.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeDriveWheelFront.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeDriveWheelBack.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeDoorsAndHatches.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeEngine.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeHull.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeLowerHull.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeUpperHull.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeIdlerWheel.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeIdlerWheelFront.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeIdlerWheelBack.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeLeftRunningGear.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeLights.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeLightGuards.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeReturnRoller.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeRightRunningGear.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeRoadWheel.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeRoadWheelFront.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeRoadWheelBack.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeSuspension.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeTrack.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeTurret.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeTowingHook.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeWeapons.lmp" Source="templates/MakePartFromSubParts.lmp" />
-				</Folder>
-				<Folder Name="Assemblers" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
-					<File Name="AssembleCannon.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
-					<File Name="AssembleBogie.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
-					<File Name="AssembleEngine.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
-					<File Name="AssembleHull.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
-					<File Name="AssembleLeftRunningGear.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
-					<File Name="AssembleRightRunningGear.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
-					<File Name="AssembleSplitRunningGearAssembly.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
-					<File Name="AssembleTurret.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
-					<File Name="AssembleWholeTank.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
-				</Folder>
-				<Folder Name="KitMakers" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt"></Folder>
-				<File Name="GlobalDefinitions.txt" Source="templates/Tank/GlobalDefinitions.txt" />
-				<File Name="Scale.txt" Source="templates/Tank/Scale.txt" />
-				<File Name="tanklib.lmp" Source="templates/Tank/tanklib.lmp" />
-			</Folder>
-			<File Name="maketank.sen" Source="templates/tank/maketank.sen" />
-		</Folder>
-		<InitialFile>
-      Hull.txt
+    <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
+      <Folder Name="Parts" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
+        <File Name="Bogie.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="AirFilter.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="CannonBarrel.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="CannonMantel.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Details.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Differential.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="DriveWheel.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="DriveWheelFront.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="DriveWheelBack.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="DoorsAndHatches.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Engine.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Hull.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="LowerHull.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="UpperHull.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="IdlerWheel.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="IdlerWheelFront.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="IdlerWheelBack.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="LeftRunningGear.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Lights.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="LightGuards.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="ReturnRoller.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RightRunningGear.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RoadWheel.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RoadWheelFront.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RoadWheelBack.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Suspension.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Track.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Turret.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="TowingHook.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Weapons.txt" Source="templates/blankmodel1_35.txt" />
+      </Folder>
+      <Folder Name="SubParts" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
+        <File Name="BogieSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="AirFilterSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="CannonBarrelSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="CannonMantelSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="DetailsSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="DifferentialSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="DriveWheelSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="DriveWheelFrontSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="DriveWheelBackSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="DoorsAndHatchesSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="EngineSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="HullSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="LowerHullSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="UpperHullSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="IdlerWheelSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="IdlerWheelFrontSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="IdlerWheelBackSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="LeftRunningGearSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="LightsSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="LightGuardsSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="ReturnRollerSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RightRunningGearSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RoadWheelFrontSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RoadWheelBackSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="SuspensionSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="TrackSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="TurretSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="TowingHookSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="WeaponsSubParts.txt" Source="templates/blankmodel1_35.txt" />
+      </Folder>
+      <Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
+        <File Name="CannonAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="BogieAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="EngineAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="HullAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="LeftRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RightRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="SplitRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="TurretAssembly.txt" Source="templates/Tank/TurretAssembly1_35.txt" />
+        <File Name="WholeTankAssembly.txt" Source="templates/Tank/WholeTankAssembly1_35.txt" />
+      </Folder>
+      <Folder Name="Kits" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
+        <File Name="wholekit.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="kit1.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="kit2.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="kit3.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="kit4.txt" Source="templates/blankmodel1_35.txt" />
+      </Folder>
+      <Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" />
+      <Folder Name="Docs" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True" AutoLoad="True">
+        <File Name="BillOfMaterials.xlsx" Source="templates/Tank/tankbom.xlsx" />
+        <File Name="BuildInstructions.docx" Source="templates/Tank/TankBuildInstructions.docx" />
+      </Folder>
+      <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
+      <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
+      <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
+      <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
+        <Folder Name="PartMakers" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
+          <File Name="MakeBogie.txt" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeAirFilter.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeCannonBarrel.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeCannonMantel.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeDetails.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeDifferential.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeDriveWheel.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeDriveWheelFront.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeDriveWheelBack.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeDoorsAndHatches.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeEngine.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeHull.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeLowerHull.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeUpperHull.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeIdlerWheel.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeIdlerWheelFront.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeIdlerWheelBack.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeLeftRunningGear.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeLights.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeLightGuards.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeReturnRoller.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeRightRunningGear.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeRoadWheel.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeRoadWheelFront.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeRoadWheelBack.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeSuspension.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeTrack.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeTurret.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeTowingHook.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeWeapons.lmp" Source="templates/MakePartFromSubParts.lmp" />
+        </Folder>
+        <Folder Name="Assemblers" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
+          <File Name="AssembleCannon.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
+          <File Name="AssembleBogie.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
+          <File Name="AssembleEngine.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
+          <File Name="AssembleHull.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
+          <File Name="AssembleLeftRunningGear.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
+          <File Name="AssembleRightRunningGear.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
+          <File Name="AssembleSplitRunningGearAssembly.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
+          <File Name="AssembleTurret.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
+          <File Name="AssembleWholeTank.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
+        </Folder>
+        <Folder Name="KitMakers" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
+          <File Name="wholekit.txt" Source="templates/blankmodel1_35.txt" />
+          <File Name="kit1.txt" Source="templates/blankmodel1_35.txt" />
+          <File Name="kit2.txt" Source="templates/blankmodel1_35.txt" />
+          <File Name="kit3.txt" Source="templates/blankmodel1_35.txt" />
+          <File Name="kit4.txt" Source="templates/blankmodel1_35.txt" />
+        </Folder>
+        <File Name="GlobalDefinitions.inc" Source="templates/Tank/GlobalDefinitions.inc" />
+        <File Name="Scale.inc" Source="templates/Tank/Scale.inc" />
+        <File Name="tanklib.lmp" Source="templates/Tank/tanklib.lmp" />
+      </Folder>
+      <File Name="maketank.sen" Source="templates/tank/maketank.sen" />
+    </Folder>
+    <InitialFile>
+      subParts\LowerHullSubParts.txt
     </InitialFile>
-	</ProjectDefinition>
-	<!--  Armoured Car Model Template -->
-	<ProjectDefinition Name="Armoured Car">
-		<Description>
+  </ProjectDefinition>
+  <!--  Armoured Car Model Template -->
+  <ProjectDefinition Name="Armoured Car">
+    <Description>
       Creates a  folder structure with empty 1/35 scale models for a typical armoured car model kit.
       The model files are empty but are a good starting point for your tank project.
 
@@ -197,41 +210,41 @@
       /images,     A place to save any image files that will be used to create the model
       /scripts,    A place to save any limpet scripts
     </Description>
-		<Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
-			<File Name="Body.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="Chassis.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="Details.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="DoorsAndHatches.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="Engine.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="Lights.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="Suspension.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="Turret.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="Weapons.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="Wheels.txt" Source="templates/blankmodel1_35.txt" />
-			<Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
-				<File Name="BodyAssembly.txt" Source="templates/bodyassembly1_35.txt" />
-				<File Name="TurretAssembly.txt" Source="templates/TurretAssembly1_35.txt" />
-				<File Name="ChassisAssembly.txt" Source="templates/ChassisAssembly1_35.txt" />
-				<File Name="EngineAssembly.txt" Source="templates/EngineAssembly1_35.txt" />
-				<File Name="WholeArmouredCarAssembly.txt" Source="templates/WholeArmouredCarAssembly1_35.txt" />
-			</Folder>
-			<Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" />
-			<Folder Name="Docs" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True" AutoLoad="True">
-				<File Name="BillOfMaterials.xlsx" Source="templates/tank/tankbom.xlsx" />
-				<File Name="BuildInstructions.docx" Source="templates/tank/TankBuildInstructions.docx" />
-			</Folder>
-			<Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
-			<Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
-			<Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
-			<Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt"></Folder>
-		</Folder>
-		<InitialFile>
+    <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
+      <File Name="Body.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Chassis.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Details.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="DoorsAndHatches.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Engine.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Lights.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Suspension.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Turret.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Weapons.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Wheels.txt" Source="templates/blankmodel1_35.txt" />
+      <Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
+        <File Name="BodyAssembly.txt" Source="templates/bodyassembly1_35.txt" />
+        <File Name="TurretAssembly.txt" Source="templates/TurretAssembly1_35.txt" />
+        <File Name="ChassisAssembly.txt" Source="templates/ChassisAssembly1_35.txt" />
+        <File Name="EngineAssembly.txt" Source="templates/EngineAssembly1_35.txt" />
+        <File Name="WholeArmouredCarAssembly.txt" Source="templates/WholeArmouredCarAssembly1_35.txt" />
+      </Folder>
+      <Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" />
+      <Folder Name="Docs" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True" AutoLoad="True">
+        <File Name="BillOfMaterials.xlsx" Source="templates/tank/tankbom.xlsx" />
+        <File Name="BuildInstructions.docx" Source="templates/tank/TankBuildInstructions.docx" />
+      </Folder>
+      <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
+      <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
+      <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
+      <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt"></Folder>
+    </Folder>
+    <InitialFile>
       Body.txt
     </InitialFile>
-	</ProjectDefinition>
-	<!--  Aircraft Model Template -->
-	<ProjectDefinition Name="Aircraft Model">
-		<Description>
+  </ProjectDefinition>
+  <!--  Aircraft Model Template -->
+  <ProjectDefinition Name="Aircraft Model">
+    <Description>
       Creates a  folder structure with empty 1/35 scale models for a typical aircraft model kit.
       The folders are
       /assemblies,   A place to store sub assembly models
@@ -243,41 +256,42 @@
       /images/ribs,  A place to save rib images to create the fuselage
       /scripts,      A place to save any limpet scripts
     </Description>
-		<Folder Name="." Explorer="True" Clean="False" Export="True"  AddSubs="True" AddFiles="True">
-			<File Name="Fuselage.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="Wings.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="UnderCarriage.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="Engine.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="Weapons.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="Tail.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="DoorsAndHatches.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="Details.txt" Source="templates/blankmodel1_35.txt" />
-			<Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
-				<File Name="EngineAssembly.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="FuselageAssembly.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="UnderCarriageAssembly.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="WingsAssembly.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="WholeAircraftAssembly.txt" Source="templates/WholeAircraftAssembly1_35.txt" />
-			</Folder>
-			<Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="False" />
-			<Folder Name="Docs" Explorer="False" Clean="False" Export="True" AddSubs="True" AddFiles="True">
-				<File Name="BillOfMaterials.xlsx" Source="templates/aircraftbillofmaterials.xlsx" />
-				<File Name="BuildInstructions.docx" Source="templates/AircraftBuildInstructions.docx" />
-			</Folder>
-			<Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True">
-				<Folder Name="Ribs" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" /></Folder>
-			<Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"  TimeDependency="." />
-			<Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" TimeDependency="Export" />
-			<Folder Name="Scripts" Run="True" Edit="True" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt"></Folder>
-		</Folder>
-		<InitialFile>
+    <Folder Name="." Explorer="True" Clean="False" Export="True"  AddSubs="True" AddFiles="True">
+      <File Name="Fuselage.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Wings.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="UnderCarriage.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Engine.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Weapons.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Tail.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="DoorsAndHatches.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Details.txt" Source="templates/blankmodel1_35.txt" />
+      <Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
+        <File Name="EngineAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="FuselageAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="UnderCarriageAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="WingsAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="WholeAircraftAssembly.txt" Source="templates/WholeAircraftAssembly1_35.txt" />
+      </Folder>
+      <Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="False" />
+      <Folder Name="Docs" Explorer="False" Clean="False" Export="True" AddSubs="True" AddFiles="True">
+        <File Name="BillOfMaterials.xlsx" Source="templates/aircraftbillofmaterials.xlsx" />
+        <File Name="BuildInstructions.docx" Source="templates/AircraftBuildInstructions.docx" />
+      </Folder>
+      <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True">
+        <Folder Name="Ribs" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
+      </Folder>
+      <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"  TimeDependency="." />
+      <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" TimeDependency="Export" />
+      <Folder Name="Scripts" Run="True" Edit="True" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt"></Folder>
+    </Folder>
+    <InitialFile>
       Fuselage.txt
     </InitialFile>
-	</ProjectDefinition>
-	<!--  Aircraft Model Made by Scripts Template -->
-	<ProjectDefinition Name="Aircraft Model Made By Scripts">
-		<Description>
-      Creates a  folder structure with scripts for making parts from subparts 
+  </ProjectDefinition>
+  <!--  Aircraft Model Made by Scripts Template -->
+  <ProjectDefinition Name="Aircraft Model Made By Scripts">
+    <Description>
+      Creates a  folder structure with scripts for making parts from subparts
       for a typical aircraft model kit.
       The folders are
       /assemblies,   A place to store sub assembly models
@@ -292,167 +306,168 @@
       /parts,        The individual model parts
       /subparts,     The unscaled primitives used to contruct the parts
     </Description>
-		<Folder Name="." Explorer="True" Clean="False" Export="True"  AddSubs="True" AddFiles="True">
-			<Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
-				<File Name="EngineAssembly.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="FuselageAssembly.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="UnderCarriageAssembly.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="WingsAssembly.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="TailAssembly.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="CockpitAssembly.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="WholeAircraftAssembly.txt" Source="templates/WholeAircraftAssembly1_35.txt" />
-			</Folder>
-			<Folder Name="Kits" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
-				<File Name="wholekit.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="kit1.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="kit2.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="kit3.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="kit4.txt" Source="templates/blankmodel1_35.txt" />
-			</Folder>
-			<Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="False" />
-			<Folder Name="Docs" Explorer="False" Clean="False" Export="True" AddSubs="True" AddFiles="True">
-				<File Name="BillOfMaterials.xlsx" Source="templates/aircraftbillofmaterials.xlsx" />
-				<File Name="BuildInstructions.docx" Source="templates/AircraftBuildInstructions.docx" />
-			</Folder>
-			<Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True">
-				<Folder Name="Ribs" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" /></Folder>
-			<Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"  TimeDependency="." />
-			<Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" TimeDependency="Export" />
-			<Folder Name="Scripts" Run="True" Edit="True" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
-				<Folder Name="KitMakers" Run="True" Edit="True" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
-					<File Name="MakeWholeKit.lmp" Source="templates/MakeKitFromAssemblies.lmp" />
-					<File Name="MakeKit1.lmp" Source="templates/MakeKitFromAssemblies.lmp" />
-					<File Name="MakeKit2.lmp" Source="templates/MakeKitFromAssemblies.lmp" />
-					<File Name="MakeKit3.lmp" Source="templates/MakeKitFromAssemblies.lmp" />
-					<File Name="MakeKit4.lmp" Source="templates/MakeKitFromAssemblies.lmp" />
-				</Folder>
-				<Folder Name="Assemblers" Run="True" Edit="True" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
-					<File Name="AssembleWholeAircraft.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
-					<File Name="AssembleEngine.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
-					<File Name="AssembleFuselage.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
-					<File Name="AssembleUnderCarriage.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
-					<File Name="AssembleWings.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
-					<File Name="AssembleTail.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
-					<File Name="AssembleCockpit.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
-				</Folder>
-				<Folder Name="PartMakers" Run="True" Edit="True" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
-					<File Name="MakePilot.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakePitotTube.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeCanopy.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeCockpit.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakePropeller.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeSpinner.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeSeat.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeDropTank.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeAirIntake.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeFuselage.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeLeftFuselage.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeRightFuselage.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeLeftWing.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeRightWing.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeLeftUnderCarriage.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeRightUnderCarriage.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeFrontUnderCarriage.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeEngine.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeEngineExhaust.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeWeapons.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeRudder.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeLeftUnderCarriageDoors.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeRightUnderCarriageDoors.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeFrontUnderCarriageDoors.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeRearUnderCarriageDoors.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeBombDoors.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeDetails.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeAerial.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeNoseWheel.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeTailWheel.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeMainWheel.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeLeftTail.lmp" Source="templates/MakePartFromSubParts.lmp" />
-					<File Name="MakeRightTail.lmp" Source="templates/MakePartFromSubParts.lmp" />
-				</Folder>
-				<File Name="Scale.inc" Source="templates/aircraftscale.txt" />
-				<File Name="GlobalDefinitions.inc" Source="templates/aircraftglobaldefinitions.txt" />
-				<File Name="Projectlib.inc" Source="templates/aircraftprojectlib.inc" />
-			</Folder>
-			<Folder Name="Parts" Explorer="True" Clean="False" Export="True"  AddSubs="True" AddFiles="True">
-				<File Name="Pilot.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="PitotTube.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Canopy.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Cockpit.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Propeller.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Spinner.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Seat.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="DropTank.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="AirIntake.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Fuselage.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="LeftFuselage.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RightFuselage.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="LeftWing.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RightWing.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="LeftUnderCarriage.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RightUnderCarriage.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="FrontUnderCarriage.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Engine.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="EngineExhaust.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Weapons.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Rudder.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="LeftUnderCarriageDoors.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RightUnderCarriageDoors.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="FrontUnderCarriageDoors.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RearUnderCarriageDoors.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="BombDoors.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Details.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Aerial.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="NoseWheel.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="TailWheel.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="MainWheel.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="LeftTail.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RightTail.txt" Source="templates/blankmodel1_35.txt" />
-			</Folder>
-			<Folder Name="Subparts" Explorer="True" Clean="False" Export="True"  AddSubs="True" AddFiles="True">
-				<File Name="PilotSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="CanopySubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="CockpitSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="PropellerSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="SpinnerSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="SeatSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="DropTankSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="AirIntakeSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="FuselageSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="LeftFuselageSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RightFuselageSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="LeftWingSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RightWingSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="LeftUnderCarriageSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RightUnderCarriageSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="FrontUnderCarriageSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="EngineSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="EngineExhaustSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="WeaponsSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RudderSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="LeftUnderCarriageDoorsSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RightUnderCarriageDoorsSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="FrontUnderCarriageDoorsSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RearUnderCarriageDoorsSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="Details.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="AerialSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="NoseWheelSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="MainWheelSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="TailWheelSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="LeftTailSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="RightTailSubparts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="PitotTubeSubParts.txt" Source="templates/blankmodel1_35.txt" />
-				<File Name="BombDoorsSubParts.txt" Source="templates/blankmodel1_35.txt" />
-			</Folder>
-			<File Name="makeaircraft.sen" Source="templates/makeaircraft.sen" />
-		</Folder>
-		<InitialFile>
+    <Folder Name="." Explorer="True" Clean="False" Export="True"  AddSubs="True" AddFiles="True">
+      <Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
+        <File Name="EngineAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="FuselageAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="UnderCarriageAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="WingsAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="TailAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="CockpitAssembly.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="WholeAircraftAssembly.txt" Source="templates/WholeAircraftAssembly1_35.txt" />
+      </Folder>
+      <Folder Name="Kits" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
+        <File Name="wholekit.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="kit1.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="kit2.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="kit3.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="kit4.txt" Source="templates/blankmodel1_35.txt" />
+      </Folder>
+      <Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="False" />
+      <Folder Name="Docs" Explorer="False" Clean="False" Export="True" AddSubs="True" AddFiles="True">
+        <File Name="BillOfMaterials.xlsx" Source="templates/aircraftbillofmaterials.xlsx" />
+        <File Name="BuildInstructions.docx" Source="templates/AircraftBuildInstructions.docx" />
+      </Folder>
+      <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True">
+        <Folder Name="Ribs" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
+      </Folder>
+      <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"  TimeDependency="." />
+      <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" TimeDependency="Export" />
+      <Folder Name="Scripts" Run="True" Edit="True" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
+        <Folder Name="KitMakers" Run="True" Edit="True" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
+          <File Name="MakeWholeKit.lmp" Source="templates/MakeKitFromAssemblies.lmp" />
+          <File Name="MakeKit1.lmp" Source="templates/MakeKitFromAssemblies.lmp" />
+          <File Name="MakeKit2.lmp" Source="templates/MakeKitFromAssemblies.lmp" />
+          <File Name="MakeKit3.lmp" Source="templates/MakeKitFromAssemblies.lmp" />
+          <File Name="MakeKit4.lmp" Source="templates/MakeKitFromAssemblies.lmp" />
+        </Folder>
+        <Folder Name="Assemblers" Run="True" Edit="True" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
+          <File Name="AssembleWholeAircraft.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
+          <File Name="AssembleEngine.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
+          <File Name="AssembleFuselage.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
+          <File Name="AssembleUnderCarriage.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
+          <File Name="AssembleWings.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
+          <File Name="AssembleTail.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
+          <File Name="AssembleCockpit.lmp" Source="templates/MakeAssemblyFromParts.lmp" />
+        </Folder>
+        <Folder Name="PartMakers" Run="True" Edit="True" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
+          <File Name="MakePilot.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakePitotTube.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeCanopy.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeCockpit.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakePropeller.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeSpinner.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeSeat.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeDropTank.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeAirIntake.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeFuselage.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeLeftFuselage.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeRightFuselage.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeLeftWing.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeRightWing.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeLeftUnderCarriage.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeRightUnderCarriage.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeFrontUnderCarriage.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeEngine.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeEngineExhaust.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeWeapons.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeRudder.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeLeftUnderCarriageDoors.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeRightUnderCarriageDoors.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeFrontUnderCarriageDoors.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeRearUnderCarriageDoors.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeBombDoors.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeDetails.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeAerial.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeNoseWheel.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeTailWheel.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeMainWheel.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeLeftTail.lmp" Source="templates/MakePartFromSubParts.lmp" />
+          <File Name="MakeRightTail.lmp" Source="templates/MakePartFromSubParts.lmp" />
+        </Folder>
+        <File Name="Scale.inc" Source="templates/aircraftscale.inc" />
+        <File Name="GlobalDefinitions.inc" Source="templates/aircraftglobaldefinitions.inc" />
+        <File Name="Projectlib.inc" Source="templates/aircraftprojectlib.inc" />
+      </Folder>
+      <Folder Name="Parts" Explorer="True" Clean="False" Export="True"  AddSubs="True" AddFiles="True">
+        <File Name="Pilot.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="PitotTube.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Canopy.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Cockpit.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Propeller.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Spinner.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Seat.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="DropTank.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="AirIntake.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Fuselage.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="LeftFuselage.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RightFuselage.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="LeftWing.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RightWing.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="LeftUnderCarriage.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RightUnderCarriage.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="FrontUnderCarriage.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Engine.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="EngineExhaust.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Weapons.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Rudder.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="LeftUnderCarriageDoors.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RightUnderCarriageDoors.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="FrontUnderCarriageDoors.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RearUnderCarriageDoors.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="BombDoors.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Details.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Aerial.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="NoseWheel.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="TailWheel.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="MainWheel.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="LeftTail.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RightTail.txt" Source="templates/blankmodel1_35.txt" />
+      </Folder>
+      <Folder Name="Subparts" Explorer="True" Clean="False" Export="True"  AddSubs="True" AddFiles="True">
+        <File Name="PilotSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="CanopySubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="CockpitSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="PropellerSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="SpinnerSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="SeatSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="DropTankSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="AirIntakeSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="FuselageSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="LeftFuselageSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RightFuselageSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="LeftWingSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RightWingSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="LeftUnderCarriageSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RightUnderCarriageSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="FrontUnderCarriageSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="EngineSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="EngineExhaustSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="WeaponsSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RudderSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="LeftUnderCarriageDoorsSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RightUnderCarriageDoorsSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="FrontUnderCarriageDoorsSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RearUnderCarriageDoorsSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="Details.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="AerialSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="NoseWheelSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="MainWheelSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="TailWheelSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="LeftTailSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="RightTailSubparts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="PitotTubeSubParts.txt" Source="templates/blankmodel1_35.txt" />
+        <File Name="BombDoorsSubParts.txt" Source="templates/blankmodel1_35.txt" />
+      </Folder>
+      <File Name="makeaircraft.sen" Source="templates/makeaircraft.sen" />
+    </Folder>
+    <InitialFile>
       subparts/Fuselagesubparts.txt
     </InitialFile>
-	</ProjectDefinition>
-	<!--   Model Building Template -->
-	<ProjectDefinition Name="Model Building">
-		<Description>
+  </ProjectDefinition>
+  <!--   Model Building Template -->
+  <ProjectDefinition Name="Model Building">
+    <Description>
       Creates a basic folder structure with empty model files for a simple model railway building.
       You can add as many more models as you like.
       The folders are
@@ -465,28 +480,28 @@
       /scripts, A place to save any limpet scripts
       These folders are simply placeholders.
     </Description>
-		<Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
-			<File Name="FrontWall.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="BackWall.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="EndWalls.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="Roof.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="RoofRidge.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="Chimneys.txt" Source="templates/blankmodel1_35.txt" />
-			<File Name="Guttering.txt" Source="templates/blankmodel1_35.txt" />
-			<Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
-				<File Name="AssembledBuilding.txt" Source="templates/blankmodel1_35.txt" />
-			</Folder>
-			<Folder Name="Backup" AddSubs="True" AddFiles="False" Explorer="True" Clean="False" Export="False" />
-			<Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
-			<Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
-			<Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
-			<Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt" Run="True" Edit="True"></Folder>
-			<Folder Name="Docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
-				<File Name="BillOfMaterials.xlsx" Source="templates/BillOfMaterials.xlsx" />
-			</Folder>
-		</Folder>
-		<InitialFile>
+    <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
+      <File Name="FrontWall.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="BackWall.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="EndWalls.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Roof.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="RoofRidge.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Chimneys.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Guttering.txt" Source="templates/blankmodel1_35.txt" />
+      <Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
+        <File Name="AssembledBuilding.txt" Source="templates/blankmodel1_35.txt" />
+      </Folder>
+      <Folder Name="Backup" AddSubs="True" AddFiles="False" Explorer="True" Clean="False" Export="False" />
+      <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
+      <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
+      <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
+      <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt" Run="True" Edit="True"></Folder>
+      <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
+        <File Name="BillOfMaterials.xlsx" Source="templates/BillOfMaterials.xlsx" />
+      </Folder>
+    </Folder>
+    <InitialFile>
       FrontWall.txt
     </InitialFile>
-	</ProjectDefinition>
+  </ProjectDefinition>
 </Defs>
