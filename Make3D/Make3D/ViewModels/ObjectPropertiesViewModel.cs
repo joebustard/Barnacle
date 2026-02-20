@@ -68,6 +68,7 @@ namespace Barnacle.ViewModels
             MoveToCentreCommand = new RelayCommand(OnMoveToCentre);
             MoveToZeroCommand = new RelayCommand(OnMoveToZero);
             NudgeCommand = new RelayCommand(OnNudge);
+            CopySizeCommand = new RelayCommand(OnCopySize);
             NotificationManager.Subscribe("ObjectProperties", "ObjectSelected", OnObjectSelected);
             NotificationManager.Subscribe("ObjectProperties", "ScaleUpdated", OnScaleUpdated);
             NotificationManager.Subscribe("ObjectProperties", "PositionUpdated", OnPositionUpdated);
@@ -132,6 +133,12 @@ namespace Barnacle.ViewModels
                     NotifyPropertyChanged("CanScale");
                 }
             }
+        }
+
+        public RelayCommand CopySizeCommand
+        {
+            get;
+            private set;
         }
 
         public String Description
@@ -658,6 +665,12 @@ namespace Barnacle.ViewModels
                 LoggerLib.Logger.LogLine(ex.Message);
             }
             return res;
+        }
+
+        private void OnCopySize(object obj)
+        {
+            string sz = $"{ScaleX},{ScaleY},{ScaleZ}";
+            System.Windows.Clipboard.SetText(sz);
         }
 
         private void OnMetricsUpdated(object param)

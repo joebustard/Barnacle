@@ -158,7 +158,12 @@ namespace TemplateLib
                     }
                     if (File.Exists(src) && !File.Exists(trg))
                     {
-                        File.Copy(src, trg, true);
+                        string s = File.ReadAllText(src);
+                        foreach (TemplateSubstitution ts in Substitutions)
+                        {
+                            s = s.Replace(ts.Original, ts.Replacement);
+                        }
+                        File.WriteAllText(trg, s);
                     }
                 }
                 else

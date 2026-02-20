@@ -1467,8 +1467,8 @@ namespace Barnacle.Dialogs
                 double lx, rx, ty, by;
                 CalculateExtents(tmp, out lx, out rx, out ty, out by);
 
-                OctTree octTree = CreateOctree(new Point3D(-lx, -by, -1.5 * (plateWidth + textureDepth)),
-          new Point3D(+rx, +ty, 1.5 * (plateWidth + textureDepth)));
+                CreateOctree(new Point3D(lx - 1, by - 1, -1.5 * (plateWidth + textureDepth)),
+                               new Point3D(rx + 1, ty + 1, 1.5 * (plateWidth + textureDepth)));
 
                 for (int i = 0; i < tmp.Count; i++)
                 {
@@ -1717,6 +1717,8 @@ namespace Barnacle.Dialogs
             BaseWidth = EditorParameters.GetDouble("BaseWidth", 2);
             int v = EditorParameters.GetInt("ShowGrid", 1);
             PathEditor.ShowGrid = (UserControls.GridSettings.GridStyle)v;
+            double zoomLevel = EditorParameters.GetDouble("Zoom", 1);
+            PathEditor.ZoomLevel = zoomLevel;
         }
 
         private void PathPointsChanged(List<System.Windows.Point> pnts)
@@ -1996,6 +1998,7 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("FittedSingle", FittedSingle.ToString());
             EditorParameters.Set("BaseWidth", BaseWidth.ToString());
             EditorParameters.Set("ShowGrid", ((int)(PathEditor.ShowGrid)).ToString());
+            EditorParameters.Set("Zoom", PathEditor.ZoomLevel);
         }
 
         private void SetShapeTab()

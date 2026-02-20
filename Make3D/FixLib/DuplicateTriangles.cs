@@ -54,7 +54,7 @@ namespace FixLib
                 {
                     int sum = tris[findex] + tris[findex + 1] + tris[findex + 2];
                     int b = sum / bucketSize;
-                    System.Diagnostics.Debug.WriteLine($"tri {t} =  {tris[findex]}, {tris[findex + 1]}, {tris[findex + 2]} sum {sum} bucket {b}");
+                    
                     // which bucket would it be in
 
                     if (b < 0 || b >= buckets.GetLength(0))
@@ -65,7 +65,7 @@ namespace FixLib
                     {
                         if (buckets[b].Count == 0)
                         {
-                            System.Diagnostics.Debug.WriteLine($"first in bucket");
+                            
                             faceRecord fr = new faceRecord();
                             fr.Index = t;
                             fr.Sum = sum;
@@ -167,7 +167,7 @@ namespace FixLib
                 {
                     int sum = tris[findex] + tris[findex + 1] + tris[findex + 2];
                     int b = sum / bucketSize;
-                    System.Diagnostics.Debug.WriteLine($"tri {t} =  {tris[findex]}, {tris[findex + 1]}, {tris[findex + 2]} sum {sum} bucket {b}");
+                    
                     // which bucket would it be in
 
                     if (b < 0 || b >= buckets.GetLength(0))
@@ -178,7 +178,7 @@ namespace FixLib
                     {
                         if (buckets[b].Count == 0)
                         {
-                            System.Diagnostics.Debug.WriteLine($"first in bucket");
+                            
                             faceRecord fr = new faceRecord();
                             fr.Index = t;
                             fr.Sum = sum;

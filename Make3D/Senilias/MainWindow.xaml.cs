@@ -448,18 +448,23 @@ namespace Senilias
                 seniliaFile.CreateAcyclicDirectedGraph();
                 seniliaFile.CheckTriggers();
                 List<string> todo = seniliaFile.ToDo();
+                DateTime totalStartTime = DateTime.Now;
                 foreach (string todoItem in todo)
                 {
                     if (keepGoing)
                     {
                         if (todoItem.StartsWith("Run "))
                         {
+                            DateTime startTime = DateTime.Now;
                             RunResults += todoItem + "\r\n";
                             string item = todoItem.Substring(4);
                             item = item.Trim();
                             if (File.Exists(SeniliasLib.Utils.Utils.RelativeToProject(item)))
                             {
                                 await Task.Run(() => keepGoing = RunSingleStep(item, seniliaFile.GetProjectPath() + "\\" + seniliaFile.GetProjectName()));
+                                DateTime endTime = DateTime.Now;
+                                TimeSpan duration = endTime - startTime;
+                                RunResults += duration.Hours.ToString() + ":" + duration.Minutes.ToString() + ":" + duration.Seconds.ToString() + "\r\n";
                             }
                             else
                             {
@@ -486,6 +491,9 @@ namespace Senilias
                         NotifyPropertyChanged("RunResults");
                     }
                 }
+                DateTime totalEndTime = DateTime.Now;
+                TimeSpan totalDuration = totalEndTime - totalStartTime;
+                RunResults += totalDuration.Hours.ToString() + ":" + totalDuration.Minutes.ToString() + ":" + totalDuration.Seconds.ToString() + "\r\n";
                 RunResults += "done\r\n";
             }
             ControlsVisible = Visibility.Visible;

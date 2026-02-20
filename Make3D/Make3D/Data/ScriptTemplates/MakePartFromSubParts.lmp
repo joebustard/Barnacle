@@ -5,6 +5,9 @@ Program  "Make Part"
    Include "..\GlobalDefinitions.txt" ;
 
    // local declarations
+   Double partlength = 20 ;
+   Double partheight = 20 ;
+   Double partwidth = 20 ;
    // define the part name. This will be used to generate the other file names
    String partname = "" ;
 
@@ -20,7 +23,8 @@ Program  "Make Part"
    String src = subpartfolder + "\" + partname + "SubParts.txt" ;
 
    // Start building the part
-   Solid part ;
+   Solid part = InsertPart( src, partname ) ;
+   Resize part, Toscale( partlength) , Toscale( partheight) , Toscale( partwidth)  ;
 
    // save the part we made
    Savepartmodel( part, outputfolder, partname ) ;

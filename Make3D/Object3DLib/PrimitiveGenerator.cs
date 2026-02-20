@@ -4903,6 +4903,7 @@ namespace Barnacle.Object3DLib
 
             indices = new Int32Collection();
             AddTriangle(indices, 3, 2, 6);
+
             AddTriangle(indices, 3, 6, 7);
 
             AddTriangle(indices, 2, 1, 5);
@@ -9353,6 +9354,15 @@ namespace Barnacle.Object3DLib
             for (int j = 0; j < f.GetLength(0); j++)
             {
                 indices.Add(f[j]);
+            }
+        }
+
+        private static void DumpTris(string v, Int32Collection tris)
+        {
+            System.Diagnostics.Debug.WriteLine(v);
+            for (int i = 0; i < tris.Count; i += 3)
+            {
+                System.Diagnostics.Debug.WriteLine($"{tris[i]}, {tris[i + 1]}, {tris[i + 2]}");
             }
         }
 

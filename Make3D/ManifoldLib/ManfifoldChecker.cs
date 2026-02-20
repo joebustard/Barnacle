@@ -20,13 +20,40 @@ namespace ManifoldLib
             Faces = new List<Face>();
         }
 
-        public Int32Collection Indices { get; set; }
-        public bool IsManifold { get; set; }
-        public int NumbeOfUnconnectedFaces { get; set; }
-        public int NumberOfDuplicatedVertices { get; set; }
-        public int NumberOfNonExistentVertices { get; set; }
-        public int NumberOfUnReferencedVertices { get; set; }
-        public Point3DCollection Points { get; set; }
+        public Int32Collection Indices
+        {
+            get; set;
+        }
+
+        public bool IsManifold
+        {
+            get; set;
+        }
+
+        public int NumbeOfUnconnectedFaces
+        {
+            get; set;
+        }
+
+        public int NumberOfDuplicatedVertices
+        {
+            get; set;
+        }
+
+        public int NumberOfNonExistentVertices
+        {
+            get; set;
+        }
+
+        public int NumberOfUnReferencedVertices
+        {
+            get; set;
+        }
+
+        public Point3DCollection Points
+        {
+            get; set;
+        }
 
         public void Check()
         {
@@ -146,44 +173,6 @@ namespace ManifoldLib
             }
         }
 
-        private int AddVertice(Point3DCollection pnts, double x, double y, double z)
-        {
-            int res = -1;
-            for (int i = 0; i < pnts.Count; i++)
-            {
-                if (PointUtils.equals(pnts[i], x, y, z))
-                {
-                    res = i;
-                    break;
-                }
-            }
-
-            if (res == -1)
-            {
-                pnts.Add(new Point3D(x, y, z));
-                res = pnts.Count - 1;
-            }
-            return res;
-        }
-
-        /*
-        public void RemoveDuplicateVertices()
-        {
-            Int32Collection tris = new Int32Collection();
-            Point3DCollection vertices = new Point3DCollection();
-
-            for ( int i =0; i < Indices.Count; i ++)
-            {
-                    int f0 = Indices[i];
-                    Point3D p = Points[f0];
-                    int nf0 = AddVertice(vertices, p.X, p.Y, p.Z);
-                    tris.Add(nf0);
-            }
-            Points = vertices;
-            Indices = tris;
-        }
-        */
-
         public void RemoveUnreferencedVertices()
         {
             if ((Indices != null) && (Indices.Count >= 3))
@@ -206,6 +195,7 @@ namespace ManifoldLib
                     Faces.Clear();
                     for (int i = 0; i < Indices.Count; i += 3)
                     {
+                        System.Diagnostics.Debug.WriteLine($"i {i}");
                         Face f = new Face(Indices[i], Indices[i + 1], Indices[i + 2]);
                         Faces.Add(f);
                         f.Dump(Vertices);
@@ -279,6 +269,44 @@ namespace ManifoldLib
 
             treeRoot = VertexTreeNode.Add(v, treeRoot);
         }
+
+        private int AddVertice(Point3DCollection pnts, double x, double y, double z)
+        {
+            int res = -1;
+            for (int i = 0; i < pnts.Count; i++)
+            {
+                if (PointUtils.equals(pnts[i], x, y, z))
+                {
+                    res = i;
+                    break;
+                }
+            }
+
+            if (res == -1)
+            {
+                pnts.Add(new Point3D(x, y, z));
+                res = pnts.Count - 1;
+            }
+            return res;
+        }
+
+        /*
+        public void RemoveDuplicateVertices()
+        {
+            Int32Collection tris = new Int32Collection();
+            Point3DCollection vertices = new Point3DCollection();
+
+            for ( int i =0; i < Indices.Count; i ++)
+            {
+                    int f0 = Indices[i];
+                    Point3D p = Points[f0];
+                    int nf0 = AddVertice(vertices, p.X, p.Y, p.Z);
+                    tris.Add(nf0);
+            }
+            Points = vertices;
+            Indices = tris;
+        }
+        */
 
         private void AddVertice(Point3D p)
         {

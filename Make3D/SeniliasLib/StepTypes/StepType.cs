@@ -37,7 +37,8 @@ namespace Senilias.StepTypes
         {
             None = 0,
             Script,
-            Slice
+            Slice,
+            Touch
         }
 
         /// <summary>

@@ -7,8 +7,9 @@ namespace VisualSolutionExplorer
 {
     public class Project
     {
-        public string ProjectFilePath;
         public List<ProjectFolder> folders;
+        public bool libraryAdd;
+        public string ProjectFilePath;
         private DateTime creationDate;
 
         public Project()
@@ -23,13 +24,40 @@ namespace VisualSolutionExplorer
             SharedProjectSettings = new ProjectSettings();
         }
 
-        public String BaseFolder { get; set; }
-        public String Description { get; set; }
+        public String BaseFolder
+        {
+            get; set;
+        }
+
+        public String Description
+        {
+            get; set;
+        }
 
         public string FirstFile
         {
             get;
             set;
+        }
+
+        public bool LibraryAdd
+        {
+            get
+            {
+                return libraryAdd;
+            }
+            set
+            {
+                libraryAdd = value;
+                foreach (ProjectFolder pf in ProjectFolders)
+                {
+                    pf.CanAddToLibrary = libraryAdd;
+                }
+                foreach (ProjectFolder pf in ProjectFolders)
+                {
+                    pf.UpdateMenu();
+                }
+            }
         }
 
         public List<ProjectFolder> ProjectFolders
@@ -47,26 +75,14 @@ namespace VisualSolutionExplorer
             }
         }
 
-        public String ProjectName { get; set; }
-        public ProjectSettings SharedProjectSettings { get; set; }
-
-        public bool libraryAdd;
-
-        public bool LibraryAdd
+        public String ProjectName
         {
-            get { return libraryAdd; }
-            set
-            {
-                libraryAdd = value;
-                foreach (ProjectFolder pf in ProjectFolders)
-                {
-                    pf.CanAddToLibrary = libraryAdd;
-                }
-                foreach (ProjectFolder pf in ProjectFolders)
-                {
-                    pf.UpdateMenu();
-                }
-            }
+            get; set;
+        }
+
+        public ProjectSettings SharedProjectSettings
+        {
+            get; set;
         }
 
         public string AbsPathToProjectPath(string rf)
@@ -76,21 +92,6 @@ namespace VisualSolutionExplorer
             {
                 rf = rf.Substring(folderRoot.Length);
             }
-            return rf;
-        }
-
-        public string ProjectPathToAbsPath(string rf)
-        {
-            string t = System.IO.Path.DirectorySeparatorChar.ToString() + System.IO.Path.GetFileName(BaseFolder);
-            if (rf.StartsWith(t))
-            {
-                rf = rf.Substring(t.Length);
-            }
-            if (!rf.StartsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
-            {
-                rf = System.IO.Path.DirectorySeparatorChar + rf;
-            }
-            rf = BaseFolder + rf;
             return rf;
         }
 
@@ -260,6 +261,7 @@ namespace VisualSolutionExplorer
                     }
                 }
             }
+            pfo.SortNames();
             pfo.RepathSubFolders("");
         }
 
@@ -301,6 +303,21 @@ namespace VisualSolutionExplorer
             }
 
             return res;
+        }
+
+        public string ProjectPathToAbsPath(string rf)
+        {
+            string t = System.IO.Path.DirectorySeparatorChar.ToString() + System.IO.Path.GetFileName(BaseFolder);
+            if (rf.StartsWith(t))
+            {
+                rf = rf.Substring(t.Length);
+            }
+            if (!rf.StartsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
+            {
+                rf = System.IO.Path.DirectorySeparatorChar + rf;
+            }
+            rf = BaseFolder + rf;
+            return rf;
         }
 
         public void Refresh()

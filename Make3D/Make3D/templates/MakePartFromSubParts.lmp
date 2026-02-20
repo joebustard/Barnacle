@@ -1,9 +1,9 @@
 Program  "Make Part"
 {
    Include "libs\limplib.txt" ;
-   include "..\scale.txt";
-   Include "..\GlobalDefinitions.txt" ;
-   Include "..\tanklib.lmp" ;
+   include "..\scale.inc";
+   Include "..\GlobalDefinitions.inc";
+   Include "..\ProjectLib.inc";
 
    // local declarations
    // define the part name. This will be used to generate the other file names

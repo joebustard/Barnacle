@@ -268,6 +268,8 @@ namespace Barnacle.Views
             NotificationManager.Notify("GroupSelected", false);
             NotificationManager.Notify("LoadedNewFile", null);
             loadingTimer = null;
+            BaseViewModel.Project.Save();
+            BaseViewModel.Document.SaveGlobalSettings();
         }
 
         private void LoadNamedProject(string projName, bool loadLastFile = true)
@@ -823,12 +825,14 @@ namespace Barnacle.Views
                             p = System.IO.Path.GetDirectoryName(p);
                             string fname1 = p + parameter1;
                             string fname2 = p + parameter2;
-
-                            if (fname1 == BaseViewModel.Document.FilePath)
+                            if (fname1 != fname2)
                             {
-                                CheckSaveFirst(null);
+                                if (fname1 == BaseViewModel.Document.FilePath)
+                                {
+                                    CheckSaveFirst(null);
+                                }
+                                File.Copy(fname1, fname2);
                             }
-                            File.Copy(fname1, fname2);
                         }
                         break;
 

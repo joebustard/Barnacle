@@ -98,6 +98,16 @@ namespace TemplateLib
             }
             if (def != null)
             {
+                TemplateSubstitution ts = new TemplateSubstitution();
+                ts.Original = "<PROJNAME>";
+                ts.Replacement = projName;
+                def.Substitutions.Add(ts);
+
+                ts = new TemplateSubstitution();
+                ts.Original = "<PROJPATH>";
+                ts.Replacement = pth;
+                def.Substitutions.Add(ts);
+
                 if (!Directory.Exists(pth))
                 {
                     Directory.CreateDirectory(pth);

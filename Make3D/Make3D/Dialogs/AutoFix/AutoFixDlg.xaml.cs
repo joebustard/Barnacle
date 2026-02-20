@@ -36,10 +36,12 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class AutoFixDlg : Window, INotifyPropertyChanged
     {
+        private bool alignFaces;
         private bool canClose;
         private bool canFix;
         private bool canStop;
         private bool removeDuplicates;
+        private bool removeDuplicatesFaces;
         private bool removeHoles;
         private string resultsText;
 
@@ -59,6 +61,23 @@ namespace Barnacle.Dialogs
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool AlignFaces
+        {
+            get
+            {
+                return alignFaces;
+            }
+
+            set
+            {
+                if (alignFaces != value)
+                {
+                    alignFaces = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public bool CanClose
         {
@@ -123,6 +142,23 @@ namespace Barnacle.Dialogs
                 if (removeDuplicates != value)
                 {
                     removeDuplicates = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool RemoveDuplicatesFaces
+        {
+            get
+            {
+                return removeDuplicatesFaces;
+            }
+
+            set
+            {
+                if (removeDuplicatesFaces != value)
+                {
+                    removeDuplicatesFaces = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -200,7 +236,26 @@ namespace Barnacle.Dialogs
                     {
                         RemoveDuplicateVertices(ob, token);
                     }
-                    if (removeHoles) FixHoles(ob, token);
+                    if (removeDuplicatesFaces)
+                    {
+                        var numberRemovedFaces = DuplicateTriangles.RemoveBothDuplicateTriangles(ob.RelativeObjectVertices.Count, ob.TriangleIndices);
+                        if (numberRemovedFaces > 0)
+                        {
+                            AppendResults($"    Removed {numberRemovedFaces} duplicate faces");
+                        }
+                    }
+                    if (alignFaces)
+                    {
+                        var numberReversed = ob.OrientateFaceNormals();
+                        if (numberReversed > 0)
+                        {
+                            AppendResults($"    Reversed {numberReversed} faces");
+                        }
+                    }
+                    if (removeHoles)
+                    {
+                        FixHoles(ob, token);
+                    }
                 }
             }
             if (!token.IsCancellationRequested)
@@ -264,7 +319,7 @@ namespace Barnacle.Dialogs
                             numberRemoved -= ob.RelativeObjectVertices.Count;
                             if (numberRemoved > 0)
                             {
-                                AppendResults($"    Removed {numberRemoved} vertices");
+                                AppendResults($"   Removed {numberRemoved} vertices");
                             }
                         }
                     }
@@ -301,7 +356,7 @@ namespace Barnacle.Dialogs
             }
 
             BaseViewModel.Document.Load(original);
-            AppendResults("Done");
+            AppendResults("All Done");
             CanClose = true;
             CanFix = true;
             CanStop = false;

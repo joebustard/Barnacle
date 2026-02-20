@@ -65,6 +65,8 @@ namespace Barnacle.UserControls
 
         private FlexiPathEditorControlViewModel vm;
 
+        private double zoomLevel = 1;
+
         public FlexiPathEditorControl()
         {
             InitializeComponent();
@@ -424,6 +426,29 @@ namespace Barnacle.UserControls
                 if (vm != null)
                 {
                     vm.ToolName = toolName;
+                }
+            }
+        }
+
+        public double ZoomLevel
+        {
+            get
+            {
+                if (vm != null)
+                {
+                    return vm.Scale;
+                }
+                else
+                {
+                    return zoomLevel;
+                }
+            }
+            set
+            {
+                zoomLevel = value;
+                if (vm != null)
+                {
+                    vm.Scale = zoomLevel;
                 }
             }
         }
@@ -877,7 +902,7 @@ namespace Barnacle.UserControls
                             vm.Points[pointIndex].X = dlg.XValue;
                             vm.Points[pointIndex].Y = dlg.YValue;
                             vm.PointsDirty = true;
-
+                            vm.UpdatePointPosition(pointIndex, new Point(dlg.XValue, dlg.YValue));
                             UpdateDisplay();
                             NotifyUserActive();
                             NotifyPathPointsChanged();
@@ -1393,6 +1418,7 @@ namespace Barnacle.UserControls
                     vm.ToolName = ToolName;
                     vm.ShowPresets = Visibility.Hidden;
                     vm.ShowSavePresets = Visibility.Hidden;
+                    vm.Scale = zoomLevel;
                     if (HasPresets)
                     {
                         vm.ShowPresets = Visibility.Visible;

@@ -5,19 +5,26 @@ Added
   Extra primitives tetrahedron, concave
   Drop from left, right, front and back added to editor.
   dropabove, dropbelow, dropfront, dropback, dropleft, dropright added to limpet
-  Addeded sgn() and Cenflo() to standard limpet lib
+  Added sgn(), MoveBackTo() and Cenflo() to standard limpet lib
   When importing from a thingiverse zip file, auto suggest an output subfolder name
-  First Version of a bevelled gear tool
-  solid bounds functions Left(),Right(),Top(),Bottom(),Front(),Back() added to limpet
+  First version of a bevelled gear tool
+  Solid bounds functions Left(),Right(),Top(),Bottom(),Front(),Back() added to limpet
   Offer to save current model file when switching to a script file
   When running a limpet script from the command line return an exit code, 0 for success, -1 for fail. Allows for error checking in cmd and make files.
   Added camera pan and camera point to centre buttons to object view used in dialogs
   Added increase/decrease size of path to common flexipath control
-  Added choice of templates to nw script file name dialog. User scripts can be stored in app data subfolder
+  Added choice of templates to new script file name dialog. User scripts can be stored in app data subfolder
   Remove duplicate triangles, that is triangles that have the same vertices but in a different order.
-  First cut of point hull tool
+  First cut of point hull tool. Move individual points around in 3D space and a convex hull is created enclosing them all
   Drag segment in flexipathcontrol, two verions. One drags the original points, the second inserts two extra connecting segments.
   First cut of Senilias make file tool
+  Added first cut of surface normal fixer. Orientates the winding order of triangles to match the first one.
+  Added buttons to record/restore the current camera position to objectviewer user control. (This does the same as F12/ shift F12)
+  Added option to move the origin to the centroid point in the ribbed fuselage control
+  Added shell mode to fuselage when front or back selected. Allows user to make a hollow fuselage from the parts
+  Added ellipsoid tool.
+  Added clean solid statement to limpet
+  Added text replace to script editor
 
 Fixed
   The number of vertices and faces shown for the selected object didn't update automatically when the object was subdivided
@@ -25,15 +32,17 @@ Fixed
   Sometimes clicking on a file in the solution explorer would cause the treeview to just scroll the current file name into focus but not
   change file.
   Stonewall was producing walls with stones floating in mid air. Fixed
-  Selected Item name in combo box was not cleared when the object was deselected by clicking away. Fixed
+  Selected object name in combo box was not cleared when the object was deselected by clicking away. Fixed
   Report run time error if flip function is used on a group.
+  Copy a model file was going wrong if the file was in a subfolder
 
 Changed
-  Paste path string in flexipath control now adjusts pasted coordinates so all path is vis-ible
+  Paste path string in flexipath control now adjusts pasted coordinates so all path is visible
   Modified focus handling in the solution tree view
   Don't allow user to load a new Limpet script if current one is executing
   Spur Gear uses the same tooth generation as the new bevelled gear so gears are compatible.
   Made all mirror operations remove the internal "interface" triangles
+  Some changes to default project templates
 
 
 v1.0.9

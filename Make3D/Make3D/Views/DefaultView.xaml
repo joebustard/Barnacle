@@ -1432,6 +1432,15 @@
                             ToolTip="Remove small holes" />
 
                         <Custom:RibbonMenuItem
+      x:Name="FaceNormalsButton"
+      HorizontalAlignment="Stretch"
+      VerticalAlignment="Top"
+      Command="{Binding FaceNormalsCommand}"
+      CommandParameter="HalfEdge"
+      Header="Face Normals"
+      ImageSource="/Barnacle;component/Images/Buttons/copy.png"
+      ToolTip="Orientate Face normals consistentaly" />
+                        <Custom:RibbonMenuItem
                             x:Name="SetZeroButton"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"

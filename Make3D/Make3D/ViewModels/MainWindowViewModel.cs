@@ -81,8 +81,8 @@ namespace Barnacle.ViewModels
             int res = -1;
             if (!String.IsNullOrEmpty(autoModelFile))
             {
-                BarnaclePrinterManager printerManager;
-                printerManager = new BarnaclePrinterManager();
+                CuraPrinterManager printerManager;
+                printerManager = new CuraPrinterManager();
 
                 Document exportDoc = new Document();
                 exportDoc.ParentProject = BaseViewModel.Project;
@@ -138,7 +138,7 @@ namespace Barnacle.ViewModels
 
                     string curaPrinterName;
                     string curaExtruderName;
-                    BarnaclePrinter bp = printerManager.FindPrinter(autoSlicePrinter);
+                    CuraPrinter bp = printerManager.FindPrinter(autoSlicePrinter);
                     curaPrinterName = bp.CuraPrinterFile + ".def.json";
                     curaExtruderName = bp.CuraExtruderFile + ".def.json";
 

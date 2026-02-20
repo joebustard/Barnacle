@@ -30,8 +30,8 @@
                 <Viewport3D
                     Name="viewport3D1"
                     MouseDown="Viewport_MouseDown"
-                    MouseUp="Viewport_MouseUp"
                     MouseMove="Viewport_MouseMove"
+                    MouseUp="Viewport_MouseUp"
                     MouseWheel="Viewport_MouseWheel">
 
                     <Viewport3D.Camera>
@@ -142,21 +142,37 @@
                 </Button>
 
                 <Button
-                Grid.Column="8"
-MaxWidth="30"
-Click="Center_Clicked"
-     Style="{StaticResource ImageButton}"
-     ToolTip="Point the camera at the centre of the world.">
+                    Grid.Column="8"
+                    MaxWidth="30"
+                    Click="Center_Clicked"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Point the camera at the centre of the world.">
                     <Image Source="/Barnacle;component/Images/Buttons/CenterEye.png" />
                 </Button>
                 <Button
-                Click="Pan_Clicked"
-
-                Grid.Column="9"
-MaxWidth="30"
-     Style="{StaticResource ImageButton}"
-     ToolTip="Pan the camera without changing the look direction">
+                    Grid.Column="9"
+                    MaxWidth="30"
+                    Click="Pan_Clicked"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Pan the camera without changing the look direction">
                     <Image Source="/Barnacle;component/Images/Buttons/PanEye.png" />
+                </Button>
+
+                <Button
+                    Grid.Column="10"
+                    MaxWidth="30"
+                    Click="RecordCamera_Click"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Record the camera position.">
+                    <Image Source="/Barnacle;component/Images/Buttons/RecordCamera.png" />
+                </Button>
+                <Button
+                    Grid.Column="11"
+                    MaxWidth="30"
+                    Click="RestoreCamera_Click"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Restore the camera position.">
+                    <Image Source="/Barnacle;component/Images/Buttons/RestoreCamera.png" />
                 </Button>
             </Grid>
         </Border>

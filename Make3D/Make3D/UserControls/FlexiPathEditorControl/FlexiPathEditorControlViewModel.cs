@@ -1267,6 +1267,14 @@ namespace Barnacle.UserControls
             return split;
         }
 
+        public void UpdatePointPosition(int index, Point pos)
+        {
+            selectedFlexiPath.SetPointPos(index, pos);
+            PathText = selectedFlexiPath.ToPath(absolutePaths);
+            PointsDirty = true;
+            NotifyPropertyChanged("Points");
+        }
+
         internal string AbsPathText()
         {
             return selectedFlexiPath.ToPath(true);
@@ -2096,7 +2104,14 @@ namespace Barnacle.UserControls
         {
             NotifyUserActive();
             PathText = selectedFlexiPath.ToPath(absolutePaths);
-            System.Windows.Clipboard.SetText(PathText);
+            if (PathText != "")
+            {
+                System.Windows.Clipboard.SetText(PathText);
+            }
+            else
+            {
+                System.Windows.Clipboard.Clear();
+            }
         }
 
         private void OnDeleteSegment(object obj)

@@ -262,10 +262,14 @@
             Grid.RowSpan="3"
             HorizontalAlignment="Center"
             FontSize="12"
-            Foreground="Red">
-            L ( X )
+            Foreground="Red" Content="L ( X )">
+            <Label.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Copy"  Command="{Binding CopySizeCommand}" IsEnabled="{Binding CanScale}" />
+                </ContextMenu>
+            </Label.ContextMenu>
         </Label>
-        <!-- , UpdateSourceTrigger=PropertyChanged-->
+
         <TextBox
             Grid.Row="12"
             Grid.Column="1"
@@ -278,8 +282,13 @@
             Grid.RowSpan="2"
             HorizontalAlignment="Center"
             FontSize="12"
-            Foreground="Green">
-            H ( Y )
+            Foreground="Green" Content="H ( Y )">
+
+            <Label.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Copy"  Command="{Binding CopySizeCommand}" IsEnabled="{Binding CanScale}" />
+                </ContextMenu>
+            </Label.ContextMenu>
         </Label>
         <TextBox
             Grid.Row="13"
@@ -293,8 +302,12 @@
             Grid.RowSpan="2"
             HorizontalAlignment="Center"
             FontSize="12"
-            Foreground="Blue">
-            W ( Z )
+            Foreground="Blue" Content="W ( Z )">
+            <Label.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Copy" Command="{Binding CopySizeCommand}" IsEnabled="{Binding CanScale}" />
+                </ContextMenu>
+            </Label.ContextMenu>
         </Label>
         <TextBox
             Grid.Row="14"

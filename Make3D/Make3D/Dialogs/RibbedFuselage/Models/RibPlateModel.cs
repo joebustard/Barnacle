@@ -26,8 +26,16 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
     internal class RibPlateModel : PlateModel
     {
         public float MiddleOffset { get; set; } = 0;
-        public double XPosition { get; set; }
-        public double YPosition { get; set; }
+
+        public double XPosition
+        {
+            get; set;
+        }
+
+        public double YPosition
+        {
+            get; set;
+        }
 
         public void Log(string s)
         {
@@ -91,6 +99,24 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
             }
         }
 
+        internal void SetPositionAndScale(double x, float yPosition, double topMin, double topMax, double sideMin, double sideMax)
+        {
+            XPosition = x;
+            Log($"RibPlateModel xposition {XPosition}");
+            YPosition = yPosition;
+            float topDim = (float)(topMax - topMin);
+            float sideDim = (float)(sideMax - sideMin);
+            List<PointF> dp = new List<PointF>();
+            foreach (PointF p in rawPoints)
+            {
+                PointF np = new PointF();
+                np.X = (p.X * topDim) + (float)topMin;
+                np.Y = (p.Y * sideDim) + (float)sideMin;
+                dp.Add(np);
+            }
+            MakeFaces(dp);
+        }
+
         private void TriangulateSide(List<PointF> points, bool invert)
         {
             TriangulationPolygon ply = new TriangulationPolygon();
@@ -115,24 +141,6 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
                     Faces.Add(c2);
                 }
             }
-        }
-
-        internal void SetPositionAndScale(double x, float yPosition, double lower1, double upper1, double lower2, double upper2)
-        {
-            XPosition = x;
-            Log($"RibPlateModel xposition {XPosition}");
-            YPosition = yPosition;
-            float topDim = (float)(upper1 - lower1);
-            float sideDim = (float)(upper2 - lower2);
-            List<PointF> dp = new List<PointF>();
-            foreach (PointF p in rawPoints)
-            {
-                PointF np = new PointF();
-                np.X = (p.X * topDim) + (float)lower1;
-                np.Y = (p.Y * sideDim) + (float)lower2;
-                dp.Add(np);
-            }
-            MakeFaces(dp);
         }
     }
 }

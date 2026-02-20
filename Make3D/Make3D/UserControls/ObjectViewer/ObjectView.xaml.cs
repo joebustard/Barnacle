@@ -355,6 +355,11 @@ namespace Barnacle.UserControls.ObjectViewer
             PanCamera();
         }
 
+        public void RecordCamera_Click(object sender, RoutedEventArgs e)
+        {
+            SaveCamera();
+        }
+
         public void Redisplay()
         {
             if (modelContent != null)
@@ -388,6 +393,11 @@ namespace Barnacle.UserControls.ObjectViewer
                 }
                 NotifyPropertyChanged("ModelContent");
             }
+        }
+
+        public void RestoreCamera_Click(object sender, RoutedEventArgs e)
+        {
+            LoadCamera();
         }
 
         public void Right_Click(object sender, RoutedEventArgs e)

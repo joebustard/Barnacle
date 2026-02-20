@@ -41,6 +41,7 @@ namespace Barnacle.Dialogs
         private string importPath;
         private bool importZipChecked;
         private string importZipPath;
+        private string[] ImportZipPaths;
         private int maxModelsPerFile;
         private int maxProgress;
         private string newFolderName;
@@ -181,7 +182,6 @@ namespace Barnacle.Dialogs
                 if (importZipPath != value)
                 {
                     importZipPath = value;
-                    CreateNewFolderNameFromZipFile();
                 }
                 NotifyPropertyChanged();
             }
@@ -575,6 +575,7 @@ namespace Barnacle.Dialogs
         {
             var dialog = new System.Windows.Forms.OpenFileDialog();
             dialog.Filter = ("Zip files(*.zip)|*.zip");
+            dialog.Multiselect = true;
             if (Properties.Settings.Default.LastImportFolder != "")
             {
                 dialog.InitialDirectory = Properties.Settings.Default.LastImportFolder;
@@ -582,7 +583,16 @@ namespace Barnacle.Dialogs
             System.Windows.Forms.DialogResult result = dialog.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)
             {
-                ImportZipPath = dialog.FileName;
+                // This one used for display
+                ImportZipPath = "";
+                foreach (string s in dialog.SafeFileNames)
+                {
+                    ImportZipPath += s + "; ";
+                }
+                ImportZipPath = ImportZipPath.Substring(0, ImportZipPath.Length - 2);
+                // This one is the list for import
+                ImportZipPaths = dialog.FileNames;
+                CreateNewFolderNameFromZipFile();
             }
             ProgressValue = 0;
         }
@@ -595,7 +605,11 @@ namespace Barnacle.Dialogs
 
         private void CreateNewFolderNameFromZipFile()
         {
-            string s = importZipPath;
+            string s = "";
+            if (ImportZipPaths.GetLength(0) > 0)
+            {
+                s = ImportZipPaths[0];
+            }
             if (s != "")
             {
                 s = System.IO.Path.GetFileNameWithoutExtension(s);
@@ -648,36 +662,42 @@ namespace Barnacle.Dialogs
 
         private async Task ImportModelsFromZip(string targetSubFolder)
         {
-            if (File.Exists(ImportZipPath))
+            ResultsText = "";
+            if (ImportZipPaths != null && ImportZipPaths.GetLength(0) > 0)
             {
-                Application.Current.Dispatcher.Invoke(() => {
-                    CloseEnabled = false;
-                    StartEnabled = false;
-                });
-
-                ResultsText = "";
-                List<string> files = ZipUtils.ListFilesInZip(importZipPath, ".stl");
-                double prog = 0;
-                int numFiles = files.Count;
-                if (numFiles > 0)
+                foreach (string zipname in ImportZipPaths)
                 {
-                    MaxProgress = numFiles - 1;
-                }
-                foreach (string fpath in files)
-                {
-                    Application.Current.Dispatcher.Invoke(() => {
-                        ProgressValue = prog;
+                    if (File.Exists(zipname))
+                    {
+                        Application.Current.Dispatcher.Invoke(() => {
+                            CloseEnabled = false;
+                            StartEnabled = false;
+                        });
 
-                        AppendResults("Importing " + System.IO.Path.GetFileName(fpath));
-                    });
+                        List<string> files = ZipUtils.ListFilesInZip(zipname, ".stl");
+                        double prog = 0;
+                        int numFiles = files.Count;
+                        if (numFiles > 0)
+                        {
+                            MaxProgress = numFiles - 1;
+                        }
+                        foreach (string fpath in files)
+                        {
+                            Application.Current.Dispatcher.Invoke(() => {
+                                ProgressValue = prog;
 
-                    await Task.Run(() => ImportOneFromZip(importZipPath, fpath, xRotation, yRotation, zRotation, targetSubFolder));
-                    prog++;
+                                AppendResults("Importing " + System.IO.Path.GetFileName(fpath));
+                            });
+
+                            await Task.Run(() => ImportOneFromZip(zipname, fpath, xRotation, yRotation, zRotation, targetSubFolder));
+                            prog++;
+                        }
+                    }
+                    AppendResults("Import Complete");
+                    GC.Collect();
+                    CloseEnabled = true;
+                    StartEnabled = true;
                 }
-                AppendResults("Import Complete");
-                GC.Collect();
-                CloseEnabled = true;
-                StartEnabled = true;
             }
         }
 

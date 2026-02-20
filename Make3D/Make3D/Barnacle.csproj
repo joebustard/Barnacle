@@ -133,6 +133,7 @@
     <Compile Include="Dialogs\CutVPlane\CutVerticalPlaneDlg.xaml.cs">
       <DependentUpon>CutVerticalPlaneDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\Ellipsoid\EllipsoidDlg.xaml.cs" />
     <Compile Include="Dialogs\HoneycombGrille\HoneyCombGrilleDlg.xaml.cs" />
     <Compile Include="Dialogs\NewUserTemplate.xaml.cs">
       <DependentUpon>NewUserTemplate.xaml</DependentUpon>
@@ -570,6 +571,10 @@
     <Page Include="Dialogs\DecimatorSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\Ellipsoid\EllipsoidDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\HoneycombGrille\HoneyCombGrilleDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -1496,6 +1501,14 @@
     <Resource Include="Images\Buttons\Concave.png" />
     <Resource Include="Images\Buttons\ExpandDragSegment.png" />
     <Resource Include="Images\Buttons\PiercedDisk.png" />
+    <Resource Include="Images\Buttons\RecordCamera.png" />
+    <Resource Include="Images\Buttons\RestoreCamera.png" />
+    <Resource Include="Images\Buttons\Ellipsoid.png" />
+    <Resource Include="Images\Buttons\Tray.png" />
+    <Resource Include="Images\Buttons\PointCloud.png" />
+    <Resource Include="Images\Buttons\PointHull.png" />
+    <Resource Include="Images\Buttons\HoneycombGrille.png" />
+    <Resource Include="Images\Buttons\PiercedRing.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

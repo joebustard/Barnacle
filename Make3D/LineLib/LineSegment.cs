@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
 using System.Windows;
 
@@ -35,7 +36,7 @@ namespace Barnacle.LineLib
             DeselectHide(P1, points);
         }
 
-        public override void DisplayPoints(List<Point> res, ObservableCollection<FlexiPoint> pnts)
+        public override void DisplayPoints(List<System.Windows.Point> res, ObservableCollection<FlexiPoint> pnts)
         {
             if (P1 < pnts.Count())
             {
@@ -47,7 +48,18 @@ namespace Barnacle.LineLib
         {
             if (P1 < pnts.Count())
             {
-                res.Add(new System.Drawing.PointF((float)pnts[P1].X, (float)pnts[P1].Y));
+                if (res.Count > 0)
+                {
+                    if (((float)pnts[P1].X != res[res.Count - 1].X) ||
+                         ((float)pnts[P1].Y != res[res.Count - 1].Y))
+                    {
+                        res.Add(new System.Drawing.PointF((float)pnts[P1].X, (float)pnts[P1].Y));
+                    }
+                }
+                else
+                {
+                    res.Add(new System.Drawing.PointF((float)pnts[P1].X, (float)pnts[P1].Y));
+                }
             }
         }
 
@@ -56,7 +68,7 @@ namespace Barnacle.LineLib
             return 2;
         }
 
-        public override double DistToPoint(Point position, ObservableCollection<FlexiPoint> points)
+        public override double DistToPoint(System.Windows.Point position, ObservableCollection<FlexiPoint> points)
         {
             double dist = DistToLine.FindDistanceToLine(position, points[P0].ToPoint(), points[P1].ToPoint());
             return dist;
@@ -67,12 +79,12 @@ namespace Barnacle.LineLib
             return P1;
         }
 
-        public Point GetCoord(double t, ObservableCollection<FlexiPoint> points)
+        public System.Windows.Point GetCoord(double t, ObservableCollection<FlexiPoint> points)
         {
             double x = points[P0].X + t * (points[P1].X - points[P0].X);
             double y = points[P0].Y + t * (points[P1].Y - points[P0].Y);
 
-            return new Point(x, y);
+            return new System.Windows.Point(x, y);
         }
 
         public override void GetSegmentPoints(List<FlexiPoint> res, ObservableCollection<FlexiPoint> pnts)

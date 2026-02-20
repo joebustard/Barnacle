@@ -89,6 +89,10 @@ namespace Barnacle.Models
                     res = new DualProfileDlg();
                     break;
 
+                case "Ellipsoid":
+                    res = new EllipsoidDlg();
+                    break;
+
                 case "HoneycombGrille":
                     res = new HoneyCombGrilleDlg();
                     break;

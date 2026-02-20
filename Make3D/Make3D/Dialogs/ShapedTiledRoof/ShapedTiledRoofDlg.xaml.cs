@@ -278,6 +278,10 @@ namespace Barnacle.Dialogs
             {
                 PathEditor.LoadImage(imageName);
             }
+            int v = EditorParameters.GetInt("ShowGrid", 1);
+            PathEditor.ShowGrid = (UserControls.GridSettings.GridStyle)v;
+            double zoomLevel = EditorParameters.GetDouble("Zoom", 1);
+            PathEditor.ZoomLevel = zoomLevel;
         }
 
         private void PathPointsChanged(List<System.Windows.Point> pnts)
@@ -314,6 +318,8 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("RoofWidth", RoofWidth.ToString());
             EditorParameters.Set("Path", PathEditor.GetPath());
             EditorParameters.Set("ImagePath", PathEditor.ImagePath);
+            EditorParameters.Set("ShowGrid", ((int)(PathEditor.ShowGrid)).ToString());
+            EditorParameters.Set("Zoom", PathEditor.ZoomLevel);
         }
 
         private void UpdateDisplay()

@@ -19,6 +19,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Barnacle.ViewModels
 {
@@ -26,13 +27,14 @@ namespace Barnacle.ViewModels
     {
         private static TextPointer oldposstart = null;
 
-        public static int Find(this RichTextBox richTextBox, string text, int startIndex = 0)
+        public static int Find(this RichTextBox richTextBox, string text, out TextRange foundTextRange, int startIndex = 0)
         {
+            foundTextRange = null;
             var textRange = new TextRange(richTextBox.Document.ContentStart, richTextBox.Document.ContentEnd);
             richTextBox.Selection.Select(textRange.Start, textRange.Start);     // clear previous select if there was one
 
             textRange.ClearAllProperties();
-            var index = textRange.Text.IndexOf(text, startIndex, StringComparison.OrdinalIgnoreCase);
+            var index = textRange.Text.IndexOf(text, startIndex, StringComparison.Ordinal);
             if (index > -1)
             {
                 var textPointerStart = GetPoint(textRange.Start, index);
@@ -43,6 +45,7 @@ namespace Barnacle.ViewModels
                 textRangeSelection.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
                 richTextBox.Selection.Select(textRangeSelection.Start, textRangeSelection.End);
                 richTextBox.Focus();
+                foundTextRange = textRangeSelection;
             }
 
             return index;
@@ -54,7 +57,7 @@ namespace Barnacle.ViewModels
             richTextBox.Selection.Select(textRange.Start, textRange.Start);     // clear previous select if there was one
 
             textRange.ClearAllProperties();
-            var index = textRange.Text.IndexOf(text, startIndex, StringComparison.OrdinalIgnoreCase);
+            var index = textRange.Text.IndexOf(text, startIndex, StringComparison.Ordinal);
             if (index > -1)
             {
                 var textPointerStart = textRange.Start.GetPositionAtOffset(index);
@@ -73,6 +76,22 @@ namespace Barnacle.ViewModels
         {
             oldposstart = richTextBox.CaretPosition;
             //  oldposend = richTextBox.Selection.End;
+        }
+
+        public static bool Replace(this RichTextBox richTextBox, int index, string src, string trg, TextRange foundTextRange)
+        {
+            bool res = false;
+            var textRange = new TextRange(richTextBox.Document.ContentStart, richTextBox.Document.ContentEnd);
+            richTextBox.Selection.Select(textRange.Start, textRange.Start);     // clear previous select if there was one
+
+            textRange.ClearAllProperties();
+            var index2 = textRange.Text.IndexOf(src, index, StringComparison.Ordinal);
+            if (index == index2 && foundTextRange != null)
+            {
+                foundTextRange.Text = trg;
+                res = true;
+            }
+            return res;
         }
 
         public static void RestoreCurrentPosition(this RichTextBox richTextBox)

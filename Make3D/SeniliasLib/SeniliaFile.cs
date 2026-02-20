@@ -455,6 +455,10 @@ namespace SeniliasLib
                                     clones.RemoveAt(i);
                                     more = true;
                                 }
+                                else
+                                {
+                                    MessageBox.Show($"Can't find target folder: {folderName}");
+                                }
                             }
                         }
                         else
@@ -490,6 +494,10 @@ namespace SeniliasLib
                                         }
                                         clones.RemoveAt(i);
                                         more = true;
+                                    }
+                                    else
+                                    {
+                                        MessageBox.Show($"Can't find target folder: {folderName}");
                                     }
                                 }
                             }
@@ -543,7 +551,20 @@ namespace SeniliasLib
                         res = new ScriptStep(actionParam);
                     }
                     break;
+
+                case StepType.TypeOfStep.None:
+                    {
+                        res = new NopStep();
+                    }
+                    break;
+
+                case StepType.TypeOfStep.Touch:
+                    {
+                        res = new TouchStep(actionParam);
+                    }
+                    break;
             }
+
             return res;
         }
 

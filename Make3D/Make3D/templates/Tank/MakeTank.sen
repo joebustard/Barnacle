@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Deps ProjectFolder="<PROJPATH>" ProjectName="<PROJNAME>.bmf">
+  <Dep Type="File">
+    <Source>parts\*Front.txt</Source>
+    <Target>parts\*.txt</Target>
+    <Step Type="Script">scripts\PartMakers\Make*.lmp</Step>
+  </Dep>
+  <Dep Type="File">
+    <Source>parts\*back.txt</Source>
+    <Target>parts\*.txt</Target>
+    <Step Type="Script">scripts\PartMakers\Make*.lmp</Step>
+  </Dep>
+  <Dep Type="File">
+    <Source>subparts\*subparts.txt</Source>
+    <Target>parts\*.txt</Target>
+    <Step Type="Script">scripts\PartMakers\Make*.lmp</Step>
+  </Dep>
+  <Dep Type="File">
+    <Source>parts\drivewheel.txt,
+parts\idlerwheel.txt,
+
+parts\roadwheel.txt,
+parts\track.txt,
+parts\Bogie.txt,
+parts\returnroller.txt</Source>
+    <Target>assemblies\rightrunninggearassembly.txt</Target>
+    <Step Type="Script">scripts\assemblers\assemblerightrunninggear.lmp</Step>
+  </Dep>
+  <Dep Type="File">
+    <Source>assemblies\rightrunninggearassembly.txt</Source>
+    <Target>Assemblies\leftrunninggearassembly.txt</Target>
+    <Step Type="Script">scripts\assemblers\AssembleLeftRunningGear.lmp</Step>
+  </Dep>
+  <Dep Type="File">
+    <Source>Parts\FuelTank.txt,
+Parts\FuelTankSupport.txt</Source>
+    <Target>Assemblies\fueltankassembly.txt</Target>
+    <Step Type="Script">scripts\Assemblers\AssembleFuelTank.lmp</Step>
+  </Dep>
+  <Dep Type="File">
+    <Source>Assemblies\RightMudGuardAssembly.txt
+Parts\LeftMudGuard.txt</Source>
+    <Target>Assemblies\LeftMudGuardAssembly.txt</Target>
+    <Step Type="Script">Scripts\Assemblers\AssembleLeftMudGuard.lmp</Step>
+  </Dep>
+  <Dep Type="File">
+    <Source>Parts\RightMudGuard.txt,
+Parts\FrontHullBox.txt,
+Parts\RearHullBox.txt,
+Parts\FireExtinghuisher.txt,
+Parts\MudGuardBox.txt</Source>
+    <Target>Assemblies\RightMudguardAssembly.txt</Target>
+    <Step Type="Script">scripts\Assemblers\AssembleRightMudGuard.lmp</Step>
+  </Dep>
+  <Dep Type="File">
+    <Source>Parts\Turret.txt,Parts\TurretBox.txt,
+Parts\TurretCopula.txt</Source>
+    <Target>Assemblies\TurretAssembly.txt</Target>
+    <Step Type="Script">scripts\Assemblers\AssembleTurret.lmp</Step>
+  </Dep>
+  <Dep Type="File">
+    <Source>Parts\CannonBarrel.txt,
+Parts\CannonMantel.txt</Source>
+    <Target>Assemblies\CannonAssembly.txt</Target>
+    <Step Type="Script">Scripts\Assemblers\AssembleCannon.lmp</Step>
+  </Dep>
+  <Dep Type="File">
+    <Source>Parts\DisplayBase.txt</Source>
+    <Target>Assemblies\DisplayBaseAssembly.txt</Target>
+    <Step Type="Script">Scripts\Assemblers\AssembleDisplayBase.lmp</Step>
+  </Dep>
+  <Dep Type="File">
+    <Source>Parts\DifferentialGearBox.txt,
+Parts\LargeToolBox.txt,
+Parts\LowerHull.txt,
+Parts\RearHullBox.txt,
+Parts\UpperHull.txt,
+Parts\IdlerWheelMount.txt,
+Parts\ReturnRollerMount.txt,
+Parts\Drivewheelmount.txt,
+Parts\Lights.txt,
+Parts\LightGuard.txt,
+Parts\ReturnRollerMount.txt
+Parts\LeftMudGuard.txt,
+Parts\TowHitch.txt,
+Parts\TowLoop.txt,
+Parts\BoxBehindTurret.txt</Source>
+    <Target>Assemblies\HullAssembly.txt</Target>
+    <Step Type="Script">Scripts\Assemblers\AssembleHull.lmp</Step>
+  </Dep>
+  <Dep Type="File">
+    <Source>Assemblies\LeftRunningGearAssembly.txt</Source>
+    <Target>Assemblies\LeftHalfTrackAssembly.txt</Target>
+    <Step Type="Script">Scripts\Assemblers\AssembleLeftHalfTrack.lmp</Step>
+  </Dep>
+  <Dep Type="File">
+    <Source>Assemblies\RightRunningGearAssembly.txt</Source>
+    <Target>Assemblies\RightHalfTrackAssembly.txt</Target>
+    <Step Type="Script">Scripts\Assemblers\AssembleRightHalfTrack.lmp</Step>
+  </Dep>
+  <Dep Type="File">
+    <Source>Assemblies\CannonAssembly.txt,
+Assemblies\FuelTankAssembly.txt,
+Assemblies\HullAssembly.txt,
+Assemblies\LeftMudGuardAssembly.txt,
+Assemblies\LeftRunningGearAssembly.txt,
+Assemblies\RightMudGuardAssembly.txt,
+Assemblies\RightRunningGearAssembly.txt,
+Assemblies\TurretAssembly.txt,
+Assemblies\EngineAssembly.txt,
+Parts\AirFilter.txt,
+Parts\SpareLinks.txt,
+Parts\MudGuardRack.txt,
+Parts\TurretRing.txt</Source>
+    <Target>Assemblies\WholeTankAssembly.txt</Target>
+    <Step Type="Script">Scripts\Assemblers\AssembleWholeTank.lmp</Step>
+  </Dep>
+  <Dep Type="File">
+    <Source>Assemblies\WholeTankAssembly.txt</Source>
+    <Target>Kit1.txt</Target>
+    <Step Type="Script">Scripts\KitMakers\MakeKit1.lmp</Step>
+  </Dep>
+  <Dep Type="File">
+    <Source>Assemblies\WholeTankAssembly.txt</Source>
+    <Target>Kit2.txt</Target>
+    <Step Type="Script">Scripts\KitMakers\MakeKit2.lmp</Step>
+  </Dep>
+  <Dep Type="File">
+    <Source>Parts\TowLoop.txt</Source>
+    <Target>Parts\LowerHull.txt</Target>
+    <Step Type="Script">Scripts\PartMakers\MakeLowerHull.lmp</Step>
+  </Dep>
+  <Dep Type="File">
+    <Source>scripts\scale.txt</Source>
+    <Target>subparts\*.txt</Target>
+    <Step Type="Touch">subparts\*.txt</Step>
+  </Dep>
+  <Dep Type="File">
+    <Source>Parts\Engine.txt</Source>
+    <Target>Assemblies\EngineAssembly.txt</Target>
+    <Step Type="Script">Scripts\Assemblers\AssembleEngine.lmp</Step>
+  </Dep>
+  <Dep Type="File">
+    <Source>Assemblies\WholeTankAssembly.txt</Source>
+    <Target>Kit3.txt</Target>
+    <Step Type="Script">Scripts\KitMakers\MakeKit3.lmp</Step>
+  </Dep>
+</Deps>

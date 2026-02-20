@@ -148,6 +148,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "Drop", OnDrop);
             NotificationManager.Subscribe("Editor", "Export", OnExport);
             NotificationManager.Subscribe("Editor", "ExportParts", OnExportParts);
+            NotificationManager.Subscribe("Editor", "OrientateFaceNormals", OnOrientateFaceNormals);
             NotificationManager.Subscribe("Editor", "FixHoles", FixHoles);
             NotificationManager.Subscribe("Editor", "Flip", OnFlip);
             NotificationManager.Subscribe("Editor", "Fold", OnFold);
@@ -3772,6 +3773,23 @@ namespace Barnacle.ViewModels
             // that are not in the newly loaded file
             selectedObjectAdorner = null;
             RegenerateDisplayList();
+        }
+
+        private void OnOrientateFaceNormals(object param)
+        {
+            if (selectedItems.Count > 0)
+            {
+                int total = 0;
+                foreach (Object3D ob in selectedItems)
+                {
+                    total += ob.OrientateFaceNormals();
+                }
+                MessageBox.Show($"Reversed {total} faces.");
+            }
+            else
+            {
+                MessageBox.Show("Must have at least one object selected");
+            }
         }
 
         private void OnRefresh(object param)

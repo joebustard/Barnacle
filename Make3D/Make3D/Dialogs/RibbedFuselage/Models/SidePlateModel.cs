@@ -81,11 +81,11 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
             //LeftOffset = - left - dx;
             LeftOffset = float.MaxValue;
             points = new List<PointF>();
-            Log("SidePlateModel : ");
+//            Log("SidePlateModel : ");
             foreach (PointF p in dp)
             {
                 float xn = p.X - left - dx;
-                Log($"{xn},{(-(p.Y - bottom) + dy)}");
+            //    Log($"{xn},{(-(p.Y - bottom) + dy)}");
                 LeftOffset = Math.Min(LeftOffset, xn);
                 points.Add(new PointF(xn, -(p.Y - bottom) + dy));
             }

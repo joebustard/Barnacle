@@ -111,7 +111,18 @@ namespace Barnacle.LineLib
             for (double t = 0; t <= 1; t += dt)
             {
                 Point p = GetCoord(t, pnts);
-                res.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
+                if (res.Count > 0)
+                {
+                    if ((p.X != res[res.Count - 1].X) ||
+                         (p.Y != res[res.Count - 1].Y))
+                    {
+                        res.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
+                    }
+                }
+                else
+                {
+                    res.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
+                }
             }
         }
 

@@ -54,7 +54,7 @@ namespace Barnacle.Dialogs.Slice
 
         private string lastLog;
         private string modelPath;
-        private BarnaclePrinterManager printerManager;
+        private CuraPrinterManager printerManager;
         private List<String> profiles;
         private string resultsText;
 
@@ -508,7 +508,7 @@ namespace Barnacle.Dialogs.Slice
         {
             if (selectedPrinter != null && selectedPrinter != "")
             {
-                BarnaclePrinter bp = printerManager.FindPrinter(selectedPrinter);
+                CuraPrinter bp = printerManager.FindPrinter(selectedPrinter);
                 if (bp != null)
                 {
                     EditPrinter dlg = new EditPrinter();
@@ -795,7 +795,7 @@ M84 ; Disable stepper motors
             AppendResults(modelName.PadRight(16) + ", ", false);
             string curaPrinterName;
             string curaExtruderName;
-            BarnaclePrinter bp = printerManager.FindPrinter(selectedPrinter);
+            CuraPrinter bp = printerManager.FindPrinter(selectedPrinter);
             curaPrinterName = bp.CuraPrinterFile + ".def.json";
             curaExtruderName = bp.CuraExtruderFile + ".def.json";
 
@@ -857,7 +857,7 @@ M84 ; Disable stepper motors
             AppendResults(modelName.PadRight(16) + ", ", false);
             string curaPrinterName;
             string curaExtruderName;
-            BarnaclePrinter bp = printerManager.FindPrinter(selectedPrinter);
+            CuraPrinter bp = printerManager.FindPrinter(selectedPrinter);
             curaPrinterName = bp.CuraPrinterFile + ".def.json";
             curaExtruderName = bp.CuraExtruderFile + ".def.json";
 
@@ -912,7 +912,7 @@ M84 ; Disable stepper motors
             UserProfilePathNoSlash = PathManager.PrinterProfileFolder();
             UserProfilePath = UserProfilePathNoSlash + "\\";
 
-            printerManager = new BarnaclePrinterManager();
+            printerManager = new CuraPrinterManager();
             BarnaclePrinterNames = printerManager.GetPrinterNames();
             if (SlicerPath != null && SlicerPath != "")
             {

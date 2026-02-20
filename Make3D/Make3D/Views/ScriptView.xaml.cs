@@ -314,5 +314,12 @@ Procedure MyProc(  )
             vm.KeyUp(e.Key, Keyboard.IsKeyDown(Key.LeftShift) | Keyboard.IsKeyDown(Key.RightShift),
                              Keyboard.IsKeyDown(Key.LeftCtrl) | Keyboard.IsKeyDown(Key.RightCtrl));
         }
+
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ScriptBox.InvalidateArrange();
+            ScriptBox.InvalidateMeasure();
+            ScriptBox.UpdateLayout();
+        }
     }
 }

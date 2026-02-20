@@ -35,8 +35,8 @@ namespace Barnacle.Dialogs.Slice
     {
         private CuraDefinitionFile curaDataForPrinter;
         private string originalName;
-        private BarnaclePrinter printer;
-        private BarnaclePrinterManager printerManager;
+        private CuraPrinter printer;
+        private CuraPrinterManager printerManager;
 
         private string profileName;
         private string selectedSection;
@@ -249,7 +249,7 @@ namespace Barnacle.Dialogs.Slice
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = this;
-            printerManager = new BarnaclePrinterManager();
+            printerManager = new CuraPrinterManager();
             printer = printerManager.FindPrinter(PrinterName);
             if (printer != null)
             {

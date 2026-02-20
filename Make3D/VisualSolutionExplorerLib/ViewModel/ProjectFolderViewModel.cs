@@ -208,11 +208,14 @@ namespace VisualSolutionExplorer
             }
             if (e == "CopyFile")
             {
-                string old = p2;
-                string newish = _folder.CopyFile(p1);
-                LoadChildren();
-                p1 = old;
-                p2 = _folder.FolderPath + System.IO.Path.DirectorySeparatorChar + newish;
+                if (!p1.StartsWith("\\"))
+                {
+                    string old = p2;
+                    string newish = _folder.CopyFile(p1);
+                    LoadChildren();
+                    p1 = old;
+                    p2 = _folder.FolderPath + System.IO.Path.DirectorySeparatorChar + newish;
+                }
             }
             if (SolutionChanged != null)
             {

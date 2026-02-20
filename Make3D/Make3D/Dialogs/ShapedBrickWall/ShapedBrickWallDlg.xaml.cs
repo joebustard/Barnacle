@@ -272,6 +272,10 @@ namespace Barnacle.Dialogs
             MortarGap = EditorParameters.GetDouble("MortarGap", 0.25);
             WallWidth = EditorParameters.GetDouble("WallWidth", 2);
             PathEditor.SetPath(EditorParameters.Get("Path"));
+            int v = EditorParameters.GetInt("ShowGrid", 1);
+            PathEditor.ShowGrid = (UserControls.GridSettings.GridStyle)v;
+            double zoomLevel = EditorParameters.GetDouble("Zoom", 1);
+            PathEditor.ZoomLevel = zoomLevel;
         }
 
         private void PathPointsChanged(List<System.Windows.Point> pnts)
@@ -304,7 +308,9 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("BrickDepth", MortarGap.ToString());
             EditorParameters.Set("MortarGap", MortarGap.ToString());
             EditorParameters.Set("WallWidth", WallWidth.ToString());
-            EditorParameters.Set("Path", PathEditor.GetPath()); ;
+            EditorParameters.Set("Path", PathEditor.GetPath());
+            EditorParameters.Set("ShowGrid", ((int)(PathEditor.ShowGrid)).ToString());
+            EditorParameters.Set("Zoom", PathEditor.ZoomLevel);
         }
 
         private void UpdateDisplay()

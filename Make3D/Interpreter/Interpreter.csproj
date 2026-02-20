@@ -66,6 +66,7 @@
     <Compile Include="IntrinsicFunctions\Dim.cs" />
     <Compile Include="IntrinsicFunctions\RndNode.cs" />
     <Compile Include="Parser\ExtraParsingFunctions\ParseBevelledGearNode.cs" />
+    <Compile Include="Parser\ExtraParsingFunctions\ParseEllipsoidNode.cs" />
     <Compile Include="Parser\ExtraParsingFunctions\ParseGeneralStatement.cs" />
     <Compile Include="Parser\ExtraParsingFunctions\ParseHoneyCombGrilleNode.cs" />
     <Compile Include="Parser\ExtraParsingFunctions\ParseMakeTrayNode.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="SolidFunctions\MakeConstructionStripNode.cs" />
     <Compile Include="SolidFunctions\MakeCrossGrillNode.cs" />
     <Compile Include="SolidFunctions\MakeDripTrayNode.cs" />
+    <Compile Include="SolidFunctions\MakeEllipsoidNode.cs" />
     <Compile Include="SolidFunctions\MakeHoneyCombGrilleNode.cs" />
     <Compile Include="SolidFunctions\MakeImagePlaqueNode.cs" />
     <Compile Include="SolidFunctions\MakeObliqueEndCylinderNode.cs" />
@@ -134,6 +136,7 @@
     <Compile Include="SolidStatements\SaveSolidNode.cs" />
     <Compile Include="SolidStatements\SaveSolidsNode.cs" />
     <Compile Include="SolidStatements\SolidCentre.cs" />
+    <Compile Include="SolidStatements\SolidClean.cs" />
     <Compile Include="SolidStatements\SolidDrop.cs" />
     <Compile Include="SolidStatements\SolidFlip.cs" />
     <Compile Include="SolidStatements\SolidHCut.cs" />

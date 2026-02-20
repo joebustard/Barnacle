@@ -123,6 +123,7 @@ namespace Barnacle.ViewModels
             ExitCommand = new RelayCommand(OnExit);
             ExportCommand = new RelayCommand(OnExport);
             ExportPartsCommand = new RelayCommand(OnExportParts);
+            FaceNormalsCommand = new RelayCommand(OnFaceNormals);
             FixHolesCommand = new RelayCommand(OnFixHoles);
             FlipCommand = new RelayCommand(OnFlip);
             FoldCommand = new RelayCommand(OnFold);
@@ -526,6 +527,12 @@ namespace Barnacle.ViewModels
         public ICommand ExportPartsCommand
         {
             get; set;
+        }
+
+        public RelayCommand FaceNormalsCommand
+        {
+            get;
+            private set;
         }
 
         public ICommand FixHolesCommand
@@ -1696,7 +1703,7 @@ namespace Barnacle.ViewModels
             decorativeToolsToShow.Add(new ToolDef("SdfModel", true, "SdfModel", "Create a model using sdfs."));
             decorativeToolsToShow.Add(new ToolDef("Morphable", true, "Morphable", "Create a morphable shape."));
             decorativeToolsToShow.Add(new ToolDef("Image Plaque", true, "ImagePlaque", "Create a plaque from a black and white image."));
-            decorativeToolsToShow.Add(new ToolDef("Clay", true, "ClaySculpt", "Sculpt a simple organic shape in clay."));
+            //decorativeToolsToShow.Add(new ToolDef("Clay", true, "ClaySculpt", "Sculpt a simple organic shape in clay."));
             decorativeToolsToShow.Add(new ToolDef("Point Hull", true, "PointHull", "Create a hull from points positioned in space"));
             SortMenu(decorativeToolsToShow);
             NotifyPropertyChanged("DecorativeToolsToShow");
@@ -1766,6 +1773,7 @@ namespace Barnacle.ViewModels
             parametricToolsToShow.Add(new ToolDef("Textured Tube", true, "TexturedTube", "Create a tube or disk with texture on the outside"));
             parametricToolsToShow.Add(new ToolDef("Box", true, "Box", "Create a hollow box"));
             parametricToolsToShow.Add(new ToolDef("Tray", true, "Tray", "Create a tray with sloping sides"));
+            parametricToolsToShow.Add(new ToolDef("Ellipsoid", true, "Ellipsoid", "Create an ellipsoid"));
             SortMenu(parametricToolsToShow);
             NotifyPropertyChanged("ParametricToolsToShow");
         }
@@ -2024,6 +2032,11 @@ namespace Barnacle.ViewModels
         private void OnExportParts(object obj)
         {
             NotificationManager.Notify("ExportParts", obj);
+        }
+
+        private void OnFaceNormals(object obj)
+        {
+            NotificationManager.Notify("OrientateFaceNormals", obj);
         }
 
         private void OnFixHoles(object obj)

@@ -32,6 +32,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using Barnacle.UserControls.ObjectViewer;
+using Barnacle.Dialogs;
 
 namespace Barnacle.ViewModels
 {
@@ -59,16 +60,19 @@ program ""Script Name""
         private Floor floor;
         private FloorMarker floorMarker;
         private FlowDocument flowDocument;
+        private TextRange foundTextRange = null;
         private Grid3D grid;
         private Interpreter interpreter;
         private Point lastMouse;
         private Vector3D lookDirection;
         private Model3DCollection modelItems;
+        private string replaceText;
         private TextBox resultsBox;
         private string resultsText;
         private RichTextBox richTextBox;
         private string rtf;
         private Script script;
+        private bool searchFound = false;
         private int searchIndex;
         private string searchText;
         private int selectedTabIndex;
@@ -97,6 +101,7 @@ program ""Script Name""
             Rtf = script.ToRichText();
             ScriptCommand = new RelayCommand(OnScriptCommand);
             FindCommand = new RelayCommand(OnFind);
+            ReplaceCommand = new RelayCommand(OnReplace);
             camera = new PolarCamera();
             lookDirection.X = -camera.CameraPos.X;
             lookDirection.Y = -camera.CameraPos.Y;
@@ -105,6 +110,7 @@ program ""Script Name""
             cameraMode = CameraModes.CameraMoveLookCenter;
             modelItems = new Model3DCollection();
             searchIndex = 0;
+            replaceText = "";
             Logging.Log.Instance().UpdateText = UpdateText;
             BaseViewModel.ScriptClearBed = false;
             NotificationManager.Subscribe("Script", "LimpetLoaded", OnLimpetLoaded);
@@ -210,6 +216,27 @@ program ""Script Name""
         public Canvas Overlay
         {
             get; internal set;
+        }
+
+        public ICommand ReplaceCommand
+        {
+            get; set;
+        }
+
+        public string ReplaceText
+        {
+            get
+            {
+                return replaceText;
+            }
+            set
+            {
+                if (replaceText != value)
+                {
+                    replaceText = value;
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
         public string ResultsText
@@ -351,42 +378,6 @@ program ""Script Name""
             //RegenerateDisplayList();
             Viewer?.MultiModels.Children.Clear();
         }
-
-        /*
-        public void RegenerateDisplayList()
-        {
-            modelItems.Clear();
-            if (showFloor)
-            {
-                modelItems.Add(floor.FloorMesh);
-                foreach (GeometryModel3D m in grid.Group.Children)
-                {
-                    modelItems.Add(m);
-                }
-            }
-
-            if (showAxies)
-            {
-                foreach (GeometryModel3D m in axies.Group.Children)
-                {
-                    modelItems.Add(m);
-                }
-            }
-            totalFaces = 0;
-            foreach (Object3D ob in content)
-            {
-                if (ob != null)
-                {
-                    totalFaces += ob.TotalFaces;
-
-                    GeometryModel3D gm = GetMesh(ob);
-                    modelItems.Add(gm);
-                }
-            }
-
-            NotifyPropertyChanged("ModelItems");
-        }
-        */
 
         public void SwitchTabs()
         {
@@ -660,7 +651,7 @@ program ""Script Name""
         {
             if (searchText != null && searchText != "" && richTextBox != null)
             {
-                searchIndex = richTextBox.Find(searchText, searchIndex + 1);
+                searchIndex = richTextBox.Find(searchText, out foundTextRange, searchIndex + 1);
                 if (searchIndex < 0)
                 {
                     searchIndex = 0;
@@ -694,6 +685,20 @@ program ""Script Name""
                 NotificationManager.Notify("UpdateScript", null);
                 content.Clear();
                 Dirty = false;
+            }
+        }
+
+        private void OnReplace(object obj)
+        {
+            if (searchText != "" && replaceText != "" && foundTextRange != null)
+            {
+                bool res = richTextBox.Replace(searchIndex, searchText, replaceText, foundTextRange);
+                if (res)
+                {
+                    // make sure search most be rerun
+                    searchFound = false;
+                    Dirty = true;
+                }
             }
         }
 

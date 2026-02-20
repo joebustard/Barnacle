@@ -26,6 +26,7 @@ namespace ScriptLanguage
                 "break",
                 "bool",
                 "centre",
+                "clean",
                 "delete",
                 "dropabove",
                 "dropbelow",
@@ -116,6 +117,7 @@ namespace ScriptLanguage
                 "makebricktower",
                 "makeconstructionstrip",
                 "makecrossgrille",
+                "makeellipsoid",
                 "makehollow",
                 "makeimageplaque",
                 "makedualprofile",
@@ -1218,6 +1220,15 @@ namespace ScriptLanguage
             return result;
         }
 
+        private bool ParseCleanStatement(CompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+            string label = "Clean";
+            SolidCleanNode asn = new SolidCleanNode();
+            result = ParseSolidStatement(parentNode, parentName, label, 1, asn);
+            return result;
+        }
+
         private bool ParseCloseFileStatement(CompoundNode parentNode, string parentName)
         {
             bool result = false;
@@ -2259,6 +2270,12 @@ namespace ScriptLanguage
                     }
                     break;
 
+                case "clean":
+                    {
+                        result = ParseCleanStatement(parentNode, parentName);
+                    }
+                    break;
+
                 case "delete":
                     {
                         result = ParseDeleteStatement(parentNode, parentName);
@@ -2922,6 +2939,12 @@ namespace ScriptLanguage
                         case "makebrickwall":
                             {
                                 exp = ParseMakeBrickWallFunction(parentName);
+                            }
+                            break;
+
+                        case "makeellipsoid":
+                            {
+                                exp = ParseMakeEllipsoidFunction(parentName);
                             }
                             break;
 

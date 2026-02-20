@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Barnacle.Dialogs.PointCoordinateEntry"
         mc:Ignorable="d"
-        Title="Point Coordinate Entry" Height="150" Width="200">
+        Title="Point Coordinate Entry" Height="150" Width="200" WindowStartupLocation="CenterOwner">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
@@ -29,6 +29,6 @@
         <Label VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" Content="Y" />
         <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding YValue}" Grid.ColumnSpan="2" />
         <Button Grid.Row="4" Grid.Column="2" Margin="2,2,2,2" Content="Cancel" Click="CancelButton_Click" />
-        <Button Grid.Row="4" Grid.Column="3" Margin="2,2,2,2" Content="OK" Click="OKButton_Click" />
+        <Button Grid.Row="4" Grid.Column="3" Margin="2,2,2,2" Content="OK" Click="OKButton_Click" IsDefault="True" />
     </Grid>
 </Window>

@@ -375,12 +375,12 @@ namespace Barnacle.Dialogs
                 {
                         case "Simple":
                             GenerateSimpleTrack(0, verts, facs);
-                            GenerateFaces(verts, facs);
+                            GenerateFacesFromRibs(verts, facs);
                             break;
 
                         case "Simple 2":
                             GenerateSimpleTrack(1, verts, facs);
-                            GenerateFaces(verts, facs);
+                            GenerateFacesFromRibs(verts, facs);
                             break;
 
                         case "M1":

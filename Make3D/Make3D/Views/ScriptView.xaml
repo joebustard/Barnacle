@@ -12,6 +12,7 @@
     d:DesignHeight="550"
     d:DesignWidth="800"
     Loaded="ScriptView_Loaded"
+    SizeChanged="UserControl_SizeChanged"
     mc:Ignorable="d">
     <UserControl.DataContext>
         <ViewModels:ScriptViewModel />
@@ -34,6 +35,8 @@
                             x:Name="ScriptBox"
                             MaxHeight="500"
                             HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            Margin="1,0,1,0"
                             Block.LineHeight="2"
                             FontSize="32"
                             IsEnabled="{Binding EnableRun}"
@@ -82,7 +85,7 @@
                             Grid.RowSpan="2"
                             Grid.ColumnSpan="2"
                             Margin="0,0,0,74.8"
-                            Columns="6"
+                            Columns="7"
                             Rows="1">
 
                             <Button
@@ -107,24 +110,6 @@
                                 IsEnabled="{Binding EnableRun}"
                                 ToolTip="Clear results log" />
 
-                            <!--
-                            <Custom:RibbonSplitButton
-                            Style="{StaticResource RibbonSplitButtonStyle}"
-                                IsEnabled="{Binding EnableRun}"
-                                Label="Save">
-                                <Custom:RibbonSplitMenuItem
-                                    Command="{Binding ScriptCommand}"
-                                    CommandParameter="Save"
-                                    Header="Save"
-                                    IsEnabled="{Binding EnableRun}" />
-                                <Custom:RibbonSplitMenuItem
-                                    Command="{Binding ScriptCommand}"
-                                    CommandParameter="SaveTemplate"
-                                    Header="Save As Template"
-                                    IsEnabled="{Binding EnableRun}" />
-                            </Custom:RibbonSplitButton>
-                            -->
-
                             <Button
                                 x:Name="SaveBut"
                                 Command="{Binding ScriptCommand}"
@@ -139,16 +124,30 @@
                                 IsEnabled="{Binding EnableRun}" />
 
                             <StackPanel Orientation="Horizontal">
-                                <TextBox
-                                    x:Name="SearchBox"
-                                    Width="80"
-                                    Margin="2,2,0,2"
-                                    Text="{Binding SearchText}" />
+
                                 <Button
                                     x:Name="SearchBut"
                                     Command="{Binding FindCommand}"
                                     Content="Find"
                                     IsEnabled="{Binding EnableRun}" />
+                                <TextBox
+                                    x:Name="SearchBox"
+                                    Width="80"
+                                    Margin="2,2,0,2"
+                                    Text="{Binding SearchText}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+
+                                <Button
+                                    x:Name="ReplaceBut"
+                                    Command="{Binding ReplaceCommand}"
+                                    Content="Replace"
+                                    IsEnabled="{Binding EnableRun}" />
+                                <TextBox
+                                    x:Name="ReplaceBox"
+                                    Width="80"
+                                    Margin="2,2,0,2"
+                                    Text="{Binding ReplaceText}" />
                             </StackPanel>
                         </UniformGrid>
                         <TextBox

@@ -50,6 +50,7 @@ namespace Barnacle
 
         public MainWindow()
         {
+            System.Diagnostics.PresentationTraceSources.DataBindingSource.Switch.Level = System.Diagnostics.SourceLevels.Critical;
             InitializeComponent();
             this.RestoreSizeAndLocation();
             PrepareUndo();

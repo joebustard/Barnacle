@@ -374,6 +374,14 @@ procedure CenFlo(solid s)
      floor s;
 }
 
+// Name       : MoveBackTo
+// Does       : Move a solid so its back is at the given z
+// Parameters : the solid to move, the z
+Procedure Movebackto( Solid  s, Double  z )
+{
+       RMove s, 0, 0, z - Back ( s ) ;
+}
+
 function solid HollowVertical( solid sl, double skinThickness)
 {
     if ( skinThickness <= 0)

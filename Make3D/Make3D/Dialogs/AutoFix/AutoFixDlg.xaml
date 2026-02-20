@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:Barnacle.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Auto Fix"
     Width="600"
@@ -36,13 +35,23 @@
                 VerticalAlignment="Center"
                 Content="Remove duplicate vertices"
                 IsChecked="{Binding RemoveDuplicates}" />
+            <CheckBox
+                Width="200"
+                VerticalAlignment="Center"
+                Content="Remove duplicate faces"
+                IsChecked="{Binding RemoveDuplicateFaces}" />
         </StackPanel>
         <StackPanel
             Grid.Row="2"
             Grid.Column="1"
             Orientation="Horizontal">
             <CheckBox
-                Width="150"
+                Width="200"
+                VerticalAlignment="Center"
+                Content="Align Faces"
+                IsChecked="{Binding AlignFaces}" />
+            <CheckBox
+                Width="200"
                 VerticalAlignment="Center"
                 Content="Remove holes"
                 IsChecked="{Binding RemoveHoles}" />

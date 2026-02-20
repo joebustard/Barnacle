@@ -1,6 +1,7 @@
 using Barnacle.EditorParameterLib;
 using CSGLib;
 using HullLibrary;
+using Object3DLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -506,7 +507,7 @@ namespace Barnacle.Object3DLib
                     res.relativeObjectVertices.Add(p3d);
                 }
                 // THIS IS A HACK TO GET aroubd an async issue.
-                if (useIndices)
+                if (useIndices && this.Indices != null)
                 {
                     foreach (int i in this.Indices)
                     {
@@ -709,6 +710,13 @@ namespace Barnacle.Object3DLib
             Position = new Point3D(Position.X, Position.Y - minY, Position.Z);
         }
 
+        public int OrientateFaceNormals()
+        {
+            int res = FaceOrientationNormaliser.StandardiseFaceOrientations(relativeObjectVertices.Count, TriangleIndices);
+            Remesh();
+            return res;
+        }
+
         public virtual bool Read(XmlNode nd, bool reportMissing = true)
         {
             bool ok = true;
@@ -878,6 +886,25 @@ namespace Barnacle.Object3DLib
                 RelativeToAbsolute();
                 SetMesh();
             }
+        }
+
+        public void RemoveDuplicateAndUnreferencedVertices()
+        {
+            OctTreeLib.OctTree octTree;
+            RelativeToAbsolute();
+            Point3DCollection tmpV = new Point3DCollection();
+            octTree = new OctTreeLib.OctTree(tmpV, AbsoluteBounds.Lower, AbsoluteBounds.Upper);
+            Int32Collection tmpF = new Int32Collection();
+            foreach (int f in TriangleIndices)
+            {
+                Point3D p = AbsoluteObjectVertices[f];
+                int v = octTree.AddPoint(p);
+                tmpF.Add(v);
+            }
+            TriangleIndices = tmpF;
+            AbsoluteObjectVertices = tmpV;
+            AbsoluteToRelative();
+            SetMesh();
         }
 
         public virtual void Rotate(Point3D RotateBy)

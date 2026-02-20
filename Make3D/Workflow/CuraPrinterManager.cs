@@ -6,13 +6,13 @@ using FileUtils;
 
 namespace Workflow
 {
-    public class BarnaclePrinterManager
+    public class CuraPrinterManager
     {
         private string filePath;
 
-        public BarnaclePrinterManager()
+        public CuraPrinterManager()
         {
-            Printers = new List<BarnaclePrinter>();
+            Printers = new List<CuraPrinter>();
 
             string folder = PathManager.PrinterProfileFolder();
             if (!Directory.Exists(folder))
@@ -26,7 +26,7 @@ namespace Workflow
             }
         }
 
-        public List<BarnaclePrinter> Printers
+        public List<CuraPrinter> Printers
         {
             get; set;
         }
@@ -38,7 +38,7 @@ namespace Workflow
                 startGCode = startGCode.Replace("\r\n", @"\n");
                 endGCode = endGCode.Replace("\r\n", @"\n");
 
-                BarnaclePrinter bp = new BarnaclePrinter();
+                CuraPrinter bp = new CuraPrinter();
                 bp.Name = printerName;
                 bp.CuraPrinterFile = curaPrinter;
                 bp.CuraExtruderFile = curaExtuder;
@@ -48,10 +48,10 @@ namespace Workflow
             }
         }
 
-        public BarnaclePrinter FindPrinter(String name)
+        public CuraPrinter FindPrinter(String name)
         {
-            BarnaclePrinter res = null;
-            foreach (BarnaclePrinter bp in Printers)
+            CuraPrinter res = null;
+            foreach (CuraPrinter bp in Printers)
             {
                 if (bp.Name == name)
                 {
@@ -65,7 +65,7 @@ namespace Workflow
         public List<string> GetPrinterNames()
         {
             List<String> res = new List<string>();
-            foreach (BarnaclePrinter bp in Printers)
+            foreach (CuraPrinter bp in Printers)
             {
                 res.Add(bp.Name);
             }
@@ -78,7 +78,7 @@ namespace Workflow
             {
                 if (Printers == null)
                 {
-                    Printers = new List<BarnaclePrinter>();
+                    Printers = new List<CuraPrinter>();
                 }
                 else
                 {
@@ -94,7 +94,7 @@ namespace Workflow
                     foreach (XmlNode nd in prnts)
                     {
                         XmlElement el = nd as XmlElement;
-                        BarnaclePrinter printer = new BarnaclePrinter();
+                        CuraPrinter printer = new CuraPrinter();
                         printer.LoadFromXml(el);
                         Printers.Add(printer);
                     }
@@ -106,8 +106,8 @@ namespace Workflow
         {
             if (Printers != null && Printers.Count > 0)
             {
-                List<BarnaclePrinter> tmp = new List<BarnaclePrinter>();
-                foreach (BarnaclePrinter bp in Printers)
+                List<CuraPrinter> tmp = new List<CuraPrinter>();
+                foreach (CuraPrinter bp in Printers)
                 {
                     if (bp.Name != name)
                     {
@@ -133,7 +133,7 @@ namespace Workflow
             XmlElement docNode = doc.CreateElement("Printers");
             if (Printers != null)
             {
-                foreach (BarnaclePrinter prnt in Printers)
+                foreach (CuraPrinter prnt in Printers)
                 {
                     docNode.AppendChild(prnt.SaveAsXml(doc));
                 }

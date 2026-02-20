@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Senilias": {
-      "commandName": "Project",
-      "commandLineArgs": "\"C:\\Users\\joe Bustard\\Documents\\Barnacle\\CrusaderMKIII\\CrusaderMkIII.sen\"\r\n"
+      "commandName": "Project"
     }
   }
 }

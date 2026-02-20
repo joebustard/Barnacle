@@ -336,6 +336,8 @@ namespace VisualSolutionExplorer
                         nf.Load(doc, fel);
                     }
                 }
+
+                SortNames();
             }
         }
 
@@ -410,6 +412,13 @@ namespace VisualSolutionExplorer
             {
                 fld.Save(solutionDoc, el);
             }
+        }
+
+        public void SortNames()
+        {
+            _projectFiles.Sort();
+
+            _projectFolders.Sort();
         }
 
         internal void AddExistingFile(string ren)
@@ -799,11 +808,6 @@ namespace VisualSolutionExplorer
             {
                 fi.FilePath = FolderPath + System.IO.Path.DirectorySeparatorChar + fi.FileName;
             }
-        }
-
-        private void SortFileNames()
-        {
-            _projectFiles.Sort();
         }
     }
 }

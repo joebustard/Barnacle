@@ -20,20 +20,12 @@ using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Barnacle.Dialogs.RibbedFuselage.Models;
 using Barnacle.LineLib;
 using System.Collections.ObjectModel;
@@ -45,23 +37,26 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
     /// </summary>
     public partial class ImageMarker3d : UserControl, INotifyPropertyChanged
     {
+        public List<LetterMarker> markers;
         private Point3D cameraPosition;
 
+        private bool convertMarkerPositionToScreen;
         private double fieldOfView;
 
+        private Floor floor;
         private GeometryModel3D lastHitModel;
 
         private Point3D lastHitPoint;
-        private Floor floor;
         private Vector3D lookDirection;
 
         private System.Windows.Media.Color meshColour;
 
+        private Point oldMousePos;
         private PolarCamera polarCamera;
 
-        private PlateModel topPlateModel;
-        private SidePlateModel sidePlateModel;
         private List<RibPlateModel> ribPlates;
+        private SidePlateModel sidePlateModel;
+        private PlateModel topPlateModel;
 
         public ImageMarker3d()
         {
@@ -148,6 +143,27 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             }
         }
 
+        public List<LetterMarker> Markers
+
+        {
+            get
+            {
+                return markers;
+            }
+
+            set
+            {
+                if (markers != value)
+                {
+                    markers = value;
+                    convertMarkerPositionToScreen = true;
+                    if (markers != null)
+                    {
+                    }
+                }
+            }
+        }
+
         public System.Windows.Media.Color MeshColour
         {
             get
@@ -161,11 +177,10 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             }
         }
 
-        public void SetTopPoints()
+        public Model3DGroup ModelGroup
         {
+            get; set;
         }
-
-        public Model3DGroup ModelGroup { get; set; }
 
         public void HitTest(Viewport3D viewport3D1, Point mouseposition)
         {
@@ -215,26 +230,6 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             }
         }
 
-        internal void SetSidePath(string pth)
-        {
-            FlexiPath flexiPath = new FlexiPath();
-            flexiPath.FromString(pth);
-            sidePlateModel.SetPoints(flexiPath.DisplayPointsF());
-            topPlateModel.SetYOffset(sidePlateModel.MiddleOffset);
-        }
-
-        public void UpdateCameraPos()
-        {
-            lookDirection.X = -polarCamera.CameraPos.X;
-            lookDirection.Y = -polarCamera.CameraPos.Y;
-            lookDirection.Z = -polarCamera.CameraPos.Z;
-            //lookDirection.Normalize();
-            CameraPosition = new Point3D(polarCamera.CameraPos.X, polarCamera.CameraPos.Y, polarCamera.CameraPos.Z);
-            LookDirection = new Vector3D(lookDirection.X, lookDirection.Y, lookDirection.Z);
-            NotifyPropertyChanged("LookDirection");
-            NotifyPropertyChanged("CameraPosition");
-        }
-
         public void Redisplay()
         {
             if (ImageMarkerModelGroup != null)
@@ -244,20 +239,6 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
                 {
                     ImageMarkerModelGroup.Children.Add(floor.FloorMesh);
                 }
-
-                /*
-                                if (floor != null && ShowFloor)
-                                {
-                                }
-
-                                if (axies != null && ShowAxies)
-                                {
-                                    foreach (GeometryModel3D m in axies.Group.Children)
-                                    {
-                                        ModelGroup.Children.Add(m);
-                                    }
-                                }
-                */
 
                 ImageMarkerModelGroup.Children.Add(topPlateModel.GetModel());
                 ImageMarkerModelGroup.Children.Add(sidePlateModel.GetModel());
@@ -269,11 +250,20 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             }
         }
 
-        internal void SetTopPath(string pth)
+        public void SetTopPoints()
         {
-            FlexiPath flexiPath = new FlexiPath();
-            flexiPath.FromString(pth);
-            topPlateModel.SetPoints(flexiPath.DisplayPointsF());
+        }
+
+        public void UpdateCameraPos()
+        {
+            lookDirection.X = -polarCamera.CameraPos.X;
+            lookDirection.Y = -polarCamera.CameraPos.Y;
+            lookDirection.Z = -polarCamera.CameraPos.Z;
+
+            CameraPosition = new Point3D(polarCamera.CameraPos.X, polarCamera.CameraPos.Y, polarCamera.CameraPos.Z);
+            LookDirection = new Vector3D(lookDirection.X, lookDirection.Y, lookDirection.Z);
+            NotifyPropertyChanged("LookDirection");
+            NotifyPropertyChanged("CameraPosition");
         }
 
         internal void AddRibPath(string pth)
@@ -283,6 +273,79 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             flexiPath.FromString(pth);
             rpm.SetPoints(flexiPath.DisplayPointsF());
             ribPlates.Add(rpm);
+        }
+
+        internal void MoveRibsUp(double minY)
+        {
+            Vector3D v = new Vector3D(0, minY + sidePlateModel.MiddleOffset, 0);
+            for (int i = 0; i < ribPlates.Count; i++)
+            {
+                for (int j = 0; j < ribPlates[i].Vertices.Count; j++)
+                {
+                    ribPlates[i].Vertices[j] += v;
+                }
+            }
+        }
+
+        internal void SetGeneratingRibs(List<RibImageDetailsModel> ribs, List<double> ribXs, List<Dimension> topDims, List<Dimension> sideDims)
+        {
+            ribPlates.Clear();
+            foreach (RibImageDetailsModel rdm in ribs)
+            {
+                if (rdm.ProfilePoints == null)
+                {
+                    rdm.GenerateProfilePoints();
+                }
+                RibPlateModel plateModel = new RibPlateModel();
+                plateModel.MeshColour = Colors.OrangeRed;
+                plateModel.SetPoints(rdm.ProfilePoints);
+                ribPlates.Add(plateModel);
+            }
+
+            for (int i = 0; i < ribPlates.Count; i++)
+            {
+                SetRibPosition(i, ribXs[i] - ribXs[0], topDims[i].P1.Y, topDims[i].P2.Y, sideDims[i].P1.Y, sideDims[i].P2.Y);
+            }
+            MoveRibsUp(sideDims[0].P1.Y);
+        }
+
+        internal void SetRibPosition(int i, double x, double topMin, double topMax, double sideMin, double sideMax)
+        {
+            if (i >= 0 && i < ribPlates.Count)
+            {
+                ribPlates[i].SetPositionAndScale(x + sidePlateModel.LeftOffset, sidePlateModel.MiddleOffset, topMin, topMax, sideMin, sideMax);
+            }
+        }
+
+        internal void SetRibs(ObservableCollection<RibImageDetailsModel> ribs)
+        {
+            ribPlates.Clear();
+            foreach (RibImageDetailsModel rdm in ribs)
+            {
+                if (rdm.ProfilePoints == null)
+                {
+                    rdm.GenerateProfilePoints();
+                }
+                RibPlateModel plateModel = new RibPlateModel();
+                plateModel.MeshColour = Colors.OrangeRed;
+                plateModel.SetPoints(rdm.ProfilePoints);
+                ribPlates.Add(plateModel);
+            }
+        }
+
+        internal void SetSidePath(string pth)
+        {
+            FlexiPath flexiPath = new FlexiPath();
+            flexiPath.FromString(pth);
+            sidePlateModel.SetPoints(flexiPath.DisplayPointsF());
+            topPlateModel.SetYOffset(sidePlateModel.MiddleOffset);
+        }
+
+        internal void SetTopPath(string pth)
+        {
+            FlexiPath flexiPath = new FlexiPath();
+            flexiPath.FromString(pth);
+            topPlateModel.SetPoints(flexiPath.DisplayPointsF());
         }
 
         protected void SetCameraDistance(bool sideView = false)
@@ -303,26 +366,6 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             }
         }
 
-        internal void SetRibPosition(int i, double x, double lower1, double upper1, double lower2, double upper2)
-        {
-            if (i >= 0 && i < ribPlates.Count)
-            {
-                ribPlates[i].SetPositionAndScale(x + sidePlateModel.LeftOffset, sidePlateModel.MiddleOffset, lower1, upper1, lower2, upper2);
-            }
-        }
-
-        internal void MoveRibsUp(double minY)
-        {
-            Vector3D v = new Vector3D(0, minY + sidePlateModel.MiddleOffset, 0);
-            for (int i = 0; i < ribPlates.Count; i++)
-            {
-                for (int j = 0; j < ribPlates[i].Vertices.Count; j++)
-                {
-                    ribPlates[i].Vertices[j] += v;
-                }
-            }
-        }
-
         protected virtual void Viewport_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
         {
             Viewport3D vp = sender as Viewport3D;
@@ -334,8 +377,6 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
                 }
             }
         }
-
-        private Point oldMousePos;
 
         protected virtual void Viewport_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
@@ -368,75 +409,16 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
 
         private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
         {
-            /*
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                if (selectedMarker != null)
-                {
-                    Br_MouseMove(sender, e);
-                }
-                else
-                if (pinSelected)
-                {
-                    Ply_MouseMove(sender, e);
-                }
-            }
-            */
         }
 
         private void MainCanvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            /*
-            Br_MouseUp(sender, e);
-
-            Ply_MouseUp(sender, e);
-            */
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateCameraPos();
             Redisplay();
-        }
-
-        public List<LetterMarker> markers;
-        private bool convertMarkerPositionToScreen;
-
-        public List<LetterMarker> Markers
-
-        {
-            get
-            {
-                return markers;
-            }
-
-            set
-            {
-                if (markers != value)
-                {
-                    markers = value;
-                    convertMarkerPositionToScreen = true;
-                    if (markers != null)
-                    {
-                    }
-                }
-            }
-        }
-
-        internal void SetRibs(ObservableCollection<RibImageDetailsModel> ribs)
-        {
-            ribPlates.Clear();
-            foreach (RibImageDetailsModel rdm in ribs)
-            {
-                if (rdm.ProfilePoints == null)
-                {
-                    rdm.GenerateProfilePoints();
-                }
-                RibPlateModel plateModel = new RibPlateModel();
-                plateModel.MeshColour = Colors.OrangeRed;
-                plateModel.SetPoints(rdm.ProfilePoints);
-                ribPlates.Add(plateModel);
-            }
         }
     }
 }

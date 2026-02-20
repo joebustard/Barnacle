@@ -77,8 +77,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BarnaclePrinter.cs" />
-    <Compile Include="BarnaclePrinterManager.cs" />
+    <Compile Include="CuraPrinter.cs" />
+    <Compile Include="CuraPrinterManager.cs" />
     <Compile Include="CuraDefinition.cs" />
     <Compile Include="CuraDefinitionFile.cs" />
     <Compile Include="CuraEngineInterface.cs" />

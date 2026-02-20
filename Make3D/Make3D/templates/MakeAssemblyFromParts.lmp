@@ -1,8 +1,8 @@
 Program  "Assemble Model"
 {
    Include "libs\limplib.txt" ;
-   Include "..\Scale.txt" ;
-   Include "..\GlobalDefinitions.txt" ;
+   Include "..\Scale.inc" ;
+   Include "..\GlobalDefinitions.inc" ;
 
    // local declarations
    // set this first

@@ -288,11 +288,32 @@
                             Content="Back"
                             GroupName="BodyMode"
                             IsChecked="{Binding BackBody}" />
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox
+                                Margin="0,4,0,0"
+                                VerticalContentAlignment="Center"
+                                Content="Shell"
+                                IsChecked="{Binding Shell}"
+                                ToolTip="Create a shell rather than a solid." />
+                            <Label
+                                Margin="8,4,0,0"
+                                VerticalAlignment="Center"
+                                Content="Size" />
+                            <TextBox
+                                Width="30"
+                                Margin="8,4,0,0"
+                                Text="{Binding ShellSize}" />
+                        </StackPanel>
                         <CheckBox
                             Margin="0,4,0,0"
                             Content="Autofit"
                             IsChecked="{Binding AutoFit}"
                             ToolTip="If consecutive ribs have the same path automatically interpolate virtual ribs in between." />
+                        <CheckBox
+                            Margin="0,4,0,0"
+                            Content="Centre Origin"
+                            IsChecked="{Binding OriginToCentroid}"
+                            ToolTip="Move object origin to centroid on exit." />
                         <StackPanel Margin="0,4,0,0" Orientation="Horizontal">
                             <Label VerticalAlignment="Center">
                                 Divisions

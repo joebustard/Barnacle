@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Deps ProjectFolder="<PROJPATH>" ProjectName="<PROJNAME>.bmf"> 
+
+<Dep Type="File">
+    <Source>scripts\scale.inc</Source>
+    <Target>subparts\*.txt</Target>
+    <Step Type="Touch">subparts\*.txt</Step>
+  </Dep>
+
+<Dep Type="File">
+    <Source>scripts\globaldefinitions.inc</Source>
+    <Target>subparts\*.txt</Target>
+    <Step Type="Touch">subparts\*.txt</Step>
+  </Dep>
+
+  <Dep Type="File">
+    <Source>subparts\*subparts.txt</Source>
+    <Target>parts\*.txt</Target>
+    <Step Type="Script">scripts\PartMakers\Make*.lmp</Step>
+  </Dep>
+
+ <Dep Type="File">
+    <Source>parts\engine.txt, parts\engineexhaust.txt</Source>
+    <Target>assemblies\engineassembly.txt</Target>
+    <Step Type="Script">assemblers\assembleengine.lmp</Step>
+  </Dep>
+
+ <Dep Type="File">
+    <Source>parts\LeftWing.txt, parts\RightWing.txt, parts\pitottube.txt</Source>
+    <Target>assemblies\wingsassembly.txt</Target>
+    <Step Type="Script">assemblers\assemblewings.lmp</Step>
+  </Dep>
+
+ <Dep Type="File">
+    <Source>parts\pilot.txt, parts\cockpit.txt, parts\seat.txt</Source>
+    <Target>assemblies\cockpitassembly.txt</Target>
+    <Step Type="Script">assemblers\assemblecockpit.lmp</Step>
+  </Dep>
+
+ <Dep Type="File">
+    <Source>parts\fuselage.txt, parts\airintake.txt, parts\propeller.txt, parts\spinner.txt, parts\bombdoors.txt</Source>
+    <Target>assemblies\fuselageassembly.txt</Target>
+    <Step Type="Script">assemblers\assemblefuselage.lmp</Step>
+  </Dep>
+
+ <Dep Type="File">
+    <Source>parts\frontundercarriage.txt, parts\leftundercarriage.txt, parts\rightundercarriage.txt, parts\mainwheel.txt, parts\nosewheel.txt, parts\tailwheel.txt </Source>
+    <Target>assemblies\undercarriageassembly.txt</Target>
+    <Step Type="Script">assemblers\assembleundercarriage.lmp</Step>
+  </Dep>
+
+  <Dep Type="File">
+    <Source>parts\rudder.txt, parts\lefttail.txt, parts\righttail.txt</Source>
+    <Target>Assemblies\TailAssembly.txt</Target>
+    <Step Type="Script">scripts\assemblers\AssembleTail.lmp</Step>
+  </Dep>
+
+  <Dep Type="File">
+    <Source>assemblies\engineassembly.txt, assemblies\wingsassembly.txt, assemblies\fuselageassembly.txt, assemblies\undercarriageassembly.txt, assemblies\tailassembly.txt</Source>
+    <Target>Assemblies\WholeAircraftAssembly.txt</Target>
+    <Step Type="Script">scripts\assemblers\AssembleWholeAircraft.lmp</Step>
+  </Dep>
+
+ <Dep Type="File">
+    <Source>Assemblies\WholeAircraftAssembly.txt</Source>
+    <Target>kits\*.txt</Target>
+    <Step Type="Script">scripts\kitmakers\Make*.lmp</Step>
+  </Dep>
+
+ </Deps>

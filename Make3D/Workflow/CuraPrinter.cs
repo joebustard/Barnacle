@@ -3,9 +3,9 @@ using System.Xml;
 
 namespace Workflow
 {
-    public class BarnaclePrinter
+    public class CuraPrinter
     {
-        public BarnaclePrinter()
+        public CuraPrinter()
         {
             Name = "Ender 3 Pro";
             CuraPrinterFile = @"creality_ender3pro";

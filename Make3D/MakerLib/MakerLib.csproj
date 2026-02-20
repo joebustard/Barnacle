@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="BicornMaker.cs" />
     <Compile Include="CohenSutherland.cs" />
+    <Compile Include="Ellipsoid\MakeEllipsoid.cs" />
     <Compile Include="GrayScaleImagePlaqueMaker.cs" />
     <Compile Include="HoneycombGrille\MakeHoneyCombGrille.cs" />
     <Compile Include="MakeGear.cs" />

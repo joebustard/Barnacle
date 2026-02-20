@@ -959,6 +959,10 @@ namespace Barnacle.Dialogs
             }
             ProfileIndex = EditorParameters.GetInt("ProfileIndex", 0);
             BaseThickness = EditorParameters.GetDouble("BaseThickness", 1);
+            int v = EditorParameters.GetInt("ShowGrid", 1);
+            PathEditor.ShowGrid = (UserControls.GridSettings.GridStyle)v;
+            double zoomLevel = EditorParameters.GetDouble("Zoom", 1);
+            PathEditor.ZoomLevel = zoomLevel;
         }
 
         private void PathPointsChanged(List<Point> points)
@@ -1018,6 +1022,8 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("ImagePath", PathEditor.ImagePath);
             EditorParameters.Set("ProfileIndex", ProfileIndex.ToString());
             EditorParameters.Set("BaseThickness", BaseThickness.ToString());
+            EditorParameters.Set("ShowGrid", ((int)(PathEditor.ShowGrid)).ToString());
+            EditorParameters.Set("Zoom", PathEditor.ZoomLevel);
         }
 
         private void UpdateDisplay()
