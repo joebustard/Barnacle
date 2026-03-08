@@ -27,6 +27,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_0550F5D5D029486CB48BCEC36CE5C212"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_0A57658F725B4593A06D75EF229DD6A2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_0B679B070CFE47DBB8111E6130EEE76F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -136,6 +148,12 @@
         "Entry"
         {
         "MsmKey" = "8:_2CCC5ECDD28E7D8623D7CCA6B3149126"
+        "OwnerKey" = "8:_93282F906FBDD3FEBEE7615D829D1D60"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2CCC5ECDD28E7D8623D7CCA6B3149126"
         "OwnerKey" = "8:_34A63051F8BAD4C96FF7D079E1461CB5"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -147,7 +165,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_310D8AE72FF14295885C027B1B1F9512"
+        "MsmKey" = "8:_32A7A2AA6A554A4A96C767E6B9DD3A3A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -213,12 +231,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_3C3976BC65674F4CABCB6CAF2B419B10"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_3F865547F63A4347A2AE4A908EFB6045"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -232,6 +244,12 @@
         "Entry"
         {
         "MsmKey" = "8:_4711B3FAB6FC465E949E4D60D27E5F87"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_493506A6044043CA8AC292195C9C53A6"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -292,7 +310,19 @@
         "Entry"
         {
         "MsmKey" = "8:_576ABB3A214CCF22264D68C7C0407D70"
+        "OwnerKey" = "8:_34A63051F8BAD4C96FF7D079E1461CB5"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_576ABB3A214CCF22264D68C7C0407D70"
         "OwnerKey" = "8:_7DD462CEB26E269C1A7F01A1C7E7427B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_591DC0C4176340A79DD02BA3BBB9A580"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -333,8 +363,26 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_60CD4A13494C4F86B062301B7F8FF260"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_627371296D6B6CCECA2EADBFD38B7AF3"
         "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_635FF8C79E3A47E381CC4A831F02CC50"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_67C2392A63DF47CABB3FE86BEDB418F4"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -375,8 +423,20 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_7E1C1253BCCB4DAC9B964F598962D9D5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_82BDBC973CD110E70F6D60C6DE9210AF"
         "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_83EBAF65A025496CAD87A9CF61FE0E58"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -400,12 +460,6 @@
         "Entry"
         {
         "MsmKey" = "8:_8D3A4C833C5B4653A54C4DEC1317D75B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_8EA0558B794A40729225166A7C884787"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -460,6 +514,12 @@
         "Entry"
         {
         "MsmKey" = "8:_933D2C11F15146D2A233F155182EDF2E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_97AB915D59AD4BE8B21948368C27E624"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -561,6 +621,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_B671DBD965BB4223A13BC062E1735200"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_B7D0124B62597219E48D79650FA8B838"
         "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
         "MsmSig" = "8:_UNDEFINED"
@@ -640,6 +706,12 @@
         "Entry"
         {
         "MsmKey" = "8:_C7E221F9DF77D09D7FE8850D0CADA95C"
+        "OwnerKey" = "8:_F74EF80B11875A6760AE8B042A766F4E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C7E221F9DF77D09D7FE8850D0CADA95C"
         "OwnerKey" = "8:_BB7464F8E71D0F82F41CEF05D8A4AAB2"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -670,12 +742,6 @@
         "Entry"
         {
         "MsmKey" = "8:_D8A9FB40385944C285E165546ADA9B95"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_DD62B7B3CB864CAFA2A36556CF23F131"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1185,6 +1251,46 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0550F5D5D029486CB48BCEC36CE5C212"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\MakeKitFromAssemblies.lmp"
+            "TargetName" = "8:MakeKitFromAssemblies.lmp"
+            "Tag" = "8:"
+            "Folder" = "8:_23862707349949B195647F45758B8C14"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0A57658F725B4593A06D75EF229DD6A2"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\AIrcraftProjectLib.inc"
+            "TargetName" = "8:AIrcraftProjectLib.inc"
+            "Tag" = "8:"
+            "Folder" = "8:_23862707349949B195647F45758B8C14"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0B679B070CFE47DBB8111E6130EEE76F"
             {
             "SourcePath" = "8:..\\Make3D\\Data\\Textures\\DeckPlate1.png"
@@ -1531,12 +1637,12 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_310D8AE72FF14295885C027B1B1F9512"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_32A7A2AA6A554A4A96C767E6B9DD3A3A"
             {
-            "SourcePath" = "8:..\\Make3D\\templates\\Tank\\Scale.txt"
-            "TargetName" = "8:Scale.txt"
+            "SourcePath" = "8:..\\Make3D\\templates\\Tank\\GlobalDefinitions.inc"
+            "TargetName" = "8:GlobalDefinitions.inc"
             "Tag" = "8:"
-            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Folder" = "8:_ABE76DA878F74A7CB17154024B220A11"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1704,26 +1810,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3C3976BC65674F4CABCB6CAF2B419B10"
-            {
-            "SourcePath" = "8:..\\Make3D\\templates\\Tank\\GlobalDefinitions.txt"
-            "TargetName" = "8:GlobalDefinitions.txt"
-            "Tag" = "8:"
-            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3F865547F63A4347A2AE4A908EFB6045"
             {
             "SourcePath" = "8:..\\Make3D\\templates\\AircraftBuildInstructions.docx"
@@ -1770,6 +1856,26 @@
             "TargetName" = "8:StoneWall1.png"
             "Tag" = "8:"
             "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_493506A6044043CA8AC292195C9C53A6"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\AircraftScale.inc"
+            "TargetName" = "8:AircraftScale.inc"
+            "Tag" = "8:"
+            "Folder" = "8:_23862707349949B195647F45758B8C14"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1946,6 +2052,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_591DC0C4176340A79DD02BA3BBB9A580"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\Tank\\Scale.inc"
+            "TargetName" = "8:Scale.inc"
+            "Tag" = "8:"
+            "Folder" = "8:_ABE76DA878F74A7CB17154024B220A11"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5A6440D3AAA64814AE14CBE4F138C869"
             {
             "SourcePath" = "8:..\\Make3D\\templates\\Tank\\Tanklib.lmp"
@@ -2057,6 +2183,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_60CD4A13494C4F86B062301B7F8FF260"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\MakeAircraft.sen"
+            "TargetName" = "8:MakeAircraft.sen"
+            "Tag" = "8:"
+            "Folder" = "8:_23862707349949B195647F45758B8C14"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_627371296D6B6CCECA2EADBFD38B7AF3"
             {
             "AssemblyRegister" = "3:1"
@@ -2086,6 +2232,46 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_635FF8C79E3A47E381CC4A831F02CC50"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\aircraftglobaldefinitions.inc"
+            "TargetName" = "8:aircraftglobaldefinitions.inc"
+            "Tag" = "8:"
+            "Folder" = "8:_23862707349949B195647F45758B8C14"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_67C2392A63DF47CABB3FE86BEDB418F4"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\MakePartFromSubParts.lmp"
+            "TargetName" = "8:MakePartFromSubParts.lmp"
+            "Tag" = "8:"
+            "Folder" = "8:_23862707349949B195647F45758B8C14"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7151DBB7E0A84E5383A2357C5BAB6370"
@@ -2199,6 +2385,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7E1C1253BCCB4DAC9B964F598962D9D5"
+            {
+            "SourcePath" = "8:..\\Interpreter\\Libs\\limplib.txt"
+            "TargetName" = "8:limplib.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_90FE52C3E5634A6EA371165DB023700B"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_82BDBC973CD110E70F6D60C6DE9210AF"
             {
             "AssemblyRegister" = "3:1"
@@ -2228,6 +2434,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_83EBAF65A025496CAD87A9CF61FE0E58"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\MakeAssemblyFromParts.lmp"
+            "TargetName" = "8:MakeAssemblyFromParts.lmp"
+            "Tag" = "8:"
+            "Folder" = "8:_23862707349949B195647F45758B8C14"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_845847A87221D417A87D171F91DC7E16"
@@ -2318,26 +2544,6 @@
             "TargetName" = "8:Checker1.png"
             "Tag" = "8:"
             "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8EA0558B794A40729225166A7C884787"
-            {
-            "SourcePath" = "8:..\\Make3D\\templates\\Tank\\Scale.txt"
-            "TargetName" = "8:Scale.txt"
-            "Tag" = "8:"
-            "Folder" = "8:_ABE76DA878F74A7CB17154024B220A11"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2498,6 +2704,26 @@
             {
             "SourcePath" = "8:..\\Make3D\\templates\\WholeArmouredCarAssembly1_35.txt"
             "TargetName" = "8:WholeArmouredCarAssembly1_35.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_23862707349949B195647F45758B8C14"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_97AB915D59AD4BE8B21948368C27E624"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\BillOfMaterials.xlsx"
+            "TargetName" = "8:BillOfMaterials.xlsx"
             "Tag" = "8:"
             "Folder" = "8:_23862707349949B195647F45758B8C14"
             "Condition" = "8:"
@@ -2795,6 +3021,26 @@
             "TargetName" = "8:ChassisAssembly1_35.txt"
             "Tag" = "8:"
             "Folder" = "8:_23862707349949B195647F45758B8C14"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B671DBD965BB4223A13BC062E1735200"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\Tank\\MakeTank.sen"
+            "TargetName" = "8:MakeTank.sen"
+            "Tag" = "8:"
+            "Folder" = "8:_ABE76DA878F74A7CB17154024B220A11"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -3121,26 +3367,6 @@
             "TargetName" = "8:ShapedWingPresetPaths.txt"
             "Tag" = "8:"
             "Folder" = "8:_2C70B6009DE74DCFB8DFE47A597DF46D"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DD62B7B3CB864CAFA2A36556CF23F131"
-            {
-            "SourcePath" = "8:..\\Make3D\\templates\\Tank\\GlobalDefinitions.txt"
-            "TargetName" = "8:GlobalDefinitions.txt"
-            "Tag" = "8:"
-            "Folder" = "8:_ABE76DA878F74A7CB17154024B220A11"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -3614,17 +3840,6 @@
                     "Property" = "8:_FDDA47BF105D4F72BBA6A3F345DFF986"
                         "Folders"
                         {
-                            "{9EF0B969-E518-4E46-987F-47570745A589}:_157431C232B245B98AC66C0ED8C73037"
-                            {
-                            "Name" = "8:Links"
-                            "AlwaysCreate" = "11:FALSE"
-                            "Condition" = "8:"
-                            "Transitive" = "11:FALSE"
-                            "Property" = "8:_022203B1F8084C7CB49D9964734F3E11"
-                                "Folders"
-                                {
-                                }
-                            }
                             "{9EF0B969-E518-4E46-987F-47570745A589}:_2BC29BA5111B4163928FC0E98D6583E1"
                             {
                             "Name" = "8:Textures"
@@ -3660,6 +3875,17 @@
                             }
                         }
                     }
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_90FE52C3E5634A6EA371165DB023700B"
+                    {
+                    "Name" = "8:libs"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_29ED3C056EBB47E6B3199147430073E1"
+                        "Folders"
+                        {
+                        }
+                    }
                 }
             }
         }
@@ -3679,7 +3905,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Barnacle3D"
         "ProductCode" = "8:{D883FA74-3204-4222-8E48-9CBF5E7E063F}"
-        "PackageCode" = "8:{1D3F6764-55BE-4B9F-B2A4-300EB51AE353}"
+        "PackageCode" = "8:{F9D01FB0-9982-4D02-875E-C4104D9E3C5E}"
         "UpgradeCode" = "8:{6F2FD966-929F-4C74-8C4C-BF438CF79394}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

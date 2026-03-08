@@ -31,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -39,6 +40,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Isdf.cs" />
@@ -49,6 +51,10 @@
     <ProjectReference Include="..\LoggerLib\LoggerLib.csproj">
       <Project>{5c3b73af-9055-4e73-be4a-30b4ee4a3c41}</Project>
       <Name>LoggerLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Object3DLib\Object3DLib.csproj">
+      <Project>{5F92B002-B820-4A56-A2B1-482C252BA8BE}</Project>
+      <Name>Object3DLib</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -33,6 +33,7 @@
 
                         <RichTextBox
                             x:Name="ScriptBox"
+
                             MaxHeight="500"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch"
@@ -43,6 +44,7 @@
                             PreviewKeyDown="ScriptBox_PreviewKeyDown"
                             TextChanged="ScriptBox_TextChanged"
                             VerticalScrollBarVisibility="Visible">
+
                             <RichTextBox.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Command="ApplicationCommands.Cut" Header="Cut" />

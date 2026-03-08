@@ -8,18 +8,19 @@ namespace sdflib
 {
     public interface Isdf
     {
-        void GetDimensions(ref int x, ref int y, ref int z);
+        void Clear(double d);
 
-        bool SetDimension(int x, int y, int z);
+        double Get(int r, int c, int p);
 
-        void Clear();
-
-        void Set(int x, int y, int z, double v);
-
-        double Get(int x, int y, int z);
         double GetAt(double x, double y, double z);
 
+        void GetDimensions(ref int r, ref int c, ref int p);
+
         // union another sdf into this one at the offset
-        void Perform(Isdf sdf, int x, int y, int z, int op, double strength);
+        void Perform(Isdf sdf, int r, int c, int p, Sdf.OpType op, double strength);
+
+        void Set(int r, int c, int p, double v);
+
+        bool SetDimension(int r, int c, int p);
     }
 }

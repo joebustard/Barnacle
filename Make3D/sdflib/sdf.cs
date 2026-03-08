@@ -1,15 +1,19 @@
-﻿using System;
+﻿using Barnacle.Object3DLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
 
 namespace sdflib
 {
     public class Sdf : Isdf
     {
+        public double[,,] distances;
         private int columns;
-        private double[,,] distances;
         private int planes;
         private int rows;
 
@@ -21,14 +25,40 @@ namespace sdflib
             distances = null;
         }
 
-        public void Clear()
+        public enum OpType
         {
+            Addition,
+            Subtraction,
+            Intersection,
+            SmoothAddition,
+            SmoothSubtraction,
+            SmoothIntersection
         }
 
-        public double Get(int x, int y, int z)
+        public void Clear(double val)
+        {
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < columns; c++)
+                {
+                    for (int p = 0; p < planes; p++)
+                    {
+                        distances[r, c, p] = val;
+                    }
+                }
+            }
+        }
+
+        public double Get(int r, int c, int p)
         {
             double res = Double.NaN;
-            res = distances[y, x, z];
+            if (r >= 0 && c >= 0 && p >= 0)
+            {
+                if (r < rows && c < columns && p < planes)
+                {
+                    res = distances[r, c, p];
+                }
+            }
             return res;
         }
 
@@ -76,7 +106,168 @@ namespace sdflib
             z = planes;
         }
 
-        public void Perform(Isdf sdf, int x, int y, int z, int opType, double strength)
+        public void MeshToSdfBruteForce(Point3DCollection points, Int32Collection faces)
+        {
+            Clear(Double.MaxValue);
+            // move all the points to fit in a box that that is length+2,height+2,width+2
+            // i.e there is a 1,1,1 boundary all around
+            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
+            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue); ;
+            PointUtils.MinMax(points, ref min, ref max);
+            double length = max.X - min.X;
+            double height = max.Y - min.Y;
+            double width = max.Z - min.Z;
+
+            double dx = min.X - 1;
+            double dy = min.Y - 1;
+            double dz = min.Z - 1;
+            Vector3D off = new Vector3D(dx, dy, dz);
+            for (int i = 0; i < points.Count; i++)
+            {
+                points[i] += off;
+            }
+            length += 2;
+            height += 2;
+            width += 2;
+            double cellLength = length / columns;
+            double cellHeight = height / rows;
+            double cellWidth = width / planes;
+            // go through each triangle
+            for (int i = 0; i < faces.Count; i += 3)
+            {
+                // get the vertices of the triangle
+                Point3D v0 = points[faces[i]];
+                Point3D v1 = points[faces[i + 1]];
+                Point3D v2 = points[faces[i + 2]];
+
+                // get the bounds of the triangle
+                double mintrix = Math.Min(Math.Min(v0.X, v1.X), v2.X);
+                double maxtrix = Math.Max(Math.Max(v0.X, v1.X), v2.X);
+
+                double mintriy = Math.Min(Math.Min(v0.Y, v1.Y), v2.Y);
+                double maxtriy = Math.Max(Math.Max(v0.Y, v1.Y), v2.Y);
+
+                double mintriz = Math.Min(Math.Min(v0.Z, v1.Z), v2.Z);
+                double maxtriz = Math.Max(Math.Max(v0.Z, v1.Z), v2.Z);
+
+                int mincol = (int)(Math.Floor(mintrix) / cellLength);
+                if (mincol < 0)
+                {
+                    mincol = 0;
+                }
+                int maxcol = (int)(Math.Ceiling(maxtrix) / cellLength);
+                if (maxcol > columns)
+                {
+                    maxcol = columns;
+                }
+
+                int minrow = (int)(Math.Floor(mintriy) / cellHeight);
+                if (minrow < 0)
+                {
+                    minrow = 0;
+                }
+                int maxrow = (int)(Math.Ceiling(maxtriy) / cellHeight);
+                if (maxrow > rows)
+                {
+                    maxrow = rows;
+                }
+
+                int minplane = (int)(Math.Floor(mintriz) / cellWidth);
+                if (minplane < 0)
+                {
+                    minplane = 0;
+                }
+                int maxplane = (int)(Math.Ceiling(maxtriz) / cellWidth);
+                if (maxplane > planes)
+                {
+                    maxplane = planes;
+                }
+
+                for (int r = minrow; r < maxrow; r++)
+                {
+                    for (int c = mincol; c < maxcol; c++)
+                    {
+                        for (int p = minplane; p < maxplane; p++)
+                        {
+                            double dist = CalcDistanceToTriangle(c * cellLength, r * cellHeight, p * cellWidth, v0, v1, v2);
+                            if (Math.Abs(distances[r, c, p]) > Math.Abs(dist))
+                            {
+                                distances[r, c, p] = dist;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public double opSmoothUnion(double a, double b, double k)
+        {
+            k *= 4.0;
+            double h = Math.Max(k - Math.Abs(a - b), 0.0);
+            return Math.Min(a, b) - h * h * 0.25 / k;
+        }
+
+        public void Perform(Sdf sdf, OpType opType, double blend)
+        {
+            // create the appropriate delegate
+            Func<int, int, int, double, double> act;
+            // default to addition
+            act = (r, c, p, b) => Math.Min(distances[r, c, p], sdf.distances[r, c, p]);
+            switch (opType)
+            {
+                case OpType.Subtraction:
+                    {
+                        act = (r, c, p, b) => Math.Max(-distances[r, c, p], sdf.distances[r, c, p]);
+                    }
+                    break;
+
+                case OpType.Intersection:
+                    {
+                        act = (r, c, p, b) => Math.Max(distances[r, c, p], sdf.distances[r, c, p]);
+                    }
+                    break;
+
+                case OpType.SmoothAddition:
+                    {
+                        act = (r, c, p, b) => opSmoothUnion(distances[r, c, p], sdf.distances[r, c, p], b);
+                    }
+                    break;
+
+                case OpType.SmoothSubtraction:
+                    {
+                        act = (r, c, p, b) => -opSmoothUnion(distances[r, c, p], -sdf.distances[r, c, p], b);
+                    }
+                    break;
+
+                case OpType.SmoothIntersection:
+                    {
+                        act = (r, c, p, b) => -opSmoothUnion(-distances[r, c, p], -sdf.distances[r, c, p], b);
+                    }
+                    break;
+            }
+            // apply the operation to all the elements
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < columns; c++)
+                {
+                    for (int p = 0; p < planes; p++)
+                    {
+                        distances[r, c, p] = act(r, c, p, blend);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        ///  Blended operations
+        /// </summary>
+        /// <param name="sdf"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <param name="opType"></param>
+        /// <param name="strength"></param>
+        public void Perform(Isdf sdf, int x, int y, int z, OpType opType, double strength)
         {
             int nx = 0;
             int ny = 0;
@@ -90,8 +281,8 @@ namespace sdflib
             int hz = nz / 2;
             switch (opType)
             {
-                case 0:
-                case 1:
+                case OpType.Addition:
+                case OpType.Subtraction:
                     {
                         for (int ix = lx; ix < hx && (x + ix) < columns; ix++)
                         {
@@ -103,7 +294,7 @@ namespace sdflib
                                         (x + ix >= 0 && x + ix < columns) &&
                                         (z + iz >= 0 && z + iz < planes))
                                     {
-                                        if (opType == 0)
+                                        if (opType == OpType.Addition)
                                         {
                                             distances[y + iy, x + ix, z + iz] = sdf_smin(distances[y + iy, x + ix, z + iz], sdf.Get(iy + ny / 2, ix + nx / 2, iz + nz / 2));
                                         }
@@ -118,7 +309,7 @@ namespace sdflib
                     }
                     break;
 
-                case 2:
+                case OpType.Intersection:
                     {
                         double maxD = Math.Sqrt(lx * lx + ly * ly + lz * lz);
                         for (int ix = lx; ix < hx && (x + ix) < columns; ix++)
@@ -133,7 +324,7 @@ namespace sdflib
                                     {
                                         double toold = Math.Sqrt(ix * ix + iy * iy + iz * iz);
                                         double r = 1 - (toold / maxD);
-                                        //distances[y + iy, x + ix, z + iz] = distances[y + iy, x + ix, z + iz] * r; ;
+                                        distances[y + iy, x + ix, z + iz] = distances[y + iy, x + ix, z + iz] * r;
                                     }
                                 }
                             }
@@ -143,21 +334,21 @@ namespace sdflib
             }
         }
 
-        public void Set(int x, int y, int z, double v)
+        public void Set(int r, int c, int p, double v)
         {
-            distances[y, x, z] = v;
+            distances[r, c, p] = v;
         }
 
-        public bool SetDimension(int x, int y, int z)
+        public bool SetDimension(int r, int c, int p)
         {
             bool res = false;
             try
             {
-                if (x > 0 && y > 0 && z > 0)
+                if (c > 0 && r > 0 && p > 0)
                 {
-                    columns = x;
-                    rows = y;
-                    planes = z;
+                    columns = c;
+                    rows = r;
+                    planes = p;
                     distances = new double[rows, columns, planes];
                 }
             }
@@ -169,6 +360,12 @@ namespace sdflib
             }
 
             return res;
+        }
+
+        private double CalcDistanceToTriangle(double x, double y, double z, Point3D v0, Point3D v1, Point3D v2)
+        {
+            double dist = Double.MaxValue;
+            return dist;
         }
 
         private double sdf_smin(double a, double b, double k = 32)

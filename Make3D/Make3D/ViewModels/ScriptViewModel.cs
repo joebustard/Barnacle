@@ -55,6 +55,7 @@ program ""Script Name""
         private PolarCamera camera;
         private CameraModes cameraMode;
         private Point3D CameraScrollDelta = new Point3D(1, 1, 0);
+
         private List<Object3D> content;
         private string filePath;
         private Floor floor;
@@ -651,7 +652,7 @@ program ""Script Name""
         {
             if (searchText != null && searchText != "" && richTextBox != null)
             {
-                searchIndex = richTextBox.Find(searchText, out foundTextRange, searchIndex + 1);
+                searchIndex = richTextBox.Find(searchText, ref foundTextRange, searchIndex + 1);
                 if (searchIndex < 0)
                 {
                     searchIndex = 0;

@@ -961,8 +961,20 @@
                             CommandParameter="GroupCut"
                             Header="Cut Out"
                             ImageSource="/Barnacle;component/Images/Buttons/copy.png"
-                            ToolTip="Cut the second part from the first but keep both." />
+                            ToolTip="Cut the second part from the first but keep both the part and the cutter." />
                         <Custom:RibbonSeparator />
+
+                        <Custom:RibbonMenuItem
+      x:Name="GroupExtract"
+      HorizontalAlignment="Stretch"
+      VerticalAlignment="Top"
+      Command="{Binding GroupCommand}"
+      CommandParameter="Extract"
+      Header="Extract"
+      ImageSource="/Barnacle;component/Images/Buttons/copy.png"
+      ToolTip="Cut the second part from the first but keep both the parts." />
+                        <Custom:RibbonSeparator />
+
                         <Custom:RibbonMenuItem
                             x:Name="GroupForce"
                             HorizontalAlignment="Stretch"

@@ -1680,6 +1680,69 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private async Task<bool> Extract(Object3D leftie, Object3D rightie, Group3D groupA, Group3D groupB)
+        {
+            bool res = false;
+            var progress = new Progress<CSGGroupProgress>(ShowCSGProgress);
+            Group3D grp = new Group3D();
+            grp.Name = leftie.Name;
+            grp.Description = leftie.Description;
+            grp.LeftObject = leftie;
+            grp.RightObject = rightie;
+            grp.PrimType = "extract";
+
+            res = await grp.ExtractAsync(csgCancelation, progress, groupA, groupB);
+            if (res)
+            {
+                groupA.LeftObject = leftie;
+                groupA.RightObject = rightie;
+                groupB.LeftObject = leftie;
+                groupB.RightObject = rightie;
+                Document.ReplaceObjectsByGroups(leftie, rightie, groupA, groupB);
+            }
+            return res;
+        }
+
+        private async Task<bool> ExtractGroup3D(string s)
+        {
+            NotificationManager.Notify("SuspendEditing", true);
+            isEditingEnabled = false;
+            bool res = false;
+            bool cut = false;
+
+            if (selectedObjectAdorner != null && selectedObjectAdorner.NumberOfSelectedObjects() == 2)
+            {
+                CheckPoint();
+
+                Object3D leftie = selectedObjectAdorner.SelectedObjects[0];
+                Object3D rightie = selectedObjectAdorner.SelectedObjects[1];
+                Group3D groupA = new Group3D();
+                groupA.Color = leftie.Color;
+
+                Group3D groupB = new Group3D();
+                groupB.Color = leftie.Color;
+                bool extracted = await Extract(leftie, rightie, groupA, groupB);
+
+                if (!extracted || csgCancelation.IsCancellationRequested)
+                {
+                    Undo();
+                }
+                else
+                {
+                    res = true;
+                    selectedObjectAdorner.Clear();
+                    selectedItems.Clear();
+                    selectedItems.Add(groupA);
+                    selectedItems.Add(groupB);
+                }
+                csgCancelation = null;
+                InfoWindow.Instance().Close();
+            }
+            NotificationManager.Notify("SuspendEditing", false);
+            isEditingEnabled = true;
+            return res;
+        }
+
         private Point3D FindY(HalfEdgeLib.Mesh hemesh, List<HalfEdge> lhe, System.Drawing.PointF point)
         {
             Point3D res = new Point3D();
@@ -2026,9 +2089,6 @@ namespace Barnacle.ViewModels
             {
                 grp.RightObject = selectedObjectAdorner.SelectedObjects[i];
             }
-
-            //OFFFormat.WriteOffFile(@"C:\tmp\t\leftie.off", leftie.AbsoluteObjectVertices, leftie.TriangleIndices);
-            //OFFFormat.WriteOffFile(@"C:\tmp\t\rightie.off", grp.RightObject.AbsoluteObjectVertices, grp.RightObject.TriangleIndices);
 
             grp.PrimType = s;
 
@@ -3397,7 +3457,21 @@ namespace Barnacle.ViewModels
             }
             else
             {
-                await TryGroup(s);
+                if (s == "extract")
+                {
+                    if (selectedItems.Count != 2)
+                    {
+                        MessageBox.Show("Extract requires exactly 2 objects");
+                    }
+                    else
+                    {
+                        await TryExtract(s);
+                    }
+                }
+                else
+                {
+                    await TryGroup(s);
+                }
                 RegenerateDisplayList();
                 SetSelectionColours();
                 NotificationManager.Notify("ObjectNamesChanged", null);
@@ -4852,6 +4926,55 @@ namespace Barnacle.ViewModels
         private bool Test()
         {
             return true;
+        }
+
+        private async Task TryExtract(string s)
+        {
+            if (SelectionContainsReferences())
+            {
+                MessageBox.Show("Can't extract referenced objects");
+            }
+            else
+            {
+                csgCancelation = new CancellationTokenSource();
+                string leftName = selectedItems[0].Name;
+                string rightName = selectedItems[1].Name;
+                bool groupOpDone = await ExtractGroup3D(s);
+                if (groupOpDone)
+                {
+                    Object3D ob1 = selectedItems[0];
+                    Object3D ob2 = selectedItems[1];
+                    selectedObjectAdorner.Clear();
+                    selectedItems.Clear();
+                    if (Properties.Settings.Default.ConfirmNameAfterCSG)
+                    {
+                        ConfirmObjectNameDlg dlg = new ConfirmObjectNameDlg();
+                        dlg.Owner = Application.Current.MainWindow;
+                        dlg.ObjectName = leftName;
+                        dlg.LeftName = leftName;
+                        dlg.RightName = rightName;
+                        if (dlg.ShowDialog() == true)
+                        {
+                            ob1.Name = dlg.ObjectName;
+                        }
+                    }
+
+                    if (Properties.Settings.Default.ConfirmNameAfterCSG)
+                    {
+                        ConfirmObjectNameDlg dlg = new ConfirmObjectNameDlg();
+                        dlg.Owner = Application.Current.MainWindow;
+                        dlg.ObjectName = rightName;
+                        dlg.LeftName = leftName;
+                        dlg.RightName = rightName;
+                        if (dlg.ShowDialog() == true)
+                        {
+                            ob2.Name = dlg.ObjectName;
+                        }
+
+                        //SelectObject(ob2);
+                    }
+                }
+            }
         }
 
         private async Task TryGroup(string s)

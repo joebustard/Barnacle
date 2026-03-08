@@ -93,6 +93,10 @@ namespace Barnacle.Models
                     res = new EllipsoidDlg();
                     break;
 
+                case "Figure":
+                    res = new FigureDlg();
+                    break;
+
                 case "HoneycombGrille":
                     res = new HoneyCombGrilleDlg();
                     break;

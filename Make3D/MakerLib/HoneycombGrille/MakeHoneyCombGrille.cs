@@ -156,16 +156,46 @@ namespace MakerLib
 
         private void CreateEdge()
         {
+            /*
+             *          1 ------------------------------------------- 2
+             *          I                                             I
+             *          I    5  --------------------------------- 6   I
+             *          I                                             I
+             *          I                                             I
+             *          I                                             I
+             *          I                                             I
+             *          I    4  --------------------------------- 7   I
+             *          I                                             I
+             *          0 ------------------------------------------- 3
+             *
+            */
+
+            /*
+ *          9 ------------------------------------------- 10
+ *          I                                             I
+ *          I    13  ------------------------------- 14   I
+ *          I                                             I
+ *          I                                             I
+ *          I                                             I
+ *          I                                             I
+ *          I    12  ------------------------------- 15   I
+ *          I                                             I
+ *          8 ------------------------------------------- 11
+ *
+*/
+            // outside
             Point p0 = new Point(0, 0);
             Point p1 = new Point(0, grilleHeight);
             Point p2 = new Point(grilleLength, grilleHeight);
             Point p3 = new Point(grilleLength, 0);
 
+            // inside
             Point p4 = new Point(edgeSize, edgeSize);
             Point p5 = new Point(edgeSize, grilleHeight - edgeSize);
             Point p6 = new Point(grilleLength - edgeSize, grilleHeight - edgeSize);
             Point p7 = new Point(grilleLength - edgeSize, edgeSize);
 
+            //back
             int v0 = AddVerticeOctTree(p0.X, p0.Y, 0);
             int v1 = AddVerticeOctTree(p1.X, p1.Y, 0);
             int v2 = AddVerticeOctTree(p2.X, p2.Y, 0);
@@ -188,6 +218,7 @@ namespace MakerLib
             AddFace(v0, v4, v7);
             AddFace(v3, v0, v7);
 
+            //front
             int v8 = AddVerticeOctTree(p0.X, p0.Y, grilleThickness);
             int v9 = AddVerticeOctTree(p1.X, p1.Y, grilleThickness);
             int v10 = AddVerticeOctTree(p2.X, p2.Y, grilleThickness);
@@ -235,12 +266,12 @@ namespace MakerLib
             AddFace(v6, v15, v14);
 
             // bottom outside
-            AddFace(v3, v11, v12);
-            AddFace(v3, v12, v0);
+            AddFace(v3, v11, v8);
+            AddFace(v3, v8, v0);
 
             // bottom inside
-            AddFace(v12, v7, v4);
-            AddFace(v12, v11, v7);
+            AddFace(v7, v12, v15);
+            AddFace(v7, v4, v12);
         }
 
         private bool dequals(double d1, double d2)

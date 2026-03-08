@@ -169,6 +169,32 @@ namespace Barnacle.Object3DLib
             }
         }
 
+        public async Task<bool> ExtractAsync(CancellationTokenSource csgCancelation, IProgress<CSGGroupProgress> progress, Group3D groupA, Group3D groupB)
+        {
+            bool result = false;
+            if (leftObject != null && rightObject != null)
+            {
+                if (leftObject.RelativeObjectVertices != null && leftObject.RelativeObjectVertices.Count > 2)
+                {
+                    if (rightObject.RelativeObjectVertices != null && rightObject.RelativeObjectVertices.Count > 2)
+                    {
+                        Color = leftObject.Color;
+                        Bounds3D leftBnd = leftObject.AbsoluteBounds;
+                        Bounds3D rightBnd = rightObject.AbsoluteBounds;
+                        Point3D leftPnt = leftObject.Position;
+                        Point3D rightPnt = rightObject.Position;
+                        Bounds3D combined = new Bounds3D();
+                        combined.Add(leftBnd);
+                        combined.Add(rightBnd);
+
+                        result = await PerformExtractAsync(csgCancelation, progress, groupA, groupB);
+                    }
+                }
+            }
+
+            return result;
+        }
+
         public bool Init()
         {
             bool result = false;
@@ -209,9 +235,6 @@ namespace Barnacle.Object3DLib
                         Bounds3D rightBnd = rightObject.AbsoluteBounds;
                         Point3D leftPnt = leftObject.Position;
                         Point3D rightPnt = rightObject.Position;
-                        Bounds3D combined = new Bounds3D();
-                        combined.Add(leftBnd);
-                        combined.Add(rightBnd);
 
                         result = await PerformOperationAsync(csgCancelation, progress);
                     }
@@ -219,6 +242,109 @@ namespace Barnacle.Object3DLib
             }
 
             return result;
+        }
+
+        public async Task<bool> PerformExtractAsync(CancellationTokenSource csgCancelation, IProgress<CSGGroupProgress> progress, Group3D groupa, Group3D groupb)
+        {
+            bool res = false;
+            absoluteBounds = new Bounds3D();
+            leftObject.RelativeToAbsolute();
+            rightObject.RelativeToAbsolute();
+
+            BooleanModeller.OperationType op = BooleanModeller.OperationType.Extract;
+
+            Solid result = null;
+            modeller = new BooleanModeller();
+            BooleanModeller.OpResult opRes = await modeller.DoModelOperationAsync(leftObject.AbsoluteObjectVertices, leftObject.TriangleIndices,
+                                      rightObject.AbsoluteObjectVertices, rightObject.TriangleIndices, op, csgCancelation, progress);
+
+            if (opRes.OperationStatus == CSGState.Good)
+            {
+                result = opRes.ResultObject;
+                if (result != null)
+                {
+                    groupa.AbsoluteObjectVertices = new Point3DCollection();
+                    groupa.TriangleIndices = new System.Windows.Media.Int32Collection();
+                    Vector3D[] vc = result.GetVertices();
+                    if (vc.GetLength(0) > 0)
+                    {
+                        foreach (Vector3D v in vc)
+                        {
+                            Point3D p = new Point3D(v.X, v.Y, v.Z);
+                            groupa.AbsoluteObjectVertices.Add(p);
+                            absoluteBounds.Adjust(p);
+                        }
+                        int[] ids = result.GetIndices();
+                        for (int i = 0; i < ids.Length; i++)
+                        {
+                            groupa.TriangleIndices.Add(ids[i]);
+                        }
+
+                        double nx = absoluteBounds.MidPoint().X;
+                        double ny = absoluteBounds.MidPoint().Y;
+                        double nz = absoluteBounds.MidPoint().Z;
+                        groupa.Position = new Point3D(nx, ny, nz);
+
+                        groupa.AbsoluteToRelative();
+                        groupa.SetMesh();
+                        groupa.CalculateAbsoluteBounds();
+                    }
+                }
+                result = opRes.ResultObject2;
+                if (result != null)
+                {
+                    absoluteBounds = new Bounds3D();
+                    groupb.AbsoluteObjectVertices = new Point3DCollection();
+                    groupb.TriangleIndices = new System.Windows.Media.Int32Collection();
+                    Vector3D[] vc = result.GetVertices();
+                    if (vc.GetLength(0) > 0)
+                    {
+                        foreach (Vector3D v in vc)
+                        {
+                            Point3D p = new Point3D(v.X, v.Y, v.Z);
+                            groupb.AbsoluteObjectVertices.Add(p);
+                            absoluteBounds.Adjust(p);
+                        }
+                        int[] ids = result.GetIndices();
+                        for (int i = 0; i < ids.Length; i++)
+                        {
+                            groupb.TriangleIndices.Add(ids[i]);
+                        }
+
+                        double nx = absoluteBounds.MidPoint().X;
+                        double ny = absoluteBounds.MidPoint().Y;
+                        double nz = absoluteBounds.MidPoint().Z;
+                        groupb.Position = new Point3D(nx, ny, nz);
+
+                        groupb.AbsoluteToRelative();
+                        groupb.SetMesh();
+                        groupb.CalculateAbsoluteBounds();
+
+                        modeller = null;
+                        GC.Collect();
+                        res = true;
+                    }
+                }
+            }
+            else
+            if (opRes.OperationStatus == CSGState.Interrupted)
+            {
+                System.Windows.Forms.MessageBox.Show("Operation aborted");
+                res = false;
+            }
+            else
+            if (opRes.OperationStatus == CSGState.Bad)
+            {
+                System.Windows.Forms.MessageBox.Show("Bad");
+                res = false;
+            }
+            else
+            if (opRes.OperationStatus == CSGState.Toolarge)
+            {
+                System.Windows.Forms.MessageBox.Show("Operation would create too many new faces");
+                res = false;
+            }
+            return res;
         }
 
         public bool PerformOperation()

@@ -134,6 +134,12 @@
       <DependentUpon>CutVerticalPlaneDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\Ellipsoid\EllipsoidDlg.xaml.cs" />
+    <Compile Include="Dialogs\FigureDlg\Bone.cs" />
+    <Compile Include="Dialogs\FigureDlg\BoneDisplayRecord.cs" />
+    <Compile Include="Dialogs\FigureDlg\FigureDlg.xaml.cs" />
+    <Compile Include="Dialogs\FigureDlg\FigureModel.cs" />
+    <Compile Include="Dialogs\FigureDlg\JointMarker.cs" />
+    <Compile Include="Dialogs\FigureDlg\ModelAssignmentControl.xaml.cs" />
     <Compile Include="Dialogs\HoneycombGrille\HoneyCombGrilleDlg.xaml.cs" />
     <Compile Include="Dialogs\NewUserTemplate.xaml.cs">
       <DependentUpon>NewUserTemplate.xaml</DependentUpon>
@@ -573,6 +579,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\Ellipsoid\EllipsoidDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\FigureDlg\FigureDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\FigureDlg\ModelAssignmentControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1518,6 +1532,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\TankTrackLinks\" />
+    <Folder Include="Dialogs\NewFolder1\" />
     <Folder Include="Dialogs\RibbedFuselage\ViewModels\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -1539,7 +1554,7 @@ copy /Y "$(SolutionDir)make3d\Data\TankTrackLinks\*.*" "$(TargetDir)data\TankTra
 copy /Y "$(SolutionDir)make3d\Data\ScriptTemplates\*.*" "$(TargetDir)data\ScriptTemplates"
 copy /Y "$(SolutionDir)Interpreter\Libs\*.*" "$(TargetDir)libs"
 del   /q "$(TargetDir)data\figure\*.txt"
-copy /Y "$(SolutionDir)make3d\Dialogs\Figure\FigureData\*.txt" "$(TargetDir)data\figure"
+copy /Y "$(SolutionDir)make3d\Dialogs\Figuredlg\FigureData\*.txt" "$(TargetDir)data\figure"
 
 
 mkdir "$(TargetDir)MeshOp"

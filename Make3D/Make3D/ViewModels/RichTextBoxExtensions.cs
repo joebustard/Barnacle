@@ -27,13 +27,19 @@ namespace Barnacle.ViewModels
     {
         private static TextPointer oldposstart = null;
 
-        public static int Find(this RichTextBox richTextBox, string text, out TextRange foundTextRange, int startIndex = 0)
+        public static int Find(this RichTextBox richTextBox, string text, ref TextRange foundTextRange, int startIndex = 0)
         {
-            foundTextRange = null;
             var textRange = new TextRange(richTextBox.Document.ContentStart, richTextBox.Document.ContentEnd);
-            richTextBox.Selection.Select(textRange.Start, textRange.Start);     // clear previous select if there was one
+            if (foundTextRange != null)
+            {
+                foundTextRange.ClearAllProperties();
+            }
+            else
+            {
+                richTextBox.Selection.Select(textRange.Start, textRange.End);     // clear previous select if there was one
+                textRange.ClearAllProperties();
+            }
 
-            textRange.ClearAllProperties();
             var index = textRange.Text.IndexOf(text, startIndex, StringComparison.Ordinal);
             if (index > -1)
             {
@@ -103,20 +109,23 @@ namespace Barnacle.ViewModels
             }
         }
 
-        private static TextPointer GetPoint(TextPointer start, int x)
+        private static TextPointer GetPoint(TextPointer start, int index)
         {
             var ret = start;
             var i = 0;
+
             while (ret != null)
             {
                 string stringSoFar = new TextRange(ret, ret.GetPositionAtOffset(i, LogicalDirection.Forward)).Text;
-                if (stringSoFar.Length == x)
+                if (stringSoFar.Length == index)
                     break;
                 i++;
                 if (ret.GetPositionAtOffset(i, LogicalDirection.Forward) == null)
                     return ret.GetPositionAtOffset(i - 1, LogicalDirection.Forward);
             }
+
             ret = ret.GetPositionAtOffset(i, LogicalDirection.Forward);
+
             return ret;
         }
     }

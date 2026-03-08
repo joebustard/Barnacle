@@ -1,0 +1,26 @@
+﻿<Window x:Class="Tectus.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Tectus"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <StackPanel>
+            <DockPanel>
+                <Menu DockPanel.Dock="Top">
+                    <MenuItem Header="_File">
+                        <MenuItem Header="_Exit" />
+                    </MenuItem>
+                    <MenuItem Header="_Tools">
+                        <MenuItem Header="_Manage users">
+                        </MenuItem>
+                        <MenuItem Header="_Show groups" IsCheckable="True" IsChecked="True" />
+                    </MenuItem>
+                </Menu>
+                <TextBox AcceptsReturn="True" />
+            </DockPanel>
+        </StackPanel>
+    </Grid>
+</Window>

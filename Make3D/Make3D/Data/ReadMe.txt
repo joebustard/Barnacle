@@ -24,7 +24,8 @@ Added
   Added shell mode to fuselage when front or back selected. Allows user to make a hollow fuselage from the parts
   Added ellipsoid tool.
   Added clean solid statement to limpet
-  Added text replace to script editor
+  Added first cut of text replace to script editor
+  new csg operation "Extract" creates two group. One containing the difference between two objects and the other the "Intersection"
 
 Fixed
   The number of vertices and faces shown for the selected object didn't update automatically when the object was subdivided

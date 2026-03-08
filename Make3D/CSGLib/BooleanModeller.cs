@@ -69,6 +69,7 @@ namespace CSGLib
         private Part Object2;
 
         private Solid resultObject;
+        private Solid resultObject2;
 
         public BooleanModeller(Solid solid1, Solid solid2, bool classifyFaces = true)
         {
@@ -122,7 +123,8 @@ namespace CSGLib
             Difference,
             Intersection,
             ReverseDifference,
-            ForceUnion
+            ForceUnion,
+            Extract
         }
 
         public CSGState State
@@ -299,6 +301,14 @@ namespace CSGLib
                                                                         resultObject = GetIntersection();
                                                                     }
                                                                     break;
+
+                                                                case OperationType.Extract:
+                                                                    {
+                                                                        ReportProgress("Intersection", 0, progress);
+                                                                        resultObject = GetDifference();
+                                                                        resultObject2 = GetIntersection();
+                                                                    }
+                                                                    break;
                                                             }
                                                         }
                                                     }
@@ -314,6 +324,7 @@ namespace CSGLib
                     {
                         opresult.OperationStatus = CSGState.Good;
                         opresult.ResultObject = resultObject;
+                        opresult.ResultObject2 = resultObject2;
                     }
                 }
             }
@@ -359,7 +370,7 @@ namespace CSGLib
             return await Task.Run(() => {
                 BooleanModeller btmp = new BooleanModeller();
                 btmp.SetCancelationToken(csgCancelation.Token);
-                OpResult res;
+                OpResult res = new OpResult();
                 if (op == OperationType.ForceUnion)
                 {
                     Point3DCollection vertices = new Point3DCollection();
@@ -580,6 +591,7 @@ namespace CSGLib
         {
             public CSGState OperationStatus;
             public Solid ResultObject;
+            public Solid ResultObject2;
         }
 
         //--------------------------------CONSTRUCTORS----------------------------------//

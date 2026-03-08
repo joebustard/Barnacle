@@ -1086,6 +1086,16 @@ namespace Barnacle.Models
             Dirty = true;
         }
 
+        internal void ReplaceObjectsByGroups(Object3D ob1, Object3D ob2, Group3D grp1, Group3D grp2)
+        {
+            Content.Remove(ob1);
+            Content.Remove(ob2);
+
+            Content.Add(grp1);
+            Content.Add(grp2);
+            Dirty = true;
+        }
+
         internal void SplitGroup(Group3D grp)
         {
             Content.Remove(grp);

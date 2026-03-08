@@ -344,6 +344,28 @@ Procedure SetSolidSize( Solid sl, Size sz)
   Resize sl,sz.l,sz.h,sz.w;
 }
 
+// Name       : Reportposition
+// Does       : Reports the position of a solid
+// Parameters : The solid s and a string to use as a name
+Procedure Reportposition( Solid  s, String  n )
+{
+  Print  "// " + n + " position" ;
+  Print  "double ", n + "X=", Str( PosX ( s ) ), ";" ;
+  Print  "double ", n + "Y=", Str( PosY ( s ) ), ";" ;
+  Print  "double ", n + "Z=", Str( PosZ ( s ) ), ";" ;
+}
+
+// Name       : Reportsize
+// Does       : Reports the size of a solid
+// Parameters : The solid s and a string to use as a name
+Procedure Reportsize( Solid  s, String  n )
+{
+  Print  "// " + n + " size" ;
+  Print  "double ", n + "L=", Str( Length ( s ) ), ";" ;
+  Print  "double ", n + "H=", Str( Height ( s ) ), ";" ;
+  Print  "double ", n + "W=", Str( Width ( s ) ), ";" ;
+}
+
 // Name       : MakeSameSize
 // Does       : Makes two solids the same size
 // Parameters : the solids, sl2 is the one that changes size
@@ -536,7 +558,7 @@ function solid ClipRight( solid sl, double l)
 
 
  // Name          : Sgn
- // Does          : Resturns the sign of parameter 
+ // Does          : Returns the sign of parameter 
  // Parameters    : The value to check
  // returns       : -1 if  the value is less than 0, 
  //                  1 if its 0 or greater
