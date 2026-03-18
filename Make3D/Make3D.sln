@@ -90,6 +90,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeniliasLib", "SeniliasLib\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tectus", "Utilities\Tectus\Tectus.csproj", "{D902D94C-69E5-494F-813F-BE9373F0F309}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathsLib", "MathsLib\MathsLib.csproj", "{1A74EA72-17F3-428F-9C58-1B04A9C33C8B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -244,6 +246,10 @@ Global
 		{D902D94C-69E5-494F-813F-BE9373F0F309}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D902D94C-69E5-494F-813F-BE9373F0F309}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D902D94C-69E5-494F-813F-BE9373F0F309}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A74EA72-17F3-428F-9C58-1B04A9C33C8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A74EA72-17F3-428F-9C58-1B04A9C33C8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A74EA72-17F3-428F-9C58-1B04A9C33C8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A74EA72-17F3-428F-9C58-1B04A9C33C8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

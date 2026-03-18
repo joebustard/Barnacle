@@ -3857,7 +3857,10 @@ namespace Barnacle.ViewModels
                 foreach (Object3D ob in selectedItems)
                 {
                     total += ob.OrientateFaceNormals();
+
+                    Document.Dirty = true;
                 }
+                RegenerateDisplayList();
                 MessageBox.Show($"Reversed {total} faces.");
             }
             else

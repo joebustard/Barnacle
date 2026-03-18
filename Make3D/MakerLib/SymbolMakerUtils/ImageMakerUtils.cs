@@ -18,10 +18,15 @@ namespace MakerLib
         protected const float diagonalDistNeigh = 2 * diagonalDist;
         protected const float horizontalDist = 0.5F;
         protected const float horizontalDistNeigh = 2 * horizontalDist;
+        protected const int numberOfLayers = 3;
         protected const float vdiagDist = 0.886F;
         protected const float vdiagDistNeigh = 2 * vdiagDist;
         protected int imageHeight = 75;
         protected int imageWidth = 75;
+
+        private int cellSize = 10;
+
+        private int minDim = 100;
 
         protected void AddQueue(List<QueueItem> queue, QueueItem qe)
         {
@@ -78,6 +83,15 @@ namespace MakerLib
                     }
                 }
             }
+        }
+
+        protected bool Black(int px, int py, int pz, Mock3DBitmap wrb)
+        {
+            if (wrb.GetPixel(px, py, pz).R < 128)
+            {
+                return true;
+            }
+            return false;
         }
 
         protected void CheckNeighbour(Mock3DBitmap wrb, List<QueueItem> queue, int dx, int dy, int dz, QueueItem item, float dist, bool[,,] visited, bool inside = false)
@@ -143,15 +157,6 @@ namespace MakerLib
                 qe.dist = dist;
                 AddQueue(queue, qe);
             }
-        }
-
-        protected bool Black(int px, int py, int pz, Mock3DBitmap wrb)
-        {
-            if (wrb.GetPixel(px, py, pz).R < 128)
-            {
-                return true;
-            }
-            return false;
         }
 
         protected void GenerateField(WriteableBitmap wrb)
@@ -309,7 +314,7 @@ namespace MakerLib
                                 foreach (LerpBox subBox2 in divs2)
                                 {
                                     subBox2.SetMask();
-                                if (subBox2.CornerMask != 0 && subBox2.CornerMask != 255)
+                                    if (subBox2.CornerMask != 0 && subBox2.CornerMask != 255)
                                     {
                                         gc = subBox2.ToGridCell();
 
@@ -322,7 +327,7 @@ namespace MakerLib
                 }
             }
             DateTime end = DateTime.Now;
-            System.Diagnostics.Debug.WriteLine($"Lerp time {end - start}");
+            //  System.Diagnostics.Debug.WriteLine($"Lerp time {end - start}");
             CreateOctree(new Point3D(-1, -1, -1), new Point3D(imageWidth, 7, imageHeight));
             foreach (Triangle t in triangles)
             {
@@ -336,111 +341,58 @@ namespace MakerLib
             }
         }
 
-        private int minDim = 100;
-        private int cellSize = 10;
-
-        private void QuickMap(Mock3DBitmap mock3D, DistVector[,,] distVector, bool[,,] visited, int imageWidth, int imageHeight, int layer)
+        protected bool valid(int px, int py, int pz)
         {
-            if (imageWidth > minDim && imageHeight > minDim)
+            if (px >= 0 && px < imageWidth && py >= 0 && py < numberOfLayers && pz >= 0 && pz < imageHeight)
             {
-                byte empty = 0;
-                byte white = 1;
-                byte black = 2;
-                int mapWidth = (imageWidth / cellSize) + 1;
-                int mapHeight = (imageHeight / cellSize) + 1;
-                byte[,] map = new byte[mapWidth, mapHeight];
-                for (int i = 0; i < mapWidth; i++)
-                {
-                    for (int j = 0; j < mapHeight; j++)
-                    {
-                        map[i, j] = empty;
-                    }
-                }
-
-                for (int i = 0; i < mapWidth; i++)
-                {
-                    for (int j = 0; j < mapHeight; j++)
-                    {
-                        int tlx = (i * cellSize) - 1;
-                        int tly = (j * cellSize) - 1;
-                        int brx = tlx + cellSize + 2;
-                        int bry = tly + cellSize + 2;
-                        bool done = false;
-                        for (int x = tlx; x <= brx && !done; x++)
-                        {
-                            for (int y = tly; y <= bry && !done; y++)
-                            {
-                                for ( int z = 0; z< numberOfLayers ; z++)
-                                //int z = layer;
-                                {
-                                    if (White(x, z, y, mock3D))
-                                    {
-                                        map[i, j] = (byte)(map[i, j] | white);
-                                    }
-                                    else
-                                    {
-                                        if (Black(x, z, y, mock3D))
-                                        {
-                                            map[i, j] = (byte)(map[i, j] | black);
-                                        }
-                                    }
-                                    if (map[i, j] == 3)
-                                    {
-                                        done = true;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                for (int i = 0; i < mapWidth; i++)
-                {
-                    for (int j = 0; j < mapHeight; j++)
-                    {
-                        int tlx = (i * cellSize);
-                        int tly = (j * cellSize);
-                        int brx = tlx + cellSize;
-                        int bry = tly + cellSize;
-
-                        for (int x = tlx; x <= brx; x++)
-                        {
-                            for (int y = tly; y <= bry; y++)
-                            {
-                                if (x < imageWidth && y < imageHeight)
-                                {
-                                    for (int z = 0; z < numberOfLayers ; z++)
-                                  
-                                    {
-                                        if (map[i, j] == white)
-                                        {
-                                            visited[x, z, y] = true;
-                                            
-                                                        distVector[x, z, y] = new DistVector();
-                                                        distVector[x, z, y].dx = 1000;
-                                                        distVector[x, z, y].dy = 1000;
-                                                        distVector[x, z, y].dz = 1000;
-                                                        distVector[x, z, y].inside = false;
-                                                        distVector[x, z, y].dv = 100000;
-                                                  
-                                        }
-                                        else if (map[i, j] == black)
-                                        {
-                                            visited[x, z, y] = true;
-                                            distVector[x, z, y] = new DistVector();
-                                            distVector[x, z, y].dx = -1000;
-                                            distVector[x, z, y].dy = -1000;
-                                            distVector[x, z, y].dz = -1000;
-                                            distVector[x, z, y].inside = true;
-                                            distVector[x, z, y].dv = -100000;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                return true;
             }
+            return false;
+        }
+
+        protected bool White(int px, int py, int pz, Mock3DBitmap wrb)
+        {
+            if (wrb.GetPixel(px, py, pz).R > 128)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private void CheckAllNeighbours(Mock3DBitmap mock3D, List<QueueItem> queue, QueueItem qe, bool[,,] visited, bool inside)
+        {
+            CheckNeighbour(mock3D, queue, -1, -1, -1, qe, vdiagDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 1, -1, -1, qe, vdiagDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, -1, -1, 1, qe, vdiagDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 1, -1, 1, qe, vdiagDistNeigh, visited, inside);
+
+            CheckNeighbour(mock3D, queue, -1, 0, -1, qe, diagonalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 1, 0, -1, qe, diagonalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, -1, 0, 1, qe, diagonalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 1, 0, 1, qe, diagonalDistNeigh, visited, inside);
+
+            CheckNeighbour(mock3D, queue, -1, 1, -1, qe, vdiagDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 1, 1, -1, qe, vdiagDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, -1, 1, 1, qe, vdiagDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 1, 1, 1, qe, vdiagDistNeigh, visited, inside);
+
+            CheckNeighbour(mock3D, queue, -1, -1, 0, qe, diagonalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 1, -1, 0, qe, diagonalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 0, -1, -1, qe, diagonalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 0, -1, 1, qe, diagonalDistNeigh, visited, inside);
+
+            CheckNeighbour(mock3D, queue, -1, 0, 0, qe, horizontalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 1, 0, 0, qe, horizontalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 0, 0, -1, qe, horizontalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 0, 0, 1, qe, horizontalDistNeigh, visited, inside);
+
+            CheckNeighbour(mock3D, queue, -1, 1, 0, qe, diagonalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 1, 1, 0, qe, diagonalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 0, 1, -1, qe, diagonalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 0, 1, 1, qe, diagonalDistNeigh, visited, inside);
+
+            CheckNeighbour(mock3D, queue, 0, -1, 0, qe, horizontalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 0, 1, 0, qe, horizontalDistNeigh, visited, inside);
         }
 
         private void DumpLayerImages(WriteableBitmap wrb, DistVector[,,] distVector)
@@ -494,42 +446,6 @@ namespace MakerLib
             }
         }
 
-        private void CheckAllNeighbours(Mock3DBitmap mock3D, List<QueueItem> queue, QueueItem qe, bool[,,] visited, bool inside)
-        {
-            CheckNeighbour(mock3D, queue, -1, -1, -1, qe, vdiagDistNeigh, visited, inside);
-            CheckNeighbour(mock3D, queue, 1, -1, -1, qe, vdiagDistNeigh, visited, inside);
-            CheckNeighbour(mock3D, queue, -1, -1, 1, qe, vdiagDistNeigh, visited, inside);
-            CheckNeighbour(mock3D, queue, 1, -1, 1, qe, vdiagDistNeigh, visited, inside);
-
-            CheckNeighbour(mock3D, queue, -1, 0, -1, qe, diagonalDistNeigh, visited, inside);
-            CheckNeighbour(mock3D, queue, 1, 0, -1, qe, diagonalDistNeigh, visited, inside);
-            CheckNeighbour(mock3D, queue, -1, 0, 1, qe, diagonalDistNeigh, visited, inside);
-            CheckNeighbour(mock3D, queue, 1, 0, 1, qe, diagonalDistNeigh, visited, inside);
-
-            CheckNeighbour(mock3D, queue, -1, 1, -1, qe, vdiagDistNeigh, visited, inside);
-            CheckNeighbour(mock3D, queue, 1, 1, -1, qe, vdiagDistNeigh, visited, inside);
-            CheckNeighbour(mock3D, queue, -1, 1, 1, qe, vdiagDistNeigh, visited, inside);
-            CheckNeighbour(mock3D, queue, 1, 1, 1, qe, vdiagDistNeigh, visited, inside);
-
-            CheckNeighbour(mock3D, queue, -1, -1, 0, qe, diagonalDistNeigh, visited, inside);
-            CheckNeighbour(mock3D, queue, 1, -1, 0, qe, diagonalDistNeigh, visited, inside);
-            CheckNeighbour(mock3D, queue, 0, -1, -1, qe, diagonalDistNeigh, visited, inside);
-            CheckNeighbour(mock3D, queue, 0, -1, 1, qe, diagonalDistNeigh, visited, inside);
-
-            CheckNeighbour(mock3D, queue, -1, 0, 0, qe, horizontalDistNeigh, visited, inside);
-            CheckNeighbour(mock3D, queue, 1, 0, 0, qe, horizontalDistNeigh, visited, inside);
-            CheckNeighbour(mock3D, queue, 0, 0, -1, qe, horizontalDistNeigh, visited, inside);
-            CheckNeighbour(mock3D, queue, 0, 0, 1, qe, horizontalDistNeigh, visited, inside);
-
-            CheckNeighbour(mock3D, queue, -1, 1, 0, qe, diagonalDistNeigh, visited, inside);
-            CheckNeighbour(mock3D, queue, 1, 1, 0, qe, diagonalDistNeigh, visited, inside);
-            CheckNeighbour(mock3D, queue, 0, 1, -1, qe, diagonalDistNeigh, visited, inside);
-            CheckNeighbour(mock3D, queue, 0, 1, 1, qe, diagonalDistNeigh, visited, inside);
-
-            CheckNeighbour(mock3D, queue, 0, -1, 0, qe, horizontalDistNeigh, visited, inside);
-            CheckNeighbour(mock3D, queue, 0, 1, 0, qe, horizontalDistNeigh, visited, inside);
-        }
-
         private void GenerateSeeds(Mock3DBitmap mock3D, List<QueueItem> queue, int px, int py, int pz, bool inside)
         {
             // diagonals
@@ -569,24 +485,107 @@ namespace MakerLib
             CheckSeed(mock3D, queue, 0, 1, 0, px, py, pz, horizontalDist, inside);
         }
 
-        protected const int numberOfLayers = 3;
-
-        protected bool valid(int px, int py, int pz)
+        private void QuickMap(Mock3DBitmap mock3D, DistVector[,,] distVector, bool[,,] visited, int imageWidth, int imageHeight, int layer)
         {
-            if (px >= 0 && px < imageWidth && py >= 0 && py < numberOfLayers && pz >= 0 && pz < imageHeight)
+            if (imageWidth > minDim && imageHeight > minDim)
             {
-                return true;
-            }
-            return false;
-        }
+                byte empty = 0;
+                byte white = 1;
+                byte black = 2;
+                int mapWidth = (imageWidth / cellSize) + 1;
+                int mapHeight = (imageHeight / cellSize) + 1;
+                byte[,] map = new byte[mapWidth, mapHeight];
+                for (int i = 0; i < mapWidth; i++)
+                {
+                    for (int j = 0; j < mapHeight; j++)
+                    {
+                        map[i, j] = empty;
+                    }
+                }
 
-        protected bool White(int px, int py, int pz, Mock3DBitmap wrb)
-        {
-            if (wrb.GetPixel(px, py, pz).R > 128)
-            {
-                return true;
+                for (int i = 0; i < mapWidth; i++)
+                {
+                    for (int j = 0; j < mapHeight; j++)
+                    {
+                        int tlx = (i * cellSize) - 1;
+                        int tly = (j * cellSize) - 1;
+                        int brx = tlx + cellSize + 2;
+                        int bry = tly + cellSize + 2;
+                        bool done = false;
+                        for (int x = tlx; x <= brx && !done; x++)
+                        {
+                            for (int y = tly; y <= bry && !done; y++)
+                            {
+                                for (int z = 0; z < numberOfLayers; z++)
+                                //int z = layer;
+                                {
+                                    if (White(x, z, y, mock3D))
+                                    {
+                                        map[i, j] = (byte)(map[i, j] | white);
+                                    }
+                                    else
+                                    {
+                                        if (Black(x, z, y, mock3D))
+                                        {
+                                            map[i, j] = (byte)(map[i, j] | black);
+                                        }
+                                    }
+                                    if (map[i, j] == 3)
+                                    {
+                                        done = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                for (int i = 0; i < mapWidth; i++)
+                {
+                    for (int j = 0; j < mapHeight; j++)
+                    {
+                        int tlx = (i * cellSize);
+                        int tly = (j * cellSize);
+                        int brx = tlx + cellSize;
+                        int bry = tly + cellSize;
+
+                        for (int x = tlx; x <= brx; x++)
+                        {
+                            for (int y = tly; y <= bry; y++)
+                            {
+                                if (x < imageWidth && y < imageHeight)
+                                {
+                                    for (int z = 0; z < numberOfLayers; z++)
+
+                                    {
+                                        if (map[i, j] == white)
+                                        {
+                                            visited[x, z, y] = true;
+
+                                            distVector[x, z, y] = new DistVector();
+                                            distVector[x, z, y].dx = 1000;
+                                            distVector[x, z, y].dy = 1000;
+                                            distVector[x, z, y].dz = 1000;
+                                            distVector[x, z, y].inside = false;
+                                            distVector[x, z, y].dv = 100000;
+                                        }
+                                        else if (map[i, j] == black)
+                                        {
+                                            visited[x, z, y] = true;
+                                            distVector[x, z, y] = new DistVector();
+                                            distVector[x, z, y].dx = -1000;
+                                            distVector[x, z, y].dy = -1000;
+                                            distVector[x, z, y].dz = -1000;
+                                            distVector[x, z, y].inside = true;
+                                            distVector[x, z, y].dv = -100000;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            return false;
         }
 
         protected struct DistVector

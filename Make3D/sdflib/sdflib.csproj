@@ -52,6 +52,10 @@
       <Project>{5c3b73af-9055-4e73-be4a-30b4ee4a3c41}</Project>
       <Name>LoggerLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MathsLib\MathsLib.csproj">
+      <Project>{1a74ea72-17f3-428f-9c58-1b04a9c33c8b}</Project>
+      <Name>MathsLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Object3DLib\Object3DLib.csproj">
       <Project>{5F92B002-B820-4A56-A2B1-482C252BA8BE}</Project>
       <Name>Object3DLib</Name>

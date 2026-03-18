@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using MathsLib;
 
 namespace sdflib
 {
@@ -136,19 +137,22 @@ namespace sdflib
             for (int i = 0; i < faces.Count; i += 3)
             {
                 // get the vertices of the triangle
-                Point3D v0 = points[faces[i]];
-                Point3D v1 = points[faces[i + 1]];
-                Point3D v2 = points[faces[i + 2]];
+                Point3D tri0 = points[faces[i]];
+                Point3D tri1 = points[faces[i + 1]];
+                Point3D tri2 = points[faces[i + 2]];
+                Vector3D v0 = new Vector3D(tri0.X, tri0.Y, tri0.Z);
+                Vector3D v1 = new Vector3D(tri1.X, tri1.Y, tri1.Z);
+                Vector3D v2 = new Vector3D(tri2.X, tri2.Y, tri2.Z);
 
                 // get the bounds of the triangle
-                double mintrix = Math.Min(Math.Min(v0.X, v1.X), v2.X);
-                double maxtrix = Math.Max(Math.Max(v0.X, v1.X), v2.X);
+                double mintrix = Math.Min(Math.Min(tri0.X, tri1.X), tri2.X);
+                double maxtrix = Math.Max(Math.Max(tri0.X, tri1.X), tri2.X);
 
-                double mintriy = Math.Min(Math.Min(v0.Y, v1.Y), v2.Y);
-                double maxtriy = Math.Max(Math.Max(v0.Y, v1.Y), v2.Y);
+                double mintriy = Math.Min(Math.Min(tri0.Y, tri1.Y), tri2.Y);
+                double maxtriy = Math.Max(Math.Max(tri0.Y, tri1.Y), tri2.Y);
 
-                double mintriz = Math.Min(Math.Min(v0.Z, v1.Z), v2.Z);
-                double maxtriz = Math.Max(Math.Max(v0.Z, v1.Z), v2.Z);
+                double mintriz = Math.Min(Math.Min(tri0.Z, tri1.Z), tri2.Z);
+                double maxtriz = Math.Max(Math.Max(tri0.Z, tri1.Z), tri2.Z);
 
                 int mincol = (int)(Math.Floor(mintrix) / cellLength);
                 if (mincol < 0)
@@ -362,9 +366,10 @@ namespace sdflib
             return res;
         }
 
-        private double CalcDistanceToTriangle(double x, double y, double z, Point3D v0, Point3D v1, Point3D v2)
+        private double CalcDistanceToTriangle(double x, double y, double z, Vector3D v0, Vector3D v1, Vector3D v2)
         {
-            double dist = Double.MaxValue;
+            double dist = TriangleDistance.GetDistance(new Vector3D(x, y, z), v0, v1, v2);
+
             return dist;
         }
 

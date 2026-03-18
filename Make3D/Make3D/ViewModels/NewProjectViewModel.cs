@@ -141,7 +141,6 @@ namespace Barnacle.ViewModels
                         ok = false;
                     }
 
-                    // can't rcrrd max len
                     if (projPath.Length > 260)
                     {
                         ok = false;

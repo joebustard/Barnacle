@@ -216,7 +216,7 @@ namespace MakerLib
                 }
                 // Whats the inner sweep angle in degrees
                 inswe = (hTextureResolution * 360.0) / (twoPI * radius);
-                System.Diagnostics.Debug.WriteLine($"Texture res h {hTextureResolution} v {vTextureResolution}");
+
                 // outer sweep is going to be close but just takes into account the depth
                 double outswe = (hTextureResolution * 360.0) / (twoPI * (radius + textureDepth));
                 inswe = DegToRad(inswe);

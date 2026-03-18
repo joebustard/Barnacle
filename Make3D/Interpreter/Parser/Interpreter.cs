@@ -156,6 +156,7 @@ namespace ScriptLanguage
                 "maketube",
                 "makewagonwheel",
                 "makecurvedfunnel",
+                "makeubracket",
                 "now",
                 "pcname",
                 "posx",
@@ -3155,6 +3156,12 @@ namespace ScriptLanguage
                         case "maketexturedtube":
                             {
                                 exp = ParseMakeTexturedTubeFunction(parentName);
+                            }
+                            break;
+
+                        case "makeubracket":
+                            {
+                                exp = ParseMakeUBracketFunction(parentName);
                             }
                             break;
 

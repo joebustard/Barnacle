@@ -72,6 +72,7 @@
     <Compile Include="Parser\ExtraParsingFunctions\ParseMakeTrayNode.cs" />
     <Compile Include="Parser\ExtraParsingFunctions\ParsePiercedDiskNode.cs" />
     <Compile Include="Parser\ExtraParsingFunctions\ParsePiercedRingNode.cs" />
+    <Compile Include="Parser\ExtraParsingFunctions\ParseUBracketNode.cs" />
     <Compile Include="SolidFunctions\GetSolidBoundNode.cs" />
     <Compile Include="SolidFunctions\GetSolidPosNode.cs" />
     <Compile Include="SolidFunctions\HullNode.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="SolidFunctions\CSGNode.cs" />
     <Compile Include="SolidFunctions\MakePlatelet.cs" />
     <Compile Include="SolidFunctions\GetSolidSizeNode.cs" />
+    <Compile Include="SolidFunctions\MakeUBracketNode.cs" />
     <Compile Include="SolidFunctions\MakeWagonWheelNode.cs" />
     <Compile Include="SolidFunctions\UnionAllNode.cs" />
     <Compile Include="SolidFunctions\ValidSolidNode.cs" />

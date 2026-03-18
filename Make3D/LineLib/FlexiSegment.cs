@@ -78,6 +78,10 @@ namespace Barnacle.LineLib
             return -1;
         }
 
+        internal virtual void AlignSegment(ObservableCollection<FlexiPoint> flexiPoints)
+        {
+        }
+
         internal virtual void Expand(List<FlexiSegment> segs, ObservableCollection<FlexiPoint> flexiPoints)
         {
         }
@@ -94,6 +98,18 @@ namespace Barnacle.LineLib
         internal virtual string ToPath(ObservableCollection<FlexiPoint> points, ref double ox, ref double oy, bool absolute)
         {
             return " ";
+        }
+
+        protected internal string AxiesAlign(int p0, int p1, ObservableCollection<FlexiPoint> flexiPoints)
+        {
+            string res = "H";
+            double xd = flexiPoints[p0].X - flexiPoints[p1].X;
+            double yd = flexiPoints[p0].Y - flexiPoints[p1].Y;
+            if (Math.Abs(yd) > Math.Abs(xd))
+            {
+                res = "V";
+            }
+            return res;
         }
 
         protected void AddDisplayPoint(List<Point> res, double x, double y)

@@ -195,7 +195,6 @@ namespace Barnacle.ViewModels
                 Document.Save(s);
                 DateTime end = DateTime.Now;
                 TimeSpan ts = end - start;
-                System.Diagnostics.Debug.WriteLine($"CHeckpoint took {ts.TotalMilliseconds} ms");
             }
         }
 

@@ -1774,6 +1774,8 @@ namespace Barnacle.ViewModels
             parametricToolsToShow.Add(new ToolDef("Box", true, "Box", "Create a hollow box"));
             parametricToolsToShow.Add(new ToolDef("Tray", true, "Tray", "Create a tray with sloping sides"));
             parametricToolsToShow.Add(new ToolDef("Ellipsoid", true, "Ellipsoid", "Create an ellipsoid"));
+            parametricToolsToShow.Add(new ToolDef("U Bracket", true, "UBracket", "Create a U bracket"));
+
             SortMenu(parametricToolsToShow);
             NotifyPropertyChanged("ParametricToolsToShow");
         }

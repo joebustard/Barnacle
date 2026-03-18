@@ -105,6 +105,17 @@ namespace Barnacle.Object3DLib
              new PrimTableEntry( "tetrahedron", PrimitiveGenerator.GenerateTetrahedron,Colors.CadetBlue),
 
              new PrimTableEntry( "concave", PrimitiveGenerator.GenerateConcave,Colors.Orchid),
+             new PrimTableEntry( "wheelbracket1", PrimitiveGenerator.GenerateWheelBracket1,Colors.Honeydew),
+             new PrimTableEntry( "wheelbracket2", PrimitiveGenerator.GenerateWheelBracket2,Colors.LimeGreen),
+
+             new PrimTableEntry( "halfcapshell", PrimitiveGenerator.GenerateHalfCapShell,Colors.Aqua),
+             new PrimTableEntry( "halfpyramid", PrimitiveGenerator.GenerateHalfPyramid,Colors.Fuchsia),
+             new PrimTableEntry( "halfpyramidshell", PrimitiveGenerator.GenerateHalfPyramidShell,Colors.BlanchedAlmond),
+             new PrimTableEntry( "heart", PrimitiveGenerator.GenerateHeart,Colors.LightPink),
+             new PrimTableEntry( "hollowdish", PrimitiveGenerator.GenerateHollowDish,Colors.Coral),
+             new PrimTableEntry( "cutgem", PrimitiveGenerator.GenerateCutGem,Colors.LightCyan),
+             new PrimTableEntry( "twistedring", PrimitiveGenerator.GenerateTwistedRing,Colors.LightCoral),
+             new PrimTableEntry( "bead1", PrimitiveGenerator.GenerateBead1,Colors.PaleGreen),
             //Next_Primitive_Table_Entry
         };
 

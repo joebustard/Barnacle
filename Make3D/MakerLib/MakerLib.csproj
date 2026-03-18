@@ -131,6 +131,7 @@
     <Compile Include="TorusMaker.cs" />
     <Compile Include="TrapezoidMaker.cs" />
     <Compile Include="TubeMaker.cs" />
+    <Compile Include="UBracket\MakeUBracket.cs" />
     <Compile Include="VoxelHull\MakeVoxelHull.cs" />
   </ItemGroup>
   <ItemGroup>

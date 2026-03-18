@@ -1376,6 +1376,11 @@ namespace Barnacle.UserControls
             }
         }
 
+        internal void MakeOrthogonal(int item1, int item2)
+        {
+            selectedFlexiPath.MakeOrthogonal(item1, item2);
+        }
+
         internal bool MouseDown(MouseButtonEventArgs e, System.Windows.Point position)
         {
             bool updateRequired = false;

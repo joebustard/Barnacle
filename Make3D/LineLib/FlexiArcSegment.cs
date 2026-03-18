@@ -18,9 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Barnacle.LineLib
@@ -252,15 +249,7 @@ namespace Barnacle.LineLib
                 angle2 = tmp;
                 t = 1 - t;
             }
-            /*
-            if (IsLargeArc == (Math.Abs(angle2 - angle1) < Math.PI))
-            {
-                if (angle1 < angle2)
-                    angle1 += 2 * Math.PI;
-                else
-                    angle2 += 2 * Math.PI;
-            }
-            */
+
             if (angle2 < angle1)
             {
                 angle2 += 2 * Math.PI;
@@ -332,6 +321,18 @@ namespace Barnacle.LineLib
             string s = "A," + P0.ToString() + "," + P1.ToString() + "," + P2.ToString() + " " + Radius.ToString();
 
             return s;
+        }
+
+        internal override void AlignSegment(ObservableCollection<FlexiPoint> flexiPoints)
+        {
+            if (AxiesAlign(P0, P2, flexiPoints) == "H")
+            {
+                flexiPoints[P2].Y = flexiPoints[P0].Y;
+            }
+            else
+            {
+                flexiPoints[P2].X = flexiPoints[P0].X;
+            }
         }
 
         internal override void Expand(List<FlexiSegment> segs, ObservableCollection<FlexiPoint> flexiPoints)

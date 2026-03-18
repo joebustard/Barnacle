@@ -36,7 +36,10 @@ namespace Barnacle.Object3DLib
             }
         }
 
-        public double Rho { get; set; }
+        public double Rho
+        {
+            get; set;
+        }
 
         public double Theta
         {
@@ -82,6 +85,13 @@ namespace Barnacle.Object3DLib
             {
                 return (new Point3D(x, y, z));
             }
+        }
+
+        public void SetPoint(double x, double y, double z)
+        {
+            Rho = Math.Sqrt(x * x + y * y + z * z);
+            Phi = Math.Acos(z / Rho);
+            Theta = Math.Acos(x / Math.Sqrt(x * x + y * y)) * (y < 0 ? -1.0 : 1.0);
         }
 
         public void SetPoint3D(Point3D p)

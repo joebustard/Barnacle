@@ -2,17 +2,16 @@
 v1.0.10
 ===========
 Added
-  Extra primitives tetrahedron, concave
+  Split primitive panel into two tabs and added  extra primitives 
+  Added Honeycomb grille
   Drop from left, right, front and back added to editor.
-  dropabove, dropbelow, dropfront, dropback, dropleft, dropright added to limpet
-  Added sgn(), MoveBackTo() and Cenflo() to standard limpet lib
-  When importing from a thingiverse zip file, auto suggest an output subfolder name
   First version of a bevelled gear tool
-  Solid bounds functions Left(),Right(),Top(),Bottom(),Front(),Back() added to limpet
-  Offer to save current model file when switching to a script file
+  When importing from a thingiverse zip file, auto suggest an output subfolder name  
   When running a limpet script from the command line return an exit code, 0 for success, -1 for fail. Allows for error checking in cmd and make files.
   Added camera pan and camera point to centre buttons to object view used in dialogs
   Added increase/decrease size of path to common flexipath control
+  Added make segment orthogonal (straight up or down, straight left or right) to flexipath control
+  Offer to save current model file when switching to a script file
   Added choice of templates to new script file name dialog. User scripts can be stored in app data subfolder
   Remove duplicate triangles, that is triangles that have the same vertices but in a different order.
   First cut of point hull tool. Move individual points around in 3D space and a convex hull is created enclosing them all
@@ -23,9 +22,15 @@ Added
   Added option to move the origin to the centroid point in the ribbed fuselage control
   Added shell mode to fuselage when front or back selected. Allows user to make a hollow fuselage from the parts
   Added ellipsoid tool.
-  Added clean solid statement to limpet
   Added first cut of text replace to script editor
-  new csg operation "Extract" creates two group. One containing the difference between two objects and the other the "Intersection"
+  Added first cut of U Bracket tool 
+  Added new csg operation "Extract" creates two group. One containing the difference between two objects and the other the "Intersection"
+    
+  dropabove, dropbelow, dropfront, dropback, dropleft, dropright added to limpet
+  Added sgn(), MoveBackTo() MoveFrontTo() and Cenflo() to standard limpet lib
+  Solid bounds functions Left(),Right(),Top(),Bottom(),Front(),Back()
+  Added clean solid statement to limpet
+
 
 Fixed
   The number of vertices and faces shown for the selected object didn't update automatically when the object was subdivided
@@ -69,7 +74,7 @@ Added
   Setlength(), setheight() and setwidth() to the standard limpet library
   Initial sdf modeller tool
   Allow user to explicitly set the x,y position of a point on a flexipath by typing in its position.
-  Added extra colour definitions to the stanard limpet library
+  Added extra colour definitions to the standard limpet library
   Added circular paste function to the limpet  library
   Added SaveSolids statement to Limpet. If run then the reminder to save solids when the script editor closes is supressed
   Added Flipdistal(), Fliphorizontal() and Flipvertical() to limpet

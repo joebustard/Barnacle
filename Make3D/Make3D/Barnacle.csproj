@@ -188,6 +188,7 @@
       <DependentUpon>TankDialog2.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\PointHull\PointHullDlg.xaml.cs" />
+    <Compile Include="Dialogs\UBracket\UBracketDlg.xaml.cs" />
     <Compile Include="Models\Bounds2D.cs" />
     <Compile Include="Models\ObjectSplitterAndSeamer\EdgeProcessor.cs" />
     <Compile Include="Models\ObjectSplitterAndSeamer\EdgeRecord.cs" />
@@ -715,6 +716,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\TexturedTube\TexturedTubeDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\UBracket\UBracketDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1523,6 +1528,16 @@
     <Resource Include="Images\Buttons\PointHull.png" />
     <Resource Include="Images\Buttons\HoneycombGrille.png" />
     <Resource Include="Images\Buttons\PiercedRing.png" />
+    <Resource Include="Images\Buttons\TwistedRing.png" />
+    <Resource Include="Images\Buttons\HollowDish.png" />
+    <Resource Include="Images\Buttons\Heart.png" />
+    <Resource Include="Images\Buttons\HollowHalfPyramid.png" />
+    <Resource Include="Images\Buttons\HalfCapShell.png" />
+    <Resource Include="Images\Buttons\CutGem.png" />
+    <Resource Include="Images\Buttons\Bead1.png" />
+    <Resource Include="Images\Buttons\HalfPyramid.png" />
+    <Resource Include="Images\Buttons\WheelBracket1.png" />
+    <Resource Include="Images\Buttons\WheelBracket2.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

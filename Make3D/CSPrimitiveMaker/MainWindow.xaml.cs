@@ -336,22 +336,29 @@ namespace Barnacle.Object3DLib
                 string newButtonCode = buttonCode.Replace(buttonNameMarker, primName).Replace(buttonDescMarker, primitiveDesc);
                 string projectPath = AppDomain.CurrentDomain.BaseDirectory;
                 projectPath += "..\\..\\..\\Make3D\\Views\\objectpalette.xaml";
-                File.Copy(projectPath, projectPath + ".bak", true);
-                string[] lines = File.ReadAllLines(projectPath);
-                StreamWriter fout = new StreamWriter(projectPath);
-                if (fout != null)
+                if (File.Exists(projectPath))
                 {
-                    int i = 0;
-                    while (i < lines.GetLength(0))
+                    File.Copy(projectPath, projectPath + ".bak", true);
+                    string[] lines = File.ReadAllLines(projectPath);
+                    StreamWriter fout = new StreamWriter(projectPath);
+                    if (fout != null)
                     {
-                        if (lines[i].Contains("</UniformGrid>"))
+                        int i = 0;
+                        while (i < lines.GetLength(0))
                         {
-                            fout.WriteLine(newButtonCode);
+                            if (lines[i].Contains("<!--  Next Button Here  -->"))
+                            {
+                                fout.WriteLine(newButtonCode);
+                            }
+                            fout.WriteLine(lines[i]);
+                            i++;
                         }
-                        fout.WriteLine(lines[i]);
-                        i++;
+                        fout.Close();
                     }
-                    fout.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Could not find " + projectPath);
                 }
             }
             catch

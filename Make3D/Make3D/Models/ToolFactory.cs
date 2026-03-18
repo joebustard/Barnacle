@@ -297,6 +297,10 @@ namespace Barnacle.Models
                 case "Wing":
                     res = new WingDlg();
                     break;
+
+                case "UBracket":
+                    res = new UBracketDlg();
+                    break;
             }
             if (res != null)
             {

@@ -71,6 +71,16 @@
     <Compile Include="ExtraPrimitives\ScrewDriverBit.cs" />
     <Compile Include="ExtraPrimitives\PieSlice.cs" />
     <Compile Include="ExtraPrimitives\ConCave.cs" />
+    <Compile Include="ExtraPrimitives\WheelBracket1.cs" />
+    <Compile Include="ExtraPrimitives\WheelBracket2.cs" />
+    <Compile Include="ExtraPrimitives\HalfCapShell.cs" />
+    <Compile Include="ExtraPrimitives\HalfPyramid.cs" />
+    <Compile Include="ExtraPrimitives\HalfPyramidShell.cs" />
+    <Compile Include="ExtraPrimitives\Heart.cs" />
+    <Compile Include="ExtraPrimitives\HollCone.cs" />
+    <Compile Include="ExtraPrimitives\CutGem.cs" />
+    <Compile Include="ExtraPrimitives\TwistedRing.cs" />
+    <Compile Include="ExtraPrimitives\Bead1.cs" />
     <Compile Include="FaceOrientationNormaliser.cs" />
     <!-- ExtraHere -->
     <Compile Include="Group3D.cs" />

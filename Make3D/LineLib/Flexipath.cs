@@ -802,7 +802,7 @@ namespace Barnacle.LineLib
             res.Upper = double.MinValue;
 
             var pnts = DisplayPointsF();
-            if (autoclose)
+            if (autoclose && pnts.Count > 0)
             {
                 if ((pnts[0].X != pnts[pnts.Count - 1].X) || (pnts[0].Y != pnts[pnts.Count - 1].Y))
                 {
@@ -1265,6 +1265,37 @@ namespace Barnacle.LineLib
             return valid;
         }
 
+        public void MakeOrthogonal(int item1, int item2)
+        {
+            // item1 and item are DISPLAYPOINT indices.
+            // We need to identify the relevant segment
+            // display points are NOT the same as the raw FlexiPoints; Any curves etc may generate
+            // more intermediate display points
+            int segStart = 0;
+            int segEnd = 0;
+            // special case, if item1 is zero then we must be on the first segment
+            if (item1 == 0)
+            {
+                AlignSegment(segs[0]);
+            }
+            else
+            {
+                FlexiSegment closest = null;
+                List<System.Windows.Point> res = new List<System.Windows.Point>();
+                foreach (FlexiSegment sg in segs)
+                {
+                    int start = res.Count;
+                    sg.DisplayPoints(res, flexiPoints);
+                    int end = res.Count;
+                    if (item1 >= start && item2 <= end)
+                    {
+                        sg.AlignSegment(flexiPoints);
+                        break;
+                    }
+                }
+            }
+        }
+
         public void MoveByOffset(System.Windows.Point offset)
         {
             foreach (FlexiPoint p in flexiPoints)
@@ -1363,7 +1394,7 @@ namespace Barnacle.LineLib
                     }
                 }
 
-                // should the imaginary segment fro the last point back to the first be included
+                // should the imaginary segment from the last point back to the first be included
                 if (closed)
                 {
                     LineSegment ls = new LineSegment(flexiPoints.Count - 1, 0);
@@ -1665,6 +1696,11 @@ namespace Barnacle.LineLib
                 segmentindex++;
             }
             return res;
+        }
+
+        private void AlignSegment(FlexiSegment flexiSegment)
+        {
+            flexiSegment.AlignSegment(flexiPoints);
         }
 
         private void AppendClosingArcSegment(bool clockwise)

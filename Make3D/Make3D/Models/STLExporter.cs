@@ -117,7 +117,6 @@ namespace Barnacle.Models
 
                     writer.Flush();
                     int size = 84 + (int)totalTriangles * 50;
-                    System.Diagnostics.Debug.WriteLine($"File should be {size} bytes");
                 }
                 stream.Close();
             }

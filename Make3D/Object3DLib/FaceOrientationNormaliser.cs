@@ -84,21 +84,53 @@ namespace Object3DLib
                     {
                         int ib = buckets[buck][fj];
                         faceRecord fb = allrecords[ib];
-                        if (fa.EdgeSum1 == fb.EdgeSum1 || fa.EdgeSum2 == fb.EdgeSum2 || fa.EdgeSum3 == fb.EdgeSum3)
+                        bool doswap = false;
+                        if ((fa.EdgeSum1 == fb.EdgeSum1) && (fa.V0 == fb.V0 && fa.V1 == fb.V1))
                         {
-                            if ((fa.V0 == fb.V0 && fa.V1 == fb.V1) ||
-                                 (fa.V1 == fb.V1 && fa.V2 == fb.V2) ||
-                                 (fa.V2 == fb.V2 && fa.V0 == fb.V0))
-                            {
-                                if (!fb.swapped)
-                                {
-                                    int tmp = allrecords[ib].V2;
-                                    allrecords[ib].V2 = allrecords[ib].V1;
-                                    allrecords[ib].V1 = tmp;
-                                    allrecords[ib].swapped = true;
-                                    wrongOns++;
-                                }
-                            }
+                            doswap = true;
+                        }
+                        if ((fa.EdgeSum1 == fb.EdgeSum2) && (fa.V0 == fb.V1 && fa.V1 == fb.V2))
+                        {
+                            doswap = true;
+                        }
+                        if ((fa.EdgeSum1 == fb.EdgeSum3) && (fa.V0 == fb.V2 && fa.V1 == fb.V0))
+                        {
+                            doswap = true;
+                        }
+
+                        if ((fa.EdgeSum2 == fb.EdgeSum1) && (fa.V1 == fb.V0 && fa.V2 == fb.V1))
+                        {
+                            doswap = true;
+                        }
+                        if ((fa.EdgeSum2 == fb.EdgeSum2) && (fa.V1 == fb.V1 && fa.V2 == fb.V2))
+                        {
+                            doswap = true;
+                        }
+                        if ((fa.EdgeSum2 == fb.EdgeSum3) && (fa.V1 == fb.V2 && fa.V2 == fb.V0))
+                        {
+                            doswap = true;
+                        }
+
+                        if ((fa.EdgeSum3 == fb.EdgeSum1) && (fa.V2 == fb.V0 && fa.V0 == fb.V1))
+                        {
+                            doswap = true;
+                        }
+                        if ((fa.EdgeSum3 == fb.EdgeSum2) && (fa.V2 == fb.V1 && fa.V0 == fb.V2))
+                        {
+                            doswap = true;
+                        }
+                        if ((fa.EdgeSum3 == fb.EdgeSum3) && (fa.V2 == fb.V2 && fa.V0 == fb.V0))
+                        {
+                            doswap = true;
+                        }
+
+                        if (doswap && !fb.swapped)
+                        {
+                            int tmp = allrecords[ib].V2;
+                            allrecords[ib].V2 = allrecords[ib].V1;
+                            allrecords[ib].V1 = tmp;
+                            allrecords[ib].swapped = true;
+                            wrongOns++;
                         }
                     }
                 }

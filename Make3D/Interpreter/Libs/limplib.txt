@@ -396,6 +396,14 @@ procedure CenFlo(solid s)
      floor s;
 }
 
+// Name       : MovefrontTo
+// Does       : Move a solid so its front is at the given z
+// Parameters : the solid to move, the z
+Procedure Movefrontto( Solid  s, Double  z )
+{
+    RMove s, 0, 0, z - Front ( s ) ;
+}
+
 // Name       : MoveBackTo
 // Does       : Move a solid so its back is at the given z
 // Parameters : the solid to move, the z

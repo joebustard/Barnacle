@@ -47,6 +47,16 @@ namespace MakerLib
             }
         }
 
+        public void AddFace(Point3D v0, Point3D v1, Point3D v2)
+        {
+            int c0 = AddVertice(v0);
+            int c1 = AddVertice(v1);
+            int c2 = AddVertice(v2);
+            Faces.Add(c0);
+            Faces.Add(c1);
+            Faces.Add(c2);
+        }
+
         public void AddFace(int c0, int c1, int c2)
         {
             Faces.Add(c0);
@@ -59,6 +69,13 @@ namespace MakerLib
             Faces.Add(c0);
             Faces.Add(c2);
             Faces.Add(c1);
+        }
+
+        public void AddToPolarProfile(double x, double y, double z, List<PolarCoordinate> polarProfile)
+        {
+            PolarCoordinate pcol = new PolarCoordinate(0, 0, 0);
+            pcol.SetPoint3D(new Point3D(x, y, z));
+            polarProfile.Add(pcol);
         }
 
         public int AddVerticeOctTree(Point3D v)

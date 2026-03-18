@@ -35,30 +35,64 @@ namespace Barnacle.Dialogs
             Length = 0;
         }
 
-        public int BackEnd { get; set; }
-        public int BackStart { get; set; }
+        public int BackEnd
+        {
+            get; set;
+        }
+
+        public int BackStart
+        {
+            get; set;
+        }
 
         public List<PointF> EdgePoints
         {
-            get { return edgePoints; }
+            get
+            {
+                return edgePoints;
+            }
         }
 
-        public int FrontEnd { get; set; }
-        public int FrontStart { get; set; }
-        public double Length { get; set; }
+        public int FrontEnd
+        {
+            get; set;
+        }
+
+        public int FrontStart
+        {
+            get; set;
+        }
+
+        public double Length
+        {
+            get; set;
+        }
 
         public double MiddleX
         {
-            get { return tlx + (brx - tlx) / 2; }
+            get
+            {
+                return tlx + (brx - tlx) / 2;
+            }
         }
 
         public double MiddleY
         {
-            get { return tly + (bry - tly) / 2; }
+            get
+            {
+                return tly + (bry - tly) / 2;
+            }
         }
 
-        public int WholeEnd { get; set; }
-        public int WholeStart { get; set; }
+        public int WholeEnd
+        {
+            get; set;
+        }
+
+        public int WholeStart
+        {
+            get; set;
+        }
 
         public void Clear()
         {
@@ -150,10 +184,6 @@ namespace Barnacle.Dialogs
                     br = bl + 1;
                 }
             }
-            for (int i = 0; i < edgePoints.Count; i++)
-            {
-                System.Diagnostics.Debug.WriteLine($"{i}, {edgePoints[i].X}, {edgePoints[i].Y}");
-            }
 
             WholeStart = 0;
             WholeEnd = edgePoints.Count;
@@ -163,9 +193,6 @@ namespace Barnacle.Dialogs
 
             FrontStart = br;
             FrontEnd = WholeEnd;
-            System.Diagnostics.Debug.WriteLine($" WholeStart {WholeStart}, WholeEnd {WholeEnd}");
-            System.Diagnostics.Debug.WriteLine($" BackStart {BackStart}, BackEnd {BackEnd}");
-            System.Diagnostics.Debug.WriteLine($" FrontStart {FrontStart}, FrontEnd {FrontEnd}");
             Length = CalcLength(0, edgePoints.Count - 1);
         }
 

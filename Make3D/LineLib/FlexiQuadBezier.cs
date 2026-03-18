@@ -225,6 +225,18 @@ namespace Barnacle.LineLib
             return s;
         }
 
+        internal override void AlignSegment(ObservableCollection<FlexiPoint> flexiPoints)
+        {
+            if (AxiesAlign(P0, P2, flexiPoints) == "H")
+            {
+                flexiPoints[P2].Y = flexiPoints[P0].Y;
+            }
+            else
+            {
+                flexiPoints[P2].X = flexiPoints[P0].X;
+            }
+        }
+
         internal override void Expand(List<FlexiSegment> segs, ObservableCollection<FlexiPoint> flexiPoints)
         {
             int np0 = P0 + 1;

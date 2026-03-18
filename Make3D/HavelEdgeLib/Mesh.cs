@@ -305,7 +305,7 @@ namespace HalfEdgeLib
                 normal *= -1;
             }
 
-            System.Diagnostics.Debug.WriteLine($"Ring size {n}, Normal {normal.X},{normal.Y},{normal.Z}");
+      //      System.Diagnostics.Debug.WriteLine($"Ring size {n}, Normal {normal.X},{normal.Y},{normal.Z}");
             return normal;
         }
 

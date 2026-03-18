@@ -874,6 +874,18 @@ namespace Barnacle.UserControls
                 ln.Y1 = ToPixelY(points[i].Y);
                 ln.X2 = ToPixelX(points[v].X);
                 ln.Y2 = ToPixelY(points[v].Y);
+
+                string cmdTxt = "Make Orthogonal";
+
+                MenuItem mitem = new MenuItem();
+                mitem.Header = cmdTxt;
+                mitem.Click += LineMenuClicked;
+                mitem.Tag = new Tuple<int, int>(i, v);
+
+                ContextMenu contextMenu = new ContextMenu();
+                contextMenu.Items.Add(mitem);
+                ln.ContextMenu = contextMenu;
+
                 ln.MouseLeftButtonDown += Ln_MouseLeftButtonDown;
                 ln.MouseRightButtonDown += Ln_MouseRightButtonDown;
                 ln.MouseUp += MainCanvas_MouseUp;
@@ -943,6 +955,18 @@ namespace Barnacle.UserControls
                 res = Math.Sqrt(dx * dx + dy * dy);
             }
             return res;
+        }
+
+        private void LineMenuClicked(object sender, RoutedEventArgs e)
+        {
+            MenuItem it = sender as MenuItem;
+            if (it != null)
+            {
+                Tuple<int, int> points = (Tuple<int, int>)it.Tag;
+                vm.MakeOrthogonal(points.Item1, points.Item2);
+                UpdateDisplay();
+                FlexiUserActive();
+            }
         }
 
         private void Ln_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -1463,8 +1487,7 @@ namespace Barnacle.UserControls
 
                 case "OrthoLocked":
                     {
-                        ShowOrthoLockedStatus();
-                        //UpdateDisplay();
+                        ShowOrthoLockedStatus();                        
                     }
                     break;
 

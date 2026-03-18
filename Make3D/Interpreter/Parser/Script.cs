@@ -28,7 +28,7 @@ namespace ScriptLanguage
         {
             get
             {
-                System.Diagnostics.Debug.WriteLine($"nextObjectid = {nextObjectId}");
+                //  System.Diagnostics.Debug.WriteLine($"nextObjectid = {nextObjectId}");
                 return nextObjectId++;
             }
             set

@@ -623,7 +623,7 @@ namespace MakerLib
                 MakeVerticalBarPolarCoords();
                 MakeHorizontalBarPolarCoords();
                 System.Diagnostics.Debug.WriteLine("Before Sort");
-                DumpSpokes();
+                //  DumpSpokes();
                 SortSpokesByTheta();
 
                 GenerateInnerEdge();
@@ -634,7 +634,7 @@ namespace MakerLib
             {
                 MakeVerticalBarPolarCoords();
                 SortSpokesByTheta();
-                DumpSpokes();
+                //   DumpSpokes();
                 GenerateInnerEdge();
                 GenerateRing();
                 GenerateVerticalBars();
@@ -644,7 +644,7 @@ namespace MakerLib
             {
                 MakeHorizontalBarPolarCoords();
                 SortSpokesByTheta();
-                DumpSpokes();
+                //   DumpSpokes();
                 GenerateInnerEdge();
                 GenerateRing();
                 GenerateHorizontalBars();
