@@ -21,7 +21,7 @@
         <TabControl SelectedIndex="{Binding SelectedTabIndex}">
             <TabItem
                 x:Name="EditTab"
-                Header="Script"
+                Header="{Binding ScriptTabHeader}"
                 PreviewKeyDown="ScriptBox_PreviewKeyDown"
                 Selector.Selected="OnEditTabSelected">
                 <Grid x:Name="ScriptGrid">
@@ -30,12 +30,15 @@
                         <RowDefinition Height="126" />
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="10*" />
+                            <ColumnDefinition Width="387*" />
+                        </Grid.ColumnDefinitions>
 
                         <RichTextBox
                             x:Name="ScriptBox"
 
                             MaxHeight="500"
-                            HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch"
                             Margin="1,0,1,0"
                             Block.LineHeight="2"
@@ -43,7 +46,7 @@
                             IsEnabled="{Binding EnableRun}"
                             PreviewKeyDown="ScriptBox_PreviewKeyDown"
                             TextChanged="ScriptBox_TextChanged"
-                            VerticalScrollBarVisibility="Visible">
+                            VerticalScrollBarVisibility="Visible" Grid.ColumnSpan="2">
 
                             <RichTextBox.ContextMenu>
                                 <ContextMenu>

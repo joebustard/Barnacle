@@ -15,6 +15,7 @@
 // *                                                                         *
 // *************************************************************************
 
+using FileUtils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -148,8 +149,10 @@ namespace Barnacle.Dialogs
             descriptions = new Dictionary<string, string>();
             templator = new ProjectTemplator();
             templator.TemplateDefinitionPath = AppDomain.CurrentDomain.BaseDirectory + "templates";
-            templator.ScanForTemplates();
-            templator.ScanForUserTemplates();
+            // templates installed with the app
+            templator.ScanForTemplates(AppDomain.CurrentDomain.BaseDirectory + "templates");
+            // user templates
+            templator.ScanForTemplates(PathManager.UserTemplatesFolder());
             TemplateBox.Items.Clear();
             for (int i = 0; i < templator.NumberOfTemplates(); i++)
             {

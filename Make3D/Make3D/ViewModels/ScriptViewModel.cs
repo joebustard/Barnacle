@@ -57,6 +57,7 @@ program ""Script Name""
         private Point3D CameraScrollDelta = new Point3D(1, 1, 0);
 
         private List<Object3D> content;
+        private bool dirty;
         private string filePath;
         private Floor floor;
         private FloorMarker floorMarker;
@@ -73,6 +74,7 @@ program ""Script Name""
         private RichTextBox richTextBox;
         private string rtf;
         private Script script;
+        private string scriptTabHeader;
         private bool searchFound = false;
         private int searchIndex;
         private string searchText;
@@ -98,6 +100,9 @@ program ""Script Name""
             grid = new Grid3D();
             interpreter = new Interpreter();
             script = new Script();
+            script.SetPartsLibraryRoot(GetPartsLibraryPath());
+            script.SetProjectPathRoot(Project.BaseFolder);
+            script.SetProjectName(Project.ProjectName);
             interpreter.LoadFromText(script, defaultSource, filePath);
             Rtf = script.ToRichText();
             ScriptCommand = new RelayCommand(OnScriptCommand);
@@ -141,7 +146,15 @@ program ""Script Name""
 
         public bool Dirty
         {
-            get; set;
+            get
+            {
+                return dirty;
+            }
+            set
+            {
+                dirty = value;
+                SetTabHeader();
+            }
         }
 
         public bool EnableRun
@@ -298,6 +311,22 @@ program ""Script Name""
         public ICommand ScriptCommand
         {
             get; set;
+        }
+
+        public string ScriptTabHeader
+        {
+            get
+            {
+                return scriptTabHeader;
+            }
+            set
+            {
+                if (value != scriptTabHeader)
+                {
+                    scriptTabHeader = value;
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
         public string SearchText
@@ -481,6 +510,7 @@ program ""Script Name""
             GC.Collect();
             script.SetPartsLibraryRoot(GetPartsLibraryPath());
             script.SetProjectPathRoot(Project.BaseFolder);
+            script.SetProjectName(Project.ProjectName);
 
             //  script.SetResultsContent(content);
             ClearResults();
@@ -533,7 +563,7 @@ program ""Script Name""
             if (enableRun)
             {
                 Source = scriptText;
-
+                Dirty = true;
                 bool result = interpreter.LoadFromText(script, Source, filePath);
                 if (result)
                 {
@@ -791,6 +821,18 @@ program ""Script Name""
                 ScriptLanguage.Log.Instance().Clear();
                 return result;
             });
+        }
+
+        private void SetTabHeader()
+        {
+            if (Dirty)
+            {
+                ScriptTabHeader = "Script*";
+            }
+            else
+            {
+                ScriptTabHeader = "Script";
+            }
         }
 
         private void UpdateText(string s)

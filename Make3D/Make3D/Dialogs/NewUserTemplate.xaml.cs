@@ -36,13 +36,43 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class NewUserTemplate : Window
     {
+        private bool clearExport;
+        private bool includeFileContents;
         private String templateDescription;
         private String templateName;
 
         public NewUserTemplate()
         {
             InitializeComponent();
+            includeFileContents = true;
+            clearExport = true;
             DataContext = this;
+        }
+
+        public bool ClearExport
+        {
+            get
+            {
+                return clearExport;
+            }
+
+            set
+            {
+                clearExport = value;
+            }
+        }
+
+        public bool IncludeFileContents
+        {
+            get
+            {
+                return includeFileContents;
+            }
+
+            set
+            {
+                includeFileContents = value;
+            }
         }
 
         public String TemplateDescription

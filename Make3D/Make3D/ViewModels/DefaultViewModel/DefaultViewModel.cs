@@ -1583,10 +1583,17 @@ namespace Barnacle.ViewModels
             return names.Length;
         }
 
-        private void AddTargetNamesForProject(string root, List<string> targetFiles, List<string> emptyFolderNames)
+        private void AddTargetNamesForProject(string root, List<string> targetFiles, List<string> emptyFolderNames, bool includeAll
+        = true)
         {
             int fileCount = 0;
-            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "bmf");
+            if (includeAll)
+            {
+                fileCount += AddTargetFileNamesForFolder(root, targetFiles, "bmf");
+                fileCount += AddTargetFileNamesForFolder(root, targetFiles, "stl");
+                fileCount += AddTargetFileNamesForFolder(root, targetFiles, "gcode");
+                fileCount += AddTargetFileNamesForFolder(root, targetFiles, "3mf");
+            }
             fileCount += AddTargetFileNamesForFolder(root, targetFiles, "txt");
             fileCount += AddTargetFileNamesForFolder(root, targetFiles, "lmp");
             fileCount += AddTargetFileNamesForFolder(root, targetFiles, "png");
@@ -1594,14 +1601,15 @@ namespace Barnacle.ViewModels
             fileCount += AddTargetFileNamesForFolder(root, targetFiles, "jpeg");
             fileCount += AddTargetFileNamesForFolder(root, targetFiles, "docx");
             fileCount += AddTargetFileNamesForFolder(root, targetFiles, "xlsx");
-            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "stl");
-            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "gcode");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "sen");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "inc");
+            fileCount += AddTargetFileNamesForFolder(root, targetFiles, "lib");
             String[] folders = Directory.GetDirectories(root);
             foreach (string folder in folders)
             {
                 if (!folder.EndsWith("Backup"))
                 {
-                    AddTargetNamesForProject(folder, targetFiles, emptyFolderNames);
+                    AddTargetNamesForProject(folder, targetFiles, emptyFolderNames, includeAll);
                 }
                 else
                 {
@@ -2233,9 +2241,22 @@ namespace Barnacle.ViewModels
                     ptd.Name = dlg.TemplateName;
                     ptd.Description = dlg.TemplateDescription;
                     ptd.InitialFile = Project.FirstFile;
+                    ptd.IsUserTemplate = true;
                     AddProjectFoldersToTemplate(ptd, Project.ProjectFolders, Project.ProjectName);
+                    if (dlg.IncludeFileContents)
+                    {
+                        String projRoot = Project.BaseFolder;
+                        String projName = ptd.Name.Replace(" ", "_");
 
-                    ptd.SaveAsTemplate();
+                        string zipPath = Path.Combine(PathManager.UserTemplatesFolder(), projName + ".zip");
+                        List<String> fileNames = new List<string>();
+                        List<String> emptyFolderNames = new List<string>();
+                        AddTargetNamesForProject(projRoot, fileNames, emptyFolderNames, false);
+
+                        ZipUtils.CreateZipFromFiles(zipPath, fileNames, emptyFolderNames, projRoot);
+
+                        ptd.SaveAsTemplate();
+                    }
                 }
             }
         }

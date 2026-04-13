@@ -756,6 +756,28 @@ namespace Barnacle.ViewModels
             }
         }
 
+        /// <summary>
+        /// Clean the folders we know are associated with exports and printing
+        /// </summary>
+        private static void CleanExportFolders()
+        {
+            String pth = BaseViewModel.Project.BaseFolder;
+            CleanFolder(pth, "export", "*.stl");
+            CleanFolder(pth, "export", "*.off");
+            CleanFolder(pth, "export", "*.3mf");
+            CleanFolder(pth, "gcode", "*.gcode");
+            CleanFolder(pth, "printer", "*.gcode");
+            CleanFolder(pth, "gcode", "*.ctb");
+            CleanFolder(pth, "printer", "*.ctb");
+            NotificationManager.Notify("ExportRefresh", null);
+        }
+
+        /// <summary>
+        /// Remove all the files with a given extension from a given folder
+        /// </summary>
+        /// <param name="pth"></param>
+        /// <param name="subName"></param>
+        /// <param name="search"></param>
         private static void CleanFolder(string pth, string subName, string search)
         {
             string targetFolder = pth + System.IO.Path.DirectorySeparatorChar + subName;
@@ -1382,32 +1404,6 @@ namespace Barnacle.ViewModels
             return handled;
         }
 
-        private void CleanExports()
-        {
-            if (MessageBox.Show("Delete all exported stl and printer files", "Warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-            {
-                String pth = BaseViewModel.Project.BaseFolder;
-                string[] files = Directory.GetFiles(pth + "\\export", "*.stl");
-                foreach (string f in files)
-                {
-                    try
-                    {
-                        File.Delete(f);
-                    }
-                    catch (Exception ex)
-                    {
-                        LoggerLib.Logger.LogLine(ex.Message);
-                    }
-                }
-
-                CleanFolder(pth, "gcode", "*.gcode");
-                CleanFolder(pth, "printer", "*.gcode");
-                CleanFolder(pth, "gcode", "*.ctb");
-                CleanFolder(pth, "printer", "*.ctb");
-                NotificationManager.Notify("ExportRefresh", null);
-            }
-        }
-
         private void CloseObjectDistances()
         {
             if (selectedObjectAdorner != null && selectedObjectAdorner is DimensionAdorner)
@@ -1423,6 +1419,14 @@ namespace Barnacle.ViewModels
                     da = null;
                     RemoveSelections(true);
                 }
+            }
+        }
+
+        private void ConfirmAndCleanExports()
+        {
+            if (MessageBox.Show("Delete all exported stl and printer files", "Warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                CleanExportFolders();
             }
         }
 
@@ -3345,7 +3349,13 @@ namespace Barnacle.ViewModels
             {
                 if (s == "Clean")
                 {
-                    CleanExports();
+                    ConfirmAndCleanExports();
+                }
+                else
+                 if (s == "QuietClean")
+                {
+                    // clean the export folders without asking the user
+                    CleanExportFolders();
                 }
                 else
                 if (s == "AllModels")

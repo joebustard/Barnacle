@@ -15,6 +15,7 @@
 // *                                                                         *
 // *************************************************************************
 
+using FileUtils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -46,8 +47,10 @@ namespace Barnacle.ViewModels
             descriptions = new Dictionary<string, string>();
             templator = new ProjectTemplator();
             templator.TemplateDefinitionPath = AppDomain.CurrentDomain.BaseDirectory + "templates";
-            templator.ScanForTemplates();
-            templator.ScanForUserTemplates();
+            // find the installed templates
+            templator.ScanForTemplates(templator.TemplateDefinitionPath);
+            // find the user installed templates
+            templator.ScanForTemplates(PathManager.UserTemplatesFolder());
             templateNames = new List<string>();
             for (int i = 0; i < templator.NumberOfTemplates(); i++)
             {

@@ -17,6 +17,7 @@ namespace TemplateLib
             Description = String.Empty;
             InitialFile = String.Empty;
             Folders = new List<ProjectTemplateFolder>();
+            IsUserTemplate = false;
             substitutions = new List<TemplateSubstitution>();
         }
 
@@ -41,6 +42,11 @@ namespace TemplateLib
         }
 
         public String InitialFile
+        {
+            get; set;
+        }
+
+        public bool IsUserTemplate
         {
             get; set;
         }
@@ -73,6 +79,10 @@ namespace TemplateLib
                 if (ele.HasAttribute("Name"))
                 {
                     Name = ele.GetAttribute("Name");
+                }
+                if (ele.HasAttribute("IsUserTemplate"))
+                {
+                    IsUserTemplate = Convert.ToBoolean(ele.GetAttribute("IsUserTemplate"));
                 }
             }
             XmlNode des = nd.SelectSingleNode("Description");
@@ -135,6 +145,7 @@ namespace TemplateLib
 
             XmlElement dnode = doc.CreateElement("ProjectDefinition");
             dnode.SetAttribute("Name", Name);
+            dnode.SetAttribute("IsUserTemplate", IsUserTemplate.ToString());
             docNode.AppendChild(dnode);
 
             XmlElement descnode = doc.CreateElement("Description");

@@ -181,26 +181,6 @@ namespace ScriptLanguage
             };
         }
 
-        public bool Load(Script script, string FilePath)
-        {
-            bool result = false;
-            lastError = "";
-            if (script != null)
-            {
-                if (FilePath != "")
-                {
-                    tokeniser.Initialise();
-                    string originalScriptFolder = System.IO.Path.GetDirectoryName(FilePath);
-                    tokeniser.SetRunningFolder(originalScriptFolder);
-                    if (tokeniser.SetSource(FilePath))
-                    {
-                        result = ParseSource(script);
-                    }
-                }
-            }
-            return result;
-        }
-
         public bool LoadFromText(Script script, string text, string originalfilePath)
         {
             bool result = false;
@@ -226,6 +206,17 @@ namespace ScriptLanguage
                 }
             }
             return result;
+        }
+
+        /// <summary>
+        /// Just add a named string to to the symbol table and set a value
+        /// </summary>
+        /// <param name="symName"></param>
+        /// <param name="sv"></param>
+        private void AddPredefinedString(string symName, string sv)
+        {
+            Symbol sym = SymbolTable.Instance().AddSymbol(symName, SymbolTable.SymbolType.stringvariable);
+            sym.StringValue = sv;
         }
 
         private bool CheckForComma(bool report = true)
@@ -6222,6 +6213,9 @@ namespace ScriptLanguage
         private bool ParseSource(Script script)
         {
             bool result = false;
+            // add predefined variables. Every script gets these
+            AddPredefinedString("ProjectName", Script.ProjectName);
+            AddPredefinedString("ProjectPath", Script.ProjectPath);
             result = ParseProgramBlock(script);
             return result;
         }

@@ -8,6 +8,7 @@ namespace ScriptLanguage
     public class Script
     {
         public static string PartsLibraryPath = "";
+        public static string ProjectName = "";
         public static string ProjectPath = "";
 
         //   public static MdiChildForm theForm;
@@ -98,6 +99,11 @@ namespace ScriptLanguage
         public void SetPartsLibraryRoot(string v)
         {
             PartsLibraryPath = v;
+        }
+
+        public void SetProjectName(string projectName)
+        {
+            ProjectName = projectName;
         }
 
         public void SetProjectPathRoot(string v)

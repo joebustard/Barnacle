@@ -28,24 +28,40 @@ namespace Barnacle.Models
 {
     public class ZipUtils
     {
-        public static List<string> ListFilesInZip(string zipPath, string ext)
+        public static bool CreateZipFromFiles(string zipPath, List<String> filePathsToAdd, List<String> emptyFoldersToAdd, string filePathRoot)
         {
-            List<string> res = new List<string>();
+            bool res = false;
             try
             {
-                ext = ext.ToLower();
-
+                // delete the zip if it already exists
                 if (File.Exists(zipPath))
                 {
-                    ZipArchive zipArchive = ZipFile.OpenRead(zipPath);
-                    var ets = zipArchive.Entries;
-                    foreach (ZipArchiveEntry et in ets)
+                    File.Delete(zipPath);
+                }
+                using (var archive = ZipFile.Open(zipPath, ZipArchiveMode.Create))
+                {
+                    foreach (var fPath in filePathsToAdd)
                     {
-                        if (et.FullName.ToLower().EndsWith(ext))
+                        string entryName = Path.GetFileName(fPath);
+                        if (fPath.StartsWith(filePathRoot))
                         {
-                            res.Add(et.FullName);
+                            // remove the root and the slash
+                            entryName = fPath.Substring(filePathRoot.Length + 1);
                         }
+                        archive.CreateEntryFromFile(fPath, entryName);
                     }
+
+                    foreach (var fPath in emptyFoldersToAdd)
+                    {
+                        string entryName = fPath;
+                        if (fPath.StartsWith(filePathRoot))
+                        {
+                            // remove the root and the slash
+                            entryName = fPath.Substring(filePathRoot.Length + 1);
+                        }
+                        archive.CreateEntry(entryName + "\\");
+                    }
+                    res = true;
                 }
             }
             catch (Exception ex)
@@ -83,38 +99,23 @@ namespace Barnacle.Models
             return res;
         }
 
-        public static bool CreateZipFromFiles(string zipPath, List<String> filePathsToAdd, List<String> emptyFoldersToAdd, string filePathRoot)
+        public static List<string> ListFilesInZip(string zipPath, string ext)
         {
-            bool res = false;
+            List<string> res = new List<string>();
             try
             {
-                // delete the zip if it already exists
+                ext = ext.ToLower();
+
                 if (File.Exists(zipPath))
                 {
-                    File.Delete(zipPath);
-                }
-                using (var archive = ZipFile.Open(zipPath, ZipArchiveMode.Create))
-                {
-                    foreach (var fPath in filePathsToAdd)
+                    ZipArchive zipArchive = ZipFile.OpenRead(zipPath);
+                    var ets = zipArchive.Entries;
+                    foreach (ZipArchiveEntry et in ets)
                     {
-                        string entryName = Path.GetFileName(fPath);
-                        if (fPath.StartsWith(filePathRoot))
+                        if (et.FullName.ToLower().EndsWith(ext))
                         {
-                            // remove the root and the slash
-                            entryName = fPath.Substring(filePathRoot.Length + 1);
+                            res.Add(et.FullName);
                         }
-                        archive.CreateEntryFromFile(fPath, entryName);
-                    }
-
-                    foreach (var fPath in emptyFoldersToAdd)
-                    {
-                        string entryName = fPath;
-                        if (fPath.StartsWith(filePathRoot))
-                        {
-                            // remove the root and the slash
-                            entryName = fPath.Substring(filePathRoot.Length + 1);
-                        }
-                        archive.CreateEntry(entryName + "\\");
                     }
                 }
             }

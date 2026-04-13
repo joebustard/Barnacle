@@ -3,7 +3,7 @@ v1.0.10
 ===========
 Added
   Split primitive panel into two tabs and added  extra primitives 
-  Added Honeycomb grille
+  Added Honeycomb grille tool
   Drop from left, right, front and back added to editor.
   First version of a bevelled gear tool
   When importing from a thingiverse zip file, auto suggest an output subfolder name  
@@ -24,13 +24,13 @@ Added
   Added ellipsoid tool.
   Added first cut of text replace to script editor
   Added first cut of U Bracket tool 
-  Added new csg operation "Extract" creates two group. One containing the difference between two objects and the other the "Intersection"
+  Added new csg operation "Extract" creates two groups. One containing the difference between two objects and the other the "Intersection"
     
   dropabove, dropbelow, dropfront, dropback, dropleft, dropright added to limpet
   Added sgn(), MoveBackTo() MoveFrontTo() and Cenflo() to standard limpet lib
   Solid bounds functions Left(),Right(),Top(),Bottom(),Front(),Back()
   Added clean solid statement to limpet
-
+  Added a "script dirty" maker to the script editor view
 
 Fixed
   The number of vertices and faces shown for the selected object didn't update automatically when the object was subdivided

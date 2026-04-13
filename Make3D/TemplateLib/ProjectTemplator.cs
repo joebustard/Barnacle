@@ -2,6 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
+using System.Threading;
+using System.Windows;
 using System.Xml;
 
 namespace TemplateLib
@@ -117,41 +120,60 @@ namespace TemplateLib
                     fld.CreateFilesAndFolders(pth, def.Substitutions);
                 }
 
+                // if we are using a user template there may be a
+                // zip file containing the files
+                if (def.IsUserTemplate)
+                {
+                    string zipPath = Path.Combine(PathManager.UserTemplatesFolder(), templateName + ".zip");
+                    // can only use it if it exists.
+                    // Its NOT a problem if the user decided not to create one
+                    if (File.Exists(zipPath))
+                    {
+                        ZipArchive zipArchive = ZipFile.OpenRead(zipPath);
+                        var ets = zipArchive.Entries;
+                        foreach (ZipArchiveEntry et in ets)
+                        {
+                            if (Path.HasExtension(et.Name))
+                            {
+                                // it seems that a file is being held open for a while after creation
+                                // so that we can't unzip to it immediately.
+                                // Backing off and retrying seems to recover
+                                bool failed = true;
+                                for (int retry = 0; retry < 5 && failed; retry++)
+                                {
+                                    try
+                                    {
+                                        string targetFile = Path.Combine(pth, et.FullName);
+                                        et.ExtractToFile(targetFile, true);
+                                        failed = false;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        // MessageBox.Show(ex.Message);
+                                        Thread.Sleep(30 * 1000);
+                                    }
+                                }
+                            }
+                        }
+                        zipArchive.Dispose();
+                    }
+                }
+                // make the actual solution file and view
                 CreateSolution(projName, pth, def);
-
                 res = true;
             }
             return res;
         }
 
-        public void ScanForTemplates()
+        public void ScanForTemplates(string srcFolder)
         {
-            if (TemplateDefinitionPath != String.Empty)
+            if (srcFolder != String.Empty)
             {
-                if (Directory.Exists(TemplateDefinitionPath))
+                if (Directory.Exists(srcFolder))
                 {
                     if (TemplateDefinitionExtension != String.Empty)
                     {
-                        string[] files = Directory.GetFiles(TemplateDefinitionPath, "*" + TemplateDefinitionExtension);
-                        foreach (string f in files)
-                        {
-                            LoadDefinition(f);
-                        }
-                    }
-                }
-            }
-        }
-
-        public void ScanForUserTemplates()
-        {
-            string templateDefinitionPath = PathManager.UserTemplatesFolder();
-            if (templateDefinitionPath != String.Empty)
-            {
-                if (Directory.Exists(templateDefinitionPath))
-                {
-                    if (TemplateDefinitionExtension != String.Empty)
-                    {
-                        string[] files = Directory.GetFiles(templateDefinitionPath, "*" + TemplateDefinitionExtension);
+                        string[] files = Directory.GetFiles(srcFolder, "*" + TemplateDefinitionExtension);
                         foreach (string f in files)
                         {
                             LoadDefinition(f);
@@ -190,6 +212,7 @@ namespace TemplateLib
 
             SolutionPath = System.IO.Path.Combine(pth, projName + ".bmf");
             solutionDoc.Save(SolutionPath);
+            solutionDoc = null;
         }
 
         private void LoadDefinition(string f)
@@ -208,6 +231,7 @@ namespace TemplateLib
                     def.Load(doc, nd);
                     templates?.Add(def);
                 }
+                doc = null;
             }
         }
     }
