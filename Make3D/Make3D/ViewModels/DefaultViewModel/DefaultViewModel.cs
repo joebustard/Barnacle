@@ -1562,8 +1562,18 @@ namespace Barnacle.ViewModels
             }
             if (v != currentViewName)
             {
+                string oldView = currentViewName;
+
                 currentViewName = v;
                 OnView(v);
+                // force a reload of the current file if neccessary
+                if (oldView == "Script" && v == "Editor")
+                {
+                    if (MessageBox.Show("Saved version of model file may have changed. Reload it", "Warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    {
+                        BaseViewModel.Document.Load(BaseViewModel.Document.FilePath);
+                    }
+                }
             }
         }
 

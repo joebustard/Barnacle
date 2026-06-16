@@ -31,6 +31,7 @@ Added
   Solid bounds functions Left(),Right(),Top(),Bottom(),Front(),Back()
   Added clean solid statement to limpet
   Added a "script dirty" maker to the script editor view
+  Added ctrl-z to flexipath control
 
 Fixed
   The number of vertices and faces shown for the selected object didn't update automatically when the object was subdivided
@@ -45,11 +46,12 @@ Fixed
 Changed
   Paste path string in flexipath control now adjusts pasted coordinates so all path is visible
   Modified focus handling in the solution tree view
+  Automatically set focus back to editor view when tabing off an objectpropertiesview textbox
   Don't allow user to load a new Limpet script if current one is executing
   Spur Gear uses the same tooth generation as the new bevelled gear so gears are compatible.
   Made all mirror operations remove the internal "interface" triangles
   Some changes to default project templates
-
+  
 
 v1.0.9
 ===========

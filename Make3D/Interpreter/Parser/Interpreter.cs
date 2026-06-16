@@ -1070,6 +1070,82 @@ namespace ScriptLanguage
                                 {
                                     if (FetchToken(out token, out tokenType) == true)
                                     {
+                                        // this token should be . to indicate a field
+                                        // or =  to assign the whole struct
+                                        // TBD
+                                        if (tokenType == Tokeniser.TokenType.Dot)
+                                        {
+                                            if (FetchToken(out token, out tokenType) == true)
+                                            {
+                                                if (tokenType == Tokeniser.TokenType.Identifier)
+                                                {
+                                                    string targetFieldIdentifier = token.ToLower();
+
+                                                    // see if the field name matches a field in the struct definition
+                                                    bool foundfield = false;
+
+                                                    string fieldName = "";
+                                                    if (actualSym != null)
+                                                    {
+                                                        foreach (StructDefinition.StructField fs in actualSym.Structure.Fields)
+                                                        {
+                                                            if (fs.FieldName == targetFieldIdentifier)
+                                                            {
+                                                                foundfield = true;
+                                                                fieldName = fs.FieldName;
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                    if (!foundfield)
+                                                    {
+                                                        ReportSyntaxError("Expected field name , found " + token);
+                                                    }
+                                                    else
+                                                    {
+                                                        if (FetchToken(out token, out tokenType) == true)
+                                                        {
+                                                            if (tokenType != Tokeniser.TokenType.Assignment)
+                                                            {
+                                                                ReportSyntaxError("Expected =");
+                                                            }
+                                                            else
+                                                            {
+                                                                ExpressionNode exp = ParseExpressionNode(parentName);
+                                                                if (exp != null)
+                                                                {
+                                                                    result = CheckForSemiColon();
+                                                                    if (!result)
+                                                                    {
+                                                                        ReportSyntaxError("Expected ;");
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        /*
+                                                                            AssignStructFieldNode asn = new AssignStructFieldNode();
+                                                                            asn.VariableName = parentName + leftidentifier;
+                                                                            asn.ExternalName = leftidentifier;
+                                                                            asn.FieldName = fieldName;
+                                                                            asn.ExpressionNode = exp;
+                                                                            asn.IsInLibrary = tokeniser.InIncludeFile();
+                                                                            parentNode.AddStatement(asn);*/
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    ReportSyntaxError("Expected structure name on right side of assignment");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                ReportSyntaxError("Expected field name on left side of assignment");
+                                            }
+                                        }
+                                        else
                                         if (tokenType != Tokeniser.TokenType.Assignment)
                                         {
                                             ReportSyntaxError("Expected =, found " + token);

@@ -27,12 +27,15 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class SdfModelDlg : BaseModellerDialog, INotifyPropertyChanged
     {
+        private bool hiResSdfMethod;
         private bool loaded;
         private SdfModelMaker maker;
 
+        private bool midResSdfMethod;
         private int nextRecordId;
         private double nextY;
         private DispatcherTimer regenTimer;
+        private bool sdfMethod;
         private int selectedPrimitive;
         private bool showCurrent = true;
         private string warningText;
@@ -58,9 +61,79 @@ namespace Barnacle.Dialogs
             Viewer.OnPreviewUserKey = PreviewViewerKey;
         }
 
+        public bool HiResSdfMethod
+        {
+            get
+            {
+                return hiResSdfMethod;
+            }
+            set
+            {
+                if (value != hiResSdfMethod)
+                {
+                    hiResSdfMethod = value;
+                    if (hiResSdfMethod == true)
+                    {
+                        sdfMethod = false;
+                        midResSdfMethod = false;
+                        NotifyPropertyChanged();
+                        maker.Resolution = 0.3;
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public bool MidResSdfMethod
+        {
+            get
+            {
+                return midResSdfMethod;
+            }
+            set
+            {
+                if (value != midResSdfMethod)
+                {
+                    midResSdfMethod = value;
+                    if (midResSdfMethod == true)
+                    {
+                        sdfMethod = false;
+                        hiResSdfMethod = false;
+                        NotifyPropertyChanged();
+                        maker.Resolution = 0.4;
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
         public ICommand MoveCommand
         {
             get; set;
+        }
+
+        public bool SdfMethod
+        {
+            get
+            {
+                return sdfMethod;
+            }
+            set
+            {
+                if (value != sdfMethod)
+                {
+                    sdfMethod = value;
+                    if (sdfMethod == true)
+                    {
+                        hiResSdfMethod = false;
+                        midResSdfMethod = false;
+
+                        NotifyPropertyChanged();
+                        maker.Resolution = 0.5;
+                        UpdateDisplay();
+                    }
+                }
+            }
         }
 
         public int SelectedPrimitive
@@ -203,7 +276,7 @@ namespace Barnacle.Dialogs
             }
             else
             {
-                maker.Resolution = 0.5;
+                maker.Resolution = 0.1;
                 Regenerate();
                 base.SaveSizeAndLocation();
                 SaveEditorParmeters();

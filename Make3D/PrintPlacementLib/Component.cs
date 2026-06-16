@@ -22,43 +22,55 @@ namespace PrintPlacementLib
         private double lowOffY;
         private double tx;
         private double ty;
-        public double Clearance { get; internal set; }
-        public int Density { get; set; }
-        public Point3D HighBound { get; set; }
-        public Point3D LowBound { get; set; }
-        public BedMap Map { get; set; }
-        public Point3D OriginalPosition { get; set; }
-        public Point3D Position { get; set; }
-        public Object3D Shape { get; set; }
-        public List<Rect> FaceBounds { get; set; }
-        internal void ExpandMap()
+
+        public double Clearance
         {
-            int newRows = Rows + 2;
-            int newColumns = Columns + 2;
-            BedMap bm = new BedMap(newRows, newColumns);
-            for (int r = 0; r < Rows; r++)
-            {
-                for (int c = 0; c < Columns; c++)
-                {
-                    if (Map.Get(r, c))
-                    {
-                        for (int rn = 0; rn < 3; rn++)
-                        {
-                            for (int cn = 0; cn < 3; cn++)
-                            {
-                                bm.Set(r + rn, c + cn, true);
-                            }
-                        }
-                    }
-                }
-            }
-            Rows = newRows;
-            Columns = newColumns;
-            Map = bm;
+            get; internal set;
         }
+
+        public int Density
+        {
+            get; set;
+        }
+
+        public List<Rect> FaceBounds
+        {
+            get; set;
+        }
+
+        public Point3D HighBound
+        {
+            get; set;
+        }
+
+        public Point3D LowBound
+        {
+            get; set;
+        }
+
+        public BedMap Map
+        {
+            get; set;
+        }
+
+        public Point3D OriginalPosition
+        {
+            get; set;
+        }
+
+        public Point3D Position
+        {
+            get; set;
+        }
+
+        public Object3D Shape
+        {
+            get; set;
+        }
+
         public void CalcFaceBounds()
         {
-           FaceBounds = new List<Rect>();
+            FaceBounds = new List<Rect>();
             for (int i = 0; i < Shape.TriangleIndices.Count; i += 3)
             {
                 Point low = new Point(int.MaxValue, int.MaxValue);
@@ -97,6 +109,33 @@ namespace PrintPlacementLib
                 FaceBounds.Add(bnd);
             }
         }
+
+        internal void ExpandMap()
+        {
+            int newRows = Rows + 2;
+            int newColumns = Columns + 2;
+            BedMap bm = new BedMap(newRows, newColumns);
+            for (int r = 0; r < Rows; r++)
+            {
+                for (int c = 0; c < Columns; c++)
+                {
+                    if (Map.Get(r, c))
+                    {
+                        for (int rn = 0; rn < 3; rn++)
+                        {
+                            for (int cn = 0; cn < 3; cn++)
+                            {
+                                bm.Set(r + rn, c + cn, true);
+                            }
+                        }
+                    }
+                }
+            }
+            Rows = newRows;
+            Columns = newColumns;
+            Map = bm;
+        }
+
         internal double Score(int row, int column, int maxRow, int maxCol, Bounds3D bedBounds)
         {
             double score = double.MaxValue;
@@ -104,18 +143,18 @@ namespace PrintPlacementLib
             if ((row + Rows < maxRow) &&
                  (column + Columns < maxCol))
             {
-            /*
-                Bounds3D scoreBounds = new Bounds3D(bedBounds);
-                int lr = row - (int)(lowOffY / Clearance);
-                int lc = column - (int)(lowOffX / Clearance);
-                scoreBounds.Adjust(new Point3D(lc, 0, lr));
+                /*
+                    Bounds3D scoreBounds = new Bounds3D(bedBounds);
+                    int lr = row - (int)(lowOffY / Clearance);
+                    int lc = column - (int)(lowOffX / Clearance);
+                    scoreBounds.Adjust(new Point3D(lc, 0, lr));
 
-                int ur = row - (int)(highOffY / Clearance);
-                int uc = column - (int)(highOffX / Clearance);
-                scoreBounds.Adjust(new Point3D(uc, 0, ur));
-                score = scoreBounds.Width * scoreBounds.Depth;
-                */
-                
+                    int ur = row - (int)(highOffY / Clearance);
+                    int uc = column - (int)(highOffX / Clearance);
+                    scoreBounds.Adjust(new Point3D(uc, 0, ur));
+                    score = scoreBounds.Width * scoreBounds.Depth;
+                    */
+
                 // convert the row and col back to a real position
                 Point orig = new Point(column * Clearance, row * Clearance);
 
@@ -127,13 +166,12 @@ namespace PrintPlacementLib
                 double d2 = Math.Sqrt((tx - p2.X) * (tx - p2.X) + (ty - p2.Y) * (ty - p2.Y));
                 score = Math.Max(d1, d2);
 
-              //  score = Math.Sqrt((tx - orig.X) * (tx - orig.X) + (ty - orig.Y) * (ty - orig.Y));
-                
+                //  score = Math.Sqrt((tx - orig.X) * (tx - orig.X) + (ty - orig.Y) * (ty - orig.Y));
             }
             return score;
         }
 
-        internal void SetMap()
+        internal void SetMap(double resolution)
         {
             CalcFaceBounds();
             lowOffX = OriginalPosition.X - LowBound.X;
@@ -156,7 +194,6 @@ namespace PrintPlacementLib
                     // create a visual that we can ray trace
                     MeshGeometry3D model = Shape.Mesh;
 
-                    double resolution = 0.25;
                     for (int row = 0; row < Rows; row++)
                     {
                         double z = (row * Clearance) + LowBound.Z;

@@ -797,7 +797,34 @@
                             CommandParameter="Optimum"
                             Header="Arrange"
                             ImageSource="/Barnacle;component/Images/Buttons/Arrange.png"
-                            ToolTip="Arrange all items in a compact footprint for printing" />
+                            ToolTip="Arrange all items in a compact footprint for printing. Hi Resolution but slow" />
+                        <Custom:RibbonMenuItem
+     x:Name="OptimumMid"
+     HorizontalAlignment="Stretch"
+     VerticalAlignment="Top"
+     Command="{Binding DistributeCommand}"
+     CommandParameter="OptimumMid"
+     Header="Arrange Mid"
+     ImageSource="/Barnacle;component/Images/Buttons/Arrange.png"
+     ToolTip="Arrange all items in a compact footprint for printing" />
+                        <Custom:RibbonMenuItem
+     x:Name="OptimumLow"
+     HorizontalAlignment="Stretch"
+     VerticalAlignment="Top"
+     Command="{Binding DistributeCommand}"
+     CommandParameter="OptimumLow"
+     Header="Arrange Low"
+     ImageSource="/Barnacle;component/Images/Buttons/Arrange.png"
+     ToolTip="Arrange all items in a compact footprint for printing" />
+                        <Custom:RibbonMenuItem
+     x:Name="Spiral"
+     HorizontalAlignment="Stretch"
+     VerticalAlignment="Top"
+     Command="{Binding DistributeCommand}"
+     CommandParameter="Spiral"
+     Header="Spiral"
+     ImageSource="/Barnacle;component/Images/Buttons/Arrange.png"
+     ToolTip="Arrange all items in a compact footprint for printing" />
                         <Custom:RibbonMenuItem
                             x:Name="HEvenAlignment"
                             HorizontalAlignment="Stretch"

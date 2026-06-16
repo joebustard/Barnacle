@@ -116,10 +116,36 @@
             Grid.RowSpan="2"
             Grid.Column="2"
             Style="{StaticResource GridSplitterStyle}" />
-        <u:ObjectView
-            x:Name="Viewer"
-            Grid.Row="0"
-            Grid.Column="3" />
+        <Grid Grid.Row="0" Grid.Column="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25" />
+                <RowDefinition />
+                <RowDefinition Height="30" />
+            </Grid.RowDefinitions>
+            <u:ObjectView x:Name="Viewer" Grid.Row="1" />
+            <StackPanel
+        Grid.Row="2"
+        IsEnabled="{Binding EditingEnabled}"
+        Orientation="Horizontal">
+                <RadioButton
+            VerticalAlignment="Center"
+            Content="Sdf"
+            GroupName="MethodGroup"
+            IsChecked="{Binding SdfMethod}" />
+                <RadioButton
+            Margin="8,0,0,0"
+            VerticalAlignment="Center"
+            Content="Mid res Sdf"
+            GroupName="MethodGroup"
+            IsChecked="{Binding MidResSdfMethod}" />
+                <RadioButton
+            Margin="8,0,0,0"
+            VerticalAlignment="Center"
+            Content="Hi res Sdf"
+            GroupName="MethodGroup"
+            IsChecked="{Binding HiResSdfMethod}" />
+            </StackPanel>
+        </Grid>
 
         <Grid Grid.Row="1" Grid.Column="3">
             <Grid.ColumnDefinitions>

@@ -1,5 +1,6 @@
 ﻿using Barnacle.Object3DLib;
 using System;
+using System.IO;
 using System.Xml;
 
 namespace ScriptLanguage
@@ -31,9 +32,17 @@ namespace ScriptLanguage
                     base.EvalExpression(this.partName, ref part, "PartName", "InsertPart")
                 )
                 {
-                    if (part != "" && Script.ProjectPath != null && Script.ProjectPath != "")
+                    if (part != "" && Script.ProjectPath != null && Script.ProjectPath != "" && container.Length > 1)
                     {
-                        string fName = System.IO.Path.Combine(Script.ProjectPath, container);
+                        string fName = "";
+                        if (container[1] == ':')
+                        {
+                            fName = container;
+                        }
+                        else
+                        {
+                            fName = Script.ProjectPath + container;
+                        }
                         if (!fName.EndsWith(".txt"))
                         {
                             fName += ".txt";

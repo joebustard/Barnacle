@@ -56,6 +56,11 @@ namespace Barnacle
             PrepareUndo();
         }
 
+        private void AutoLoadTimer_Tick(object sender, EventArgs e)
+        {
+            NotificationManager.Notify("StartWithOldProject", autoStartProject);
+        }
+
         private void AutoRunScript()
         {
             NotificationManager.Notify("StartWithOldProjectNoLoad", autoStartProject);
@@ -173,7 +178,18 @@ namespace Barnacle
                     autoSlicePrinter = args[++i];
                 }
             }
-            if (autoStartProject != "" && autoScriptToRun != "")
+            if (autoStartProject != "" && autoScriptToRun == "")
+            {
+                // command line asks us to load a project and run a script in it
+                // We can't do that from here as things haven't fully started yet
+                // so delay for a few seconds
+                autoRunTimer = new DispatcherTimer();
+                autoRunTimer.Interval = new TimeSpan(0, 0, 1);
+                autoRunTimer.Tick += AutoLoadTimer_Tick;
+                autoRunTimer.Start();
+            }
+            else
+           if (autoStartProject != "" && autoScriptToRun != "")
             {
                 // command line asks us to load a project and run a script in it
                 // We can't do that from here as things haven't fully started yet

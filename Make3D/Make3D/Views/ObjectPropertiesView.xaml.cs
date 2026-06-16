@@ -16,6 +16,7 @@
 // *************************************************************************
 
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace Barnacle.Views
 {
@@ -24,9 +25,28 @@ namespace Barnacle.Views
     /// </summary>
     public partial class ObjectPropertiesView : UserControl
     {
+        private DispatcherTimer tabTimer;
+
         public ObjectPropertiesView()
         {
             InitializeComponent();
+            tabTimer = new DispatcherTimer();
+            tabTimer.Interval = new System.TimeSpan(0, 0, 0, 0, 500);
+            tabTimer.Tick += TabTimer_Tick;
+        }
+
+        private void TabTimer_Tick(object sender, System.EventArgs e)
+        {
+            // reset the focus back to the main view
+            NotificationManager.Notify("RefocusEditor", null);
+        }
+
+        private void TextBox_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Tab)
+            {
+                tabTimer.Start();
+            }
         }
     }
 }

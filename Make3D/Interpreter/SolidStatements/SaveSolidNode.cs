@@ -54,9 +54,17 @@ namespace ScriptLanguage.SolidStatements
                             else
                             {
                                 result = false;
-                                if (Script.ProjectPath != null && Script.ProjectPath != "")
+                                if (Script.ProjectPath != null && Script.ProjectPath != "" && filePath.Length > 1)
                                 {
-                                    string fName = System.IO.Path.Combine(Script.ProjectPath, filePath);
+                                    string fName = "";
+                                    if (filePath[1] == ':')
+                                    {
+                                        fName = filePath;
+                                    }
+                                    else
+                                    {
+                                        fName = Script.ProjectPath + filePath;
+                                    }
                                     if (!fName.EndsWith(".txt"))
                                     {
                                         fName += ".txt";

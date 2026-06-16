@@ -1360,6 +1360,17 @@ namespace Barnacle.UserControls
             }
         }
 
+        private void UndoAction()
+        {
+            if (vm != null)
+            {
+                vm.Undo();
+                NotifyPathPointsChanged();
+                UpdateDisplay();
+                NotifyUserActive();
+            }
+        }
+
         private void UpdateDisplay()
         {
             MainCanvas.Children.Clear();
@@ -1376,7 +1387,7 @@ namespace Barnacle.UserControls
                     MainCanvas.Children.Add(image);
                     image.MouseUp += MainCanvas_MouseUp;
                 }
-                if (vm.ShowGrid != GridSettings.GridStyle.Hidden)
+                if (vm.ShowGrid != GridSettings.GridStyle.Hidden && vm.GridMarkers != null)
                 {
                     foreach (Shape sh in vm.GridMarkers)
                     {
@@ -1468,6 +1479,22 @@ namespace Barnacle.UserControls
             UpdateDisplay();
         }
 
+        private void UserControl_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Z:
+                    {
+                        if (e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+                        {
+                            UndoAction();
+                            e.Handled = true;
+                        }
+                    }
+                    break;
+            }
+        }
+
         private void Vm_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
@@ -1487,7 +1514,7 @@ namespace Barnacle.UserControls
 
                 case "OrthoLocked":
                     {
-                        ShowOrthoLockedStatus();                        
+                        ShowOrthoLockedStatus();
                     }
                     break;
 

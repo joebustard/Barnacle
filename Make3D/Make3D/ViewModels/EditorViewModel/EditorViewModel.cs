@@ -3235,7 +3235,19 @@ namespace Barnacle.ViewModels
             else
             if (s == "Optimum")
             {
-                OptimumArranger();
+                OptimumArranger(0.25);
+                document.Dirty = true;
+            }
+            else
+            if (s == "OptimumMid")
+            {
+                OptimumArranger(0.5);
+                document.Dirty = true;
+            }
+            else
+            if (s == "OptimumLow")
+            {
+                OptimumArranger(1);
                 document.Dirty = true;
             }
             else
@@ -4086,12 +4098,13 @@ namespace Barnacle.ViewModels
             NotifyPropertyChanged("ModelItems");
         }
 
-        private void OptimumArranger()
+        private void OptimumArranger(double mapRayResolution)
         {
             CheckPoint();
             if (Document.Content.Count > 1)
             {
                 PrintPlacement arr = new PrintPlacement();
+                arr.MapRayResolution = mapRayResolution;
                 foreach (Object3D ob in Document.Content)
                 {
                     if (ob.Exportable)

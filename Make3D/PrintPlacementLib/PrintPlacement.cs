@@ -15,23 +15,42 @@ namespace PrintPlacementLib
         private double bedHeight;
         private int bedRows;
         private double bedWidth;
+        private double clearance;
+        private double mapRayResolution;
         private BedMap overallPlacement;
         private double workingClearance;
 
         public PrintPlacement()
         {
             Clearance = 2;
+            MapRayResolution = 0.25;
             SetBedSize(200, 200);
             components = new List<Component>();
             Results = new List<Component>(); ;
         }
 
-        public double BedHeight { get { return bedHeight; } }
-        public double BedWidth { get { return bedWidth; } }
-        private double clearance;
+        public double BedHeight
+        {
+            get
+            {
+                return bedHeight;
+            }
+        }
+
+        public double BedWidth
+        {
+            get
+            {
+                return bedWidth;
+            }
+        }
+
         public double Clearance
         {
-            get { return clearance; }
+            get
+            {
+                return clearance;
+            }
 
             set
             {
@@ -40,9 +59,21 @@ namespace PrintPlacementLib
                 {
                     foreach (Component cm in components)
                     {
-                        cm.Clearance = clearance/2;
+                        cm.Clearance = clearance / 2;
                     }
                 }
+            }
+        }
+
+        public double MapRayResolution
+        {
+            get
+            {
+                return mapRayResolution;
+            }
+            set
+            {
+                mapRayResolution = value;
             }
         }
 
@@ -73,8 +104,7 @@ namespace PrintPlacementLib
             // create the bed maps
             foreach (Component cm in components)
             {
-
-                cm.SetMap();
+                cm.SetMap(mapRayResolution);
             }
 
             // sort so we have the densist object first
@@ -147,7 +177,7 @@ namespace PrintPlacementLib
                         }
                     }
                 }
-             //   overallPlacement.Dump("Updated Placement");
+                //   overallPlacement.Dump("Updated Placement");
             }
             DateTime et = DateTime.Now;
             TimeSpan ts = et - st;

@@ -20,6 +20,7 @@ using Barnacle.ViewModels;
 using ImageUtils;
 using Microsoft.Win32;
 using System;
+using System.Runtime.Remoting;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -53,8 +54,9 @@ namespace Barnacle.Views
             NotificationManager.Subscribe("Editor", "KeyUp", OnKeyUp);
             NotificationManager.Subscribe("Editor", "KeyDown", OnKeyDown);
             NotificationManager.Subscribe("Editor", "Settings", OnSettings);
-            NotificationManager.Subscribe("Editor", "ScreenShot", OnScreenShot);
 
+            NotificationManager.Subscribe("Editor", "RefocusEditor", OnRefocus);
+            NotificationManager.Subscribe("Editor", "ScreenShot", OnScreenShot);
             UpdateDisplay(null);
 
             vm = DataContext as EditorViewModel;
@@ -189,10 +191,17 @@ namespace Barnacle.Views
             }
         }
 
+        private void OnRefocus(object param)
+        {
+            Keyboard.Focus(this);
+        }
+
         private void OnScreenShot(object param)
         {
             screenShotTarget = "";
             SaveFileDialog dlg = new SaveFileDialog();
+            String defName = BaseViewModel.Document.FileName;
+            dlg.FileName = System.IO.Path.ChangeExtension(defName, "png");
             dlg.Filter = "Portable Network Images (*.png)|*.png";
             if (dlg.ShowDialog() == true)
             {
