@@ -1,6 +1,5 @@
 ﻿using Barnacle.Object3DLib;
 using System;
-using System.IO;
 using System.Xml;
 
 namespace ScriptLanguage

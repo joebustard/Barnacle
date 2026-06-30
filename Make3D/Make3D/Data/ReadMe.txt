@@ -29,8 +29,9 @@ Added
   dropabove, dropbelow, dropfront, dropback, dropleft, dropright added to limpet
   Added sgn(), MoveBackTo() MoveFrontTo() and Cenflo() to standard limpet lib
   Solid bounds functions Left(),Right(),Top(),Bottom(),Front(),Back()
+  Added ContainsPart(path,partname) to Limpet
   Added clean solid statement to limpet
-  Added a "script dirty" maker to the script editor view
+  Added a "script dirty" asterisk marker to the script editor tab view
   Added ctrl-z to flexipath control
 
 Fixed

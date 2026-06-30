@@ -115,6 +115,10 @@
       <Project>{0d9bb88e-b275-4e45-8ea9-aec204588a7c}</Project>
       <Name>OctTreeLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SplitterLib\SplitterLib.csproj">
+      <Project>{B85BF434-663E-4219-8572-7542DA5CBB32}</Project>
+      <Name>SplitterLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

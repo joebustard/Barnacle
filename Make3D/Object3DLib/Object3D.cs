@@ -9,6 +9,8 @@ using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml;
+using System.Xml.Linq;
+using SplitterLib;
 
 namespace Barnacle.Object3DLib
 {
@@ -1076,6 +1078,44 @@ namespace Barnacle.Object3DLib
             }
         }
 
+        public Object3D SplitFrontBack(double plane)
+        {
+            return SplitIt(plane, ObjectSplitter.SplitterOrientation.Distal, "_Back", "_Front");
+        }
+
+        public Object3D SplitIt(double plane, ObjectSplitter.SplitterOrientation orient, string label1, string label2)
+        {
+            ObjectSplitter splitter = new ObjectSplitter(AbsoluteObjectVertices,
+                                                          TriangleIndices,
+                                                          orient);
+
+            splitter.Plane = plane;
+            splitter.Split();
+
+            Object3D partB = ObjectFromSoup(splitter.Result2Vertices, splitter.Result2Faces); ;
+            partB.Name = Name + label1;
+            partB.Color = Color;
+            partB.Remesh();
+
+            Object3D partA = ObjectFromSoup(splitter.Result1Vertices, splitter.Result1Faces);
+            Name = Name + label2;
+            Position = partA.Position;
+            RelativeObjectVertices = partA.RelativeObjectVertices;
+            TriangleIndices = partA.TriangleIndices;
+            Remesh();
+            return partB;
+        }
+
+        public Object3D SplitLeftRight(double plane)
+        {
+            return SplitIt(plane, ObjectSplitter.SplitterOrientation.Horizontal, "_Left", "_Right");
+        }
+
+        public Object3D SplitTopBottom(double plane)
+        {
+            return SplitIt(plane, ObjectSplitter.SplitterOrientation.Vertical, "_Bottom", "_Top");
+        }
+
         public void SwapYZAxies()
         {
             List<P3D> tmp = new List<P3D>();
@@ -1255,6 +1295,32 @@ namespace Barnacle.Object3DLib
             }
             absoluteBounds.Lower = l;
             absoluteBounds.Upper = u;
+        }
+
+        /// <summary>
+        /// Converts the given soup into an object3D
+        /// </summary>
+        /// <param name="verts"></param>
+        /// <param name="faces"></param>
+        /// <returns></returns>
+        private Object3D ObjectFromSoup(Point3DCollection verts, Int32Collection faces)
+        {
+            Object3D res = new Object3D();
+            res.PrimType = "Mesh";
+            Bounds3D bnds = new Bounds3D();
+            foreach (Point3D p in verts)
+            {
+                res.AbsoluteObjectVertices.Add(new Point3D(p.X, p.Y, p.Z));
+                bnds.Adjust(p);
+            }
+            for (int i = 0; i < faces.Count; i++)
+            {
+                res.TriangleIndices.Add(faces[i]);
+            }
+            Point3D mid = bnds.MidPoint();
+            res.Position = new Point3D(mid.X, mid.Y, mid.Z);
+            res.AbsoluteToRelative();
+            return res;
         }
 
         private Point3DCollection RotatePoints(Point3DCollection pnts, double r1, double r2, double r3)

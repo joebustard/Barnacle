@@ -684,7 +684,7 @@ M84 ; Disable stepper motors
             }
             else
             {
-                MessageBox.Show("Sdcard label not defined in settings.");
+                MessageBox.Show("Sdcard Label not defined in settings.");
             }
         }
 

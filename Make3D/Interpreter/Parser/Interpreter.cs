@@ -1,5 +1,6 @@
 using ScriptLanguage.SolidStatements;
 using System;
+using static CSGLib.BooleanModeller;
 
 namespace ScriptLanguage
 {
@@ -86,6 +87,7 @@ namespace ScriptLanguage
                 "abs",
                 "atan",
                 "cos",
+                "containspart",
                 "copy",
                 "cutout",
                 "degrees",
@@ -166,6 +168,9 @@ namespace ScriptLanguage
                 "rnd",
                 "replaceall",
                 "sin",
+                "splitfrontback",
+                "splittopbottom",
+                "splitleftright",
                 "sqrt",
                 "str",
                 "substring",
@@ -1471,6 +1476,14 @@ namespace ScriptLanguage
                 }
             } while ((!bDone) && (tokenType != Tokeniser.TokenType.None) && (result == true));
             return result;
+        }
+
+        private ExpressionNode ParseContainsPartFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            ContainsPartNode asn = new ContainsPartNode();
+            exp = ParseSolidFunction(parentName, asn.Label, 2, asn);
+            return exp;
         }
 
         private ExpressionNode ParseCopyFunction(string parentName)
@@ -2872,6 +2885,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "containspart":
+                            {
+                                exp = ParseContainsPartFunction(parentName);
+                            }
+                            break;
+
                         case "degrees":
                             {
                                 exp = GetFunctionNode<DegreesNode>(parentName);
@@ -3271,6 +3290,24 @@ namespace ScriptLanguage
                         case "sin":
                             {
                                 exp = GetFunctionNode<SinNode>(parentName);
+                            }
+                            break;
+
+                        case "splitfrontback":
+                            {
+                                exp = ParseSplitFrontBackFunction(parentName);
+                            }
+                            break;
+
+                        case "splitleftright":
+                            {
+                                exp = ParseSplitLeftRightFunction(parentName);
+                            }
+                            break;
+
+                        case "splittopbottom":
+                            {
+                                exp = ParseSplitTopBottomFunction(parentName);
                             }
                             break;
 
@@ -6191,6 +6228,46 @@ namespace ScriptLanguage
             return result;
         }
 
+        private ExpressionNode ParseSolidFunction(string parentName, string label, int paramCount, SolidFunctionNode fn)
+        {
+            ExpressionNode exp = null;
+
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+
+            for (int i = 0; i < paramCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < paramCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.InsertAtStart(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == paramCount)
+            {
+                fn.expressions = coll;
+                fn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = fn;
+            }
+
+            return exp;
+        }
+
         private bool ParseSolidStatement(CompoundNode parentNode, string parentName, string label, int expectedExpressions, SolidStatement asn)
         {
             bool result = false;
@@ -6294,6 +6371,30 @@ namespace ScriptLanguage
             AddPredefinedString("ProjectPath", Script.ProjectPath);
             result = ParseProgramBlock(script);
             return result;
+        }
+
+        private ExpressionNode ParseSplitFrontBackFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            SplitFrontBackNode asn = new SplitFrontBackNode();
+            exp = ParseSolidFunction(parentName, asn.Label, 1, asn);
+            return exp;
+        }
+
+        private ExpressionNode ParseSplitLeftRightFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            SplitLeftRightNode asn = new SplitLeftRightNode();
+            exp = ParseSolidFunction(parentName, asn.Label, 1, asn);
+            return exp;
+        }
+
+        private ExpressionNode ParseSplitTopBottomFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            SplitTopBottomNode asn = new SplitTopBottomNode();
+            exp = ParseSolidFunction(parentName, asn.Label, 1, asn);
+            return exp;
         }
 
         private bool ParseStackStatement(CompoundNode parentNode, String parentName, string id)

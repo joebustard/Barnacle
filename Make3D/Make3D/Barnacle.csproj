@@ -1171,6 +1171,10 @@
       <Project>{BF2A8A31-2618-4A3C-A061-E8968F77586D}</Project>
       <Name>SimpleSmoothLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SplitterLib\SplitterLib.csproj">
+      <Project>{b85bf434-663e-4219-8572-7542da5cbb32}</Project>
+      <Name>SplitterLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TemplateLib\TemplateLib.csproj">
       <Project>{a1e87ea7-c89a-4eba-8fb7-4e3fc8cfc521}</Project>
       <Name>TemplateLib</Name>

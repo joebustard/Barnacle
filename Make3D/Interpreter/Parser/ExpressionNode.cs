@@ -173,6 +173,15 @@ namespace ScriptLanguage
             return true;
         }
 
+        public void ReportExpression(string s = "")
+        {
+            if (s != "")
+            {
+                Log.Instance().AddEntry(s);
+            }
+            Log.Instance().AddEntry($"{this.ToString()}");
+        }
+
         public virtual void SetExpressions(ExpressionCollection coll)
         {
         }
