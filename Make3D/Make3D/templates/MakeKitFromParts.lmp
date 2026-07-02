@@ -1,0 +1,109 @@
+Program  "Make Kit"
+{
+   Include "libs\limplib.txt" ;
+   Include "..\Scale.inc" ;
+   Include "..\GlobalDefinitions.inc" ;
+
+   // local declarations
+   // set this first
+   String kitname = "<KITNAME>" ;
+   Bool setdrawingscale = False  ;
+   Double reversescale = 1.0 / scalefactor ;
+
+   // the folder where the assemblies are stored
+   String outputfolder = projectpath + "\kits" ;
+   String [100] partnames ;
+   Double [100] xrot ;
+   Double [100] yrot ;
+   Double [100] zrot ;
+
+   //
+   Int numentries = 0 ;
+   Procedure Addpart( String  name, Double  xr, Double  yr, Double  zr )
+   {
+       partnames[numentries] = name ;
+       xrot[numentries] = xr ;
+       yrot[numentries] = yr ;
+       zrot[numentries] = zr ;
+       numentries = numentries + 1 ;
+   }
+
+   // Add parts here
+   <PARTLIST>
+
+   // the folder where the parts are stored
+   String parts = projectpath + "\parts\" ;
+   String assemblies = projectpath + "\assemblies" ;
+   Double leftx = -60 ;
+   Double rightx = 60 ;
+   Double backz = -60 ;
+   Double px = leftx ;
+   Double pz = backz ;
+   Double leftgap ;
+   Double rowgap = 15 ;
+   Solid oldsld ;
+   Int pi ;
+   Int row = 0 ;
+
+   // ;ay the parts in a grid
+   String pn ;
+   For pi = 0 To  numentries - 1 
+   {
+       pn = partnames[ pi ] ;
+       If ( pn == "seperator" ) 
+       {
+           px = leftx ;
+           pz = pz + rowgap + 10 ;
+           row = row + 1 ;
+           If ( row == 3 ) 
+           {
+               rowgap = 25 ;
+           }
+
+       }
+       Else 
+       {
+           Print  pn ;
+           Solid sld = InsertPart( parts + pn + ".txt", pn ) ;
+           If ( setdrawingscale ) 
+           {
+               Resize sld, reversescale * Length ( sld ), reversescale * Height ( sld ), reversescale * Width ( sld ) ;
+           }
+
+           Rotate sld, xrot[ pi ], yrot[ pi ], zrot[ pi ] ;
+           If ( pi == 0 ) 
+           {
+               Move sld, px, 0, pz ;
+               Floor sld ;
+               px = Right ( sld ) + 3 ;
+           }
+           Else 
+           {
+               Move sld, 0, 0, 0 ;
+               leftgap = -Left ( sld ) ;
+               px = px + leftgap + 3 ;
+               Move sld, px, 0, pz ;
+               Floor sld ;
+               px = Right ( sld ) ;
+               oldsld = sld ;
+           }
+
+           If ( px > rightx ) 
+           {
+               px = leftx ;
+               pz = pz + rowgap ;
+               row = row + 1 ;
+               If ( row == 3 ) 
+               {
+                   rowgap = 25 ;
+               }
+
+           }
+
+       }
+
+   }
+
+   // save results
+   SaveSolids outputfolder + "\" + kitname + ".txt" ;
+}

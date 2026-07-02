@@ -6,11 +6,14 @@ namespace TemplateLib
 {
     public class ProjectTemplateFile
     {
+        private List<TemplateSubstitution> substitutions;
+
         public ProjectTemplateFile()
         {
             Name = String.Empty;
             Source = String.Empty;
             Attributes = new Dictionary<string, string>();
+            substitutions = new List<TemplateSubstitution>();
         }
 
         public Dictionary<string, string> Attributes
@@ -26,6 +29,21 @@ namespace TemplateLib
         public String Source
         {
             get; set;
+        }
+
+        public List<TemplateSubstitution> Substitutions
+        {
+            get
+            {
+                return substitutions;
+            }
+            set
+            {
+                if (substitutions != value)
+                {
+                    substitutions = value;
+                }
+            }
         }
 
         public void Load(XmlDocument doc, XmlNode nd)

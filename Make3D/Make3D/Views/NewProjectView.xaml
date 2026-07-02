@@ -66,121 +66,242 @@
                     Text="{Binding ProjectName, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
         </Border>
-
-        <Border
+        <TabControl
             Grid.Row="3"
-            Grid.RowSpan="1"
+            Grid.RowSpan="5"
             Grid.Column="1"
             Grid.ColumnSpan="4"
-            Background="White"
-            BorderThickness="4"
-            Style="{StaticResource ControlBorder}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                </Grid.ColumnDefinitions>
-                <Label
-                    Grid.Column="0"
-                    VerticalAlignment="Center"
-                    FontSize="18">
-                    Template
-                </Label>
+            BorderBrush="green"
+            BorderThickness="4">
 
-                <ComboBox
-                    x:Name="TemplateBox"
-                    Grid.Column="1"
-                    Grid.ColumnSpan="1"
-                    ItemsSource="{Binding TemplateNames}"
-                    SelectedItem="{Binding SelectedTemplate}" />
-            </Grid>
-        </Border>
+            <TabItem
+                Background="AliceBlue"
+                BorderBrush="green"
+                BorderThickness="4"
+                FontSize="20"
+                Header="By Template">
 
-        <Border
-            Grid.Row="5"
-            Grid.RowSpan="2"
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="5" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition />
+                        <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+                    <Border
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Background="White"
+                        BorderThickness="4"
+                        Style="{StaticResource ControlBorder}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+                            <Label
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                FontSize="18">
+                                Template
+                            </Label>
+
+                            <ComboBox
+                                x:Name="TemplateBox"
+                                Grid.Column="1"
+                                Grid.ColumnSpan="1"
+                                ItemsSource="{Binding TemplateNames}"
+                                SelectedItem="{Binding SelectedTemplate}" />
+                        </Grid>
+                    </Border>
+
+                    <Border
+                        Grid.Row="2"
+                        Grid.RowSpan="2"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="4"
+                        Background="White"
+                        BorderThickness="4"
+                        Style="{StaticResource ControlBorder}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Label
+                                Grid.Row="0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="18">
+                                Description
+                            </Label>
+
+                            <TextBox
+                                x:Name="DescriptionBox"
+                                Grid.Row="1"
+                                HorizontalAlignment="Stretch"
+                                AcceptsReturn="True"
+                                FontSize="18"
+                                IsReadOnly="True"
+                                Text="{Binding SelectedDescription}"
+                                TextChanged="DescriptionBox_TextChanged"
+                                VerticalScrollBarVisibility="Visible" />
+                        </Grid>
+                    </Border>
+
+                    <Grid
+                        Grid.Row="4"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+                        <Button
+                            Grid.Column="1"
+                            Command="{Binding BackCommand}"
+                            Content="Back">
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource LargeButton}" TargetType="Button">
+
+                                    <Style.Triggers>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Margin" Value="4,4,4,4" />
+                                            <Setter Property="FontSize" Value="20" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <Button
+                            Grid.Column="3"
+                            HorizontalAlignment="Right"
+                            Command="{Binding CreateCommand}"
+                            CommandParameter="ByTemplate"
+                            Content="Create"
+                            IsDefault="True"
+                            IsEnabled="{Binding OKEnabled}">
+
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource LargeButton}" TargetType="Button">
+
+                                    <Style.Triggers>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Margin" Value="4,4,4,4" />
+                                            <Setter Property="FontSize" Value="20" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem
+                Background="AliceBlue"
+                BorderBrush="green"
+                BorderThickness="4"
+                FontSize="20"
+                Header="Design">
+                <ScrollViewer>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="5" />
+                            <ColumnDefinition />
+                            <ColumnDefinition  Width="5" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                        </Grid.RowDefinitions>
+                        <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Models" />
+                        <TextBox Grid.Column="0" Grid.Row="1" Grid.RowSpan="3"  AcceptsReturn="True"    Text="{Binding ModelList}" VerticalContentAlignment="Top" BorderThickness="2" VerticalAlignment="Stretch" />
+                        <Label Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Assemblies" />
+                        <TextBox Grid.Column="2" Grid.Row="1" Grid.RowSpan="3"  AcceptsReturn="True"    Text="{Binding AssemblyList}" VerticalAlignment="Stretch" VerticalContentAlignment="Top" BorderThickness="2" />
+
+                        <Label Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Extra Scripts" />
+                        <TextBox Grid.Column="0" Grid.Row="5" Grid.RowSpan="3"  AcceptsReturn="True"    Text="{Binding ScriptList}" VerticalAlignment="Stretch" VerticalContentAlignment="Top" BorderThickness="2" />
+
+                        <Label Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Script Includes" />
+                        <TextBox Grid.Column="2" Grid.Row="5" Grid.RowSpan="3"  AcceptsReturn="True"    Text="{Binding ScriptIncludeList}" VerticalAlignment="Stretch" VerticalContentAlignment="Top" BorderThickness="2" />
+
+                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="8">
+                            <Label VerticalAlignment="Center" Content="No. Kits" Margin="4,0,4,0" />
+                            <TextBox Text="{Binding NumberOfKits}" Width="50" Margin="0,2,0,2" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="8">
+                            <CheckBox Content="Quick Assembler" VerticalAlignment="Center" IsChecked="{Binding GenerateQuickAssembler}" />
+                        </StackPanel>
+                        <Grid
+        Grid.Row="9"
+        Grid.Column="0"
+        Grid.ColumnSpan="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+                            <Button
             Grid.Column="1"
-            Grid.ColumnSpan="4"
-            Background="White"
-            BorderThickness="4"
-            Style="{StaticResource ControlBorder}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="40" />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Label
-                    Grid.Row="0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontSize="18">
-                    Description
-                </Label>
+            Command="{Binding BackCommand}"
+            Content="Back">
+                                <Button.Style>
+                                    <Style BasedOn="{StaticResource LargeButton}" TargetType="Button">
 
-                <TextBox
-                    x:Name="DescriptionBox"
-                    Grid.Row="1"
-                    HorizontalAlignment="Stretch"
-                    AcceptsReturn="True"
-                    FontSize="18"
-                    IsReadOnly="True"
-                    Text="{Binding SelectedDescription}"
-                    TextChanged="DescriptionBox_TextChanged"
-                    VerticalScrollBarVisibility="Visible" />
-            </Grid>
-        </Border>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter Property="Margin" Value="4,4,4,4" />
+                                                <Setter Property="FontSize" Value="20" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
 
-        <Grid
-            Grid.Row="7"
-            Grid.Column="1"
-            Grid.ColumnSpan="4">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="2*" />
-            </Grid.ColumnDefinitions>
-            <Button
-                Grid.Column="1"
-                Command="{Binding BackCommand}"
-                Content="Back">
-                <Button.Style>
-                    <Style BasedOn="{StaticResource LargeButton}" TargetType="Button">
+                            <Button
+            Grid.Column="3"
+            HorizontalAlignment="Right"
+            Command="{Binding CreateCommand}"
+            CommandParameter="Design"
+            Content="Create"
+            IsDefault="True"
+            IsEnabled="{Binding OKEnabled}">
 
-                        <Style.Triggers>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Margin" Value="4,4,4,4" />
-                                <Setter Property="FontSize" Value="20" />
-                            </Trigger>
+                                <Button.Style>
+                                    <Style BasedOn="{StaticResource LargeButton}" TargetType="Button">
 
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
-
-            <Button
-                Grid.Column="3"
-                HorizontalAlignment="Right"
-                Command="{Binding CreateCommand}"
-                Content="Create"
-                IsDefault="True"
-                IsEnabled="{Binding OKEnabled}">
-
-                <Button.Style>
-                    <Style BasedOn="{StaticResource LargeButton}" TargetType="Button">
-
-                        <Style.Triggers>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Margin" Value="4,4,4,4" />
-                                <Setter Property="FontSize" Value="20" />
-                            </Trigger>
-
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
-        </Grid>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter Property="Margin" Value="4,4,4,4" />
+                                                <Setter Property="FontSize" Value="20" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
     </Grid>
 </UserControl>

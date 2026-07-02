@@ -12,12 +12,14 @@ namespace TemplateLib
         public List<ProjectTemplateFile> files;
 
         public List<ProjectTemplateFolder> folders;
+        private List<TemplateSubstitution> substitutions;
 
         public ProjectTemplateFolder()
         {
             Files = new List<ProjectTemplateFile>();
             Folders = new List<ProjectTemplateFolder>();
             Attributes = new Dictionary<string, string>();
+            Substitutions = new List<TemplateSubstitution>();
         }
 
         public ProjectTemplateFolder(VisualSolutionExplorer.ProjectFolder folder, string projectName)
@@ -140,7 +142,17 @@ namespace TemplateLib
 
         public List<TemplateSubstitution> Substitutions
         {
-            get; set;
+            get
+            {
+                return substitutions;
+            }
+            set
+            {
+                if (substitutions != value)
+                {
+                    substitutions = value;
+                }
+            }
         }
 
         public void CreateFiles(string path)
@@ -159,7 +171,11 @@ namespace TemplateLib
                     if (File.Exists(src) && !File.Exists(trg))
                     {
                         string s = File.ReadAllText(src);
-                        foreach (TemplateSubstitution ts in Substitutions)
+                        foreach (TemplateSubstitution ts in this.Substitutions)
+                        {
+                            s = s.Replace(ts.Original, ts.Replacement);
+                        }
+                        foreach (TemplateSubstitution ts in pf.Substitutions)
                         {
                             s = s.Replace(ts.Original, ts.Replacement);
                         }

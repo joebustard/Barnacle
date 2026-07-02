@@ -18,8 +18,10 @@
 using FileUtils;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Security.RightsManagement;
 using System.Windows.Input;
 using TemplateLib;
 
@@ -27,15 +29,20 @@ namespace Barnacle.ViewModels
 {
     internal class NewProjectViewModel : BaseViewModel, INotifyPropertyChanged
     {
+        private String assemblyList;
         private Dictionary<string, string> descriptions;
+        private bool generateQuickAssembler;
+        private String modelList;
+        private int numberOfKits;
         private bool okEnabled;
         private string projectName;
         private string projectRoot;
         private string projPath;
+        private String scriptIncludeList;
+        private String scriptList;
         private string selectedDescription;
         private string selectedTemplate;
         private List<string> templateNames;
-
         private ProjectTemplator templator;
 
         public NewProjectViewModel()
@@ -66,6 +73,27 @@ namespace Barnacle.ViewModels
                 SelectedTemplate = templateNames[0];
             }
             OKEnabled = false;
+            ModelList = "";
+            AssemblyList = "";
+            ScriptIncludeList = "";
+            ScriptList = "";
+            GenerateQuickAssembler = true;
+        }
+
+        public String AssemblyList
+        {
+            get
+            {
+                return assemblyList;
+            }
+            set
+            {
+                if (assemblyList != value)
+                {
+                    assemblyList = value;
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
         public ICommand BackCommand
@@ -76,6 +104,50 @@ namespace Barnacle.ViewModels
         public ICommand CreateCommand
         {
             get; set;
+        }
+
+        public bool GenerateQuickAssembler
+        {
+            get
+            {
+                return generateQuickAssembler;
+            }
+            set
+            {
+                if (value != generateQuickAssembler)
+                {
+                    generateQuickAssembler = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String ModelList
+        {
+            get
+            {
+                return modelList;
+            }
+            set
+            {
+                if (modelList != value)
+                {
+                    modelList = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public int NumberOfKits
+        {
+            get
+            {
+                return numberOfKits;
+            }
+            set
+            {
+                if (numberOfKits != value) { numberOfKits = value; NotifyPropertyChanged(); }
+            }
         }
 
         public bool OKEnabled
@@ -160,6 +232,38 @@ namespace Barnacle.ViewModels
             }
         }
 
+        public String ScriptIncludeList
+        {
+            get
+            {
+                return scriptIncludeList;
+            }
+            set
+            {
+                if (scriptIncludeList != value)
+                {
+                    scriptIncludeList = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String ScriptList
+        {
+            get
+            {
+                return scriptList;
+            }
+            set
+            {
+                if (scriptList != value)
+                {
+                    scriptList = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public string SelectedDescription
         {
             get
@@ -216,13 +320,26 @@ namespace Barnacle.ViewModels
 
         private void OnCreate(object obj)
         {
-            if (templator.ProcessTemplate(projectName, projPath, selectedTemplate))
+            string param = obj.ToString();
+            if (param.ToLower() == "bytemplate")
             {
-                projPath = templator.SolutionPath;
+                if (templator.ProcessTemplate(projectName, projPath, selectedTemplate))
+                {
+                    projPath = templator.SolutionPath;
+                }
+                RecentlyUsedManager.UpdateRecentFiles(projPath);
+                NotificationManager.Notify("ShowEditor", null);
+                NotificationManager.Notify("ReloadProject", projPath);
             }
-            RecentlyUsedManager.UpdateRecentFiles(projPath);
-            NotificationManager.Notify("ShowEditor", null);
-            NotificationManager.Notify("ReloadProject", projPath);
+            else
+            if (param.ToLower() == "design")
+            {
+                templator.CreateByDesign(projectName, projPath, modelList, assemblyList, scriptList, scriptIncludeList, numberOfKits, generateQuickAssembler);
+                projPath = templator.SolutionPath;
+                RecentlyUsedManager.UpdateRecentFiles(projPath);
+                NotificationManager.Notify("ShowEditor", null);
+                NotificationManager.Notify("ReloadProject", projPath);
+            }
         }
 
         private void UpdateDescription()
