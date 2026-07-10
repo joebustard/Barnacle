@@ -22,6 +22,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Security.RightsManagement;
+using System.Windows;
 using System.Windows.Input;
 using TemplateLib;
 
@@ -334,11 +335,18 @@ namespace Barnacle.ViewModels
             else
             if (param.ToLower() == "design")
             {
-                templator.CreateByDesign(projectName, projPath, modelList, assemblyList, scriptList, scriptIncludeList, numberOfKits, generateQuickAssembler);
-                projPath = templator.SolutionPath;
-                RecentlyUsedManager.UpdateRecentFiles(projPath);
-                NotificationManager.Notify("ShowEditor", null);
-                NotificationManager.Notify("ReloadProject", projPath);
+                try
+                {
+                    templator.CreateByDesign(projectName, projPath, modelList, assemblyList, scriptList, scriptIncludeList, numberOfKits, generateQuickAssembler);
+                    projPath = templator.SolutionPath;
+                    RecentlyUsedManager.UpdateRecentFiles(projPath);
+                    NotificationManager.Notify("ShowEditor", null);
+                    NotificationManager.Notify("ReloadProject", projPath);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
         }
 

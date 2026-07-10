@@ -3,7 +3,6 @@
    // Include in all the  scripts you create in project
    // so they are all using the same values for these
    // Assume model is of the floor, facing to the right
-   String projectpath = "<PROJPATH>" ;
 
    // String thats used to generate the display label
    string DisplayLabel="<PROJNAME>";

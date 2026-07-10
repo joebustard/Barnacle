@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Compression;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Shapes;
 using System.Xml;
 
@@ -86,6 +88,7 @@ namespace TemplateLib
         /// <exception cref="NotImplementedException"></exception>
         public bool CreateByDesign(string projectName, string projPath, string modelList, string assemblyList, string scriptList, string scriptIncludeList, int numberOfKits, bool generateQuickAssembler)
         {
+            // Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True"
             bool res = false;
             ProjectTemplateDefinition def = new ProjectTemplateDefinition();
             TemplateSubstitution ts = new TemplateSubstitution();
@@ -119,56 +122,53 @@ namespace TemplateLib
 
             ProjectTemplateFolder assemblyFolder = AddDesignedFolder(def, rootptf, "Assemblies");
             ProjectTemplateFolder backupsFolder = AddDesignedFolder(def, rootptf, "Backups");
+            AddAttribute(backupsFolder, "Export", "False");
+
             ProjectTemplateFolder exportFolder = AddDesignedFolder(def, rootptf, "Export");
+            AddAttribute(exportFolder, "Export", "False");
+            AddAttribute(exportFolder, "Clean", "True");
+            ProjectTemplateFolder imagesFolder = AddDesignedFolder(def, rootptf, "Images");
             ProjectTemplateFolder kitFolder = AddDesignedFolder(def, rootptf, "Kits");
             ProjectTemplateFolder printerFolder = AddDesignedFolder(def, rootptf, "Printer");
+            AddAttribute(printerFolder, "Export", "False");
             ProjectTemplateFolder partsFolder = AddDesignedFolder(def, rootptf, "Parts");
             ProjectTemplateFolder scriptsFolder = AddDesignedFolder(def, rootptf, "Scripts");
+            AddAttribute(scriptsFolder, "Export", "False");
             ProjectTemplateFolder subpartsFolder = AddDesignedFolder(def, rootptf, "Subparts");
+            AddAttribute(subpartsFolder, "Export", "False");
             ProjectTemplateFolder assemblersScriptsFolder = AddDesignedFolder(def, scriptsFolder, "Assemblers");
+            AddAttribute(assemblersScriptsFolder, "Export", "False");
             ProjectTemplateFolder partmakersFolder = AddDesignedFolder(def, scriptsFolder, "PartMakers");
+            AddAttribute(partmakersFolder, "Export", "False");
             ProjectTemplateFolder kitmakersFolder = AddDesignedFolder(def, scriptsFolder, "KitMakers");
+            AddAttribute(kitmakersFolder, "Export", "False");
 
             // models
             if (!String.IsNullOrEmpty(modelList))
             {
                 string[] partnames = modelList.Split('\n');
+
                 foreach (string fn in partnames)
                 {
                     string fn2 = fn.Trim();
-                    ProjectTemplateFile partfile = new ProjectTemplateFile();
-                    partfile.Name = fn2 + ".txt";
-                    partsFolder.Files.Add(partfile);
-                    partfile.Attributes["Name"] = partfile.Name;
-                    partfile.Attributes["Source"] = @"templates/blankmodel1_35.txt";
-                    partfile.Source = @"templates/blankmodel1_35.txt";
+                    AddFile(partsFolder, fn2 + ".txt", @"templates/blankmodel1_35.txt");
 
-                    ProjectTemplateFile partmakerfile = new ProjectTemplateFile();
-                    partmakerfile.Name = "Make" + fn2 + ".lmp";
+                    ProjectTemplateFile partmakerfile = AddFile(partmakersFolder, "Make" + fn2 + ".lmp", @"templates/MakePartFromSubParts.lmp");
 
-                    TemplateSubstitution ts2 = new TemplateSubstitution();
-                    ts2.Original = "<PARTNAME>";
-                    ts2.Replacement = fn2;
-
-                    partmakerfile.Substitutions.Add(ts2);
-
-                    partmakersFolder.Files.Add(partmakerfile);
-                    partmakerfile.Attributes["Name"] = partmakerfile.Name;
-                    partmakerfile.Attributes["Source"] = @"templates/MakePartFromSubParts.lmp";
-                    partmakerfile.Source = @"templates/MakePartFromSubParts.lmp";
+                    AddSubstitution(partmakerfile, "<PARTNAME>", fn2);
                 }
 
                 // sub parts
                 foreach (string fn in partnames)
                 {
                     string fn2 = fn.Trim();
-                    ProjectTemplateFile subpartFile = new ProjectTemplateFile();
-                    subpartFile.Name = fn2 + "Subparts.txt";
-                    subpartsFolder.Files.Add(subpartFile);
-                    subpartFile.Attributes["Name"] = subpartFile.Name;
-                    subpartFile.Attributes["Source"] = @"templates/blankmodel1_35.txt";
-                    subpartFile.Source = @"templates/blankmodel1_35.txt";
+                    AddFile(subpartsFolder, fn2 + "Subparts.txt", @"templates/blankmodel1_35.txt");
                 }
+
+                // Add include file to scripts
+                AddFile(scriptsFolder, "scale.inc", @"templates/AircraftScale.inc");
+                AddFile(scriptsFolder, "globaldefinitions.inc", @"templates/AircraftGlobalDefinitions.inc");
+                AddFile(scriptsFolder, "projectlib.inc", @"templates/AircraftProjectLib.inc");
             }
 
             // assemblies folder
@@ -178,19 +178,69 @@ namespace TemplateLib
                 foreach (string fn in assemblies)
                 {
                     string fn2 = fn.Trim();
-                    ProjectTemplateFile assemblyFile = new ProjectTemplateFile();
-                    assemblyFile.Name = fn2 + ".txt";
-                    assemblyFolder.Files.Add(assemblyFile);
-                    assemblyFile.Attributes["Name"] = assemblyFile.Name;
-                    assemblyFile.Attributes["Source"] = @"templates/blankmodel1_35.txt";
-                    assemblyFile.Source = @"templates/blankmodel1_35.txt";
+                    // the assembly model file
+                    ProjectTemplateFile assemblyFile = AddFile(assemblyFolder, fn2 + "Assembly.txt", @"templates/blankmodel1_35.txt");
 
-                    ProjectTemplateFile assemblerScriptFile = new ProjectTemplateFile();
-                    assemblerScriptFile.Name = "Assemble" + fn2 + ".lmp";
-                    assemblersScriptsFolder.Files.Add(assemblerScriptFile);
-                    assemblerScriptFile.Attributes["Name"] = assemblerScriptFile.Name;
-                    assemblerScriptFile.Attributes["Source"] = @"templates/MakeAssemblyFromParts.lmp";
-                    assemblerScriptFile.Source = assemblerScriptFile.Attributes["Source"];
+                    // the script that makes the assembly
+                    ProjectTemplateFile assemblerScriptFile = AddFile(assemblersScriptsFolder, "Assemble" + fn2 + ".lmp", @"templates/MakeAssemblyFromParts.lmp");
+
+                    string dummyDecs = "";
+                    string dummyInserts = "";
+                    string dummyPositions = "";
+                    string dummyBuilder = "";
+                    string[] partnames = modelList.Split('\n');
+                    bool first = true;
+                    foreach (string pn in partnames)
+                    {
+                        string npn = pn.Trim();
+                        dummyPositions += $"  // {npn} positions\r\n";
+                        dummyPositions += $"double  {npn}X=0;\r\n";
+                        dummyPositions += $"double  {npn}Y=0;\r\n";
+                        dummyPositions += $"double  {npn}Z=0;\r\n";
+                        dummyPositions += $"double  {npn}RX=0;\r\n";
+                        dummyPositions += $"double  {npn}RY=0;\r\n";
+                        dummyPositions += $"double  {npn}RZ=0;\r\n";
+                        dummyDecs += $"  Solid {npn};\r\n";
+                        dummyInserts += "  //\r\n";
+                        dummyInserts += $"  {npn} =Insert(src,\"{npn}\",";
+                        dummyInserts += $"  {npn}X,{npn}Y,{npn}Z,{npn}RX,{npn}RY,{npn}RZ);";
+
+                        if (first)
+                        {
+                            dummyBuilder += $"  whole ={npn};\r\n";
+                            first = false;
+                        }
+                        else
+                        {
+                            dummyBuilder += $"  if (IsValid({npn}))\r\n";
+                            dummyBuilder += "  {";
+                            dummyBuilder += $"  whole = ForceUnion(whole,{npn});\r\n";
+                            dummyBuilder += "  }";
+                        }
+                    }
+                    AddSubstitution(assemblerScriptFile, "<PARTLIST>", dummyInserts);
+                    AddSubstitution(assemblerScriptFile, "<PARTPOSITIONS>", dummyPositions);
+                    AddSubstitution(assemblerScriptFile, "<ASSEMBLYNAME>", fn2);
+                    AddSubstitution(assemblerScriptFile, "<BUILDER>", dummyBuilder);
+                    AddSubstitution(assemblerScriptFile, "<DECS>", dummyDecs);
+                }
+            }
+
+            if (!String.IsNullOrEmpty(scriptIncludeList))
+            {
+                string[] scincs = scriptIncludeList.Split('\n');
+                foreach (string fn in scincs)
+                {
+                    AddFile(scriptsFolder, fn.Trim() + ".inc", @"templates/LimpetInclude.inc");
+                }
+            }
+
+            if (!String.IsNullOrEmpty(scriptList))
+            {
+                string[] scincs = scriptList.Split('\n');
+                foreach (string fn in scincs)
+                {
+                    AddFile(scriptsFolder, fn.Trim() + ".lmp", @"templates/LimpetTemplate.txt");
                 }
             }
 
@@ -199,37 +249,22 @@ namespace TemplateLib
             {
                 for (int i = 1; i <= numberOfKits; i++)
                 {
-                    ProjectTemplateFile kitFile = new ProjectTemplateFile();
                     string fn = "kit" + i.ToString();
-                    kitFile.Name = fn + ".txt";
-                    kitFolder.Files.Add(kitFile);
-                    kitFile.Attributes["Name"] = kitFile.Name;
-                    kitFile.Attributes["Source"] = @"templates/blankmodel1_35.txt";
-                    kitFile.Source = @"templates/blankmodel1_35.txt";
 
-                    TemplateSubstitution ts3 = new TemplateSubstitution();
-                    ts3.Original = "<KITNAME>";
-                    ts3.Replacement = fn;
-                    kitFile.Substitutions.Add(ts3);
+                    ProjectTemplateFile kitFile = AddFile(kitFolder, fn + ".txt", @"templates/blankmodel1_35.txt");
+                    AddSubstitution(kitFile, "<KITNAME>", fn);
 
-                    ProjectTemplateFile kitmakerFile = new ProjectTemplateFile();
-                    string kn = "kit" + i.ToString();
-                    kitmakerFile.Name = kn + ".lmp";
-                    kitmakersFolder.Files.Add(kitmakerFile);
-                    kitmakerFile.Attributes["Name"] = kitmakerFile.Name;
-                    kitmakerFile.Attributes["Source"] = @"templates/MakeKitFromParts.lmp";
-                    kitmakerFile.Source = kitmakerFile.Attributes["Source"];
+                    ProjectTemplateFile kitmakerFile = AddFile(kitmakersFolder, fn + ".lmp", @"templates/MakeKitFromParts.lmp");
+                    AddSubstitution(kitmakerFile, "<KITNAME>", fn);
 
                     string dummy = "";
                     string[] partnames = modelList.Split('\n');
                     foreach (string pn in partnames)
                     {
-                        dummy += $"    Addpart(\"{pn}\",0,0,0);\r\n";
+                        string npn = pn.Trim();
+                        dummy += $"    Addpart(\"{npn}\",0,0,0);\r\n";
                     }
-                    TemplateSubstitution ts4 = new TemplateSubstitution();
-                    ts4.Original = "<PARTLIST>";
-                    ts4.Replacement = dummy;
-                    kitmakerFile.Substitutions.Add(ts4);
+                    AddSubstitution(kitmakerFile, "<PARTLIST", dummy);
                 }
             }
             foreach (ProjectTemplateFolder fld in def.Folders)
@@ -355,6 +390,11 @@ namespace TemplateLib
             }
         }
 
+        private static void AddAttribute(ProjectTemplateFolder folder, string v1, string v2)
+        {
+            folder.Attributes[v1] = v2;
+        }
+
         private static ProjectTemplateFolder AddDesignedFolder(ProjectTemplateDefinition def, ProjectTemplateFolder root, string name)
         {
             ProjectTemplateFolder folder = new ProjectTemplateFolder();
@@ -362,7 +402,36 @@ namespace TemplateLib
             folder.Attributes["Name"] = name;
             folder.Substitutions = def.Substitutions;
             root.Folders.Add(folder);
+            SetDefaultAttributes(folder);
             return folder;
+        }
+
+        private static ProjectTemplateFile AddFile(ProjectTemplateFolder folder, string fileName, string templateName)
+        {
+            ProjectTemplateFile file = new ProjectTemplateFile();
+            file.Name = fileName;
+            folder.Files.Add(file);
+            file.Attributes["Name"] = fileName;
+            file.Attributes["Source"] = templateName;
+            file.Source = templateName;
+            return file;
+        }
+
+        private static void SetDefaultAttributes(ProjectTemplateFolder folder)
+        {
+            AddAttribute(folder, "Explorer", "True");
+            AddAttribute(folder, "Export", "True");
+            AddAttribute(folder, "Clean", "False");
+            AddAttribute(folder, "AddSubs", "True");
+            AddAttribute(folder, "AddFiles", "True");
+        }
+
+        private void AddSubstitution(ProjectTemplateFile file, string src, string trg)
+        {
+            TemplateSubstitution ts = new TemplateSubstitution();
+            ts.Original = src;
+            ts.Replacement = trg;
+            file.Substitutions.Add(ts);
         }
 
         private void CreateSolution(string projName, string pth, ProjectTemplateDefinition def)

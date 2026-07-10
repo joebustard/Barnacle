@@ -65,6 +65,8 @@
     <Compile Include="Execution\Array.cs" />
     <Compile Include="IntrinsicFunctions\Dim.cs" />
     <Compile Include="IntrinsicFunctions\RndNode.cs" />
+    <Compile Include="IntrinsicFunctions\ToLower.cs" />
+    <Compile Include="IntrinsicFunctions\ToUpper.cs" />
     <Compile Include="Parser\ExtraParsingFunctions\ParseBevelledGearNode.cs" />
     <Compile Include="Parser\ExtraParsingFunctions\ParseEllipsoidNode.cs" />
     <Compile Include="Parser\ExtraParsingFunctions\ParseGeneralStatement.cs" />

@@ -5,8 +5,39 @@ Program  "Assemble Model"
    Include "..\GlobalDefinitions.inc" ;
 
    // local declarations
+<DECS>
    // set this first
-   String assemblyname = "" ;
+   String assemblyname = "<ASSEMBLYNAME>" ;
+   bool buildUp = false;
+
+
+   // procedure to build everything into a single model
+   procedure BuildUpModel()
+   {
+       Solid whole;
+<BUILDER>
+
+   }
+
+function solid Insert( string src, string name,double x,double y,double z,double rx, double ry, double rx)
+{
+  string fname = src+"\"+name+".txt";
+  Solid res;
+  if ( containspart(fname,name))
+  {
+     res = insertpart(fname,name);
+     move res,x,y,z;
+     rotate res,rx,0,0;
+     rotate res,0,ry,0;
+     rotate res,0,0,rz;
+  }
+  else
+  {
+   print "Failed to load ",name," from ",fname;
+  }
+  return res;
+}
+
 
    // the folder where the assemblies are stored
    String outputfolder = projectpath + "\Assemblies" ;
@@ -14,8 +45,17 @@ Program  "Assemble Model"
    // the folder where the parts are stored
    String src = projectpath + "\Parts" ;
 
-   // Insert the parts and move to the right places
+   // Part positions
+   <PARTPOSITIONS>
 
+   // Insert parts
+   <PARTLIST>
+
+   // put parts together if required
+   if (buildup) 
+   {
+       BuildUpModel();
+   }
    // save results
    SaveSolids outputfolder + "\" + assemblyname + "assembly.txt" ;
 }

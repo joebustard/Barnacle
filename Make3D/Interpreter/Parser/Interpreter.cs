@@ -175,6 +175,8 @@ namespace ScriptLanguage
                 "str",
                 "substring",
                 "tan",
+                "tolower",
+                "toupper",
                 "trim",
                 "trimleft",
                 "trimright",
@@ -3332,6 +3334,18 @@ namespace ScriptLanguage
                         case "tan":
                             {
                                 exp = GetFunctionNode<TanNode>(parentName);
+                            }
+                            break;
+
+                        case "tolower":
+                            {
+                                exp = GetFunctionNode<ToLowerNode>(parentName);
+                            }
+                            break;
+
+                        case "toupper":
+                            {
+                                exp = GetFunctionNode<ToUpperNode>(parentName);
                             }
                             break;
 
