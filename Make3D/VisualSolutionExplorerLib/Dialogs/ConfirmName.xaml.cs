@@ -170,8 +170,11 @@ namespace VisualSolutionExplorerLib.Dialogs
         internal void SetFileTemplates(string fileTemplate, string supportedFileExtension)
         {
             string key = System.IO.Path.GetFileNameWithoutExtension(fileTemplate);
-            fileTemplates[key] = fileTemplate;
-            templateNames.Add(key);
+            if (key != "")
+            {
+                fileTemplates[key] = fileTemplate;
+                templateNames.Add(key);
+            }
 
             TemplatesVisible = Visibility.Visible;
             switch (supportedFileExtension)

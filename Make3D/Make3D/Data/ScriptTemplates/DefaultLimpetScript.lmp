@@ -1,0 +1,7 @@
+﻿program "Script Name"
+{
+  Include "libs\limplib.txt" ;
+
+  // main starts here
+
+}

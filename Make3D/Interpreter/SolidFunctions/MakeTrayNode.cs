@@ -7,9 +7,9 @@ using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
 {
-    internal class MakeDripTrayNode : ExpressionNode
+    internal class MakeTrayNode : ExpressionNode
     {
-        private static string label = "MakeDripTray";
+        private static string label = "MakeTray";
         private ExpressionNode baseLengthExp;
         private ExpressionNode baseWidthExp;
         private ExpressionNode topLengthExp;
@@ -17,7 +17,7 @@ namespace ScriptLanguage
         private ExpressionNode trayHeightExp;
         private ExpressionNode wallThicknessExp;
 
-        public MakeDripTrayNode(ExpressionNode topLength,
+        public MakeTrayNode(ExpressionNode topLength,
                                  ExpressionNode topWidth,
                                  ExpressionNode baseLength,
                                  ExpressionNode baseWidth,
@@ -32,7 +32,7 @@ namespace ScriptLanguage
             this.wallThicknessExp = wallThickness;
         }
 
-        public MakeDripTrayNode(ExpressionCollection coll)
+        public MakeTrayNode(ExpressionCollection coll)
         {
             this.topLengthExp = coll.Get(0);
             this.topWidthExp = coll.Get(1);
@@ -42,7 +42,7 @@ namespace ScriptLanguage
             this.wallThicknessExp = coll.Get(5);
         }
 
-        public MakeDripTrayNode()
+        public MakeTrayNode()
         {
         }
 

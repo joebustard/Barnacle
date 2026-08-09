@@ -381,6 +381,20 @@ namespace Barnacle.Views
             }
         }
 
+        private void PerformDeferredLoad(string fName, string p)
+        {
+            pathOfNextFileToLoad = p;
+            nameOfNextFileToLoad = fName;
+            // Let the editor view know we are loading a new file
+            NotificationManager.Notify("Loading", null);
+
+            // give it half a second to put up some loading indicator
+            loadingTimer = new DispatcherTimer();
+            loadingTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
+            loadingTimer.Tick += LoadingTimerTick;
+            loadingTimer.Start();
+        }
+
         private void ProjectChanged(object param)
         {
             Project prj = param as Project;
@@ -657,24 +671,31 @@ namespace Barnacle.Views
                                 if (ext == ".txt")
                                 {
                                     vm.SwitchToView("Editor");
+                                    bool loadIt = false;
                                     if (p != BaseViewModel.Document.FilePath)
                                     {
                                         CheckSaveFirst(null);
 
                                         if (File.Exists(p))
                                         {
-                                            pathOfNextFileToLoad = p;
-                                            nameOfNextFileToLoad = fName;
-                                            // Let the editor view know we are loading a new file
-                                            NotificationManager.Notify("Loading", null);
-
-                                            // give it half a second to put up some loading indicator
-                                            loadingTimer = new DispatcherTimer();
-                                            loadingTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
-                                            loadingTimer.Tick += LoadingTimerTick;
-                                            loadingTimer.Start();
-                                            // load will happen when timer fires
+                                            loadIt = true;
                                         }
+                                    }
+                                    else  // force a reload of the current file if neccessary
+                                    {
+                                        if (vm.OldViewName == "Script")
+                                        {
+                                            if (MessageBox.Show("Saved version of model file may have changed. Reload it", "Warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                                            {
+                                                loadIt = true;
+                                            }
+                                        }
+                                        vm.ClearOldViewName();
+                                    }
+                                    if (loadIt)
+                                    {
+                                        PerformDeferredLoad(fName, p);
+                                        // load will happen when timer fires
                                     }
                                 }
                                 else

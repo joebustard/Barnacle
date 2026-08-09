@@ -141,6 +141,9 @@
     <Compile Include="Dialogs\FigureDlg\JointMarker.cs" />
     <Compile Include="Dialogs\FigureDlg\ModelAssignmentControl.xaml.cs" />
     <Compile Include="Dialogs\HoneycombGrille\HoneyCombGrilleDlg.xaml.cs" />
+    <Compile Include="Models\3MFImporter\3MFImporter.cs" />
+    <Compile Include="Models\3MFImporter\ComponentRec.cs" />
+    <Compile Include="Models\3MFImporter\ObjectRec.cs" />
     <Compile Include="Dialogs\NewUserTemplate.xaml.cs">
       <DependentUpon>NewUserTemplate.xaml</DependentUpon>
     </Compile>
@@ -406,6 +409,7 @@
     <Compile Include="ViewModels\EditorViewModel\ExtraFunctions\CameraFunctions.cs" />
     <Compile Include="ViewModels\EditorViewModel\ExtraFunctions\CutAndPasteFunctions.cs" />
     <Compile Include="ViewModels\EditorViewModel\ExtraFunctions\DropFunctions.cs" />
+    <Compile Include="ViewModels\EditorViewModel\ExtraFunctions\IslandFunctions.cs" />
     <Compile Include="ViewModels\Logging\Log.cs" />
     <Compile Include="ViewModels\Logging\LogEntry.cs" />
     <Compile Include="ViewModels\RichTextBoxExtensions.cs" />
@@ -1011,6 +1015,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Data\ScriptTemplates\DefaultLimpetScript.lmp" />
     <None Include="Data\ScriptTemplates\MakeAssemblyFromParts.lmp" />
     <None Include="Data\ScriptTemplates\MakePartFromSubParts.lmp" />
     <None Include="packages.config" />
@@ -1542,6 +1547,8 @@
     <Resource Include="Images\Buttons\HalfPyramid.png" />
     <Resource Include="Images\Buttons\WheelBracket1.png" />
     <Resource Include="Images\Buttons\WheelBracket2.png" />
+    <Resource Include="Images\Buttons\Spinner.png" />
+    <Resource Include="Images\Buttons\MeshIslands.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

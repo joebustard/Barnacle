@@ -6,7 +6,7 @@ namespace ScriptLanguage
     {
         private ExpressionNode ParseMakeTrayFunction(string parentName)
         {
-            return ParseGeneral(parentName, new MakeDripTrayNode(), 6, "MakeTray");
+            return ParseGeneral(parentName, new MakeTrayNode(), 6, "MakeTray");
         }
     }
 }

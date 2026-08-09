@@ -29,6 +29,10 @@ namespace ScriptLanguage
                     {
                         string fName = Script.PartsLibraryPath;
                         fName = System.IO.Path.Combine(Script.PartsLibraryPath, partName);
+                        if (!fName.EndsWith(".txt"))
+                        {
+                            fName += ".txt";
+                        }
                         if (!System.IO.File.Exists(fName))
                         {
                             Log.Instance().AddEntry($"InsertLibPart : couldn't find {fName}");

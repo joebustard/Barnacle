@@ -76,31 +76,50 @@ namespace Barnacle.ViewModels
         private bool limpetScriptRunning;
         private bool linearEnabled;
         private Ribbon MainRibbon;
-
+        private string oldViewName;
         private bool profileFuselageEnabled;
         private bool rightTextAlignment;
 
         private String selectedBuildPlate;
+
         private string selectedObjectName;
+
         private bool settingsLoaded;
+
         private bool showAxiesChecked;
+
         private bool showBuildPlate;
+
         private bool showBuildVolume;
+
         private bool showFloorChecked;
+
         private bool showFloorMarkerChecked;
+
         private bool showFloorMMChecked;
+
         private bool snapMarginChecked;
+
         private bool solutionEnabled;
+
         private bool spurGearEnabled;
+
         private bool stadiumEnabled;
+
         private SubViewManager subViewMan;
 
         private int tabPanelWidth;
+
         private bool tankTrackEnabled;
+
         private Visibility toolPaletteVisible;
+
         private bool tubeEnabled;
+
         private bool twoShapeEnabled;
+
         private bool underLineChecked;
+
         private bool wingEnabled;
 
         public DefaultViewModel()
@@ -137,6 +156,7 @@ namespace Barnacle.ViewModels
             MeshHullCommand = new RelayCommand(OnHullEdit);
             MeshSmoothCommand = new RelayCommand(OnLoopSmooth);
             MeshSubdivideCommand = new RelayCommand(OnMeshSubdivide);
+            MeshIslandCommand = new RelayCommand(OnMeshIsland);
             MirrorCommand = new RelayCommand(OnMirror);
             MultiPasteCommand = new RelayCommand(OnMultiPaste);
             NewCommand = new RelayCommand(OnNew);
@@ -223,6 +243,7 @@ namespace Barnacle.ViewModels
             LoadPartLibrary();
             LoadAutoSaveSettings();
             LimpetScriptIsRunning = false;
+            oldViewName = "";
         }
 
         public ICommand AboutCommand
@@ -426,6 +447,14 @@ namespace Barnacle.ViewModels
         public ICommand CopyCommand
         {
             get; set;
+        }
+
+        public String CurrentViewName
+        {
+            get
+            {
+                return currentViewName;
+            }
         }
 
         public ICommand CutCommand
@@ -823,6 +852,11 @@ namespace Barnacle.ViewModels
             get; set;
         }
 
+        public ICommand MeshIslandCommand
+        {
+            get; set;
+        }
+
         public ICommand MeshSmoothCommand
         {
             get; set;
@@ -863,6 +897,14 @@ namespace Barnacle.ViewModels
                     res = document.GetObjectNames();
                 }
                 return res;
+            }
+        }
+
+        public string OldViewName
+        {
+            get
+            {
+                return oldViewName;
             }
         }
 
@@ -1549,6 +1591,11 @@ namespace Barnacle.ViewModels
             get; set;
         }
 
+        internal void ClearOldViewName()
+        {
+            oldViewName = "";
+        }
+
         internal void SetRibbonMenu(Ribbon mainRibbon)
         {
             MainRibbon = mainRibbon;
@@ -1562,18 +1609,9 @@ namespace Barnacle.ViewModels
             }
             if (v != currentViewName)
             {
-                string oldView = currentViewName;
-
+                oldViewName = currentViewName;
                 currentViewName = v;
                 OnView(v);
-                // force a reload of the current file if neccessary
-                if (oldView == "Script" && v == "Editor")
-                {
-                    if (MessageBox.Show("Saved version of model file may have changed. Reload it", "Warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                    {
-                        BaseViewModel.Document.Load(BaseViewModel.Document.FilePath);
-                    }
-                }
             }
         }
 
@@ -2133,6 +2171,11 @@ namespace Barnacle.ViewModels
         private void OnMeshEdit(object obj)
         {
             NotificationManager.Notify("MeshEdit", null);
+        }
+
+        private void OnMeshIsland(object obj)
+        {
+            NotificationManager.Notify("MeshIsland", obj);
         }
 
         private void OnMeshSubdivide(object obj)

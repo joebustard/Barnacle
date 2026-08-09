@@ -44,8 +44,15 @@
                     <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="100" Content="Leg Height" />
-                    <TextBox Margin="8,0,0,0" Text="{Binding LegHeight}" Width="150" ToolTip="{Binding LegHeightToolTip}" />
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="Leg Height" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding LegHeight}"
+                        ToolTip="{Binding LegHeightToolTip}" />
 
                     <Button
                         Margin="8,0,0,0"
@@ -54,25 +61,42 @@
                         ToolTip="Restore parameters to their defaults" />
                 </StackPanel>
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="100" Content="Leg Width" />
-                    <TextBox Margin="8,0,0,0" Text="{Binding LegWidth}" Width="150" ToolTip="{Binding LegWIdthToolTip}" />
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="Leg Width" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding LegWidth}"
+                        ToolTip="{Binding LegWIdthToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="3" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="100" Content="Leg Gap" />
-                    <TextBox Margin="8,0,0,0" Text="{Binding LegGap}" Width="150" ToolTip="{Binding LegGapToolTip}" />
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="Leg Gap" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding LegGap}"
+                        ToolTip="{Binding LegGapToolTip}" />
                 </StackPanel>
                 <StackPanel Grid.Row="4" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="100" Content="Sweep Angle" />
-                    <TextBox Margin="8,0,0,0" Text="{Binding SweepAngle}" Width="150" ToolTip="{Binding SweepAngleToolTip}" />
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="Sweep Angle" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding SweepAngle}"
+                        ToolTip="{Binding SweepAngleToolTip}" />
                 </StackPanel>
-                <StackPanel Grid.Row="5" Orientation="Horizontal">
-                </StackPanel>
-                <StackPanel Grid.Row="6" Orientation="Horizontal">
-                </StackPanel>
-                <StackPanel Grid.Row="7" Orientation="Horizontal">
-                </StackPanel>
-                <StackPanel Grid.Row="8" Orientation="Horizontal">
-                </StackPanel>
+                <StackPanel Grid.Row="5" Orientation="Horizontal" />
+                <StackPanel Grid.Row="6" Orientation="Horizontal" />
+                <StackPanel Grid.Row="7" Orientation="Horizontal" />
+                <StackPanel Grid.Row="8" Orientation="Horizontal" />
                 <StackPanel Grid.Row="9" Orientation="Horizontal">
                     <Label
                         VerticalAlignment="Center"

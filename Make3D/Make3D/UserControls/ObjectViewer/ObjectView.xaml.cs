@@ -20,6 +20,7 @@ using Barnacle.Object3DLib;
 using FileUtils;
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -337,6 +338,17 @@ namespace Barnacle.UserControls.ObjectViewer
             NotifyPropertyChanged("CameraPos");
         }
 
+        public void LoadCamera(String name)
+        {
+            string dataPath = PathManager.CommonAppDataFolder() + "\\" + name;
+            if (File.Exists(dataPath))
+            {
+                polarCamera.Read(dataPath);
+                UpdateCameraPos();
+                NotifyPropertyChanged("CameraPos");
+            }
+        }
+
         public void NotBusy()
         {
             BusyVisible = Visibility.Hidden;
@@ -403,6 +415,12 @@ namespace Barnacle.UserControls.ObjectViewer
         public void Right_Click(object sender, RoutedEventArgs e)
         {
             RightCamera();
+        }
+
+        public void SaveCamera(string name)
+        {
+            string dataPath = PathManager.CommonAppDataFolder() + "\\" + name;
+            polarCamera.Save(dataPath);
         }
 
         public void Top_Click(object sender, RoutedEventArgs e)

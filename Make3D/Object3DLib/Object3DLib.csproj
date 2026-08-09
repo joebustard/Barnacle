@@ -81,6 +81,7 @@
     <Compile Include="ExtraPrimitives\CutGem.cs" />
     <Compile Include="ExtraPrimitives\TwistedRing.cs" />
     <Compile Include="ExtraPrimitives\Bead1.cs" />
+  <Compile Include="ExtraPrimitives\SpinnerSubparts.cs" />
     <Compile Include="FaceOrientationNormaliser.cs" />
     <!-- ExtraHere -->
     <Compile Include="Group3D.cs" />

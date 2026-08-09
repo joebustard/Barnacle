@@ -11,8 +11,9 @@
     Height="450"
     Background="{StaticResource WindowBackBrush}"
     Loaded="Window_Loaded"
+    SizeChanged="BaseModellerDialog_SizeChanged"
     WindowStartupLocation="CenterOwner"
-    mc:Ignorable="d" SizeChanged="BaseModellerDialog_SizeChanged">
+    mc:Ignorable="d">
     <Window.Resources>
 
         <CollectionViewSource x:Key="Ops" Source="{Binding OpTypes}" />
@@ -32,7 +33,8 @@
         <Border
             Grid.Row="0"
             Grid.Column="1"
-            Style="{StaticResource ControlBorder}" HorizontalAlignment="Stretch">
+            HorizontalAlignment="Stretch"
+            Style="{StaticResource ControlBorder}">
             <Grid HorizontalAlignment="Stretch">
 
                 <Grid.RowDefinitions>
@@ -49,10 +51,14 @@
                         ToolTip="Restore parameters to their defaults" />
                 </StackPanel>
 
-                <ListView  Grid.Row="1" ItemsSource="{Binding StepRecords}" SelectedIndex="{Binding SelectedPrimitive}" x:Name="StepList">
+                <ListView
+                    x:Name="StepList"
+                    Grid.Row="1"
+                    ItemsSource="{Binding StepRecords}"
+                    SelectedIndex="{Binding SelectedPrimitive}">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Border Style="{StaticResource ControlBorder}" HorizontalAlignment="Stretch">
+                            <Border HorizontalAlignment="Stretch" Style="{StaticResource ControlBorder}">
                                 <Grid HorizontalAlignment="Stretch">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="25" />
@@ -61,35 +67,112 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Grid.Row="0">
-                                        <ComboBox Width="150" ItemsSource="{Binding PrimTypes}"  SelectedItem="{Binding PrimitiveType}">
-                                        </ComboBox>
+                                    <StackPanel
+                                        Grid.Row="0"
+                                        HorizontalAlignment="Stretch"
+                                        Orientation="Horizontal">
+                                        <ComboBox
+                                            Width="150"
+                                            ItemsSource="{Binding PrimTypes}"
+                                            SelectedItem="{Binding PrimitiveType}" />
 
-                                        <Label Content="Size" Margin="4,0,4,0" Visibility="{Binding ShowSize}" />
-                                        <TextBox Text="{Binding SizeX}" Margin="4,0,4,0" Visibility="{Binding ShowSize}" MinWidth="30" />
-                                        <TextBox Text="{Binding SizeY}" Margin="4,0,4,0" Visibility="{Binding ShowSize}" MinWidth="30" />
-                                        <TextBox Text="{Binding SizeZ}" Margin="4,0,4,0" Visibility="{Binding ShowSize}" MinWidth="30" />
-                                        <Label Content="Radius" Margin="4,0,4,0" Width="50" Visibility="{Binding ShowRadius}" />
-                                        <TextBox Text="{Binding Radius}" Margin="4,0,4,0" Visibility="{Binding ShowRadius}" MinWidth="30" />
+                                        <Label
+                                            Margin="4,0,4,0"
+                                            Content="Size"
+                                            Visibility="{Binding ShowSize}" />
+                                        <TextBox
+                                            MinWidth="30"
+                                            Margin="4,0,4,0"
+                                            Text="{Binding SizeX}"
+                                            Visibility="{Binding ShowSize}" />
+                                        <TextBox
+                                            MinWidth="30"
+                                            Margin="4,0,4,0"
+                                            Text="{Binding SizeY}"
+                                            Visibility="{Binding ShowSize}" />
+                                        <TextBox
+                                            MinWidth="30"
+                                            Margin="4,0,4,0"
+                                            Text="{Binding SizeZ}"
+                                            Visibility="{Binding ShowSize}" />
+                                        <Label
+                                            Width="50"
+                                            Margin="4,0,4,0"
+                                            Content="Radius"
+                                            Visibility="{Binding ShowRadius}" />
+                                        <TextBox
+                                            MinWidth="30"
+                                            Margin="4,0,4,0"
+                                            Text="{Binding Radius}"
+                                            Visibility="{Binding ShowRadius}" />
 
-                                        <Label Content="Radius 2" Margin="4,0,4,0" Width="50" Visibility="{Binding ShowThickness}" />
-                                        <TextBox Text="{Binding Thickness}" Margin="4,0,4,0" Visibility="{Binding ShowThickness}" MinWidth="30" />
-                                        <Label Content="Length/Height" Margin="4,0,4,0" Width="80" Visibility="{Binding ShowTriangle}" />
-                                        <TextBox Text="{Binding SizeX}" Margin="4,0,4,0" Visibility="{Binding ShowTriangle}" MinWidth="30" />
+                                        <Label
+                                            Width="50"
+                                            Margin="4,0,4,0"
+                                            Content="Radius 2"
+                                            Visibility="{Binding ShowThickness}" />
+                                        <TextBox
+                                            MinWidth="30"
+                                            Margin="4,0,4,0"
+                                            Text="{Binding Thickness}"
+                                            Visibility="{Binding ShowThickness}" />
+                                        <Label
+                                            Width="80"
+                                            Margin="4,0,4,0"
+                                            Content="Length/Height"
+                                            Visibility="{Binding ShowTriangle}" />
+                                        <TextBox
+                                            MinWidth="30"
+                                            Margin="4,0,4,0"
+                                            Text="{Binding SizeX}"
+                                            Visibility="{Binding ShowTriangle}" />
 
-                                        <Label Content="Width" Margin="4,0,4,0" Width="45" Visibility="{Binding ShowTriangle}" />
-                                        <TextBox Text="{Binding SizeY}" Margin="4,0,4,0" Visibility="{Binding ShowTriangle}" MinWidth="30" />
+                                        <Label
+                                            Width="45"
+                                            Margin="4,0,4,0"
+                                            Content="Width"
+                                            Visibility="{Binding ShowTriangle}" />
+                                        <TextBox
+                                            MinWidth="30"
+                                            Margin="4,0,4,0"
+                                            Text="{Binding SizeY}"
+                                            Visibility="{Binding ShowTriangle}" />
 
-                                        <Label Content="Rot" Margin="4,0,4,0"  Visibility="{Binding ShowRot}" />
-                                        <TextBox Text="{Binding RotX}" Margin="4,0,4,0"  MinWidth="30"  Visibility="{Binding ShowRot}" />
-                                        <TextBox Text="{Binding RotY}" Margin="4,0,4,0"  MinWidth="30"  Visibility="{Binding ShowRot}" />
-                                        <TextBox Text="{Binding RotZ}" Margin="4,0,4,0"  MinWidth="30"  Visibility="{Binding ShowRot}" />
+                                        <Label
+                                            Margin="4,0,4,0"
+                                            Content="Rot"
+                                            Visibility="{Binding ShowRot}" />
+                                        <TextBox
+                                            MinWidth="30"
+                                            Margin="4,0,4,0"
+                                            Text="{Binding RotX}"
+                                            Visibility="{Binding ShowRot}" />
+                                        <TextBox
+                                            MinWidth="30"
+                                            Margin="4,0,4,0"
+                                            Text="{Binding RotY}"
+                                            Visibility="{Binding ShowRot}" />
+                                        <TextBox
+                                            MinWidth="30"
+                                            Margin="4,0,4,0"
+                                            Text="{Binding RotZ}"
+                                            Visibility="{Binding ShowRot}" />
                                     </StackPanel>
                                     <StackPanel Grid.Row="1" Orientation="Horizontal">
-                                        <ComboBox Width="150" ItemsSource="{Binding OpTypes}"  SelectedItem="{Binding OpType}">
-                                        </ComboBox>
-                                        <Label Content="Blend" Margin="4,0,4,0" Width="50" Visibility="{Binding ShowBlend}" />
-                                        <TextBox Text="{Binding Blend}" Margin="4,0,4,0" Visibility="{Binding ShowBlend}" MinWidth="30" />
+                                        <ComboBox
+                                            Width="150"
+                                            ItemsSource="{Binding OpTypes}"
+                                            SelectedItem="{Binding OpType}" />
+                                        <Label
+                                            Width="50"
+                                            Margin="4,0,4,0"
+                                            Content="Blend"
+                                            Visibility="{Binding ShowBlend}" />
+                                        <TextBox
+                                            MinWidth="30"
+                                            Margin="4,0,4,0"
+                                            Text="{Binding Blend}"
+                                            Visibility="{Binding ShowBlend}" />
                                     </StackPanel>
                                 </Grid>
                             </Border>
@@ -97,17 +180,38 @@
                     </ListView.ItemTemplate>
                 </ListView>
 
-                <StackPanel Orientation="Horizontal" Grid.Row="2">
-                    <Button Content="Add" Click="AddClick" />
-                    <Button Content="View/Hide" Click="HideClick" Margin="10,0,0,0" />
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <Button Click="AddClick" Content="Add" />
+                    <Button
+                        Margin="10,0,0,0"
+                        Click="HideClick"
+                        Content="View/Hide" />
                 </StackPanel>
                 <StackPanel Grid.Row="3" Orientation="Horizontal">
-                    <Button Content="Left" Command="{Binding MoveCommand}" CommandParameter="Left" />
-                    <Button Content="Right" Command="{Binding MoveCommand}" CommandParameter="Right" />
-                    <Button Content="Up" Command="{Binding MoveCommand}" CommandParameter="Up" />
-                    <Button Content="Down" Command="{Binding MoveCommand}" CommandParameter="Down" />
-                    <Button Content="Forward" Command="{Binding MoveCommand}" CommandParameter="Forward" />
-                    <Button Content="Back" Command="{Binding MoveCommand}" CommandParameter="Back" />
+                    <Button
+                        Command="{Binding MoveCommand}"
+                        CommandParameter="Left"
+                        Content="Left" />
+                    <Button
+                        Command="{Binding MoveCommand}"
+                        CommandParameter="Right"
+                        Content="Right" />
+                    <Button
+                        Command="{Binding MoveCommand}"
+                        CommandParameter="Up"
+                        Content="Up" />
+                    <Button
+                        Command="{Binding MoveCommand}"
+                        CommandParameter="Down"
+                        Content="Down" />
+                    <Button
+                        Command="{Binding MoveCommand}"
+                        CommandParameter="Forward"
+                        Content="Forward" />
+                    <Button
+                        Command="{Binding MoveCommand}"
+                        CommandParameter="Back"
+                        Content="Back" />
                 </StackPanel>
             </Grid>
         </Border>
@@ -124,26 +228,26 @@
             </Grid.RowDefinitions>
             <u:ObjectView x:Name="Viewer" Grid.Row="1" />
             <StackPanel
-        Grid.Row="2"
-        IsEnabled="{Binding EditingEnabled}"
-        Orientation="Horizontal">
+                Grid.Row="2"
+                IsEnabled="{Binding EditingEnabled}"
+                Orientation="Horizontal">
                 <RadioButton
-            VerticalAlignment="Center"
-            Content="Sdf"
-            GroupName="MethodGroup"
-            IsChecked="{Binding SdfMethod}" />
+                    VerticalAlignment="Center"
+                    Content="Sdf"
+                    GroupName="MethodGroup"
+                    IsChecked="{Binding SdfMethod}" />
                 <RadioButton
-            Margin="8,0,0,0"
-            VerticalAlignment="Center"
-            Content="Mid res Sdf"
-            GroupName="MethodGroup"
-            IsChecked="{Binding MidResSdfMethod}" />
+                    Margin="8,0,0,0"
+                    VerticalAlignment="Center"
+                    Content="Mid res Sdf"
+                    GroupName="MethodGroup"
+                    IsChecked="{Binding MidResSdfMethod}" />
                 <RadioButton
-            Margin="8,0,0,0"
-            VerticalAlignment="Center"
-            Content="Hi res Sdf"
-            GroupName="MethodGroup"
-            IsChecked="{Binding HiResSdfMethod}" />
+                    Margin="8,0,0,0"
+                    VerticalAlignment="Center"
+                    Content="Hi res Sdf"
+                    GroupName="MethodGroup"
+                    IsChecked="{Binding HiResSdfMethod}" />
             </StackPanel>
         </Grid>
 

@@ -72,6 +72,9 @@
                         Width="30"
                         VerticalAlignment="Center"
                         Text="{Binding DihedralAngle}" />
+                    <CheckBox Margin="8,0,0,0" Content="Override root height" IsChecked="{Binding OverrideRootHeight}" VerticalAlignment="Center" />
+
+                    <TextBox Margin="4,0,0,0" Width="60" Text="{Binding ForcedRootHeight}" VerticalAlignment="Center" />
                 </StackPanel>
                 <ctrls:AeroProfileDisplayer
                     x:Name="ProfileDisplayer"

@@ -45,6 +45,9 @@
                     <RowDefinition Height="30" />
                     <RowDefinition Height="30" />
                     <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Orientation="Horizontal">
                     <Label
@@ -118,6 +121,26 @@
                         Width="30"
                         VerticalAlignment="Center"
                         Text="{Binding RootLength}" />
+                    <CheckBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center"
+                        Content="Overide Root Height"
+                        IsChecked="{Binding OverrideRootHeight}"
+                        ToolTip="The Height of the root usually depends on the profile. Check this to set a specifc value" />
+                    <Label
+                        Width="80"
+                        Margin="4,0,0,0"
+                        VerticalAlignment="Center">
+                        Root Height
+                    </Label>
+                    <TextBox
+                        Width="30"
+                        VerticalAlignment="Center"
+                        Text="{Binding RootHeight}" />
+                </StackPanel>
+                <StackPanel Grid.Row="4" Orientation="Horizontal">
+
                     <Label
                         Width="80"
                         Margin="4,0,0,0"
@@ -139,12 +162,12 @@
                 </StackPanel>
                 <uc:AeroProfileDisplayer
                     x:Name="RootDisplay"
-                    Grid.Row="4"
+                    Grid.Row="5"
                     Grid.RowSpan="2"
                     Width="280"
                     Margin="80,0,0,0"
                     HorizontalAlignment="Left" />
-                <StackPanel Grid.Row="6" Orientation="Horizontal">
+                <StackPanel Grid.Row="7" Orientation="Horizontal">
                     <Label
                         Width="80"
                         Margin="4,0,0,0"
@@ -157,6 +180,25 @@
                         VerticalAlignment="Center"
                         Text="{Binding TipLength}"
                         Visibility="{Binding TipControlsVisible}" />
+                    <CheckBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center"
+                        Content="Overide Tip Height"
+                        IsChecked="{Binding OverrideTipHeight}"
+                        ToolTip="The Height of the tip usually depends on the profile. Check this to set a specifc value" />
+                    <Label
+                        Width="80"
+                        Margin="4,0,0,0"
+                        VerticalAlignment="Center"
+                        Content="Tip Height" />
+
+                    <TextBox
+                        Width="30"
+                        VerticalAlignment="Center"
+                        Text="{Binding TipHeight}" />
+                </StackPanel>
+                <StackPanel Grid.Row="8" Orientation="Horizontal">
                     <Label
                         Width="80"
                         Margin="4,0,0,0"
@@ -178,12 +220,12 @@
                 </StackPanel>
                 <uc:AeroProfileDisplayer
                     x:Name="TipDisplay"
-                    Grid.Row="7"
+                    Grid.Row="9"
                     Grid.RowSpan="2"
                     Width="280"
                     Margin="80,0,0,0"
                     HorizontalAlignment="Left" />
-                <StackPanel Grid.Row="9" Orientation="Horizontal">
+                <StackPanel Grid.Row="11" Orientation="Horizontal">
                     <Label
                         Width="80"
                         Margin="4,0,0,0"
@@ -197,7 +239,7 @@
                         Text="{Binding SweepAngle}"
                         Visibility="{Binding SweepControlsVisible}" />
                 </StackPanel>
-                <StackPanel Grid.Row="10" Orientation="Horizontal">
+                <StackPanel Grid.Row="13" Orientation="Horizontal">
                     <Label
                         Width="80"
                         Margin="4,0,0,0"

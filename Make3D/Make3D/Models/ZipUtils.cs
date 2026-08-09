@@ -112,7 +112,7 @@ namespace Barnacle.Models
                     var ets = zipArchive.Entries;
                     foreach (ZipArchiveEntry et in ets)
                     {
-                        if (et.FullName.ToLower().EndsWith(ext))
+                        if (et.FullName.ToLower().EndsWith(ext) || ext == "*.*")
                         {
                             res.Add(et.FullName);
                         }

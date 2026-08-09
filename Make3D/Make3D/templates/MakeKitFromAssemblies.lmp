@@ -1,4 +1,4 @@
-Program  "Make Kit"
+Program  "Make <KITNAME>"
 {
    Include "libs\limplib.txt" ;
    Include "..\Scale.inc" ;
@@ -6,7 +6,7 @@ Program  "Make Kit"
 
    // local declarations
    // set this first
-   String kitname = "" ;
+   String kitname = "<KITNAME>" ;
 
    // the folder where the assemblies are stored
    String outputfolder = projectpath + "\kits" ;

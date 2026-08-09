@@ -18,7 +18,7 @@
         <ViewModels:ScriptViewModel />
     </UserControl.DataContext>
     <Grid>
-        <TabControl SelectedIndex="{Binding SelectedTabIndex}">
+        <TabControl SelectedIndex="{Binding SelectedTabIndex}" SelectionChanged="TabControl_SelectionChanged">
             <TabItem
                 x:Name="EditTab"
                 Header="{Binding ScriptTabHeader}"
@@ -37,16 +37,16 @@
 
                         <RichTextBox
                             x:Name="ScriptBox"
-
+                            Grid.ColumnSpan="2"
                             MaxHeight="500"
-                            HorizontalContentAlignment="Stretch"
                             Margin="1,0,1,0"
+                            HorizontalContentAlignment="Stretch"
                             Block.LineHeight="2"
                             FontSize="32"
                             IsEnabled="{Binding EnableRun}"
                             PreviewKeyDown="ScriptBox_PreviewKeyDown"
                             TextChanged="ScriptBox_TextChanged"
-                            VerticalScrollBarVisibility="Visible" Grid.ColumnSpan="2">
+                            VerticalScrollBarVisibility="Visible">
 
                             <RichTextBox.ContextMenu>
                                 <ContextMenu>

@@ -93,23 +93,6 @@ namespace Barnacle.Views
             }
         }
 
-        private void Grid_MouseMove(object sender, MouseEventArgs e)
-        {
-            lastMousePos = e.GetPosition(this);
-            vm.MouseMove(lastMousePos, e);
-        }
-
-        private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            lastMousePos = e.GetPosition(this);
-            vm.MouseUp(lastMousePos, e);
-        }
-
-        private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            vm.MouseWheel(e);
-        }
-
         private void InsertIntoScript(object param)
         {
             string what = param.ToString();
@@ -301,6 +284,10 @@ Procedure MyProc(  )
             TextRange tr = new TextRange(ScriptBox.Document.ContentStart, ScriptBox.Document.ContentEnd);
             MemoryStream ms = new MemoryStream(ASCIIEncoding.ASCII.GetBytes(vm.Rtf));
             tr.Load(ms, DataFormats.Rtf);
+        }
+
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
         }
 
         private void UserControl_KeyDown(object sender, KeyEventArgs e)

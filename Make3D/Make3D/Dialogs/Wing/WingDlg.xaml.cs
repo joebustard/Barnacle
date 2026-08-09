@@ -15,12 +15,16 @@
 // *                                                                         *
 // *************************************************************************
 
+using Barnacle.Object3DLib;
+using HullLibrary;
 using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml;
 
@@ -37,8 +41,11 @@ namespace Barnacle.Dialogs
         private bool bottomModelChecked;
         private double dihedralAngle;
         private double dihedralLimit = 20;
+        private bool overrideRootHeight;
+        private bool overrideTipHeight;
         private List<String> rootairfoilNames;
         private string rootGroup;
+        private double rootHeightForced;
         private double rootLength;
         private string selectedRootAirfoil;
         private string selectedShape;
@@ -52,6 +59,7 @@ namespace Barnacle.Dialogs
         private List<String> tipairfoilNames;
         private Visibility tipControlsVisible;
         private string tipGroup;
+        private double tipHeightForced;
         private double tipLength;
         private double tipOffsetX = 0;
         private double tipOffsetY = 0;
@@ -77,6 +85,12 @@ namespace Barnacle.Dialogs
             span = 70;
             sweepAngle = 0;
             dihedralAngle = 0;
+            rootHeightForced = 0;
+            tipHeightForced = 0;
+            overrideRootHeight = false;
+            overrideTipHeight = false;
+            //            rootHeightForced = 6.5;
+            //            tipHeightForced = 3.5;
         }
 
         public List<string> AirfoilGroups
@@ -139,6 +153,40 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public bool OverrideRootHeight
+        {
+            get
+            {
+                return overrideRootHeight;
+            }
+            set
+            {
+                if (overrideRootHeight != value)
+                {
+                    overrideRootHeight = value;
+                    NotifyPropertyChanged();
+                    Update();
+                }
+            }
+        }
+
+        public bool OverrideTipHeight
+        {
+            get
+            {
+                return overrideTipHeight;
+            }
+            set
+            {
+                if (overrideTipHeight != value)
+                {
+                    overrideTipHeight = value;
+                    NotifyPropertyChanged();
+                    Update();
+                }
+            }
+        }
+
         public List<string> RootAirfoilNames
         {
             get
@@ -171,6 +219,23 @@ namespace Barnacle.Dialogs
 
                     NotifyPropertyChanged();
                     RootAirfoilNames = names;
+                }
+            }
+        }
+
+        public double RootHeight
+        {
+            get
+            {
+                return rootHeightForced;
+            }
+            set
+            {
+                if (rootHeightForced != value)
+                {
+                    rootHeightForced = value;
+                    NotifyPropertyChanged();
+                    Update();
                 }
             }
         }
@@ -392,6 +457,23 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public double TipHeight
+        {
+            get
+            {
+                return tipHeightForced;
+            }
+            set
+            {
+                if (tipHeightForced != value)
+                {
+                    tipHeightForced = value;
+                    NotifyPropertyChanged();
+                    Update();
+                }
+            }
+        }
+
         public double TipLength
         {
             get
@@ -499,15 +581,17 @@ namespace Barnacle.Dialogs
             Faces.Add(v4);
         }
 
-        private void EllipseTip(List<Point> tipPnts, double mainRad, double sideRad, double tX, double tY, double tZ)
+        private Int32Collection EllipseTip(List<Point> tipProfile, double mainRad, double sideRad, double tX, double tY, double tZ)
         {
-            List<Point3D> tipEdge = new List<Point3D>();
-            List<Point> triEdge = new List<Point>();
-            double md = mainRad * 2;
-            double stepSize = 1.0 / (tipPnts.Count - 1);
+            Int32Collection res = new Int32Collection();
+            List<Point3D> ellipseEdge3D = new List<Point3D>();
+            List<Point> ellipseEdgeForClosingTopOrBottom = new List<Point>();
+            double mainDiameter = mainRad * 2;
+            double stepSize = 1.0 / (tipProfile.Count - 1);
+            double yrot = Math.Cos(dihedralAngle);
             if (!WholeModelChecked)
             {
-                stepSize = 1.0 / (2 * tipPnts.Count - 1);
+                stepSize = 1.0 / (2 * tipProfile.Count - 1);
             }
             if (wholeModelChecked || topModelChecked)
             {
@@ -518,10 +602,12 @@ namespace Barnacle.Dialogs
                         t = 0.5;
                     }
                     Point elp = GetEllipsePoint(mainRad, sideRad, t);
-                    triEdge.Add(elp);
+                    ellipseEdgeForClosingTopOrBottom.Add(elp);
 
                     Point3D p = new Point3D(elp.X, tY, elp.Y);
-                    tipEdge.Add(p);
+                    // this point needs to be rotated by the dihedral around tX,tY,tZ
+                    p = RotateAroundXAxis(0, tY, 0, p, 90 - dihedralAngle);
+                    ellipseEdge3D.Add(p);
                 }
             }
             if (wholeModelChecked || bottomModelChecked)
@@ -529,25 +615,47 @@ namespace Barnacle.Dialogs
                 for (double t = 0.5; t >= 0; t -= stepSize)
                 {
                     Point elp = GetEllipsePoint(mainRad, sideRad, t);
-                    triEdge.Add(elp);
+                    ellipseEdgeForClosingTopOrBottom.Add(elp);
                     // Point3D p = new Point3D(tX + elp.X + mainRad, tY, tZ + elp.Y);
+
                     Point3D p = new Point3D(elp.X, tY, elp.Y);
-                    tipEdge.Add(p);
+                    // this point needs to be rotated by the dihedral around tX,tY,tZ
+                    p = RotateAroundXAxis(0, tY, 0, p, 90 - dihedralAngle);
+                    ellipseEdge3D.Add(p);
                 }
             }
-
-            for (int i = 0; i < tipPnts.Count - 1 && i < tipEdge.Count - 1; i++)
+            // use the tipprofile and the ellipse edge to make the
+            // shaped part of the tip
+            for (int i = 0; i < tipProfile.Count - 1 && i < ellipseEdge3D.Count - 1; i++)
             {
-                Point3D pd1 = new Point3D(tX + (tipPnts[i].X * md), tY + (tipPnts[i].Y * md), tZ);
-                Point3D pd2 = new Point3D(tX + mainRad - tipEdge[i].X, tipEdge[i].Y, tZ + tipEdge[i].Z);
-                Point3D pd3 = new Point3D(tX + mainRad - tipEdge[i + 1].X, tipEdge[i + 1].Y, tZ + tipEdge[i + 1].Z);
-                Point3D pd4 = new Point3D(tX + (tipPnts[i + 1].X * md), tY + (tipPnts[i + 1].Y * md), tZ);
+                Point3D pd1 = new Point3D(tX + (tipProfile[i].X * mainDiameter), tY + (tipProfile[i].Y * mainDiameter), tZ);
+                Point3D pd2 = new Point3D(tX + mainRad - ellipseEdge3D[i].X, ellipseEdge3D[i].Y, tZ + ellipseEdge3D[i].Z);
+                Point3D pd3 = new Point3D(tX + mainRad - ellipseEdge3D[i + 1].X, ellipseEdge3D[i + 1].Y, tZ + ellipseEdge3D[i + 1].Z);
+                Point3D pd4 = new Point3D(tX + (tipProfile[i + 1].X * mainDiameter), tY + (tipProfile[i + 1].Y * mainDiameter), tZ);
 
                 int v1 = AddVertice(pd1);
                 int v2 = AddVertice(pd2);
                 int v3 = AddVertice(pd3);
                 int v4 = AddVertice(pd4);
+                if (!res.Contains(v1))
+                {
+                    res.Add(v1);
+                }
 
+                if (!res.Contains(v2))
+                {
+                    res.Add(v2);
+                }
+
+                if (!res.Contains(v3))
+                {
+                    res.Add(v3);
+                }
+
+                if (!res.Contains(v4))
+                {
+                    res.Add(v4);
+                }
                 Faces.Add(v1);
                 Faces.Add(v2);
                 Faces.Add(v3);
@@ -556,10 +664,23 @@ namespace Barnacle.Dialogs
                 Faces.Add(v3);
                 Faces.Add(v4);
             }
+            // if we were just making the top or bottom of the wing we will have a whole
+            // Use the 2D ellipse edge list to close it
             if (!WholeModelChecked)
             {
-                TriangulateWingTip(triEdge, 1, tX + mainRad, tY, tipOffsetZ, bottomModelChecked);
+                /*
+                    Int32Collection res2 = TriangulateWingTip(ellipseEdgeForClosingTopOrBottom, 1, tX + mainRad, tY, tipOffsetZ, bottomModelChecked);
+                    foreach (int i in res2)
+                    {
+                        if (!res.Contains(i))
+                        {
+                            res.Add(i);
+                        }
+                    }
+                    */
             }
+
+            return res;
         }
 
         private void EnableControlsForShape()
@@ -629,6 +750,29 @@ namespace Barnacle.Dialogs
             if (RootGroup != "" && SelectedRootAirfoil != "")
             {
                 double rootEdgeLength = 0;
+                double rootEdgeHeightScale = rootLength;
+                double tipEdgeHeightScale = tipLength;
+                double rootMinY = double.MaxValue;
+                double rootMaxY = double.MinValue;
+                double tipMinY = double.MaxValue;
+                double tipMaxY = double.MinValue;
+                Int32Collection rootVertices = new Int32Collection();
+                Int32Collection tipVertices = new Int32Collection();
+                if (SelectedShape == "Straight")
+                {
+                    tipEdgeHeightScale = rootLength;
+                }
+
+                // the thickness of the wing should come from the profile
+                // but does yje user want to force it to a specific value
+                if (overrideRootHeight)
+                {
+                    rootEdgeHeightScale = rootHeightForced;
+                }
+                if (overrideTipHeight)
+                {
+                    tipEdgeHeightScale = tipHeightForced;
+                }
                 List<Point> rootProfile = GetProfilePoints(RootGroup, SelectedRootAirfoil, rootLength, ref rootEdgeLength);
                 RootDisplay.ProfilePnts = rootProfile;
                 if (rootProfile.Count > 0)
@@ -691,14 +835,80 @@ namespace Barnacle.Dialogs
                                 Faces.Add(v1);
                                 Faces.Add(v4);
                                 Faces.Add(v3);
+
+                                if (!rootVertices.Contains(v1))
+                                {
+                                    rootVertices.Add(v1);
+                                    rootMinY = Math.Min(rootMinY, pd1.Y);
+                                    rootMaxY = Math.Max(rootMaxY, pd1.Y);
+                                }
+                                if (!rootVertices.Contains(v2))
+                                {
+                                    rootVertices.Add(v2);
+                                    rootMinY = Math.Min(rootMinY, pd2.Y);
+                                    rootMaxY = Math.Max(rootMaxY, pd2.Y);
+                                }
+
+                                if (!tipVertices.Contains(v3))
+                                {
+                                    tipVertices.Add(v3);
+                                    tipMinY = Math.Min(tipMinY, pd3.Y);
+                                    tipMaxY = Math.Max(tipMaxY, pd3.Y);
+                                }
+                                if (!tipVertices.Contains(v4))
+                                {
+                                    tipVertices.Add(v4);
+                                    tipMinY = Math.Min(tipMinY, pd4.Y);
+                                    tipMaxY = Math.Max(tipMaxY, pd4.Y);
+                                }
                             }
                             if (close)
                             {
-                                CloseMissingHalfOfWing(rootEdgeLength, rootProfile, tipEdgeLength, tl, tipProfile, startT, endT);
+                                //  CloseMissingHalfOfWing(rootEdgeLength, rootProfile, tipEdgeLength, tl, tipProfile, startT, endT);
                             }
 
-                            TriangulatePerimiter(rootPnts, rootLength, 0, 0, 0, true);
-                            GenerateWingTip(tl, tipPnts);
+                            if (overrideRootHeight)
+                            {
+                                double rootYScaler = rootHeightForced / (rootMaxY - rootMinY);
+                                foreach (int pi in rootVertices)
+                                {
+                                    double y = Vertices[pi].Y * rootYScaler;
+                                    Vertices[pi] = new Point3D(Vertices[pi].X, y, Vertices[pi].Z);
+                                }
+                                TriangulatePerimiter(rootPnts, rootLength, 0, 0, 0, true, rootYScaler);
+                            }
+                            else
+                            {
+                                TriangulatePerimiter(rootPnts, rootLength, 0, 0, 0, true);
+                            }
+
+                            if (overrideTipHeight)
+                            {
+                                double tipYScaler = tipHeightForced / (tipMaxY - tipMinY);
+                                foreach (int pi in tipVertices)
+                                {
+                                    double y = Vertices[pi].Y * tipYScaler;
+                                    Vertices[pi] = new Point3D(Vertices[pi].X, y, Vertices[pi].Z);
+                                }
+                                Int32Collection tipV2 = GenerateWingTip(tl, tipPnts);
+                                foreach (int pi in tipV2)
+                                {
+                                    if (!tipVertices.Contains(pi))
+                                    {
+                                        double y = Vertices[pi].Y * tipYScaler;
+                                        Vertices[pi] = new Point3D(Vertices[pi].X, y, Vertices[pi].Z);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                GenerateWingTip(tl, tipPnts);
+                            }
+                            if (!WholeModelChecked)
+                            {
+                                var hullMaker = new ConvexHullCalculator();
+                                hullMaker.GeneratePoint3DHull(Vertices, Faces);
+                            }
                             CentreVertices();
                         }
                     }
@@ -706,38 +916,40 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void GenerateWingTip(double tl, List<Point> tipPnts)
+        private Int32Collection GenerateWingTip(double tl, List<Point> tipPnts)
         {
+            Int32Collection res = new Int32Collection();
             if (selectedTipShape == "Cut Off")
             {
-                TriangulatePerimiter(tipPnts, tl, tipOffsetX, tipOffsetY, tipOffsetZ, false);
+                res = TriangulatePerimiter(tipPnts, tl, tipOffsetX, tipOffsetY, tipOffsetZ, false);
             }
             else
                                         if (selectedTipShape == "Ellipse 1")
             {
                 double mr = tl / 2;
                 double sr = mr / 10;
-                EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
+                res = EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
             }
             else
                                         if (selectedTipShape == "Ellipse 2")
             {
                 double mr = tl / 2;
                 double sr = mr / 5;
-                EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
+                res = EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
             }
             if (selectedTipShape == "Ellipse 3")
             {
                 double mr = tl / 2;
                 double sr = mr / 2;
-                EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
+                res = EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
             }
             if (selectedTipShape == "Ellipse 4")
             {
                 double mr = tl / 2;
                 double sr = mr;
-                EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
+                res = EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
             }
+            return res;
         }
 
         private Point GetEllipsePoint(double a, double b, double t)
@@ -891,6 +1103,11 @@ namespace Barnacle.Dialogs
                 TipGroup = EditorParameters.Get("TipGroup");
                 SelectedTipAirfoil = EditorParameters.Get("TipAirfoil");
                 SelectedTipShape = EditorParameters.Get("TipShape");
+                RootHeight = EditorParameters.GetDouble("ForcedRootHeight", 5.0);
+                OverrideRootHeight = EditorParameters.GetBoolean("OverrideRootHeight", false);
+
+                TipHeight = EditorParameters.GetDouble("ForcedTipHeight", 5.0);
+                OverrideTipHeight = EditorParameters.GetBoolean("OverrideTipHeight", false);
             }
         }
 
@@ -911,6 +1128,10 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("TipGroup", TipGroup);
             EditorParameters.Set("TipAirfoil", SelectedTipAirfoil);
             EditorParameters.Set("TipShape", SelectedTipShape);
+            EditorParameters.Set("OverrideRootHeight", OverrideRootHeight.ToString());
+            EditorParameters.Set("ForcedRootHeight", RootHeight.ToString());
+            EditorParameters.Set("OverrideTipHeight", OverrideTipHeight.ToString());
+            EditorParameters.Set("ForcedTipHeight", TipHeight.ToString());
         }
 
         private void SetProfiles(string grpName, List<string> names)
@@ -949,8 +1170,10 @@ namespace Barnacle.Dialogs
             NotifyPropertyChanged("TipShapeNames");
         }
 
-        private void TriangulatePerimiter(List<Point> points, double l, double xo, double yo, double z, bool invert)
+        private Int32Collection TriangulatePerimiter(List<Point> points, double l, double xo, double yo, double z, bool invert, double yScaler = 1)
         {
+            Int32Collection res = new Int32Collection();
+
             TriangulationPolygon ply = new TriangulationPolygon();
             List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
             foreach (Point p in points)
@@ -961,9 +1184,24 @@ namespace Barnacle.Dialogs
             List<Triangle> tris = ply.Triangulate();
             foreach (Triangle t in tris)
             {
-                int c0 = AddVertice(xo + t.Points[0].X * l, yo + t.Points[0].Y * l, z);
-                int c1 = AddVertice(xo + t.Points[1].X * l, yo + t.Points[1].Y * l, z);
-                int c2 = AddVertice(xo + t.Points[2].X * l, yo + t.Points[2].Y * l, z);
+                int c0 = AddVertice(xo + t.Points[0].X * l, yo + t.Points[0].Y * l * yScaler, z);
+                int c1 = AddVertice(xo + t.Points[1].X * l, yo + t.Points[1].Y * l * yScaler, z);
+                int c2 = AddVertice(xo + t.Points[2].X * l, yo + t.Points[2].Y * l * yScaler, z);
+                if (!res.Contains(c0))
+                {
+                    res.Add(c0);
+                }
+
+                if (!res.Contains(c1))
+                {
+                    res.Add(c1);
+                }
+
+                if (!res.Contains(c2))
+                {
+                    res.Add(c2);
+                }
+
                 if (invert)
                 {
                     Faces.Add(c0);
@@ -977,10 +1215,12 @@ namespace Barnacle.Dialogs
                     Faces.Add(c2);
                 }
             }
+            return res;
         }
 
-        private void TriangulateWingTip(List<Point> points, double l, double xo, double yo, double z, bool invert)
+        private Int32Collection TriangulateWingTip(List<Point> points, double l, double xo, double yo, double zo, bool invert)
         {
+            Int32Collection res = new Int32Collection();
             TriangulationPolygon ply = new TriangulationPolygon();
             List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
             foreach (Point p in points)
@@ -991,9 +1231,39 @@ namespace Barnacle.Dialogs
             List<Triangle> tris = ply.Triangulate();
             foreach (Triangle t in tris)
             {
-                int c0 = AddVertice(xo + t.Points[0].X * l, yo, z + t.Points[0].Y * l);
-                int c1 = AddVertice(xo + t.Points[1].X * l, yo, z + t.Points[1].Y * l);
-                int c2 = AddVertice(xo + t.Points[2].X * l, yo, z + t.Points[2].Y * l);
+                int c0 = AddVertice(xo + t.Points[0].X * l, yo, zo + t.Points[0].Y * l);
+                int c1 = AddVertice(xo + t.Points[1].X * l, yo, zo + t.Points[1].Y * l);
+                int c2 = AddVertice(xo + t.Points[2].X * l, yo, zo + t.Points[2].Y * l);
+                if (!res.Contains(c0))
+                {
+                    res.Add(c0);
+                    Vertices[c0] = RotateAroundXAxis(xo, yo, zo, Vertices[c0], 90 - dihedralAngle);
+                }
+                else
+                {
+                    bool dup1 = true;
+                }
+
+                if (!res.Contains(c1))
+                {
+                    res.Add(c1);
+                    Vertices[c1] = RotateAroundXAxis(xo, yo, zo, Vertices[c1], 90 - dihedralAngle);
+                }
+                else
+                {
+                    bool dup1 = true;
+                }
+
+                if (!res.Contains(c2))
+                {
+                    res.Add(c2);
+                    Vertices[c2] = RotateAroundXAxis(xo, yo, zo, Vertices[c2], 90 - dihedralAngle);
+                }
+                else
+                {
+                    bool dup1 = true;
+                }
+
                 if (invert)
                 {
                     Faces.Add(c0);
@@ -1007,6 +1277,7 @@ namespace Barnacle.Dialogs
                     Faces.Add(c2);
                 }
             }
+            return res;
         }
 
         private void Update()

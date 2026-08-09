@@ -102,6 +102,14 @@
                     </Button>
 
                     <Button
+               Command="{Binding AddCommand}"
+               CommandParameter="Spinner"
+               IsEnabled="{Binding EditingActive}"
+               Style="{StaticResource PrimitiveImageButton}"
+               ToolTip="Add a A curved cone">
+                        <Image Source="/Barnacle;component/Images/Buttons/Spinner.png" />
+                    </Button>
+                    <Button
                         Command="{Binding AddCommand}"
                         CommandParameter="Polygon"
                         IsEnabled="{Binding EditingActive}"
@@ -382,15 +390,6 @@
                         ToolTip="Add a bracket for holding a wheel or pully">
                         <Image Source="/Barnacle;component/Images/Buttons/WheelBracket1.png" />
                     </Button>
-
-                    <Button
-                        Command="{Binding AddCommand}"
-                        CommandParameter="WheelBracket2"
-                        IsEnabled="{Binding EditingActive}"
-                        Style="{StaticResource PrimitiveImageButton}"
-                        ToolTip="Add a bracket for holding a wheel or pully">
-                        <Image Source="/Barnacle;component/Images/Buttons/WheelBracket2.png" />
-                    </Button>
                 </UniformGrid>
             </TabItem>
             <TabItem Header="More">
@@ -399,76 +398,83 @@
                     MinHeight="160"
                     VerticalAlignment="Top"
                     Columns="4">
-
                     <Button
-     Command="{Binding AddCommand}"
-     CommandParameter="CutGem"
-     IsEnabled="{Binding EditingActive}"
-     Style="{StaticResource PrimitiveImageButton}"
-     ToolTip="Add a cut gem">
+    Command="{Binding AddCommand}"
+    CommandParameter="WheelBracket2"
+    IsEnabled="{Binding EditingActive}"
+    Style="{StaticResource PrimitiveImageButton}"
+    ToolTip="Add a bracket for holding a wheel or pully">
+                        <Image Source="/Barnacle;component/Images/Buttons/WheelBracket2.png" />
+                    </Button>
+                    <Button
+                        Command="{Binding AddCommand}"
+                        CommandParameter="CutGem"
+                        IsEnabled="{Binding EditingActive}"
+                        Style="{StaticResource PrimitiveImageButton}"
+                        ToolTip="Add a cut gem">
                         <Image Source="/Barnacle;component/Images/Buttons/CutGem.png" />
                     </Button>
 
                     <Button
-     Command="{Binding AddCommand}"
-     CommandParameter="HalfCapShell"
-     IsEnabled="{Binding EditingActive}"
-     Style="{StaticResource PrimitiveImageButton}"
-     ToolTip="Add a half cap shell">
+                        Command="{Binding AddCommand}"
+                        CommandParameter="HalfCapShell"
+                        IsEnabled="{Binding EditingActive}"
+                        Style="{StaticResource PrimitiveImageButton}"
+                        ToolTip="Add a half cap shell">
                         <Image Source="/Barnacle;component/Images/Buttons/HalfCapShell.png" />
                     </Button>
 
                     <Button
-     Command="{Binding AddCommand}"
-     CommandParameter="HalfPyramid"
-     IsEnabled="{Binding EditingActive}"
-     Style="{StaticResource PrimitiveImageButton}"
-     ToolTip="Add a half pyramid">
+                        Command="{Binding AddCommand}"
+                        CommandParameter="HalfPyramid"
+                        IsEnabled="{Binding EditingActive}"
+                        Style="{StaticResource PrimitiveImageButton}"
+                        ToolTip="Add a half pyramid">
                         <Image Source="/Barnacle;component/Images/Buttons/HalfPyramid.png" />
                     </Button>
 
                     <Button
-     Command="{Binding AddCommand}"
-     CommandParameter="HalfPyramidShell"
-     IsEnabled="{Binding EditingActive}"
-     Style="{StaticResource PrimitiveImageButton}"
-     ToolTip="Add a half pyramid shell">
+                        Command="{Binding AddCommand}"
+                        CommandParameter="HalfPyramidShell"
+                        IsEnabled="{Binding EditingActive}"
+                        Style="{StaticResource PrimitiveImageButton}"
+                        ToolTip="Add a half pyramid shell">
                         <Image Source="/Barnacle;component/Images/Buttons/HollowHalfPyramid.png" />
                     </Button>
 
                     <Button
-     Command="{Binding AddCommand}"
-     CommandParameter="Heart"
-     IsEnabled="{Binding EditingActive}"
-     Style="{StaticResource PrimitiveImageButton}"
-     ToolTip="Add a heart">
+                        Command="{Binding AddCommand}"
+                        CommandParameter="Heart"
+                        IsEnabled="{Binding EditingActive}"
+                        Style="{StaticResource PrimitiveImageButton}"
+                        ToolTip="Add a heart">
                         <Image Source="/Barnacle;component/Images/Buttons/Heart.png" />
                     </Button>
 
                     <Button
-     Command="{Binding AddCommand}"
-     CommandParameter="HollowDish"
-     IsEnabled="{Binding EditingActive}"
-     Style="{StaticResource PrimitiveImageButton}"
-     ToolTip="Add a hollow dish">
+                        Command="{Binding AddCommand}"
+                        CommandParameter="HollowDish"
+                        IsEnabled="{Binding EditingActive}"
+                        Style="{StaticResource PrimitiveImageButton}"
+                        ToolTip="Add a hollow dish">
                         <Image Source="/Barnacle;component/Images/Buttons/HollowDish.png" />
                     </Button>
                     <Button
-Command="{Binding AddCommand}"
-CommandParameter="TwistedRing"
-IsEnabled="{Binding EditingActive}"
-Style="{StaticResource PrimitiveImageButton}"
-ToolTip="Add a twisted ring">
+                        Command="{Binding AddCommand}"
+                        CommandParameter="TwistedRing"
+                        IsEnabled="{Binding EditingActive}"
+                        Style="{StaticResource PrimitiveImageButton}"
+                        ToolTip="Add a twisted ring">
                         <Image Source="/Barnacle;component/Images/Buttons/TwistedRing.png" />
                     </Button>
 
                     <Button
-                Command="{Binding AddCommand}"
-                CommandParameter="Bead1"
-                IsEnabled="{Binding EditingActive}"
-                Style="{StaticResource PrimitiveImageButton}"
-                ToolTip="Add a bead">
-                        <Image Source = "/Barnacle;component/Images/Buttons/Bead1.png" />
+                        Command="{Binding AddCommand}"
+                        CommandParameter="Bead1"
+                        IsEnabled="{Binding EditingActive}"
+                        Style="{StaticResource PrimitiveImageButton}"
+                        ToolTip="Add a bead">
+                        <Image Source="/Barnacle;component/Images/Buttons/Bead1.png" />
                     </Button>
 
                     <!--  Next Button Here  -->

@@ -115,17 +115,33 @@
         <Label
             Grid.Row="3"
             Grid.ColumnSpan="3"
+            Content="Position"
             Style="{StaticResource InverseLabel}">
-            Position
+            <Label.ContextMenu>
+                <ContextMenu>
+                    <MenuItem
+                        Command="{Binding CopyPositionCommand}"
+                        Header="Copy"
+                        IsEnabled="{Binding CanScale}" />
+                </ContextMenu>
+            </Label.ContextMenu>
         </Label>
         <Label
             Grid.Row="4"
             Grid.RowSpan="2"
             HorizontalAlignment="Center"
             VerticalContentAlignment="Center"
+            Content="X"
             FontSize="12"
             Foreground="Red">
-            X
+            <Label.ContextMenu>
+                <ContextMenu>
+                    <MenuItem
+                        Command="{Binding CopyPositionCommand}"
+                        Header="Copy"
+                        IsEnabled="{Binding CanScale}" />
+                </ContextMenu>
+            </Label.ContextMenu>
         </Label>
         <TextBox
             Grid.Row="4"
@@ -133,9 +149,8 @@
             Grid.Column="1"
             FontSize="14"
             IsEnabled="{Binding ControlsEnabled}"
-            Text="{Binding PositionX, UpdateSourceTrigger=PropertyChanged}"
-
-            PreviewKeyDown="TextBox_PreviewKeyUp" />
+            PreviewKeyDown="TextBox_PreviewKeyUp"
+            Text="{Binding PositionX, UpdateSourceTrigger=PropertyChanged}" />
 
         <UniformGrid
             Grid.Row="4"
@@ -160,9 +175,17 @@
             Grid.RowSpan="2"
             HorizontalAlignment="Center"
             VerticalContentAlignment="Center"
+            Content="Y"
             FontSize="12"
             Foreground="Green">
-            Y
+            <Label.ContextMenu>
+                <ContextMenu>
+                    <MenuItem
+                        Command="{Binding CopyPositionCommand}"
+                        Header="Copy"
+                        IsEnabled="{Binding CanScale}" />
+                </ContextMenu>
+            </Label.ContextMenu>
         </Label>
         <TextBox
             Grid.Row="6"
@@ -195,9 +218,17 @@
             Grid.RowSpan="2"
             HorizontalAlignment="Center"
             VerticalContentAlignment="Center"
+            Content="Z"
             FontSize="12"
             Foreground="Blue">
-            Z
+            <Label.ContextMenu>
+                <ContextMenu>
+                    <MenuItem
+                        Command="{Binding CopyPositionCommand}"
+                        Header="Copy"
+                        IsEnabled="{Binding CanScale}" />
+                </ContextMenu>
+            </Label.ContextMenu>
         </Label>
         <TextBox
             Grid.Row="8"
@@ -259,18 +290,30 @@
             Grid.Row="11"
             Grid.ColumnSpan="3"
             HorizontalContentAlignment="Center"
+            Content="Size"
             Style="{StaticResource InverseLabel}">
-            Size
+            <Label.ContextMenu>
+                <ContextMenu>
+                    <MenuItem
+                        Command="{Binding CopySizeCommand}"
+                        Header="Copy"
+                        IsEnabled="{Binding CanScale}" />
+                </ContextMenu>
+            </Label.ContextMenu>
         </Label>
         <Label
             Grid.Row="12"
             Grid.RowSpan="3"
             HorizontalAlignment="Center"
+            Content="L ( X )"
             FontSize="12"
-            Foreground="Red" Content="L ( X )">
+            Foreground="Red">
             <Label.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Copy"  Command="{Binding CopySizeCommand}" IsEnabled="{Binding CanScale}" />
+                    <MenuItem
+                        Command="{Binding CopySizeCommand}"
+                        Header="Copy"
+                        IsEnabled="{Binding CanScale}" />
                 </ContextMenu>
             </Label.ContextMenu>
         </Label>
@@ -287,12 +330,16 @@
             Grid.Row="13"
             Grid.RowSpan="2"
             HorizontalAlignment="Center"
+            Content="H ( Y )"
             FontSize="12"
-            Foreground="Green" Content="H ( Y )">
+            Foreground="Green">
 
             <Label.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Copy"  Command="{Binding CopySizeCommand}" IsEnabled="{Binding CanScale}" />
+                    <MenuItem
+                        Command="{Binding CopySizeCommand}"
+                        Header="Copy"
+                        IsEnabled="{Binding CanScale}" />
                 </ContextMenu>
             </Label.ContextMenu>
         </Label>
@@ -308,11 +355,15 @@
             Grid.Row="14"
             Grid.RowSpan="2"
             HorizontalAlignment="Center"
+            Content="W ( Z )"
             FontSize="12"
-            Foreground="Blue" Content="W ( Z )">
+            Foreground="Blue">
             <Label.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Copy" Command="{Binding CopySizeCommand}" IsEnabled="{Binding CanScale}" />
+                    <MenuItem
+                        Command="{Binding CopySizeCommand}"
+                        Header="Copy"
+                        IsEnabled="{Binding CanScale}" />
                 </ContextMenu>
             </Label.ContextMenu>
         </Label>
@@ -544,7 +595,6 @@
             Grid.ColumnSpan="3"
             VerticalAlignment="Stretch"
             IsReadOnly="True"
-
             Text="{Binding ObjectType}" />
         <TextBox
             Grid.Row="29"

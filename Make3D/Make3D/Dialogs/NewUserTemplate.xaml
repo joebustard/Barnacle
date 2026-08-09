@@ -100,13 +100,13 @@
             </Grid>
         </Border>
         <Border
-      Grid.Row="7"
-      Grid.RowSpan="1"
-      Grid.Column="1"
-      Grid.ColumnSpan="4"
-      Background="White"
-      BorderThickness="4"
-      Style="{StaticResource ControlBorder}">
+            Grid.Row="7"
+            Grid.RowSpan="1"
+            Grid.Column="1"
+            Grid.ColumnSpan="4"
+            Background="White"
+            BorderThickness="4"
+            Style="{StaticResource ControlBorder}">
 
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -114,7 +114,13 @@
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
 
-                <CheckBox Content="Include File Contents" IsChecked="{Binding IncludeFileContents}" FontSize="18" VerticalAlignment="Top" Grid.Column="0" ToolTip="Model files,scripts etc will all be included in the template." />
+                <CheckBox
+                    Grid.Column="0"
+                    VerticalAlignment="Top"
+                    Content="Include File Contents"
+                    FontSize="18"
+                    IsChecked="{Binding IncludeFileContents}"
+                    ToolTip="Model files,scripts etc will all be included in the template." />
             </Grid>
         </Border>
         <Grid

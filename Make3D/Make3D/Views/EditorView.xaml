@@ -27,16 +27,21 @@
         MouseMove="Grid_MouseMove"
         MouseUp="Grid_MouseUp"
         MouseWheel="Grid_MouseWheel">
-        <Image x:Name="BusyDisplay" Width="250" Height="250"
-        Source="/Images/Snooze.png" Stretch="UniformToFill"
-    Visibility="{Binding BusyVisible}" />
+        <Image
+            x:Name="BusyDisplay"
+            Width="250"
+            Height="250"
+            Source="/Images/Snooze.png"
+            Stretch="UniformToFill"
+            Visibility="{Binding BusyVisible}" />
         <Viewport3D
             Name="viewport3D1"
             Width="{Binding ViewPortWidth}"
             Height="{Binding ViewPortHeight}"
             ClipToBounds="False"
             KeyDown="UserControl_KeyDown"
-            KeyUp="UserControl_KeyUp" Visibility="{Binding ViewportVisible}">
+            KeyUp="UserControl_KeyUp"
+            Visibility="{Binding ViewportVisible}">
 
             <Viewport3D.Camera>
                 <PerspectiveCamera

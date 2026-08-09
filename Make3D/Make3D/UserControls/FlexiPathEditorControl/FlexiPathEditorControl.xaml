@@ -8,8 +8,8 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     Loaded="UserControl_Loaded"
-    SizeChanged="MainCanvas_SizeChanged"
     PreviewKeyUp="UserControl_PreviewKeyUp"
+    SizeChanged="MainCanvas_SizeChanged"
     mc:Ignorable="d">
     <UserControl.DataContext>
         <local:FlexiPathEditorControlViewModel />
@@ -172,14 +172,14 @@
                             </Button>
                         </Border>
                         <Border
-     x:Name="ExpandDragSegmentBorder"
-     BorderThickness="4"
-     CornerRadius="2">
+                            x:Name="ExpandDragSegmentBorder"
+                            BorderThickness="4"
+                            CornerRadius="2">
                             <Button
-         x:Name="ExpandDragSegmentButton"
-         Command="{Binding ExpandDragSegmentCommand}"
-         Style="{StaticResource SmallButton}"
-         ToolTip="Drag the selected segment">
+                                x:Name="ExpandDragSegmentButton"
+                                Command="{Binding ExpandDragSegmentCommand}"
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Drag the selected segment">
                                 <Image Source="/Barnacle;component/Images/Buttons/ExpandDragSegment.png" />
                             </Button>
                         </Border>

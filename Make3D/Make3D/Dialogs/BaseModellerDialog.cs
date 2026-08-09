@@ -1237,6 +1237,19 @@ namespace Barnacle.Dialogs
             this.RestoreSizeAndLocation(true);
         }
 
+        protected Point3D RotateAroundXAxis(double cX, double cY, double cZ, Point3D p, double angleDegrees)
+        {
+            double px = p.X - cX;
+            double py = p.Y - cY;
+            double pz = p.Z - cZ;
+            double anglerad = DegToRad(angleDegrees);
+            // rotate
+            double npx = px + cX;
+            double npy = pz * Math.Cos(anglerad) - py * Math.Sin(anglerad) + cY;
+            double npz = pz * Math.Sin(anglerad) + py * Math.Cos(anglerad) + cZ;
+            return new Point3D(npx, npy, npz);
+        }
+
         protected void ScaleVertices(double x, double y, double z)
         {
             for (int i = 0; i < Vertices.Count; i++)

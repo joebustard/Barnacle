@@ -20,6 +20,7 @@ using Barnacle.Dialogs.RenameSelection;
 using Barnacle.Dialogs.Slice;
 using Barnacle.EditorParameterLib;
 using Barnacle.Models;
+using Barnacle.Models._3MFImporter;
 using Barnacle.Models.Adorners;
 using Barnacle.Models.LoopSmoothing;
 using Barnacle.Object3DLib;
@@ -198,6 +199,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "ZoomOut", ZoomOut);
             NotificationManager.Subscribe("Editor", "ZoomReset", ZoomReset);
             NotificationManager.SubscribeTask("Editor", "Group", OnGroup);
+            NotificationManager.Subscribe("Editor", "MeshIsland", OnMeshIsland);
             ReportCameraPosition();
 
             selectedItems = new List<Object3D>();
@@ -3529,6 +3531,37 @@ namespace Barnacle.ViewModels
                     }
                     break;
 
+                case "3mf":
+                    {
+                        dlg.Filter = "3D Manufacturing Files (*.3mf) | *.3mf";
+                        dlg.CheckFileExists = true;
+                        dlg.Multiselect = true;
+                        if (dlg.ShowDialog() == true)
+                        {
+                            foreach (string fn in dlg.FileNames)
+                            {
+                                if (File.Exists(fn))
+                                {
+                                    try
+                                    {
+                                        var mi = new _3MFImporter(document);
+                                        if (mi.Process3MFFile(fn) == true)
+                                        {
+                                            GC.Collect();
+                                            BaseViewModel.Project.Save();
+                                            BaseViewModel.Document.SaveGlobalSettings();
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        MessageBox.Show(ex.Message);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+
                 case "obj":
                     {
                         dlg.Filter = "Object SourceModel Files (*.obj) | *.obj";
@@ -3799,6 +3832,23 @@ namespace Barnacle.ViewModels
                     }
                     DeselectAll();
                 }
+            }
+        }
+
+        private void OnMeshIsland(object param)
+        {
+            if (selectedItems == null || selectedItems.Count != 1)
+            {
+                MessageBox.Show("Mesh island operation requires a single selected object");
+            }
+            else
+            {
+                MeshIslands(selectedItems[0]);
+                DeselectAll();
+                RegenerateDisplayList();
+                // let any one who is interested know that the number of objects has changed.
+                NotificationManager.Notify("MetricsUpdated", null);
+                NotificationManager.Notify("ObjectNamesChanged", null);
             }
         }
 

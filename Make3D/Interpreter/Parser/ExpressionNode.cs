@@ -30,7 +30,7 @@ namespace ScriptLanguage
             }
         }
 
-        public virtual bool EvalExpression(ExpressionNode exp, ref int x, string v, string id = "")
+        public virtual bool EvalExpression(ExpressionNode exp, ref int x, string v, string id = "", bool reportErrs = true)
         {
             //  Log.Instance().AddEntry($"evalexpression : {exp.ToString()}, {v} , {id}");
             bool result = exp.Execute();
@@ -52,14 +52,14 @@ namespace ScriptLanguage
                     }
                 }
             }
-            if (!result)
+            if (!result && reportErrs)
             {
                 Log.Instance().AddEntry($"{id} : {v}  expression error");
             }
             return result;
         }
 
-        public virtual bool EvalExpression(ExpressionNode exp, ref double x, string v, string id = "")
+        public virtual bool EvalExpression(ExpressionNode exp, ref double x, string v, string id = "", bool reportErrs = true)
         {
             bool result = exp.Execute();
             if (result)
@@ -80,14 +80,14 @@ namespace ScriptLanguage
                     }
                 }
             }
-            if (!result)
+            if (!result && reportErrs)
             {
                 Log.Instance().AddEntry($"{id} : {v}  expression error");
             }
             return result;
         }
 
-        public virtual bool EvalExpression(ExpressionNode exp, ref bool x, string v, string id = "")
+        public virtual bool EvalExpression(ExpressionNode exp, ref bool x, string v, string id = "", bool reportErrs = true)
         {
             bool result = exp.Execute();
             if (result)
@@ -103,14 +103,14 @@ namespace ScriptLanguage
                     }
                 }
             }
-            if (!result)
+            if (!result && reportErrs)
             {
                 Log.Instance().AddEntry($"{id} : {v}  expression error");
             }
             return result;
         }
 
-        public virtual bool EvalExpression(ExpressionNode exp, ref double[] x, string v, string label = "")
+        public virtual bool EvalExpression(ExpressionNode exp, ref double[] x, string v, string label = "", bool reportErrs = true)
         {
             bool result = exp.Execute();
             if (result)
@@ -135,14 +135,14 @@ namespace ScriptLanguage
                     }
                 }
             }
-            if (!result)
+            if (!result && reportErrs)
             {
                 Log.Instance().AddEntry($"{label} : {v}  expression error");
             }
             return result;
         }
 
-        public virtual bool EvalExpression(ExpressionNode exp, ref string x, string v, string label = "")
+        public virtual bool EvalExpression(ExpressionNode exp, ref string x, string v, string label = "", bool reportErrs = true)
         {
             bool result = exp.Execute();
             if (result)
@@ -158,7 +158,7 @@ namespace ScriptLanguage
                     }
                 }
             }
-            if (!result)
+            if (!result && reportErrs)
             {
                 Log.Instance().AddEntry($"{label} : {v}  expression error");
             }

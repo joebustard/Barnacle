@@ -88,6 +88,7 @@ namespace ScriptLanguage
                 "atan",
                 "cos",
                 "containspart",
+                "contentcount",
                 "copy",
                 "cutout",
                 "degrees",
@@ -1485,6 +1486,14 @@ namespace ScriptLanguage
             ExpressionNode exp = null;
             ContainsPartNode asn = new ContainsPartNode();
             exp = ParseSolidFunction(parentName, asn.Label, 2, asn);
+            return exp;
+        }
+
+        private ExpressionNode ParseContentCountFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            ContentCountNode asn = new ContentCountNode();
+            exp = ParseSolidFunction(parentName, asn.Label, 1, asn);
             return exp;
         }
 
@@ -2890,6 +2899,12 @@ namespace ScriptLanguage
                         case "containspart":
                             {
                                 exp = ParseContainsPartFunction(parentName);
+                            }
+                            break;
+
+                        case "contentcount":
+                            {
+                                exp = ParseContentCountFunction(parentName);
                             }
                             break;
 

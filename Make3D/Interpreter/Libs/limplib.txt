@@ -593,6 +593,7 @@ function solid ClipRight( solid sl, double l)
        // if the part is valid centre and floor it
        If ( IsSolid ( whole )) 
        {
+           Clean whole;
            Centre whole ;
            Floor whole ;
            SetName whole, partname ;

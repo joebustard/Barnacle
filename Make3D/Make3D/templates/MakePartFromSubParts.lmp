@@ -1,4 +1,4 @@
-Program  "Make Part"
+Program  "Make <PARTNAME>"
 {
    Include "libs\limplib.txt" ;
    include "..\scale.inc";
@@ -20,6 +20,11 @@ Program  "Make Part"
 
    // Start building the part
    Solid part ;
+double l = 10;
+double h = 10;
+double w = 10;
+part = insertpart(src,partname);
+resize part,toscale(l),toscale(h),toscale(w);
 
    // save the part we made
    Savepartmodel( part, outputfolder, partname ) ;

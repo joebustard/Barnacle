@@ -33,6 +33,7 @@ namespace Barnacle.ViewModels
         private String assemblyList;
         private Dictionary<string, string> descriptions;
         private bool generateQuickAssembler;
+        private bool generateSubparts;
         private String modelList;
         private int numberOfKits;
         private bool okEnabled;
@@ -79,6 +80,7 @@ namespace Barnacle.ViewModels
             ScriptIncludeList = "";
             ScriptList = "";
             GenerateQuickAssembler = true;
+            GenerateSubparts = true;
         }
 
         public String AssemblyList
@@ -118,6 +120,22 @@ namespace Barnacle.ViewModels
                 if (value != generateQuickAssembler)
                 {
                     generateQuickAssembler = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool GenerateSubparts
+        {
+            get
+            {
+                return generateSubparts;
+            }
+            set
+            {
+                if (value != generateSubparts)
+                {
+                    generateSubparts = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -337,7 +355,7 @@ namespace Barnacle.ViewModels
             {
                 try
                 {
-                    templator.CreateByDesign(projectName, projPath, modelList, assemblyList, scriptList, scriptIncludeList, numberOfKits, generateQuickAssembler);
+                    templator.CreateByDesign(projectName, projPath, modelList, assemblyList, scriptList, scriptIncludeList, numberOfKits, generateQuickAssembler, generateSubparts);
                     projPath = templator.SolutionPath;
                     RecentlyUsedManager.UpdateRecentFiles(projPath);
                     NotificationManager.Notify("ShowEditor", null);

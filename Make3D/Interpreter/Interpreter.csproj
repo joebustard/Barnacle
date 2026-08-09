@@ -76,6 +76,7 @@
     <Compile Include="Parser\ExtraParsingFunctions\ParsePiercedRingNode.cs" />
     <Compile Include="Parser\ExtraParsingFunctions\ParseUBracketNode.cs" />
     <Compile Include="SolidFunctions\ContainsPart.cs" />
+    <Compile Include="SolidFunctions\ContentCount.cs" />
     <Compile Include="SolidFunctions\GetSolidBoundNode.cs" />
     <Compile Include="SolidFunctions\GetSolidPosNode.cs" />
     <Compile Include="SolidFunctions\HullNode.cs" />
@@ -87,7 +88,7 @@
     <Compile Include="SolidFunctions\MakeBrickTowerNode.cs" />
     <Compile Include="SolidFunctions\MakeConstructionStripNode.cs" />
     <Compile Include="SolidFunctions\MakeCrossGrillNode.cs" />
-    <Compile Include="SolidFunctions\MakeDripTrayNode.cs" />
+    <Compile Include="SolidFunctions\MakeTrayNode.cs" />
     <Compile Include="SolidFunctions\MakeEllipsoidNode.cs" />
     <Compile Include="SolidFunctions\MakeHoneyCombGrilleNode.cs" />
     <Compile Include="SolidFunctions\MakeImagePlaqueNode.cs" />

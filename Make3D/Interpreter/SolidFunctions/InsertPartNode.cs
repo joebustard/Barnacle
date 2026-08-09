@@ -17,7 +17,8 @@ namespace ScriptLanguage
         }
 
         /// Execute this node
-        /// returning false terminates the application
+        /// returning false terminates the application if there is a syntaxk error
+        /// Not finding the object is NOT  a terminal error
         ///
         public override bool Execute()
         {
@@ -25,53 +26,71 @@ namespace ScriptLanguage
             try
             {
                 string container = "";
-                string part = "";
 
-                if (base.EvalExpression(this.partFileName, ref container, "FileName", "InsertPart") &&
-                    base.EvalExpression(this.partName, ref part, "PartName", "InsertPart")
-                )
+                if (base.EvalExpression(this.partFileName, ref container, "FileName", "InsertPart"))
                 {
-                    if (part != "" && Script.ProjectPath != null && Script.ProjectPath != "" && container.Length > 1)
+                    string fName = "";
+                    if (container[1] == ':')
                     {
-                        string fName = "";
-                        if (container[1] == ':')
-                        {
-                            fName = container;
-                        }
-                        else
-                        {
-                            fName = Script.ProjectPath + container;
-                        }
-                        if (!fName.EndsWith(".txt"))
-                        {
-                            fName += ".txt";
-                        }
-                        if (!System.IO.File.Exists(fName))
-                        {
-                            Log.Instance().AddEntry($"InsertPart : couldn't find {fName}");
-                        }
-                        else
-                        {
-                            Object3D clone = Read(fName, part);
-                            if (clone != null)
-                            {
-                                clone.CalcScale(false);
-                                clone.Remesh();
-                                int id = Script.NextObjectId;
-                                Script.ResultArtefacts[id] = clone;
-                                Script.ResultArtefacts[id].CalculateAbsoluteBounds();
-                                ExecutionStack.Instance().PushSolid(id);
-                                result = true;
-                            }
-                            else
-                            {
-                                Log.Instance().AddEntry($"InsertPart : failed to read {part} from {partFileName}");
-                            }
-                        }
+                        fName = container;
                     }
                     else
                     {
-                        Log.Instance().AddEntry("InsertPart : expected part name");
+                        fName = Script.ProjectPath + container;
+                    }
+                    if (!fName.EndsWith(".txt"))
+                    {
+                        fName += ".txt";
+                    }
+                    if (!System.IO.File.Exists(fName))
+                    {
+                        Log.Instance().AddEntry($"InsertPart : couldn't find {fName}");
+                    }
+                    else
+                    {
+                        // part parameter my be a string in which case its a name
+                        string part = "";
+                        Object3D clone = null;
+                        if (base.EvalExpression(this.partName, ref part, "PartName", "InsertPart", false))
+                        {
+                            if (part != "" && Script.ProjectPath != null && Script.ProjectPath != "" && container.Length > 1)
+                            {
+                                clone = Read(fName, part);
+                                result = true;
+                                if (clone != null)
+                                {
+                                    PushClone(clone);
+                                }
+                                else
+                                {
+                                    Log.Instance().AddEntry($"InsertPart : failed to read {part} from {partFileName}");
+                                    ExecutionStack.Instance().PushSolid(-1);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // The oart may also be an int id
+                            int partId = -1;
+                            if (base.EvalExpression(this.partName, ref partId, "PartName", "InsertPart"))
+                            {
+                                clone = Read(fName, partId);
+                                result = true;
+                                if (clone != null)
+                                {
+                                    PushClone(clone);
+                                }
+                                else
+                                {
+                                    Log.Instance().AddEntry($"InsertPart : failed to read {partId} from {partFileName}");
+                                    ExecutionStack.Instance().PushSolid(-1);
+                                }
+                            }
+                            else
+                            {
+                                Log.Instance().AddEntry("InsertPart : expected part name");
+                            }
+                        }
                     }
                 }
             }
@@ -147,6 +166,77 @@ namespace ScriptLanguage
             return res;
         }
 
+        // cut down version of read function in main document
+        // only loads limited object types
+        // and only the ided part one from the file
+        public Object3D Read(string file, int partId)
+        {
+            Object3D res = null;
+            if (partId >= 0)
+            {
+                int count = -1;
+                try
+                {
+                    XmlDocument doc = new XmlDocument();
+                    doc.XmlResolver = null;
+                    doc.Load(file);
+                    XmlNode docNode = doc.SelectSingleNode("Document");
+
+                    XmlNodeList nodes = docNode.ChildNodes;
+                    foreach (XmlNode nd in nodes)
+                    {
+                        string ndname = nd.Name.ToLower();
+
+                        if (ndname == "obj")
+                        {
+                            Object3D obj = new Object3D();
+                            obj.Read(nd);
+                            count++;
+                            if (count == partId)
+                            {
+                                obj.SetMesh();
+                                if (obj.PrimType != "Mesh")
+                                {
+                                    obj = obj.ConvertToMesh();
+                                }
+                                if (!(double.IsNegativeInfinity(obj.Position.X)))
+                                {
+                                    res = obj;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (ndname == "groupobj")
+                        {
+                            Group3D gobj = new Group3D();
+                            gobj.Read(nd);
+                            count++;
+                            if (count == partId)
+
+                            {
+                                Object3D obj = gobj.ConvertToMesh();
+
+                                obj.SetMesh();
+                                if (!(double.IsNegativeInfinity(obj.Position.X)))
+                                {
+                                    res = obj;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    doc = null;
+                    GC.Collect();
+                }
+                catch (Exception ex)
+                {
+                    Log.Instance().AddEntry($"InsertPart : failed to load part: " + ex.Message);
+                }
+            }
+            return res;
+        }
+
         /// Returns a String representation of this node that can be used for
         /// Pretty Printing
         ///
@@ -169,6 +259,16 @@ namespace ScriptLanguage
             result += partName.ToString();
             result += " )";
             return result;
+        }
+
+        private static void PushClone(Object3D clone)
+        {
+            clone.CalcScale(false);
+            clone.Remesh();
+            int id = Script.NextObjectId;
+            Script.ResultArtefacts[id] = clone;
+            Script.ResultArtefacts[id].CalculateAbsoluteBounds();
+            ExecutionStack.Instance().PushSolid(id);
         }
     }
 }

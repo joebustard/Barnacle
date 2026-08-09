@@ -97,7 +97,10 @@
                                     FontWeight="Bold"
                                     Text="Recent Projects" />
                             </Border>
-                            <ItemsControl Grid.Row="1" ItemsSource="{Binding RecentFilesList}" IsEnabled="{Binding EditingActive}">
+                            <ItemsControl
+                                Grid.Row="1"
+                                IsEnabled="{Binding EditingActive}"
+                                ItemsSource="{Binding RecentFilesList}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Custom:RibbonApplicationMenuItem
@@ -395,6 +398,15 @@
                             Header="STL"
                             ImageSource="/Barnacle;component/Images/Buttons/stl.png"
                             ToolTip="Import the object in a single STL into the current file." />
+
+                        <Custom:RibbonMenuItem
+                            x:Name="Import3MF"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding ImportCommand}"
+                            CommandParameter="3MF"
+                            Header="3MF"
+                            ImageSource="/Barnacle;component/Images/Buttons/importobj.png" />
                         <Custom:RibbonMenuItem
                             x:Name="ImportMultiSTL"
                             HorizontalAlignment="Stretch"
@@ -799,32 +811,32 @@
                             ImageSource="/Barnacle;component/Images/Buttons/Arrange.png"
                             ToolTip="Arrange all items in a compact footprint for printing. Hi Resolution but slow" />
                         <Custom:RibbonMenuItem
-     x:Name="OptimumMid"
-     HorizontalAlignment="Stretch"
-     VerticalAlignment="Top"
-     Command="{Binding DistributeCommand}"
-     CommandParameter="OptimumMid"
-     Header="Arrange Mid"
-     ImageSource="/Barnacle;component/Images/Buttons/Arrange.png"
-     ToolTip="Arrange all items in a compact footprint for printing" />
+                            x:Name="OptimumMid"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding DistributeCommand}"
+                            CommandParameter="OptimumMid"
+                            Header="Arrange Mid"
+                            ImageSource="/Barnacle;component/Images/Buttons/Arrange.png"
+                            ToolTip="Arrange all items in a compact footprint for printing" />
                         <Custom:RibbonMenuItem
-     x:Name="OptimumLow"
-     HorizontalAlignment="Stretch"
-     VerticalAlignment="Top"
-     Command="{Binding DistributeCommand}"
-     CommandParameter="OptimumLow"
-     Header="Arrange Low"
-     ImageSource="/Barnacle;component/Images/Buttons/Arrange.png"
-     ToolTip="Arrange all items in a compact footprint for printing" />
+                            x:Name="OptimumLow"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding DistributeCommand}"
+                            CommandParameter="OptimumLow"
+                            Header="Arrange Low"
+                            ImageSource="/Barnacle;component/Images/Buttons/Arrange.png"
+                            ToolTip="Arrange all items in a compact footprint for printing" />
                         <Custom:RibbonMenuItem
-     x:Name="Spiral"
-     HorizontalAlignment="Stretch"
-     VerticalAlignment="Top"
-     Command="{Binding DistributeCommand}"
-     CommandParameter="Spiral"
-     Header="Spiral"
-     ImageSource="/Barnacle;component/Images/Buttons/Arrange.png"
-     ToolTip="Arrange all items in a compact footprint for printing" />
+                            x:Name="Spiral"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding DistributeCommand}"
+                            CommandParameter="Spiral"
+                            Header="Spiral"
+                            ImageSource="/Barnacle;component/Images/Buttons/Arrange.png"
+                            ToolTip="Arrange all items in a compact footprint for printing" />
                         <Custom:RibbonMenuItem
                             x:Name="HEvenAlignment"
                             HorizontalAlignment="Stretch"
@@ -992,14 +1004,14 @@
                         <Custom:RibbonSeparator />
 
                         <Custom:RibbonMenuItem
-      x:Name="GroupExtract"
-      HorizontalAlignment="Stretch"
-      VerticalAlignment="Top"
-      Command="{Binding GroupCommand}"
-      CommandParameter="Extract"
-      Header="Extract"
-      ImageSource="/Barnacle;component/Images/Buttons/copy.png"
-      ToolTip="Cut the second part from the first but keep both the parts." />
+                            x:Name="GroupExtract"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding GroupCommand}"
+                            CommandParameter="Extract"
+                            Header="Extract"
+                            ImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                            ToolTip="Cut the second part from the first but keep both the parts." />
                         <Custom:RibbonSeparator />
 
                         <Custom:RibbonMenuItem
@@ -1422,6 +1434,15 @@
                             Header="Decimate"
                             ImageSource="/Barnacle;component/Images/Buttons/copy.png"
                             ToolTip="Reduce the number of faces in the selected object" />
+                        <Custom:RibbonMenuItem
+                            x:Name="MeshIslandButton"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding MeshIslandCommand}"
+                            Header="Islands"
+                            ImageSource="/Barnacle;component/Images/Buttons/MeshIslands.png"
+                            IsEnabled="{Binding MeshEditEnabled}"
+                            ToolTip="Split mesh islands into seperate parts" />
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton Label="Fix">
 
@@ -1442,13 +1463,13 @@
                             ImageSource="/Barnacle;component/Images/Buttons/copy.png"
                             ToolTip="Remove Duplicate/Unreferenced Vertex" />
                         <Custom:RibbonMenuItem
-     x:Name="DupFaceButton"
-     HorizontalAlignment="Stretch"
-     VerticalAlignment="Top"
-     Command="{Binding DupFaceCommand}"
-     Header="Duplicate Faces"
-     ImageSource="/Barnacle;component/Images/Buttons/copy.png"
-     ToolTip="Remove Duplicate Faces" />
+                            x:Name="DupFaceButton"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding DupFaceCommand}"
+                            Header="Duplicate Faces"
+                            ImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                            ToolTip="Remove Duplicate Faces" />
 
                         <Custom:RibbonMenuItem
                             x:Name="FixHolesButton"
@@ -1471,14 +1492,14 @@
                             ToolTip="Remove small holes" />
 
                         <Custom:RibbonMenuItem
-      x:Name="FaceNormalsButton"
-      HorizontalAlignment="Stretch"
-      VerticalAlignment="Top"
-      Command="{Binding FaceNormalsCommand}"
-      CommandParameter="HalfEdge"
-      Header="Face Normals"
-      ImageSource="/Barnacle;component/Images/Buttons/copy.png"
-      ToolTip="Orientate Face normals consistentaly" />
+                            x:Name="FaceNormalsButton"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding FaceNormalsCommand}"
+                            CommandParameter="HalfEdge"
+                            Header="Face Normals"
+                            ImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                            ToolTip="Orientate Face normals consistentaly" />
                         <Custom:RibbonMenuItem
                             x:Name="SetZeroButton"
                             HorizontalAlignment="Stretch"
@@ -1601,7 +1622,8 @@
                         <vsx1:SolutionExplorerControl
                             x:Name="SolutionExplorer"
                             Grid.Column="0"
-                            VerticalAlignment="Stretch" IsEnabled="{Binding SolutionEnabled}" />
+                            VerticalAlignment="Stretch"
+                            IsEnabled="{Binding SolutionEnabled}" />
                     </Grid>
                 </TabItem>
 

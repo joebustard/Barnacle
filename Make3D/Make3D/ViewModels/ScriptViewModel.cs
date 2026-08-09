@@ -33,6 +33,7 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using Barnacle.UserControls.ObjectViewer;
 using Barnacle.Dialogs;
+using System.Windows.Threading;
 
 namespace Barnacle.ViewModels
 {
@@ -56,6 +57,7 @@ program ""Script Name""
         private CameraModes cameraMode;
         private Point3D CameraScrollDelta = new Point3D(1, 1, 0);
 
+        private DispatcherTimer cameraUpdateTimer;
         private List<Object3D> content;
         private bool dirty;
         private string filePath;
@@ -122,6 +124,13 @@ program ""Script Name""
             NotificationManager.Subscribe("Script", "LimpetLoaded", OnLimpetLoaded);
             NotificationManager.Subscribe("Script", "LimpetClosing", OnLimpetClosing);
             selectedTabIndex = 0;
+            // each time we switch between the editor tab and the 3D tab , the camera is reset
+            // but we can cheat and restore the position from an external file.
+            // We need to defer this untill the 3D tab has completely loaded
+            // Use a timer
+            cameraUpdateTimer = new DispatcherTimer();
+            cameraUpdateTimer.Tick += CameraUpdateTimer_Tick;
+            cameraUpdateTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
         }
 
         private enum CameraModes
@@ -355,7 +364,15 @@ program ""Script Name""
             {
                 if (selectedTabIndex != value)
                 {
+                    if (selectedTabIndex == 1)
+                    {
+                        RecordCameraPos();
+                    }
                     selectedTabIndex = value;
+                    if (selectedTabIndex == 1)
+                    {
+                        cameraUpdateTimer.Start();
+                    }
                     NotifyPropertyChanged();
                 }
             }
@@ -447,45 +464,6 @@ program ""Script Name""
 
         internal void KeyUp(Key key, bool v1, bool v2)
         {
-        }
-
-        internal void MouseDown(System.Windows.Point lastMousePos, MouseButtonEventArgs e)
-        {
-            lastMouse = lastMousePos;
-        }
-
-        internal void MouseMove(System.Windows.Point newPos, MouseEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                if (cameraMode == CameraModes.CameraMove)
-                {
-                    MoveCameraDelta(lastMouse, newPos);
-                    lastMouse = newPos;
-                }
-                else if (cameraMode == CameraModes.CameraMoveLookCenter)
-                {
-                    MoveCameraDelta(lastMouse, newPos);
-                    LookToCenter();
-                    lastMouse = newPos;
-                }
-            }
-        }
-
-        internal void MouseUp(System.Windows.Point lastMousePos, MouseButtonEventArgs e)
-        {
-        }
-
-        internal void MouseWheel(MouseWheelEventArgs e)
-        {
-            if (e.Delta > 0)
-            {
-                ZoomIn(null);
-            }
-            else
-            {
-                ZoomOut(null);
-            }
         }
 
         internal async void RunScript()
@@ -600,6 +578,12 @@ program ""Script Name""
             return gm;
         }
 
+        private void CameraUpdateTimer_Tick(object sender, EventArgs e)
+        {
+            cameraUpdateTimer.Stop();
+            RestoreCameraPos();
+        }
+
         private void CheckForSave()
         {
             if (Dirty == true && filePath != "")
@@ -657,25 +641,6 @@ program ""Script Name""
             }
 
             return position;
-        }
-
-        private void LookToCenter()
-        {
-            lookDirection.X = -camera.CameraPos.X;
-            lookDirection.Y = -camera.CameraPos.Y;
-            lookDirection.Z = -camera.CameraPos.Z;
-            lookDirection.Normalize();
-            NotifyPropertyChanged("LookDirection");
-        }
-
-        private void MoveCameraDelta(Point lastMouse, Point newPos)
-        {
-            double dx = newPos.X - lastMouse.X;
-            double dy = newPos.Y - lastMouse.Y;
-            double dz = newPos.X - lastMouse.X;
-
-            camera.Move(dx, dy);
-            NotifyPropertyChanged("CameraPos");
         }
 
         private void OnFind(object obj)
@@ -801,6 +766,16 @@ program ""Script Name""
             }
         }
 
+        private void RecordCameraPos()
+        {
+            Viewer.SaveCamera("ScriptViewCamera.txt");
+        }
+
+        private void RestoreCameraPos()
+        {
+            Viewer.LoadCamera("ScriptViewCamera.txt");
+        }
+
         private Task<RunRes> RunAsync(CancellationToken cancellationToken)
         {
             return Task.Run(() => {
@@ -847,26 +822,6 @@ program ""Script Name""
             zoomPercent += v;
 
             NotifyPropertyChanged("CameraPos");
-        }
-
-        private void ZoomIn(object param)
-        {
-            Zoom(1);
-        }
-
-        private void ZoomOut(object param)
-        {
-            if (zoomPercent > 0)
-            {
-                Zoom(-1);
-            }
-        }
-
-        private void ZoomReset(object param)
-        {
-            double diff = 100 - zoomPercent;
-            Zoom(diff);
-            zoomPercent = 100;
         }
 
         private struct RunRes

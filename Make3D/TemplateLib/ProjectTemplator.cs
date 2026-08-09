@@ -86,7 +86,7 @@ namespace TemplateLib
         /// <param name="numberOfKits"></param>
         /// <param name="generateQuickAssembler"></param>
         /// <exception cref="NotImplementedException"></exception>
-        public bool CreateByDesign(string projectName, string projPath, string modelList, string assemblyList, string scriptList, string scriptIncludeList, int numberOfKits, bool generateQuickAssembler)
+        public bool CreateByDesign(string projectName, string projPath, string modelList, string assemblyList, string scriptList, string scriptIncludeList, int numberOfKits, bool generateQuickAssembler, bool generateSubparts)
         {
             // Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True"
             bool res = false;
@@ -134,12 +134,20 @@ namespace TemplateLib
             ProjectTemplateFolder partsFolder = AddDesignedFolder(def, rootptf, "Parts");
             ProjectTemplateFolder scriptsFolder = AddDesignedFolder(def, rootptf, "Scripts");
             AddAttribute(scriptsFolder, "Export", "False");
-            ProjectTemplateFolder subpartsFolder = AddDesignedFolder(def, rootptf, "Subparts");
-            AddAttribute(subpartsFolder, "Export", "False");
+
+            ProjectTemplateFolder partmakersFolder = null;
+            ProjectTemplateFolder subpartsFolder = null;
+            if (generateSubparts)
+            {
+                subpartsFolder = AddDesignedFolder(def, rootptf, "Subparts");
+                AddAttribute(subpartsFolder, "Export", "False");
+                partmakersFolder = AddDesignedFolder(def, scriptsFolder, "PartMakers");
+                AddAttribute(partmakersFolder, "Export", "False");
+            }
+
             ProjectTemplateFolder assemblersScriptsFolder = AddDesignedFolder(def, scriptsFolder, "Assemblers");
             AddAttribute(assemblersScriptsFolder, "Export", "False");
-            ProjectTemplateFolder partmakersFolder = AddDesignedFolder(def, scriptsFolder, "PartMakers");
-            AddAttribute(partmakersFolder, "Export", "False");
+
             ProjectTemplateFolder kitmakersFolder = AddDesignedFolder(def, scriptsFolder, "KitMakers");
             AddAttribute(kitmakersFolder, "Export", "False");
 
@@ -153,16 +161,22 @@ namespace TemplateLib
                     string fn2 = fn.Trim();
                     AddFile(partsFolder, fn2 + ".txt", @"templates/blankmodel1_35.txt");
 
-                    ProjectTemplateFile partmakerfile = AddFile(partmakersFolder, "Make" + fn2 + ".lmp", @"templates/MakePartFromSubParts.lmp");
+                    if (generateSubparts)
+                    {
+                        ProjectTemplateFile partmakerfile = AddFile(partmakersFolder, "Make" + fn2 + ".lmp", @"templates/MakePartFromSubParts.lmp");
 
-                    AddSubstitution(partmakerfile, "<PARTNAME>", fn2);
+                        AddSubstitution(partmakerfile, "<PARTNAME>", fn2);
+                    }
                 }
 
-                // sub parts
-                foreach (string fn in partnames)
+                if (generateSubparts)
                 {
-                    string fn2 = fn.Trim();
-                    AddFile(subpartsFolder, fn2 + "Subparts.txt", @"templates/blankmodel1_35.txt");
+                    // sub parts
+                    foreach (string fn in partnames)
+                    {
+                        string fn2 = fn.Trim();
+                        AddFile(subpartsFolder, fn2 + "Subparts.txt", @"templates/blankmodel1_35.txt");
+                    }
                 }
 
                 // Add include file to scripts

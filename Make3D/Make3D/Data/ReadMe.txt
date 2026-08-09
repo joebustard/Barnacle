@@ -4,7 +4,7 @@ v1.0.10
 Added
   Split primitive panel into two tabs and added  extra primitives 
   Added Honeycomb grille tool
-  Drop from left, right, front and back added to editor.
+  Drop from left, right, front and back added to editor. Drops an object onto another until there is a contact
   First version of a bevelled gear tool
   When importing from a thingiverse zip file, auto suggest an output subfolder name  
   When running a limpet script from the command line return an exit code, 0 for success, -1 for fail. Allows for error checking in cmd and make files.
@@ -22,7 +22,7 @@ Added
   Added option to move the origin to the centroid point in the ribbed fuselage control
   Added shell mode to fuselage when front or back selected. Allows user to make a hollow fuselage from the parts
   Added ellipsoid tool.
-  Added first cut of text replace to script editor
+  Added first cut of text replace to script editor. 
   Added first cut of U Bracket tool 
   Added new csg operation "Extract" creates two groups. One containing the difference between two objects and the other the "Intersection"
     
@@ -30,9 +30,13 @@ Added
   Added sgn(), MoveBackTo() MoveFrontTo() and Cenflo() to standard limpet lib
   Solid bounds functions Left(),Right(),Top(),Bottom(),Front(),Back()
   Added ContainsPart(path,partname) to Limpet
+  Added ContentCount(path) to Limpet
   Added clean solid statement to limpet
   Added a "script dirty" asterisk marker to the script editor tab view
   Added ctrl-z to flexipath control
+  Added first cut of import objects from a 3mf file
+  Add first cut of "Seperate Islands"
+
 
 Fixed
   The number of vertices and faces shown for the selected object didn't update automatically when the object was subdivided
@@ -45,7 +49,7 @@ Fixed
   Copy a model file was going wrong if the file was in a subfolder
 
 Changed
-  Paste path string in flexipath control now adjusts pasted coordinates so all path is visible
+  Paste path string in flexipath control now adjusts pasted coordinates so all path is in bounds of view
   Modified focus handling in the solution tree view
   Automatically set focus back to editor view when tabing off an objectpropertiesview textbox
   Don't allow user to load a new Limpet script if current one is executing

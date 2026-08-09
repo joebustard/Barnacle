@@ -1,8 +1,9 @@
-Program  "Assemble Model"
+Program  "Assemble <ASSEMBLYNAME>"
 {
    Include "libs\limplib.txt" ;
    Include "..\Scale.inc" ;
    Include "..\GlobalDefinitions.inc" ;
+   Include "..\ProjectLib.inc" ;
 
    // local declarations
 <DECS>
@@ -19,7 +20,7 @@ Program  "Assemble Model"
 
    }
 
-function solid Insert( string src, string name,double x,double y,double z,double rx, double ry, double rx)
+function solid Insert( string src, string name,double x,double y,double z,double rx, double ry, double rZ)
 {
   string fname = src+"\"+name+".txt";
   Solid res;

@@ -1,4 +1,4 @@
-Program  "Make Kit"
+Program  "Make <KITNAME>"
 {
    Include "libs\limplib.txt" ;
    Include "..\Scale.inc" ;
