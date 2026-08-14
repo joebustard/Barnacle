@@ -97,6 +97,10 @@ namespace Barnacle.Models
                     res = new FigureDlg();
                     break;
 
+                case "FourView":
+                    res = new FourViewDlg();
+                    break;
+
                 case "HoneycombGrille":
                     res = new HoneyCombGrilleDlg();
                     break;

@@ -50,8 +50,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BicornMaker.cs" />
+    <Compile Include="Boundary2D.cs" />
     <Compile Include="CohenSutherland.cs" />
     <Compile Include="Ellipsoid\MakeEllipsoid.cs" />
+    <Compile Include="FourView\MakeFourView.cs" />
+    <Compile Include="FourView\Rib.cs" />
     <Compile Include="GrayScaleImagePlaqueMaker.cs" />
     <Compile Include="HoneycombGrille\MakeHoneyCombGrille.cs" />
     <Compile Include="MakeGear.cs" />

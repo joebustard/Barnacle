@@ -646,7 +646,7 @@ namespace Barnacle.Dialogs
             double x = ribXs[0];
             leftMostX = x;
             rightMostX = x;
-            int vert = 0;
+
             int vindex = 0;
             for (int ribId = 0; ribId < generatingRibs.Count; ribId++)
             {
@@ -1192,7 +1192,6 @@ namespace Barnacle.Dialogs
 
         private void RibsChanged()
         {
-          
             CalculateMainRibSizes();
             List<double> ribXs = new List<double>();
             List<Dimension> topDims = new List<Dimension>();

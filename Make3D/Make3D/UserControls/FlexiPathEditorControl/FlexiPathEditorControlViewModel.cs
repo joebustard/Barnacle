@@ -1600,7 +1600,6 @@ namespace Barnacle.UserControls
         {
             CheckPoint();
             position = SnapPositionToMM(position);
-            bool onFirstPoint = false;
 
             if (Math.Abs(position.X - selectedFlexiPath.Start.X) < pntTestTolerance && Math.Abs(position.Y - selectedFlexiPath.Start.Y) < pntTestTolerance)
             {

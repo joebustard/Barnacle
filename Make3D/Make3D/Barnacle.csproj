@@ -140,6 +140,7 @@
     <Compile Include="Dialogs\FigureDlg\FigureModel.cs" />
     <Compile Include="Dialogs\FigureDlg\JointMarker.cs" />
     <Compile Include="Dialogs\FigureDlg\ModelAssignmentControl.xaml.cs" />
+    <Compile Include="Dialogs\FourView\FourViewDlg.xaml.cs" />
     <Compile Include="Dialogs\HoneycombGrille\HoneyCombGrilleDlg.xaml.cs" />
     <Compile Include="Models\3MFImporter\3MFImporter.cs" />
     <Compile Include="Models\3MFImporter\ComponentRec.cs" />
@@ -592,6 +593,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\FigureDlg\ModelAssignmentControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\FourView\FourViewDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1558,7 +1563,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\TankTrackLinks\" />
-    <Folder Include="Dialogs\NewFolder1\" />
     <Folder Include="Dialogs\RibbedFuselage\ViewModels\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

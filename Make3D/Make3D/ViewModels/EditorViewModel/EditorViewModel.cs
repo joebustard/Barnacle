@@ -1905,7 +1905,7 @@ namespace Barnacle.ViewModels
             selectedObjectAdorner.Clear();
             selectedObjectAdorner.AdornObject(ob);
             RegenerateDisplayList();
-            MessageBox.Show($"Filled {totalFixed.ToString()}, {totalFound.ToString()} holes still remaining", "Information");
+            MessageBox.Show($"Filled {totalFixed.ToString()}, {(totalFound - totalFixed).ToString()} holes remaining", "Information");
         }
 
         private void FlipSelectedObjects(string s)

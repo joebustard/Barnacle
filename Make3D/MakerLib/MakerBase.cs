@@ -701,6 +701,36 @@ namespace MakerLib
             }
         }
 
+        protected void TriangulateSide(System.Windows.Point[] points, double x, bool reverse = false)
+        {
+            TriangulationPolygon ply = new TriangulationPolygon();
+            List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
+            foreach (Point p in points)
+            {
+                pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
+            }
+            ply.Points = pf.ToArray();
+            List<Triangle> tris = ply.Triangulate();
+            foreach (Triangle t in tris)
+            {
+                int c0 = AddVertice(x, t.Points[0].Y, t.Points[0].X);
+                int c1 = AddVertice(x, t.Points[1].Y, t.Points[1].X);
+                int c2 = AddVertice(x, t.Points[2].Y, t.Points[2].X);
+                if (reverse)
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+                }
+                else
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+                }
+            }
+        }
+
         protected void TriangulateSurface(Point[] points, double z, bool reverse = false)
         {
             TriangulationPolygon ply = new TriangulationPolygon();

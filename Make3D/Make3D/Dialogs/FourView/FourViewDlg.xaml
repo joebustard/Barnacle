@@ -1,0 +1,134 @@
+<local:BaseModellerDialog
+    x:Class="Barnacle.Dialogs.FourViewDlg"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ctrls="clr-namespace:Barnacle.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:u="clr-namespace:Barnacle.UserControls.ObjectViewer"
+    Title=""
+    Width="1000"
+    Height="450"
+    Background="{StaticResource WindowBackBrush}"
+    Loaded="Window_Loaded"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+    <Grid VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="100  " />
+            <RowDefinition Height="30" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="8*" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="10*" />
+            <ColumnDefinition Width="10" />
+        </Grid.ColumnDefinitions>
+        <Border
+            Grid.Row="0"
+            Grid.Column="1"
+            Style="{StaticResource ControlBorder}">
+            <TabControl>
+                <TabItem Header="Left">
+                    <ctrls:FlexiPathEditorControl x:Name="LeftPathEditor" AbsolutePaths="True" />
+                </TabItem>
+
+                <TabItem Header="Right">
+                    <ctrls:FlexiPathEditorControl x:Name="RightPathEditor" AbsolutePaths="True" />
+                </TabItem>
+
+                <TabItem Header="Front">
+                    <ctrls:FlexiPathEditorControl x:Name="FrontPathEditor" AbsolutePaths="True" />
+                </TabItem>
+
+                <TabItem Header="Top">
+                    <ctrls:FlexiPathEditorControl x:Name="TopPathEditor" AbsolutePaths="True" />
+                </TabItem>
+            </TabControl>
+        </Border>
+        <Border
+            Grid.Row="1"
+            Grid.Column="1"
+            Style="{StaticResource ControlBorder}">
+            <Grid>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="Horizontal Steps" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding HorizontalSteps}"
+                        ToolTip="{Binding HorizontalStepsToolTip}" />
+                    <Button
+                        Margin="8,0,0,0"
+                        Click="ResetDefaults"
+                        Content="Reset"
+                        ToolTip="Restore parameters to their defaults" />
+                </StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="Distal Steps" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding DistalSteps}"
+                        ToolTip="{Binding DistalStepsToolTip}" />
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <Label
+                        Width="100"
+                        VerticalAlignment="Center"
+                        Content="Bias" />
+                    <TextBox
+                        Width="150"
+                        Margin="8,0,0,0"
+                        Text="{Binding Bias}"
+                        ToolTip="{Binding BiasToolTip}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+        <GridSplitter
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Grid.Column="2"
+            Style="{StaticResource GridSplitterStyle}" />
+        <u:ObjectView
+            x:Name="Viewer"
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Grid.Column="3" />
+
+        <Grid Grid.Row="2" Grid.Column="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="80" />
+            </Grid.ColumnDefinitions>
+            <Button
+                Grid.Column="1"
+                Margin="2,2,2,2"
+                Click="Cancel_Click"
+                Content="Cancel" />
+            <Button
+                Grid.Column="2"
+                Margin="2,2,2,2"
+                Click="Ok_Click"
+                Content="Ok"
+                IsDefault="True" />
+        </Grid>
+    </Grid>
+</local:BaseModellerDialog>

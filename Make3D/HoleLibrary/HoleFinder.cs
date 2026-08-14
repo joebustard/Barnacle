@@ -18,24 +18,16 @@ namespace HoleLibrary
         public HoleFinder(List<P3D> meshPoints, Int32Collection mf)
         {
             Points = meshPoints;
+
             MeshFaces = mf;
             P3D centre = new P3D(0, 0, 0);
             if (Points.Count > 0)
             {
-                foreach (P3D p in Points)
-                {
-                    centre.X += p.X;
-                    centre.Y += p.Y;
-                    centre.Z += p.Z;
-                }
-                centre.X = centre.X / Points.Count;
-                centre.Y = centre.Y / Points.Count;
-                centre.Z = centre.Z / Points.Count;
                 faces = new List<Face>();
 
-                edgeTree = new EdgeTree();
+                edgeTree = new EdgeTree(Points.Count);
                 edgeTree.Vertices = meshPoints;
-                edgeTree.CentrePoint = centre;
+
                 for (int i = 0; i <= mf.Count - 3; i += 3)
                 {
                     Face nf = new Face(mf[i],
@@ -54,24 +46,11 @@ namespace HoleLibrary
             P3D centre = new P3D(0, 0, 0);
             if (Points.Count > 0)
             {
-                foreach (P3D p in Points)
-                {
-                    centre.X += p.X;
-                    centre.Y += p.Y;
-                    centre.Z += p.Z;
-                    if (token.IsCancellationRequested)
-                    {
-                        break;
-                    }
-                }
-                centre.X = centre.X / Points.Count;
-                centre.Y = centre.Y / Points.Count;
-                centre.Z = centre.Z / Points.Count;
                 faces = new List<Face>();
 
-                edgeTree = new EdgeTree();
+                edgeTree = new EdgeTree(Points.Count);
                 edgeTree.Vertices = meshPoints;
-                edgeTree.CentrePoint = centre;
+
                 for (int i = 0; i <= mf.Count - 3 && !token.IsCancellationRequested; i += 3)
                 {
                     Face nf = new Face(mf[i],
@@ -88,17 +67,14 @@ namespace HoleLibrary
             int foundHoles = 0;
             int fixedHoles = 0;
             List<Edge> duffEdges = new List<Edge>();
+            //List<Edge> processedEdges = new List<Edge>();
 
-            for (int r = 0; r < 3; r++)
+            foreach (List<Edge> edges in edgeTree.Edgebucket)
             {
-                for (int c = 0; c < 3; c++)
-                {
-                    for (int d = 0; d < 3; d++)
-                    {
-                        FetchDuff(edgeTree.Edgebucket[c, r, d], duffEdges);
-                    }
-                }
+                FetchDuff(edges, duffEdges);
             }
+            // can we find any combinations of these duffedges that just form simple triangles
+            int simples = FillSimpleTriangles(duffEdges);
 
             bool more = (duffEdges.Count >= 3);
             List<int> holePoints = new List<int>();
@@ -106,6 +82,7 @@ namespace HoleLibrary
             {
                 int holeS = duffEdges[0].Start;
                 int holeE = duffEdges[0].End;
+                //   processedEdges.Add(duffEdges[0]);
                 duffEdges.RemoveAt(0);
 
                 holePoints.Add(holeS);
@@ -127,7 +104,7 @@ namespace HoleLibrary
                             {
                                 holeE = duffEdges[i].End;
                                 holePoints.Add(holeE);
-
+                                //         processedEdges.Add(duffEdges[i]);
                                 duffEdges.RemoveAt(i);
                                 found = true;
                             }
@@ -136,7 +113,7 @@ namespace HoleLibrary
                             {
                                 holeS = duffEdges[i].Start;
                                 holePoints.Insert(0, holeS);
-
+                                //         processedEdges.Insert(0, duffEdges[i]);
                                 duffEdges.RemoveAt(i);
                                 found = true;
                             }
@@ -179,7 +156,12 @@ namespace HoleLibrary
                 more = (duffEdges.Count >= 3);
                 holePoints.Clear();
             }
-            return new Tuple<int, int>(foundHoles, fixedHoles);
+            return new Tuple<int, int>(foundHoles + simples, fixedHoles + simples);
+        }
+
+        private void Debug(string v)
+        {
+            System.Diagnostics.Debug.WriteLine(v);
         }
 
         private void FetchDuff(List<Edge> edges, List<Edge> duffEdges)
@@ -192,11 +174,6 @@ namespace HoleLibrary
                     // Debug($"Edge {e.Start} to {e.End}");
                 }
             }
-        }
-
-        private void Debug(string v)
-        {
-            System.Diagnostics.Debug.WriteLine(v);
         }
 
         private bool FillHole(List<int> holePoints)
@@ -269,6 +246,94 @@ namespace HoleLibrary
                             }
                         }
                         break;
+                }
+            }
+            return res;
+        }
+
+        private int FillSimpleTriangles(List<Edge> duffEdges)
+        {
+            int res = 0;
+            if (duffEdges.Count > 2)
+            {
+                bool again = true;
+
+                Edge edge1 = null;
+                Edge edge2 = null;
+                Edge edge3 = null;
+                while (again)
+                {
+                    again = false;
+                    for (int i = 0; i < duffEdges.Count && again == false; i++)
+                    {
+                        edge1 = duffEdges[i];
+                        for (int j = 0; j < duffEdges.Count && again == false; j++)
+                        {
+                            if (i != j)
+                            {
+                                edge2 = duffEdges[j];
+                                if (edge2.Start == edge1.End)
+                                {
+                                    for (int k = 0; k < duffEdges.Count && again == false; k++)
+                                    {
+                                        if (i != k && j != k)
+                                        {
+                                            edge3 = duffEdges[k];
+
+                                            // if they form a triangle then edge2 must connect to edge1 somehow
+                                            // so edge3 should fit between the end of edge2 and the start of edge 1
+                                            if (edge3.Start == edge2.End)
+                                            {
+                                                if (edge3.End == edge1.Start)
+                                                {
+                                                    MeshFaces.Add(edge3.Start);
+                                                    MeshFaces.Add(edge2.Start);
+                                                    MeshFaces.Add(edge1.Start);
+
+                                                    duffEdges.Remove(edge1);
+                                                    duffEdges.Remove(edge2);
+                                                    duffEdges.Remove(edge3);
+
+                                                    res++;
+                                                    again = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                if (edge2.End == edge1.Start)
+                                {
+                                    for (int k = 0; k < duffEdges.Count && again == false; k++)
+                                    {
+                                        if (i != k && j != k)
+                                        {
+                                            edge3 = duffEdges[k];
+
+                                            // if they form a triangle then edge2 must connect to edge1 somehow
+                                            // so edge3 should fit between the end of edge2 and the start of edge 1
+                                            if (edge3.Start == edge1.End)
+                                            {
+                                                if (edge3.End == edge2.Start)
+                                                {
+                                                    MeshFaces.Add(edge3.Start);
+                                                    MeshFaces.Add(edge1.Start);
+                                                    MeshFaces.Add(edge2.Start);
+
+                                                    duffEdges.Remove(edge1);
+                                                    duffEdges.Remove(edge2);
+                                                    duffEdges.Remove(edge3);
+
+                                                    res++;
+                                                    again = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
             return res;

@@ -1337,6 +1337,13 @@
                         SmallImageSource="/Barnacle;component/Images/Buttons/Lofted.png" />
 
                     <Custom:RibbonMenuButton
+                        x:Name="MainSolidsTools"
+                        ItemContainerStyle="{StaticResource ToolMenuItemStyleWithIcon}"
+                        ItemsSource="{Binding MainSolidsToolsToShow}"
+                        Label="Main"
+                        SmallImageSource="/Barnacle;component/Images/Buttons/Aircraft.png" />
+
+                    <Custom:RibbonMenuButton
                         x:Name="MechanicalTools"
                         ItemContainerStyle="{StaticResource ToolMenuItemStyleWithIcon}"
                         ItemsSource="{Binding MechanicalToolsToShow}"

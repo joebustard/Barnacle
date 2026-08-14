@@ -8,6 +8,7 @@ namespace OctTreeLib
     public class OctTree
     {
         private const int MaxPointsPerNode = 500;
+        private const double tolerance = 1.0E-7;
         private Point3DCollection AllPoints;
         private OctNode root;
 
@@ -44,7 +45,7 @@ namespace OctTreeLib
 
         public static bool equals(double v1, double v2)
         {
-            if (Math.Abs(v1 - v2) < 0.00000001)
+            if (Math.Abs(v1 - v2) < tolerance)
             {
                 return true;
             }

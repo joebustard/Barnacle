@@ -46,6 +46,7 @@ namespace Barnacle.ViewModels
         public List<ToolDef> decorativeToolsToShow;
         public List<ToolDef> grilleToolsToShow;
         public List<ToolDef> loftedToolsToShow;
+        public List<ToolDef> mainSolidsToolsToShow;
         public List<ToolDef> mechanicalToolsToShow;
         public List<ToolDef> parametricToolsToShow;
         public List<ToolDef> vehicleToolsToShow;
@@ -805,6 +806,23 @@ namespace Barnacle.ViewModels
                 if (loftedToolsToShow != value)
                 {
                     loftedToolsToShow = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public List<ToolDef> MainSolidsToolsToShow
+        {
+            get
+            {
+                return mainSolidsToolsToShow;
+            }
+
+            set
+            {
+                if (mainSolidsToolsToShow != value)
+                {
+                    mainSolidsToolsToShow = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -1787,6 +1805,18 @@ namespace Barnacle.ViewModels
             NotifyPropertyChanged("LoftedToolsToShow");
         }
 
+        private void CreateMainSolidsMenu()
+        {
+            mainSolidsToolsToShow = new List<ToolDef>();
+            mainSolidsToolsToShow.Add(new ToolDef("Bezier Surface", true, "BezierSurface", "Create a surface using control points."));
+            mainSolidsToolsToShow.Add(new ToolDef("Platelet", true, "Platelet", "Create an object from a polygon optionaly with holes."));
+            mainSolidsToolsToShow.Add(new ToolDef("Dual", true, "Dual", "Create an object from two polygons."));
+            mainSolidsToolsToShow.Add(new ToolDef("Four View", true, "FourView", "Create an object from four polygons."));
+
+            SortMenu(mainSolidsToolsToShow);
+            NotifyPropertyChanged("MainSolidsToolsToShow");
+        }
+
         private void CreateMechanicalToolMenu()
         {
             mechanicalToolsToShow = new List<ToolDef>();
@@ -1804,13 +1834,10 @@ namespace Barnacle.ViewModels
         private void CreateParametricMenu()
         {
             parametricToolsToShow = new List<ToolDef>();
-            parametricToolsToShow.Add(new ToolDef("Bezier Surface", true, "BezierSurface", "Create a surface using control points."));
             parametricToolsToShow.Add(new ToolDef("Figure", true, "Figure", "Create a basic figure."));
             parametricToolsToShow.Add(new ToolDef("Reuleaux Polygon", true, "Reuleaux", "Create a Reuleaux polygon."));
             parametricToolsToShow.Add(new ToolDef("Parabolic Dish", true, "ParabolicDish", "Create a parabolic dish."));
             parametricToolsToShow.Add(new ToolDef("Parallelogram", true, "Parallelogram", "Create a parallelogram."));
-            parametricToolsToShow.Add(new ToolDef("Platelet", true, "Platelet", "Create an object from a polygon optionaly with holes."));
-            parametricToolsToShow.Add(new ToolDef("Dual", true, "Dual", "Create an object from two polygons."));
             parametricToolsToShow.Add(new ToolDef("Squared Stadium", true, "SquaredStadium", "Create a stadium or sausage with one end a variable radius and the other square."));
 
             parametricToolsToShow.Add(new ToolDef("Stadium", true, "Stadium", "Create a stadium or sausage with variable end radii."));
@@ -1838,6 +1865,7 @@ namespace Barnacle.ViewModels
 
         private void CreateToolMenus()
         {
+            CreateMainSolidsMenu();
             CreateParametricMenu();
             CreateLoftingMenu();
             CreateVehicleToolMenu();
@@ -1878,6 +1906,7 @@ namespace Barnacle.ViewModels
             TubeEnabled = b;
             ProfileFuselageEnabled = b;
             WingEnabled = b;
+            EnabledToolList(b, mainSolidsToolsToShow);
             EnabledToolList(b, parametricToolsToShow);
             EnabledToolList(b, loftedToolsToShow);
             EnabledToolList(b, vehicleToolsToShow);
@@ -2502,6 +2531,7 @@ namespace Barnacle.ViewModels
         {
             string s = param.ToString();
 
+            SetActive(s, mainSolidsToolsToShow);
             SetActive(s, parametricToolsToShow);
             SetActive(s, buildingToolsToShow);
             SetActive(s, loftedToolsToShow);

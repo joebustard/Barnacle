@@ -7,47 +7,81 @@ namespace HoleLibrary
 {
     public class EdgeTree
     {
-        public EdgeTree()
+        public List<Edge>[] Edgebucket;
+        private int bucketLim = 1500;
+        private int numBuckets = 300;
+
+        public EdgeTree(int count)
         {
-            CentrePoint = new P3D(0, 0, 0);
-            Vertices = null;
-            Edgebucket = new List<Edge>[3, 3, 3];
-            for (int r = 0; r < 3; r++)
+            if (count > numBuckets * 10)
             {
-                for (int c = 0; c < 3; c++)
+                numBuckets = count / numBuckets;
+                if (numBuckets > bucketLim)
                 {
-                    for (int d = 0; d < 3; d++)
-                    {
-                        Edgebucket[c, r, d] = new List<Edge>();
-                    }
+                    numBuckets = bucketLim;
                 }
+            }
+            Edgebucket = new List<Edge>[numBuckets];
+            for (int r = 0; r < numBuckets; r++)
+            {
+                Edgebucket[r] = new List<Edge>();
             }
         }
 
-        public List<Edge>[,,] Edgebucket;
-
-        public P3D CentrePoint { get; set; }
-        public List<P3D> Vertices { get; set; }
+        public List<P3D> Vertices
+        {
+            get; set;
+        }
 
         public void AddEdge(Edge ed)
         {
             int r;
-            int c;
-            int d;
-            ClassifyEdge(ed.Start, ed.End, out r, out c, out d);
+            ClassifyEdge(ed.Start, ed.End, out r);
 
             if (Vertices != null)
             {
-                Edgebucket[c, r, d].Add(ed);
+                Edgebucket[r].Add(ed);
             }
         }
 
-        private void ClassifyEdge(int start, int end, out int r, out int c, out int d)
+        public Edge FindEdge(int start, int end, Face face)
         {
-            r = 1;
-            c = 1;
-            d = 1;
+            int r;
+            int c;
+            int d;
+            Edge res = null;
+            List<Edge> edgeList = null;
+            if (Vertices != null)
+            {
+                ClassifyEdge(start, end, out r);
+                edgeList = Edgebucket[r];
+                // dummy for now
+                foreach (Edge e in edgeList)
+                {
+                    if (e.EdgeMatch(start, end))
+                    {
+                        res = e;
+                        break;
+                    }
+                }
+                if (res == null)
+                {
+                    res = new Edge(start, end, face);
+                    edgeList.Add(res);
+                }
+                else
+                {
+                    res.Face2 = face;
+                }
+            }
+            return res;
+        }
 
+        private void ClassifyEdge(int start, int end, out int r)
+        {
+            r = (start + end) % numBuckets;
+
+            /*
             if (Vertices[start].X <= CentrePoint.X && Vertices[end].X <= CentrePoint.X)
             {
                 c = 0;
@@ -77,40 +111,7 @@ namespace HoleLibrary
             {
                 d = 2;
             }
-        }
-
-        public Edge FindEdge(int start, int end, Face face)
-        {
-            int r;
-            int c;
-            int d;
-            Edge res = null;
-            List<Edge> edgeList = null;
-            if (Vertices != null)
-            {
-                ClassifyEdge(start, end, out r, out c, out d);
-                edgeList = Edgebucket[c, r, d];
-                // dummy for now
-                foreach (Edge e in edgeList)
-                {
-                    if (e.EdgeMatch(start, end))
-                    {
-                        res = e;
-                        break;
-                    }
-                }
-                if (res == null)
-                {
-                    res = new Edge(start, end, face);
-                    //  AddEdge(res);
-                    edgeList.Add(res);
-                }
-                else
-                {
-                    res.Face2 = face;
-                }
-            }
-            return res;
+            */
         }
     }
 }
