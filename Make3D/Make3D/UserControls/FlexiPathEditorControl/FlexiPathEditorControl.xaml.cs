@@ -828,6 +828,50 @@ namespace Barnacle.UserControls
             }
         }
 
+        private void DisplayPolygonBackground()
+        {
+            // on;y do this if its actually a polygon
+            if (!vm.OpenEndedPath)
+            {
+                for (int l = 0; l < vm.NumberOfPaths; l++)
+                {
+                    List<System.Windows.Point> points = vm.GetDisplayPointsForPath(l);
+
+                    if (points != null && points.Count >= 3)
+                    {
+                        for (int i = 0; i < points.Count; i++)
+                        {
+                            points[i] = new Point(vm.ToPixelX(points[i].X), ToPixelY(points[i].Y));
+                        }
+                        Color c;
+                        if (l == 0)
+                        {
+                            if (vm.IsPathComplete(l))
+                            {
+                                c = Color.FromArgb(64, 45, 45, 255);
+                            }
+                            else
+                            {
+                                c = Color.FromArgb(64, 255, 255, 0);
+                            }
+                        }
+                        else
+                        {
+                            if (vm.IsPathComplete(l))
+                            {
+                                c = Color.FromArgb(128, 20, 20, 20);
+                            }
+                            else
+                            {
+                                c = Color.FromArgb(128, 128, 128, 128);
+                            }
+                        }
+                        DrawPoly(points, c);
+                    }
+                }
+            }
+        }
+
         private void DoButtonBorder(Border src, Border trg)
         {
             if (src == trg)
@@ -891,6 +935,16 @@ namespace Barnacle.UserControls
                 ln.MouseUp += MainCanvas_MouseUp;
                 MainCanvas.Children.Add(ln);
             }
+        }
+
+        private void DrawPoly(List<Point> points, Color c)
+        {
+            Polygon ply = new Polygon();
+            ply.Fill = new SolidColorBrush(c);
+            ply.Stroke = new SolidColorBrush(c);
+            ply.Points = new PointCollection(points);
+            ply.MouseUp += MainCanvas_MouseUp;
+            MainCanvas.Children.Add(ply);
         }
 
         private void EditPointPosition(object sender, RoutedEventArgs e)
@@ -1394,6 +1448,7 @@ namespace Barnacle.UserControls
                         MainCanvas.Children.Add(sh);
                     }
                 }
+                DisplayPolygonBackground();
                 DisplayLines();
                 DisplayPoints();
                 if (lengthLabel != null)

@@ -17,6 +17,7 @@ namespace Barnacle.Dialogs
     public partial class FourViewDlg : BaseModellerDialog, INotifyPropertyChanged
     {
         private double bias;
+        private int currentTabIndex;
         private int distalSteps;
         private string frontView;
         private int horizontalSteps;
@@ -40,9 +41,16 @@ namespace Barnacle.Dialogs
             regenTimer.Interval = new TimeSpan(0, 0, Properties.Settings.Default.RegenerationDelay);
             regenTimer.Tick += RegenTimer_Tick;
             LeftPathEditor.OnFlexiPathChanged += LeftPathChanged;
+            LeftPathEditor.OnFlexiUserActive += UserActive;
+
             RightPathEditor.OnFlexiPathChanged += RightPathChanged;
+            RightPathEditor.OnFlexiUserActive += UserActive;
+
             FrontPathEditor.OnFlexiPathChanged += FrontPathChanged;
+            FrontPathEditor.OnFlexiUserActive += UserActive;
+
             TopPathEditor.OnFlexiPathChanged += TopPathChanged;
+            TopPathEditor.OnFlexiUserActive += UserActive;
         }
 
         public double Bias
@@ -70,6 +78,37 @@ namespace Barnacle.Dialogs
             get
             {
                 return ConstructToolTip("bias");
+            }
+        }
+
+        public int CurrentTabIndex
+        {
+            get
+            {
+                return currentTabIndex;
+            }
+            set
+            {
+                if (currentTabIndex != value)
+                {
+                    currentTabIndex = value;
+                    if (currentTabIndex == 0)
+                    {
+                        LeftPathEditor.SetPath(leftView);
+                    }
+                    if (currentTabIndex == 1)
+                    {
+                        RightPathEditor.SetPath(rightView);
+                    }
+                    if (currentTabIndex == 3)
+                    {
+                        TopPathEditor.SetPath(topView);
+                    }
+                    if (currentTabIndex == 2)
+                    {
+                        FrontPathEditor.SetPath(frontView);
+                    }
+                }
             }
         }
 
@@ -187,8 +226,12 @@ namespace Barnacle.Dialogs
 
         private void FrontPathChanged(List<Point> points)
         {
-            frontView = FrontPathEditor.GetPath();
-            UpdateDisplay();
+            string s = FrontPathEditor.GetPath();
+            if (s != frontView)
+            {
+                frontView = s;
+                UpdateDisplay();
+            }
         }
 
         private AsyncGeneratorResult GenerateAsync(string leftview, string rightview, string topview, string sideview, int horizontalSteps, int distalSteps, double bias)
@@ -220,19 +263,15 @@ namespace Barnacle.Dialogs
         private async void GenerateShape()
         {
             ClearShape();
-            string pl = LeftPathEditor.GetPath();
-            string pr = RightPathEditor.GetPath();
-            string pt = TopPathEditor.GetPath();
-            string ps = LeftPathEditor.GetPath();
 
-            if (pl != "" && pr != "" && pt != "" && ps != "")
+            if (leftView != "" && rightView != "" && topView != "" && frontView != "")
             {
                 if (LeftPathEditor.PathClosed && RightPathEditor.PathClosed && FrontPathEditor.PathClosed && TopPathEditor.PathClosed)
                 {
                     Viewer.Busy();
                     EditingEnabled = false;
                     AsyncGeneratorResult result;
-                    result = await Task.Run(() => GenerateAsync(pl, pr, pt, ps, horizontalSteps, distalSteps, bias));
+                    result = await Task.Run(() => GenerateAsync(leftView, rightView, topView, frontView, horizontalSteps, distalSteps, bias));
                     GetVerticesFromAsyncResult(result);
                     CentreVertices();
                     Viewer.NotBusy();
@@ -243,8 +282,12 @@ namespace Barnacle.Dialogs
 
         private void LeftPathChanged(List<Point> points)
         {
-            leftView = LeftPathEditor.GetPath();
-            UpdateDisplay();
+            string s = LeftPathEditor.GetPath();
+            if (s != leftView)
+            {
+                leftView = s;
+                UpdateDisplay();
+            }
         }
 
         private void LoadEditorParameters()
@@ -282,8 +325,12 @@ namespace Barnacle.Dialogs
 
         private void RightPathChanged(List<Point> points)
         {
-            rightView = RightPathEditor.GetPath();
-            UpdateDisplay();
+            String s = RightPathEditor.GetPath();
+            if (s != rightView)
+            {
+                rightView = s;
+                UpdateDisplay();
+            }
         }
 
         private void SaveEditorParmeters()
@@ -301,10 +348,7 @@ namespace Barnacle.Dialogs
         private void SetDefaults()
         {
             loaded = false;
-            frontView = "";
-            leftView = "";
-            rightView = "";
-            topView = "";
+
             HorizontalSteps = 100;
             DistalSteps = 100;
             Bias = 0;
@@ -314,14 +358,27 @@ namespace Barnacle.Dialogs
 
         private void TopPathChanged(List<Point> points)
         {
-            topView = TopPathEditor.GetPath();
-            UpdateDisplay();
+            string s = TopPathEditor.GetPath();
+            if (s != topView)
+            {
+                topView = s;
+                UpdateDisplay();
+            }
         }
 
         private void UpdateDisplay()
         {
             regenTimer.Stop();
             regenTimer.Start();
+        }
+
+        private void UserActive()
+        {
+            if (regenTimer.IsEnabled)
+            {
+                regenTimer.Stop();
+                regenTimer.Start();
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

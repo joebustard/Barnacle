@@ -4902,7 +4902,7 @@ namespace Barnacle.Object3DLib
             pnts.Add(new Point3D(-0.5, 0.5, 0.5));
 
             indices = new Int32Collection();
-            //   AddTriangle(indices, 3, 2, 6);
+            AddTriangle(indices, 3, 2, 6);
 
             AddTriangle(indices, 3, 6, 7);
 
@@ -4912,7 +4912,7 @@ namespace Barnacle.Object3DLib
             AddTriangle(indices, 1, 0, 4);
             AddTriangle(indices, 1, 4, 5);
 
-            //    AddTriangle(indices, 0, 3, 7);
+            AddTriangle(indices, 0, 3, 7);
             AddTriangle(indices, 0, 7, 4);
 
             AddTriangle(indices, 7, 6, 5);

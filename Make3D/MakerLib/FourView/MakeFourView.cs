@@ -194,7 +194,7 @@ namespace MakerLib
             {
                 System.Windows.Point p = points[i];
                 p.X = topDim.Lower + (p.X * td);
-                p.Y = sideDim.Upper + (p.Y * sd);
+                p.Y = sideDim.Lower + (p.Y * sd);
                 points[i] = p;
             }
         }

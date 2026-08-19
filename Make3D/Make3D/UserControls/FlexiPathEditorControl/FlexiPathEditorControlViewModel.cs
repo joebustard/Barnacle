@@ -1273,6 +1273,18 @@ namespace Barnacle.UserControls
             return split;
         }
 
+        public double ToPixelX(double x)
+        {
+            double res = ScreenDpi.PixelsPerInchX * x / 25.4;
+            return res;
+        }
+
+        public double ToPixelY(double y)
+        {
+            double res = ScreenDpi.PixelsPerInchY * y / 25.4;
+            return res;
+        }
+
         public void UpdatePointPosition(int index, Point pos)
         {
             CheckPoint();
@@ -1382,6 +1394,18 @@ namespace Barnacle.UserControls
                 labelPos.X = ToPixelX((ps.X + pe.X) / 2);
                 labelPos.Y = ToPixelY((ps.Y + pe.Y) / 2);
             }
+        }
+
+        internal bool IsPathComplete(int l)
+        {
+            if (l < allPaths.Count)
+            {
+                if (allPaths[l] != null && allPaths[l].PathComplete)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         internal void MakeOrthogonal(int item1, int item2)
@@ -2753,18 +2777,6 @@ namespace Barnacle.UserControls
         private double ToMMY(double y)
         {
             double res = 25.4 * y / ScreenDpi.PixelsPerInchY;
-            return res;
-        }
-
-        private double ToPixelX(double x)
-        {
-            double res = ScreenDpi.PixelsPerInchX * x / 25.4;
-            return res;
-        }
-
-        private double ToPixelY(double y)
-        {
-            double res = ScreenDpi.PixelsPerInchY * y / 25.4;
             return res;
         }
 

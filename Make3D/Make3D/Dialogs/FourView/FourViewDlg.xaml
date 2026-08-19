@@ -31,7 +31,7 @@
             Grid.Row="0"
             Grid.Column="1"
             Style="{StaticResource ControlBorder}">
-            <TabControl>
+            <TabControl SelectedIndex="{Binding CurrentTabIndex}">
                 <TabItem Header="Left">
                     <ctrls:FlexiPathEditorControl x:Name="LeftPathEditor" AbsolutePaths="True" />
                 </TabItem>
