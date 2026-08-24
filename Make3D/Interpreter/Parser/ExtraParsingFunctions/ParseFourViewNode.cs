@@ -6,7 +6,7 @@ namespace ScriptLanguage
     {
         private ExpressionNode ParseMakeFourViewFunction(string parentName)
         {
-            return ParseGeneral(parentName, new MakeFourViewNode(), 7, "MakeFourView");
+            return ParseGeneral(parentName, new MakeFourViewNode(), 6, "MakeFourView");
         }
     }
 }

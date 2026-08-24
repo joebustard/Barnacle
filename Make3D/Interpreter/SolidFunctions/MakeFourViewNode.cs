@@ -23,7 +23,7 @@ namespace ScriptLanguage
         }
 
         public MakeFourViewNode(
-            ExpressionNode frontView, ExpressionNode leftView, ExpressionNode rightView, ExpressionNode topView, ExpressionNode horizontalSteps, ExpressionNode distalSteps, ExpressionNode bias
+            ExpressionNode frontView, ExpressionNode leftView, ExpressionNode rightView, ExpressionNode topView, ExpressionNode horizontalSteps, ExpressionNode distalSteps
             )
         {
             this.frontViewExp = frontView;
@@ -32,7 +32,6 @@ namespace ScriptLanguage
             this.topViewExp = topView;
             this.horizontalStepsExp = horizontalSteps;
             this.distalStepsExp = distalSteps;
-            this.biasExp = bias;
         }
 
         public MakeFourViewNode(ExpressionCollection coll)
@@ -43,7 +42,6 @@ namespace ScriptLanguage
             this.topViewExp = coll.Get(3);
             this.horizontalStepsExp = coll.Get(4);
             this.distalStepsExp = coll.Get(5);
-            this.biasExp = coll.Get(6);
         }
 
         /// Execute this node
@@ -59,7 +57,6 @@ namespace ScriptLanguage
             string valTopView = "";
             int valHorizontalSteps = 0;
             int valDistalSteps = 0;
-            double valBias = 0;
 
             if (
                EvalExpression(frontViewExp, ref valFrontView, "FrontView", "MakeFourView") &&
@@ -67,8 +64,8 @@ namespace ScriptLanguage
                EvalExpression(rightViewExp, ref valRightView, "RightView", "MakeFourView") &&
                EvalExpression(topViewExp, ref valTopView, "TopView", "MakeFourView") &&
                EvalExpression(horizontalStepsExp, ref valHorizontalSteps, "HorizontalSteps", "MakeFourView") &&
-               EvalExpression(distalStepsExp, ref valDistalSteps, "DistalSteps", "MakeFourView") &&
-               EvalExpression(biasExp, ref valBias, "Bias", "MakeFourView"))
+               EvalExpression(distalStepsExp, ref valDistalSteps, "DistalSteps", "MakeFourView")
+               )
             {
                 FourViewMaker maker = new FourViewMaker();
                 // check calculated values are in range
@@ -76,7 +73,6 @@ namespace ScriptLanguage
 
                 inRange = RangeCheck(maker, "HorizontalSteps", valHorizontalSteps) && inRange;
                 inRange = RangeCheck(maker, "DistalSteps", valDistalSteps) && inRange;
-                inRange = RangeCheck(maker, "Bias", valBias) && inRange;
 
                 if (inRange)
                 {
@@ -90,7 +86,7 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     Point3DCollection tmp = new Point3DCollection();
-                    maker.SetValues(valFrontView, valLeftView, valRightView, valTopView, valHorizontalSteps, valDistalSteps, valBias);
+                    maker.SetValues(valFrontView, valLeftView, valRightView, valTopView, valHorizontalSteps, valDistalSteps);
 
                     maker.Generate(tmp, obj.TriangleIndices);
                     PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);

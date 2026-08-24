@@ -13,7 +13,6 @@ namespace MakerLib
 {
     public class FourViewMaker : MakerBase
     {
-        private double bias;
         private int distalSteps;
         private string frontView;
         private int horizontalSteps;
@@ -46,11 +45,9 @@ namespace MakerLib
 
             leftflexiPath.FromString(leftView);
             List<System.Windows.Point> leftPnts = leftflexiPath.DisplayPoints();
-            FlipY(leftPnts);
 
             rightflexiPath.FromString(rightView);
             List<System.Windows.Point> rightPnts = rightflexiPath.DisplayPoints();
-            FlipY(rightPnts);
 
             topflexiPath.FromString(topView);
             topflexiPath.CalculatePathBounds();
@@ -85,7 +82,7 @@ namespace MakerLib
             // get the leftmost profile
             profiles[0] = Rib.GenerateProfilePoints(distalSteps, leftPnts);
 
-            // get the leftmost profile
+            // get the rightmost profile
             profiles[horizontalSteps - 1] = Rib.GenerateProfilePoints(distalSteps, rightPnts);
 
             // interpolate the intermediate ribs
@@ -153,8 +150,7 @@ namespace MakerLib
                               string rightView,
                               string topView,
                               int horizontalSteps,
-                              int distalSteps,
-                              double bias)
+                              int distalSteps)
         {
             this.frontView = frontView;
             this.leftView = leftView;
@@ -162,7 +158,6 @@ namespace MakerLib
             this.topView = topView;
             this.horizontalSteps = horizontalSteps;
             this.distalSteps = distalSteps;
-            this.bias = bias;
         }
 
         private void FlipY(List<System.Windows.Point> pnts)
@@ -194,7 +189,7 @@ namespace MakerLib
             {
                 System.Windows.Point p = points[i];
                 p.X = topDim.Lower + (p.X * td);
-                p.Y = sideDim.Lower + (p.Y * sd);
+                p.Y = -(sideDim.Lower + (p.Y * sd));
                 points[i] = p;
             }
         }
@@ -203,7 +198,6 @@ namespace MakerLib
         {
             paramLimits.AddLimit("HorizontalSteps", 10, 200);
             paramLimits.AddLimit("DistalSteps", 10, 200);
-            paramLimits.AddLimit("Bias", -0.5, 0.5);
         }
     }
 }

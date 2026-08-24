@@ -88,17 +88,6 @@
                         Text="{Binding DistalSteps}"
                         ToolTip="{Binding DistalStepsToolTip}" />
                 </StackPanel>
-                <StackPanel Grid.Row="2" Orientation="Horizontal">
-                    <Label
-                        Width="100"
-                        VerticalAlignment="Center"
-                        Content="Bias" />
-                    <TextBox
-                        Width="150"
-                        Margin="8,0,0,0"
-                        Text="{Binding Bias}"
-                        ToolTip="{Binding BiasToolTip}" />
-                </StackPanel>
             </Grid>
         </Border>
         <GridSplitter

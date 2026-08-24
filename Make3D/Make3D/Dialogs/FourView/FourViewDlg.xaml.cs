@@ -239,7 +239,7 @@ namespace Barnacle.Dialogs
             Point3DCollection v1 = new Point3DCollection();
             Int32Collection i1 = new Int32Collection();
             FourViewMaker maker = new FourViewMaker();
-            maker.SetValues(frontView, leftView, rightView, topView, horizontalSteps, distalSteps, bias);
+            maker.SetValues(frontView, leftView, rightView, topView, horizontalSteps, distalSteps);
             maker.Generate(v1, i1);
 
             AsyncGeneratorResult res = new AsyncGeneratorResult();
