@@ -442,7 +442,7 @@ namespace Barnacle.Dialogs
                         bry = pnts[i].Y;
                     }
                 }
-                System.Diagnostics.Debug.WriteLine($"Path bounds tlx {tlx} tly {tly} brx {brx} bry {bry}");
+                //    System.Diagnostics.Debug.WriteLine($"Path bounds tlx {tlx} tly {tly} brx {brx} bry {bry}");
                 divisionLength = pathLength / (NumDivisions - 1);
                 pathWidth = brx - tlx;
                 pathHeight = bry - tly;
@@ -450,7 +450,7 @@ namespace Barnacle.Dialogs
                 middleY = tly + pathHeight / 2.0;
                 double minangle = double.MaxValue;
                 int minIndex = int.MaxValue;
-                System.Diagnostics.Debug.WriteLine($"Pathwidth {pathWidth} PathHeight {pathHeight} middleX {middleX} middleY {middleY}");
+                //         System.Diagnostics.Debug.WriteLine($"Pathwidth {pathWidth} PathHeight {pathHeight} middleX {middleX} middleY {middleY}");
                 double deltaT = 1.0 / (NumDivisions + 1);
                 List<double> angles = new List<double>();
                 for (int div = 0; div < NumDivisions; div++)
@@ -496,7 +496,7 @@ namespace Barnacle.Dialogs
                                     nx = (nx - tlx) / pathWidth;
                                     ny = (ny - tly) / pathHeight;
                                     profilePoints.Add(new PointF((float)nx, (float)ny));
-                                    System.Diagnostics.Debug.WriteLine($"nx {nx} ny {ny}");
+                                    //        System.Diagnostics.Debug.WriteLine($"nx {nx} ny {ny}");
                                 }
                                 else
                                 {
@@ -516,7 +516,7 @@ namespace Barnacle.Dialogs
                                     nx = (nx - tlx) / pathWidth;
                                     ny = (ny - tly) / pathHeight;
                                     profilePoints.Add(new PointF((float)nx, (float)ny));
-                                    System.Diagnostics.Debug.WriteLine($"nx {nx} ny {ny}");
+                                    //         System.Diagnostics.Debug.WriteLine($"nx {nx} ny {ny}");
                                 }
                             }
                             runningDistance += d;

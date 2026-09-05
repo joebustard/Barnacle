@@ -734,6 +734,11 @@ namespace Barnacle.ViewModels
                 if (!handled)
                 {
                     handled = CheckIfContentSelected(geo, append, size, control, hitPos);
+                    // if the user selected something automatically switch to the properties view
+                    if (handled && !append)
+                    {
+                        SwitchToObjectProperties();
+                    }
                 }
                 if (!handled)
                 {
