@@ -788,7 +788,7 @@ namespace VisualSolutionExplorer
             FileTemplate = "";
             Export = false;
             Clean = false;
-            Explorer = false;
+            Explorer = true;
             AutoLoad = false;
             CanBeRenamed = true;
             TimeDependency = "";

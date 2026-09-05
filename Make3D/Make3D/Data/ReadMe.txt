@@ -56,6 +56,8 @@ Changed
   Spur Gear uses the same tooth generation as the new bevelled gear so gears are compatible.
   Made all mirror operations remove the internal "interface" triangles
   Some changes to default project templates
+  Default all folders and sub folders to have "Explore" as a menu option
+  Automatically switch to object properties view whenever an object is selected
   
 
 v1.0.9
