@@ -168,7 +168,7 @@ namespace Barnacle.Dialogs
 
             set
             {
-                if (numberOfDivisions != value && value >= 3 && value <= 360)
+                if (numberOfDivisions != value && value >= 3 && value <= 720)
                 {
                     numberOfDivisions = value;
                     NotifyPropertyChanged();
@@ -556,7 +556,6 @@ namespace Barnacle.Dialogs
             {
                 p.Z -= shellThickness;
             }
-            //System.Diagnostics.Debug.WriteLine($" p.Y {p.Y}  p.Z {p.Z}");
         }
 
         private void CalculateMainRibSizes()
@@ -1133,6 +1132,15 @@ namespace Barnacle.Dialogs
                             dirty = true;
                         }
                         break;
+
+                    case "ends":
+                        {
+                            ResetEndRibs();
+                            UpdateMarkers();
+                            UpdateModel();
+                            dirty = true;
+                        }
+                        break;
                 }
             }
         }
@@ -1168,6 +1176,13 @@ namespace Barnacle.Dialogs
                 SidePath = fuselageData.SideImageDetails.FlexiPathText;
                 RibsChanged();
             }
+        }
+
+        private void ResetEndRibs()
+        {
+            fuselageData.ResetEndMarkerPositions();
+            TopView.Markers = GetMarkers();
+            SideView.Markers = GetMarkers();
         }
 
         private void ResetRibs()
@@ -1300,7 +1315,7 @@ namespace Barnacle.Dialogs
                 }
             }
             System.Windows.Controls.TabItem ti = tc.SelectedItem as System.Windows.Controls.TabItem;
-            LoggerLib.Logger.LogLine($"{ti.Header}");
+            //     LoggerLib.Logger.LogLine($"{ti.Header}");
         }
 
         private void TabItem_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -1329,7 +1344,7 @@ namespace Barnacle.Dialogs
 
         private void TopPathChanged(string pathText)
         {
-            LoggerLib.Logger.LogLine($"rcved notification from path control -TopPath changed to {pathText}");
+            //  LoggerLib.Logger.LogLine($"rcved notification from path control -TopPath changed to {pathText}");
             TopPath = pathText;
             //  UpdateModel();
         }

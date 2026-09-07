@@ -102,7 +102,7 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
         internal void SetPositionAndScale(double x, float yPosition, double topMin, double topMax, double sideMin, double sideMax)
         {
             XPosition = x;
-            Log($"RibPlateModel xposition {XPosition}");
+            //  Log($"RibPlateModel xposition {XPosition}");
             YPosition = yPosition;
             float topDim = (float)(topMax - topMin);
             float sideDim = (float)(sideMax - sideMin);

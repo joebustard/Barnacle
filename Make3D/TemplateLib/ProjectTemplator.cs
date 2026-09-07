@@ -110,6 +110,13 @@ namespace TemplateLib
             ProjectTemplateFolder rootptf = new ProjectTemplateFolder();
             rootptf.Name = ".";
             rootptf.Substitutions = def.Substitutions;
+            rootptf.Attributes["Explorer"] = "true";
+            rootptf.Attributes["Extension"] = ".txt";
+            rootptf.Attributes["AddSubs"] = "true";
+            rootptf.Attributes["AddFiles"] = "true";
+            rootptf.Attributes["AutoLoad"] = "false";
+            rootptf.Attributes["Clean"] = "false";
+            rootptf.Attributes["Export"] = "true";
             def.Folders.Add(rootptf);
             // add a empty file
             ProjectTemplateFile file1 = new ProjectTemplateFile();

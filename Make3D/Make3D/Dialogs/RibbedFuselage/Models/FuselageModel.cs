@@ -463,6 +463,16 @@ namespace Barnacle.RibbedFuselage.Models
             }
         }
 
+        internal void ResetEndMarkerPositions()
+        {
+            int mc = markers.Count - 1;
+            if (mc > 0)
+            {
+                markers[0].Position = 0;
+                markers[mc].Position = 1;
+            }
+        }
+
         internal void ResetMarkerPositions()
         {
             int mc = markers.Count - 1;
@@ -484,7 +494,7 @@ namespace Barnacle.RibbedFuselage.Models
 
         internal void SetSidePath(string pathText)
         {
-            LoggerLib.Logger.LogLine($"SetSidePath(string pathText) {pathText}");
+            //   LoggerLib.Logger.LogLine($"SetSidePath(string pathText) {pathText}");
 
             SideImageDetails.FlexiPathText = pathText;
         }
@@ -496,7 +506,7 @@ namespace Barnacle.RibbedFuselage.Models
 
         internal void SetTopPath(string pathText)
         {
-            LoggerLib.Logger.LogLine($"SetTopPath(string pathText) {pathText}");
+            // LoggerLib.Logger.LogLine($"SetTopPath(string pathText) {pathText}");
             TopImageDetails.FlexiPathText = pathText;
         }
 
