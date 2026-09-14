@@ -15,7 +15,9 @@
 // *                                                                         *
 // *************************************************************************
 
+using Barnacle.Dialogs;
 using FileUtils;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -24,6 +26,7 @@ using System.IO;
 using System.Security.RightsManagement;
 using System.Windows;
 using System.Windows.Input;
+using System.Xml;
 using TemplateLib;
 
 namespace Barnacle.ViewModels
@@ -51,6 +54,8 @@ namespace Barnacle.ViewModels
         {
             BackCommand = new RelayCommand(OnBack);
             CreateCommand = new RelayCommand(OnCreate);
+            LoadDesignCommand = new RelayCommand(OnLoadDesign);
+            SaveDesignCommand = new RelayCommand(OnSaveDesign);
             projectRoot = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             projectRoot += "\\Barnacle";
             descriptions = new Dictionary<string, string>();
@@ -83,6 +88,82 @@ namespace Barnacle.ViewModels
             GenerateSubparts = true;
         }
 
+        private void OnSaveDesign(object obj)
+        {
+            try
+            {
+
+                SaveFileDialog fileSaveDialog = new SaveFileDialog();
+                fileSaveDialog.Filter = "Design Files|*.des";
+                fileSaveDialog.InitialDirectory = PathManager.UserTemplatesFolder();
+                if (fileSaveDialog.ShowDialog() == true)
+                {
+                    String fname = fileSaveDialog.FileName;
+                    XmlDocument doc = new XmlDocument();
+                    doc.XmlResolver = null;
+                    XmlElement docNode = doc.CreateElement("Design");
+                    docNode.SetAttribute("NumKits", NumberOfKits.ToString());
+                    docNode.SetAttribute("AddSubParts", GenerateSubparts.ToString());
+
+                    doc.AppendChild(docNode);
+
+                    SaveNode(doc, docNode, "Models", modelList);
+                    SaveNode(doc, docNode, "Assemblies", assemblyList);
+                    SaveNode(doc, docNode, "Scripts", scriptList);
+                    SaveNode(doc, docNode, "ScriptIncludes", scriptIncludeList);
+                    doc.Save(fname);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+        }
+        void SaveNode(XmlDocument doc, XmlElement docNode, String eleName, string eleText)
+        {
+            XmlElement ele = doc.CreateElement(eleName);
+            ele.InnerText = eleText;
+            docNode.AppendChild(ele);
+        }
+        private void OnLoadDesign(object obj)
+        {
+            try
+            {
+
+                OpenFileDialog fileLoadDialog = new OpenFileDialog();
+                fileLoadDialog.Filter = "Design Files|*.des";
+                fileLoadDialog.InitialDirectory = PathManager.UserTemplatesFolder();
+                if (fileLoadDialog.ShowDialog() == true)
+                {
+                    String fname = fileLoadDialog.FileName;
+                    XmlDocument doc = new XmlDocument();
+                    doc.XmlResolver = null;
+                    doc.Load(fname);
+                    XmlElement docNode = (XmlElement)doc.SelectSingleNode("Design");
+                    NumberOfKits = Convert.ToInt16(docNode.GetAttribute("NumKits"));
+                    GenerateSubparts = Convert.ToBoolean(docNode.GetAttribute("AddSubParts"));
+                    modelList = LoadNode(docNode, "Models");
+                    assemblyList = LoadNode(docNode, "Assemblies");
+                    scriptList = LoadNode(docNode, "Scripts");
+                    scriptIncludeList = LoadNode(docNode, "riptIncludes");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private string LoadNode(XmlElement docNode, string v)
+        {
+            string res = "";
+            XmlElement ele = (XmlElement)docNode.SelectSingleNode(v);
+            res = ele.InnerText;
+            return res;
+        }
+
         public String AssemblyList
         {
             get
@@ -101,6 +182,15 @@ namespace Barnacle.ViewModels
 
         public ICommand BackCommand
         {
+            get; set;
+        }
+        public ICommand LoadDesignCommand
+        {
+            get; set;
+        }
+        public ICommand SaveDesignCommand
+        {
+
             get; set;
         }
 
@@ -351,21 +441,21 @@ namespace Barnacle.ViewModels
                 NotificationManager.Notify("ReloadProject", projPath);
             }
             else
-            if (param.ToLower() == "design")
-            {
-                try
+                if (param.ToLower() == "design")
                 {
-                    templator.CreateByDesign(projectName, projPath, modelList, assemblyList, scriptList, scriptIncludeList, numberOfKits, generateQuickAssembler, generateSubparts);
-                    projPath = templator.SolutionPath;
-                    RecentlyUsedManager.UpdateRecentFiles(projPath);
-                    NotificationManager.Notify("ShowEditor", null);
-                    NotificationManager.Notify("ReloadProject", projPath);
+                    try
+                    {
+                        templator.CreateByDesign(projectName, projPath, modelList, assemblyList, scriptList, scriptIncludeList, numberOfKits, generateQuickAssembler, generateSubparts);
+                        projPath = templator.SolutionPath;
+                        RecentlyUsedManager.UpdateRecentFiles(projPath);
+                        NotificationManager.Notify("ShowEditor", null);
+                        NotificationManager.Notify("ReloadProject", projPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-            }
         }
 
         private void UpdateDescription()

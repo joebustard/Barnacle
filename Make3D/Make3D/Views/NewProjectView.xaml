@@ -307,17 +307,20 @@
                                 Width="50"
                                 Margin="0,2,0,2"
                                 Text="{Binding NumberOfKits}" />
+                            
                         </StackPanel>
                         <StackPanel
-                            Grid.Row="8"
+                            Grid.Row="9"
                             Grid.Column="2"
                             Orientation="Horizontal">
+                            <Button Margin="8,2,0,2"     Command="{Binding LoadDesignCommand}" Content="Load"/>
+                            <Button Margin="16,2,0,2"     Command="{Binding SaveDesignCommand}" Content="Save"/>
                             <!--
                             <CheckBox Content="Quick Assembler" VerticalAlignment="Center" IsChecked="{Binding GenerateQuickAssembler}" />
                             -->
                         </StackPanel>
                         <Grid
-                            Grid.Row="9"
+                            Grid.Row="10"
                             Grid.Column="0"
                             Grid.ColumnSpan="5">
                             <Grid.ColumnDefinitions>
