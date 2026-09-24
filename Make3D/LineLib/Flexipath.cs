@@ -353,7 +353,7 @@ namespace Barnacle.LineLib
             }
         }
 
-        public void ChangeSize(double sd)
+        public void ScaleSizeByDoubleFactor(double sx, double sy)
         {
             double minx = double.MaxValue;
             double miny = double.MaxValue;
@@ -367,8 +367,8 @@ namespace Barnacle.LineLib
                 {
                     double dx = flexiPoints[i].X - origin.X;
                     double dy = flexiPoints[i].Y - origin.Y;
-                    dx = dx + (sd * dx);
-                    dy = dy + (sd * dy);
+                    dx =  (sx * dx);
+                    dy =  (sy * dy);
                     flexiPoints[i].X = dx + origin.X;
                     flexiPoints[i].Y = dy + origin.Y;
 
@@ -393,6 +393,10 @@ namespace Barnacle.LineLib
                     }
                 }
             }
+        }
+        public void ScaleSizeBySingleFactor(double sd)
+        {
+            ScaleSizeByDoubleFactor(sd, sd);
         }
 
         public virtual void Clear()
@@ -1319,7 +1323,7 @@ namespace Barnacle.LineLib
             }
         }
 
-        public virtual System.Windows.Point MoveTo(System.Windows.Point position)
+        public virtual System.Windows.Point MovePathCentroidToNewPosition(System.Windows.Point position)
         {
             double cx = 0;
             double cy = 0;

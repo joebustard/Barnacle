@@ -49,7 +49,7 @@ namespace FileUtils
         public static string LibraryFolder()
         {
             string pth = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Barnacle");
-            pth += "//Library";
+            pth += "\\Library";
             return pth;
         }
 
@@ -69,14 +69,14 @@ namespace FileUtils
         public static string UserScriptTemplatesFolder()
         {
             string pth = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Barnacle");
-            pth += "//UserScriptTemplates";
+            pth += "\\UserScriptTemplates";
             return pth;
         }
 
         public static string UserTemplatesFolder()
         {
             string pth = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Barnacle");
-            pth += "//UserTemplates";
+            pth += "\\UserTemplates";
             return pth;
         }
 

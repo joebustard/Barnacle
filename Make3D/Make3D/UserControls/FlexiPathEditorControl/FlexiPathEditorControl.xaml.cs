@@ -17,8 +17,10 @@
 
 using Barnacle.Dialogs.PointCoordinateEntry;
 using Barnacle.LineLib;
+using Barnacle.Models.Adorners;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -66,6 +68,7 @@ namespace Barnacle.UserControls
         private FlexiPathEditorControlViewModel vm;
 
         private double zoomLevel = 1;
+        private LengthAndHeightAdorner lengthAndHeightAdorner;
 
         public FlexiPathEditorControl()
         {
@@ -80,8 +83,16 @@ namespace Barnacle.UserControls
             fixedPolarGridCentre = new Point(0, 50);
             initialPaths = new List<string>();
             IncludeCommonPresets = true;
+            lengthAndHeightAdorner = new LengthAndHeightAdorner();
+            lengthAndHeightAdorner.Overlay = MainCanvas;
+            lengthAndHeightAdorner.OnDimensionsChangedByUser = UserSetLengthAndHeight;
         }
 
+        public void UserSetLengthAndHeight(double length, double height)
+        {
+            vm.ResizePath(length, height);
+            UpdateDisplay();
+        }
         public delegate void FlexiImageChanged(String imagePath);
 
         public delegate void FlexiPathChanged(List<System.Windows.Point> points);
@@ -789,11 +800,16 @@ namespace Barnacle.UserControls
                 if (!vm.FixedEndPath)
                 {
                     // If we are appending points to the polygon then always draw the start point
-                    if ((vm.SelectionMode == FlexiPathEditorControlViewModel.SelectionModeType.StartPoint || vm.SelectionMode == FlexiPathEditorControlViewModel.SelectionModeType.AppendPoint) && vm.Points.Count > 0)
+                    if (vm.Points.Count > 0)
                     {
-                        br = System.Windows.Media.Brushes.Red;
                         var p = vm.Points[0].ToPoint();
-                        MakeEllipse(8, br, p, 0);
+                        br = System.Windows.Media.Brushes.Red;
+                        if ((vm.SelectionMode == FlexiPathEditorControlViewModel.SelectionModeType.StartPoint || vm.SelectionMode == FlexiPathEditorControlViewModel.SelectionModeType.AppendPoint))
+                        {
+                            MakeEllipse(6, br, p, 0);
+                        }
+                        // always mark point 0 with a hollow ring datum
+                        MakeEllipse(9, br, p, 0, false);
                     }
                 }
                 // now draw any control connectors
@@ -830,7 +846,7 @@ namespace Barnacle.UserControls
 
         private void DisplayPolygonBackground()
         {
-            // on;y do this if its actually a polygon
+            // ony do this if its actually a polygon
             if (!vm.OpenEndedPath)
             {
                 for (int l = 0; l < vm.NumberOfPaths; l++)
@@ -1172,7 +1188,7 @@ namespace Barnacle.UserControls
             UpdateDisplay();
         }
 
-        private System.Windows.Point MakeEllipse(double rad, System.Windows.Media.Brush br, System.Windows.Point p, int pointIndex)
+        private System.Windows.Point MakeEllipse(double rad, System.Windows.Media.Brush br, System.Windows.Point p, int pointIndex, bool fill = true)
         {
             Ellipse el = new Ellipse();
 
@@ -1181,7 +1197,10 @@ namespace Barnacle.UserControls
             el.Width = 2 * rad;
             el.Height = 2 * rad;
             el.Stroke = br;
-            el.Fill = br;
+            if (fill)
+            {
+                el.Fill = br;
+            }
             el.MouseDown += MainCanvas_MouseDown;
             el.MouseMove += MainCanvas_MouseMove;
             el.MouseUp += MainCanvas_MouseUp;
@@ -1455,7 +1474,35 @@ namespace Barnacle.UserControls
                 {
                     MainCanvas.Children.Add(lengthLabel.TextBox);
                 }
+                if (vm.ShowLengthAndHeightAdorner)
+                {
+                    DisplayLengthAndHeightAdorner();
+                }
             }
+        }
+
+        private void DisplayLengthAndHeightAdorner()
+        {
+
+            if ((vm.OpenEndedPath && vm.Points.Count >= 2) ||
+                (!vm.OpenEndedPath && vm.Points.Count >= 3))
+            {
+                double tlx = double.MaxValue;
+                double tly = double.MaxValue;
+                double brx = 0, bry = 0;
+                foreach (var p in vm.Points)
+                {
+                    tlx = Math.Min(tlx, p.X);
+                    tly = Math.Min(tly, p.Y);
+                    brx = Math.Max(brx, p.X);
+                    bry = Math.Max(bry, p.Y);
+                }
+                lengthAndHeightAdorner.Anchor = new Point(brx, bry);
+                lengthAndHeightAdorner.Length = brx - tlx;
+                lengthAndHeightAdorner.Height = bry - tly;
+                lengthAndHeightAdorner.Display(MainCanvas.Children);
+            }
+
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)

@@ -31,6 +31,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Barnacle3DKeystore.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
@@ -176,6 +182,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Barnacle3DKeystore.pfx" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

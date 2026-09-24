@@ -107,10 +107,10 @@ namespace Barnacle.ViewModels
 
                     doc.AppendChild(docNode);
 
-                    SaveNode(doc, docNode, "Models", modelList);
-                    SaveNode(doc, docNode, "Assemblies", assemblyList);
-                    SaveNode(doc, docNode, "Scripts", scriptList);
-                    SaveNode(doc, docNode, "ScriptIncludes", scriptIncludeList);
+                    SaveNode(doc, docNode, "Models", RemoveDuplicatesAndSort(modelList));
+                    SaveNode(doc, docNode, "Assemblies", RemoveDuplicatesAndSort(assemblyList));
+                    SaveNode(doc, docNode, "Scripts", RemoveDuplicatesAndSort(scriptList));
+                    SaveNode(doc, docNode, "ScriptIncludes", RemoveDuplicatesAndSort(scriptIncludeList));
                     doc.Save(fname);
                 }
             }
@@ -120,6 +120,38 @@ namespace Barnacle.ViewModels
             }
 
         }
+
+        private string RemoveDuplicatesAndSort(string src)
+        {
+            string res = src;
+            String[] words = src.Split('\n');
+            if (words.GetLength(0) > 1)
+            {
+                List<String> individuals = new List<string>();
+                foreach (String word in words)
+                {
+                    string word2 = word.Replace(" ", "_");
+                    word2 = word2.Trim();
+                    word2 = word2.ToLower();
+                    if (word2.Length > 0)
+                    {
+                        word2 = Char.ToUpper(word2[0]) + word2.Substring(1);
+                    }
+                    if (!individuals.Contains(word2))
+                    {
+                        individuals.Add(word2);
+                    }
+                }
+                individuals.Sort();
+                res = "";
+                foreach (string s in individuals)
+                {
+                    res += s + "\n";
+                }
+            }
+            return res;
+        }
+
         void SaveNode(XmlDocument doc, XmlElement docNode, String eleName, string eleText)
         {
             XmlElement ele = doc.CreateElement(eleName);
@@ -143,10 +175,10 @@ namespace Barnacle.ViewModels
                     XmlElement docNode = (XmlElement)doc.SelectSingleNode("Design");
                     NumberOfKits = Convert.ToInt16(docNode.GetAttribute("NumKits"));
                     GenerateSubparts = Convert.ToBoolean(docNode.GetAttribute("AddSubParts"));
-                    modelList = LoadNode(docNode, "Models");
-                    assemblyList = LoadNode(docNode, "Assemblies");
-                    scriptList = LoadNode(docNode, "Scripts");
-                    scriptIncludeList = LoadNode(docNode, "riptIncludes");
+                    ModelList = LoadNode(docNode, "Models");
+                    AssemblyList = LoadNode(docNode, "Assemblies");
+                    ScriptList = LoadNode(docNode, "Scripts");
+                    ScriptIncludeList = LoadNode(docNode, "ScriptIncludes");
 
                 }
             }
@@ -160,7 +192,7 @@ namespace Barnacle.ViewModels
         {
             string res = "";
             XmlElement ele = (XmlElement)docNode.SelectSingleNode(v);
-            res = ele.InnerText;
+            res = ele.InnerText.Trim();
             return res;
         }
 

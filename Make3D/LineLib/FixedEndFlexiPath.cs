@@ -84,7 +84,7 @@ namespace Barnacle.LineLib
             }
         }
 
-        public override Point MoveTo(Point position)
+        public override Point MovePathCentroidToNewPosition(Point position)
         {
             return new Point(0, 0);
         }

@@ -1456,7 +1456,7 @@ namespace Barnacle.UserControls
                         {
                             CheckPoint();
                             position = SnapPositionToMM(position);
-                            MoveWholePath(position);
+                            MoveWholePathsCentroid(position);
 
                             SelectionMode = SelectionModeType.DraggingPath;
                             updateRequired = true;
@@ -1688,16 +1688,25 @@ namespace Barnacle.UserControls
             }
         }
 
-        private void ChangePathSize(double sd)
+        private void ScalePathSize(double sd)
         {
             CheckPoint();
-            selectedFlexiPath.ChangeSize(sd);
+            selectedFlexiPath.ScaleSizeBySingleFactor(sd);
             PathText = selectedFlexiPath.ToPath(absolutePaths);
             PointsDirty = true;
             selectedPoint = -1;
             NotifyPropertyChanged("Points");
         }
 
+        private void ScalePathSize(double sx, double sy)
+        {
+            CheckPoint();
+            selectedFlexiPath.ScaleSizeByDoubleFactor(sx, sy);
+            PathText = selectedFlexiPath.ToPath(absolutePaths);
+            PointsDirty = true;
+            selectedPoint = -1;
+            NotifyPropertyChanged("Points");
+        }
         private void CheckEnableSavePreset()
         {
             bool enable = false;
@@ -1778,7 +1787,7 @@ namespace Barnacle.UserControls
 
         private void DecreasePathSize()
         {
-            ChangePathSize(-0.1);
+            ScalePathSize(0.9);
         }
 
         private void DeselectAll()
@@ -1795,7 +1804,7 @@ namespace Barnacle.UserControls
         {
             bool updateRequired;
             position = SnapPositionToMM(position);
-            MoveWholePath(position);
+            MoveWholePathsCentroid(position);
             updateRequired = true;
             if (e != null)
             {
@@ -1944,7 +1953,7 @@ namespace Barnacle.UserControls
         private void IncreasePathSize()
         {
             CheckPoint();
-            ChangePathSize(0.1);
+            ScalePathSize(1.1);
         }
 
         private void LoadPresetFile(string dataPath, bool user)
@@ -2004,9 +2013,10 @@ namespace Barnacle.UserControls
             PointsDirty = true;
         }
 
-        private void MoveWholePath(System.Windows.Point position)
+        private void MoveWholePathsCentroid(System.Windows.Point position)
         {
-            System.Windows.Point offset = selectedFlexiPath.MoveTo(position);
+            System.Windows.Point offset = selectedFlexiPath.MovePathCentroidToNewPosition(position);
+
             if (!editingHole)
             {
                 for (int i = 1; i < allPaths.Count; i++)
@@ -2025,69 +2035,98 @@ namespace Barnacle.UserControls
                 updateRequired = ExpandDragSegment(null, ref position);
             }
             else
-               if (selectionMode == SelectionModeType.DragSegment)
-            {
-                CheckPoint();
-                updateRequired = DragSegment(null, ref position);
-            }
-            else
-            if (selectionMode == SelectionModeType.DraggingPath)
-            {
-                CheckPoint();
-                position = SnapPositionToMM(position);
-                MoveWholePath(position);
-                updateRequired = true;
-                SelectionMode = SelectionModeType.SelectSegmentAtPoint;
-            }
-            else
-            {
-                if (selectedPoint != -1 && moving)
+                if (selectionMode == SelectionModeType.DragSegment)
                 {
-                    selectedArcPoint = -1;
-                    SwapArcVisible = Visibility.Hidden;
-
-                    System.Windows.Point positionSnappedToMM = SnapPositionToMM(position);
-                    bool okToSet = true;
-                    if (editingHole)
-                    {
-                        okToSet = PointInOutline(positionSnappedToMM);
-                    }
-                    if (okToSet)
-                    {
-                        // if the selected point is the control point for an arc
-                        // it isn't snapped to the grid but has to follow the arc control line
-                        if (Points[selectedPoint].Mode == FlexiPoint.PointMode.ControlA)
-                        {
-                            Point unsnappedPositionMM = new Point(0, 0);
-                            unsnappedPositionMM.X = ToMMX(position.X);
-                            unsnappedPositionMM.Y = ToMMY(position.Y);
-
-                            Point snappedPos = selectedFlexiPath.ArcSnap(selectedPoint, unsnappedPositionMM);
-
-                            selectedFlexiPathControlPoints[selectedPoint].X = snappedPos.X;
-                            selectedFlexiPathControlPoints[selectedPoint].Y = snappedPos.Y;
-
-                            selectedFlexiPath.SetPointPos(selectedPoint, snappedPos);
-                            selectedArcPoint = selectedPoint;
-                            SwapArcVisible = Visibility.Visible;
-                        }
-                        else
-                        {
-                            selectedFlexiPathControlPoints[selectedPoint].X = position.X;
-                            selectedFlexiPathControlPoints[selectedPoint].Y = position.Y;
-
-                            selectedFlexiPath.SetPointPos(selectedPoint, positionSnappedToMM);
-                        }
-                        PointsDirty = true;
-                        updateRequired = true;
-                        selectedPoint = -1;
-                        NotifyPropertyChanged("Points");
-                    }
+                    CheckPoint();
+                    updateRequired = DragSegment(null, ref position);
                 }
-            }
+                else
+                    if (selectionMode == SelectionModeType.DraggingPath)
+                    {
+                        CheckPoint();
+                        position = SnapPositionToMM(position);
+                        MoveWholePathsCentroid(position);
+                        if (Snap)
+                        {
+                            // we have moved the whole shape so that its centroid is over position but that
+                            // may leave us with no points actually on the grid.
+                            // Snap the origin point to the grid
+                            System.Windows.Point originPoint = selectedFlexiPath.FlexiPoints[0].ToPoint();
+                            System.Windows.Point screenPoint = new Point(ToScreenX(originPoint.X), ToScreenY(originPoint.Y));
+
+                            System.Windows.Point snappedPoint = SnapPositionToMM(screenPoint);
+                            double dx = snappedPoint.X - originPoint.X;
+                            double dy = snappedPoint.Y - originPoint.Y;
+                            MoveWholePathByOffset(dx, dy);
+
+                        }
+                        updateRequired = true;
+                        SelectionMode = SelectionModeType.SelectSegmentAtPoint;
+                    }
+                    else
+                    {
+                        if (selectedPoint != -1 && moving)
+                        {
+                            selectedArcPoint = -1;
+                            SwapArcVisible = Visibility.Hidden;
+
+                            System.Windows.Point positionSnappedToMM = SnapPositionToMM(position);
+                            bool okToSet = true;
+                            if (editingHole)
+                            {
+                                okToSet = PointInOutline(positionSnappedToMM);
+                            }
+                            if (okToSet)
+                            {
+                                // if the selected point is the control point for an arc
+                                // it isn't snapped to the grid but has to follow the arc control line
+                                if (Points[selectedPoint].Mode == FlexiPoint.PointMode.ControlA)
+                                {
+                                    Point unsnappedPositionMM = new Point(0, 0);
+                                    unsnappedPositionMM.X = ToMMX(position.X);
+                                    unsnappedPositionMM.Y = ToMMY(position.Y);
+
+                                    Point snappedPos = selectedFlexiPath.ArcSnap(selectedPoint, unsnappedPositionMM);
+
+                                    selectedFlexiPathControlPoints[selectedPoint].X = snappedPos.X;
+                                    selectedFlexiPathControlPoints[selectedPoint].Y = snappedPos.Y;
+
+                                    selectedFlexiPath.SetPointPos(selectedPoint, snappedPos);
+                                    selectedArcPoint = selectedPoint;
+                                    SwapArcVisible = Visibility.Visible;
+                                }
+                                else
+                                {
+                                    selectedFlexiPathControlPoints[selectedPoint].X = position.X;
+                                    selectedFlexiPathControlPoints[selectedPoint].Y = position.Y;
+
+                                    selectedFlexiPath.SetPointPos(selectedPoint, positionSnappedToMM);
+                                }
+                                PointsDirty = true;
+                                updateRequired = true;
+                                selectedPoint = -1;
+                                NotifyPropertyChanged("Points");
+                            }
+                        }
+                    }
             PathText = selectedFlexiPath.ToPath(absolutePaths);
             moving = false;
             return updateRequired;
+        }
+
+        private void MoveWholePathByOffset(double dx, double dy)
+        {
+            System.Windows.Point offset = new Point(dx, dy);
+            selectedFlexiPath.MoveByOffset(offset);
+
+            if (!editingHole)
+            {
+                for (int i = 1; i < allPaths.Count; i++)
+                {
+                    allPaths[i].MoveByOffset(offset);
+                }
+            }
+            PointsDirty = true;
         }
 
         private bool NormalPathMove(MouseEventArgs e, Point position, bool updateRequired)
@@ -2097,26 +2136,26 @@ namespace Barnacle.UserControls
                 updateRequired = DragPath(e, ref position);
             }
             else
-            if (selectionMode == SelectionModeType.DragSegment)
-            {
-                if (e.LeftButton == MouseButtonState.Pressed)
+                if (selectionMode == SelectionModeType.DragSegment)
                 {
-                    updateRequired = DragSegment(e, ref position);
+                    if (e.LeftButton == MouseButtonState.Pressed)
+                    {
+                        updateRequired = DragSegment(e, ref position);
+                    }
                 }
-            }
-            else
-            if (selectionMode == SelectionModeType.ExpandDragSegment)
-            {
-                if (e.LeftButton == MouseButtonState.Pressed)
-                {
-                    updateRequired = ExpandDragSegment(e, ref position);
-                    SelectionMode = SelectionModeType.DragSegment;
-                }
-            }
-            else
-            {
-                updateRequired = PathPointMove(e, position, updateRequired);
-            }
+                else
+                    if (selectionMode == SelectionModeType.ExpandDragSegment)
+                    {
+                        if (e.LeftButton == MouseButtonState.Pressed)
+                        {
+                            updateRequired = ExpandDragSegment(e, ref position);
+                            SelectionMode = SelectionModeType.DragSegment;
+                        }
+                    }
+                    else
+                    {
+                        updateRequired = PathPointMove(e, position, updateRequired);
+                    }
             return updateRequired;
         }
 
@@ -2556,22 +2595,37 @@ namespace Barnacle.UserControls
 
         private void OnSize(object obj)
         {
+            NotifyUserActive();
             if (CheckPathComplete())
             {
-                CheckPoint();
+
                 String s = obj.ToString();
                 if (s == "+")
                 {
+                    CheckPoint();
                     IncreasePathSize();
                 }
 
                 if (s == "-")
                 {
+                    CheckPoint();
                     DecreasePathSize();
+                }
+                if (s == "Edit")
+                {
+                    showLengthAndHeightAdorner = !showLengthAndHeightAdorner;
+                    NotifyPropertyChanged("Points");
                 }
             }
         }
-
+        private bool showLengthAndHeightAdorner = false;
+        public bool ShowLengthAndHeightAdorner
+        {
+            get
+            {
+                return showLengthAndHeightAdorner;
+            }
+        }
         private void OnSplitQuad(object obj)
         {
             NotifyUserActive();
@@ -2790,6 +2844,23 @@ namespace Barnacle.UserControls
         {
             double res = ScreenDpi.PixelsPerInchY * y / 25.4;
             return res;
+        }
+
+        internal void ResizePath(double targetLength, double targetHeight)
+        {
+            double tlx = double.MaxValue;
+            double tly = double.MaxValue;
+            double brx = 0, bry = 0;
+            foreach (var p in Points)
+            {
+                tlx = Math.Min(tlx, p.X);
+                tly = Math.Min(tly, p.Y);
+                brx = Math.Max(brx, p.X);
+                bry = Math.Max(bry, p.Y);
+            }
+            double length = brx - tlx;
+            double height = bry - tly;
+            ScalePathSize(targetLength / length, targetHeight / height);
         }
 
         public struct Preset

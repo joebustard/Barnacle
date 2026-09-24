@@ -266,40 +266,71 @@
                                 <Image Source="/Barnacle;component/Images/Buttons/OrthoPath.png" />
                             </Button>
                         </Border>
-                        <Button
+                        <Border
+     x:Name="FlipHBorder"
+     BorderThickness="4"
+     CornerRadius="2">
+                            <Button
                             x:Name="FlipHorizontalButton"
                             Command="{Binding FlipCommand}"
                             CommandParameter="Horizontal"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Flip the points in the current path horizontally">
-                            <Image Source="/Barnacle;component/Images/Buttons/FlipH.png" />
-                        </Button>
-
-                        <Button
+                                <Image Source="/Barnacle;component/Images/Buttons/FlipH.png" />
+                            </Button>
+                        </Border>
+                        <Border
+     x:Name="FlipVBorder"
+     BorderThickness="4"
+     CornerRadius="2">
+                            <Button
                             x:Name="FlipVericalButton"
                             Command="{Binding FlipCommand}"
                             CommandParameter="Vertical"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Flip the points in the current path vertically">
-                            <Image Source="/Barnacle;component/Images/Buttons/FLipV.png" />
-                        </Button>
-
-                        <Button
+                                <Image Source="/Barnacle;component/Images/Buttons/FLipV.png" />
+                            </Button>
+                        </Border>
+                        <Border
+     x:Name="IncSizeBorder"
+     BorderThickness="4"
+     CornerRadius="2">
+                            <Button
                             x:Name="IncreaseSizeButton"
                             Command="{Binding SizeCommand}"
                             CommandParameter="+"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Increase the size of the path">
-                            <Image Source="/Barnacle;component/Images/Buttons/IncreaseSize.png" />
-                        </Button>
-                        <Button
+                                <Image Source="/Barnacle;component/Images/Buttons/IncreaseSize.png" />
+                            </Button>
+                        </Border>
+                        <Border
+     x:Name="DecSizeBorder"
+     BorderThickness="4"
+     CornerRadius="2">
+                            <Button
                             x:Name="DecreaseSizeButton"
                             Command="{Binding SizeCommand}"
                             CommandParameter="-"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Decrease the size of the path">
-                            <Image Source="/Barnacle;component/Images/Buttons/DecreaseSize.png" />
-                        </Button>
+                                <Image Source="/Barnacle;component/Images/Buttons/DecreaseSize.png" />
+                            </Button>
+                        </Border>
+                        <Border
+  x:Name="EditSizeBorder"
+  BorderThickness="4"
+  CornerRadius="2">
+                            <Button
+                         x:Name="EditSizeButton"
+                         Command="{Binding SizeCommand}"
+                         CommandParameter="Edit"
+                         Style="{StaticResource SmallButton}"
+                         ToolTip="Show or hide the edit size controls">
+                                <Image Source="/Barnacle;component/Images/Buttons/DecreaseSize.png" />
+                            </Button>
+                        </Border>
                         <Border
                             x:Name="ZoomOutBorder"
                             BorderThickness="4"
@@ -422,6 +453,7 @@
                         <ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}" />
                     </Canvas.LayoutTransform>
                 </Canvas>
+               
             </ScrollViewer>
             <Grid Grid.Row="2" Grid.Column="1">
                 <Grid.RowDefinitions>

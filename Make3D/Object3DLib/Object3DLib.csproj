@@ -31,6 +31,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Barnacle3DKeystore.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
@@ -81,7 +87,7 @@
     <Compile Include="ExtraPrimitives\CutGem.cs" />
     <Compile Include="ExtraPrimitives\TwistedRing.cs" />
     <Compile Include="ExtraPrimitives\Bead1.cs" />
-  <Compile Include="ExtraPrimitives\SpinnerSubparts.cs" />
+    <Compile Include="ExtraPrimitives\SpinnerSubparts.cs" />
     <Compile Include="FaceOrientationNormaliser.cs" />
     <!-- ExtraHere -->
     <Compile Include="Group3D.cs" />
@@ -121,6 +127,8 @@
       <Name>SplitterLib</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Barnacle3DKeystore.pfx" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -89,6 +89,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Adorners\DimensionAdorner.cs" />
+    <Compile Include="UserControls\FlexiPathEditorControl\LengthAndHeightAdorner.cs" />
     <Compile Include="Dialogs\AboutBox\AboutBoxDlg.xaml.cs">
       <DependentUpon>AboutBoxDlg.xaml</DependentUpon>
     </Compile>
