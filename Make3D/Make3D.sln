@@ -1,9 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178
+# Visual Studio Version 18
+VisualStudioVersion = 18.10.12217.157
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barnacle", "Make3D\Barnacle.csproj", "{2F327EA0-F3C2-455E-A057-CE718CFD4E5D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CBB201AB-8345-43A4-A0F0-4B2FEAC07D73} = {CBB201AB-8345-43A4-A0F0-4B2FEAC07D73}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{323F3CC6-E104-45FD-A151-3F9F4AFE3310}"
 	ProjectSection(SolutionItems) = preProject
@@ -93,6 +96,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathsLib", "MathsLib\MathsLib.csproj", "{1A74EA72-17F3-428F-9C58-1B04A9C33C8B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SplitterLib", "SplitterLib\SplitterLib.csproj", "{B85BF434-663E-4219-8572-7542DA5CBB32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Polygon3DTriangulationLib", "Polygon3DTriangulationLib\Polygon3DTriangulationLib.csproj", "{CBB201AB-8345-43A4-A0F0-4B2FEAC07D73}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -256,6 +261,10 @@ Global
 		{B85BF434-663E-4219-8572-7542DA5CBB32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B85BF434-663E-4219-8572-7542DA5CBB32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B85BF434-663E-4219-8572-7542DA5CBB32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBB201AB-8345-43A4-A0F0-4B2FEAC07D73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBB201AB-8345-43A4-A0F0-4B2FEAC07D73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBB201AB-8345-43A4-A0F0-4B2FEAC07D73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBB201AB-8345-43A4-A0F0-4B2FEAC07D73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -49,7 +49,7 @@ namespace ScriptLanguage
                                 double cutLevel;
                                 if (PullDouble(out cutLevel))
                                 {
-                                    PlaneCutter cutter = new PlaneCutter(
+                                    OrthogonalPlaneCutter cutter = new OrthogonalPlaneCutter(
                                         Script.ResultArtefacts[objectIndex].AbsoluteObjectVertices,
                                         Script.ResultArtefacts[objectIndex].TriangleIndices, cutLevel);
                                     cutter.SetHorizontal();

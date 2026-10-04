@@ -292,6 +292,7 @@
                                 <Image Source="/Barnacle;component/Images/Buttons/FLipV.png" />
                             </Button>
                         </Border>
+                        <!-- I dont know if we want these buttons or not. So comment them out for now
                         <Border
      x:Name="IncSizeBorder"
      BorderThickness="4"
@@ -318,6 +319,7 @@
                                 <Image Source="/Barnacle;component/Images/Buttons/DecreaseSize.png" />
                             </Button>
                         </Border>
+                        -->
                         <Border
   x:Name="EditSizeBorder"
   BorderThickness="4"
@@ -328,7 +330,7 @@
                          CommandParameter="Edit"
                          Style="{StaticResource SmallButton}"
                          ToolTip="Show or hide the edit size controls">
-                                <Image Source="/Barnacle;component/Images/Buttons/DecreaseSize.png" />
+                                <Image Source="/Images/Buttons/editlengthandheight.png" />
                             </Button>
                         </Border>
                         <Border

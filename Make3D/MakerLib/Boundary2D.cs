@@ -82,10 +82,7 @@ namespace MakerLib
         internal Bounds2D Overlap(Bounds2D b)
         {
             Bounds2D result = null;
-            if (b.Height() > 0 && b.Width() > 0)
-            {
-                bool stophere = true;
-            }
+           
             bool over = false;
             if (Contains(b.Left, b.Bottom) ||
                 Contains(b.Left, b.Top) ||

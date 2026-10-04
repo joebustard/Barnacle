@@ -21,19 +21,23 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace Barnacle.Models
 {
-    internal class VerticalPlane : Plane
+    internal class VerticalPlane : PlaneControl
     {
-        internal VerticalPlane(double planeLevel, double height, double depth) : base(planeLevel, height, depth, true)
+        internal VerticalPlane(double height, double depth) : base(height, depth, true)
         {
         }
 
-        public override void SetLocation(double v)
+        public override void SetLocation(double x, double y, double z)
+        {
+            SetLocation(x);
+        }
+
+        public void SetLocation(double v)
         {
             double over = 10;
             double y = width;
             double z = depth / 2;
-            double thick = -0.1; // give the floor some depth so it's not a 2 dimensional plane
-
+  
             points = new Point3DCollection(20);
             Point3D point;
             //top of the floor
@@ -45,42 +49,8 @@ namespace Barnacle.Models
             points.Add(point);
             point = new Point3D(v, -over, -z);
             points.Add(point);
-            //front side
-            point = new Point3D(v, -over, z);
-            points.Add(point);
-            point = new Point3D(v + thick, -over, z);
-            points.Add(point);
-            point = new Point3D(v + thick, y + over, z);
-            points.Add(point);
-            point = new Point3D(v, y + over, z);
-            points.Add(point);
-            //right side
-            point = new Point3D(v, y + over, z);
-            points.Add(point);
-            point = new Point3D(v + thick, y + over, z);
-            points.Add(point);
-            point = new Point3D(v + thick, y + over, -z);
-            points.Add(point);
-            point = new Point3D(v, y + over, -z);
-            points.Add(point);
-            //back side
-            point = new Point3D(v, y + over, -z);
-            points.Add(point);
-            point = new Point3D(v + thick, y + over, -z);
-            points.Add(point);
-            point = new Point3D(v + thick, -y, -z);
-            points.Add(point);
-            point = new Point3D(v, -over, -z);
-            points.Add(point);
-            //left side
-            point = new Point3D(v, -over, -z);
-            points.Add(point);
-            point = new Point3D(v + thick, -over, -z);
-            points.Add(point);
-            point = new Point3D(v + thick, -over, z);
-            points.Add(point);
-            point = new Point3D(v, -over, z);
-            points.Add(point);
+            return;
+         
         }
     }
 }

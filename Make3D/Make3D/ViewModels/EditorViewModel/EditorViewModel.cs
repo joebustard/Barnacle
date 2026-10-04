@@ -37,6 +37,7 @@ using Microsoft.Win32;
 using PolygonTriangulationLib;
 using PrintPlacementLib;
 using SimpleSmoothLib;
+using SplitterLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -1503,6 +1504,7 @@ namespace Barnacle.ViewModels
                     ob.TriangleIndices.Add(i);
                 }
                 // RemoveDuplicateVertices(ob);
+                
                 ob.Remesh();
             }
         }
@@ -4887,13 +4889,13 @@ namespace Barnacle.ViewModels
             splitter.Split();
             document.Content.Remove(ob);
 
-            Object3D partA = splitter.GetObject1();
+            Object3D partA = GetObject1FromSplitter(splitter);
             partA.Name = ob.Name + "_" + desc1;
             partA.Color = ob.Color;
             partA.Remesh();
             document.Content.Add(partA);
 
-            Object3D partB = splitter.GetObject2();
+            Object3D partB = GetObject2FromSplitter(splitter);
             partB.Name = ob.Name + "_" + desc2;
             partB.Color = ob.Color;
             partB.Remesh();
@@ -4907,6 +4909,45 @@ namespace Barnacle.ViewModels
             Logger.Log($"Split took {ts.Hours}:{ts.Minutes}:{ts.Seconds}");
         }
 
+        /// <summary>
+        /// returns the vertices and edges of the first object soup
+        /// as a new Object3D
+        /// </summary>
+        /// <returns></returns>
+        internal Object3D GetObject1FromSplitter(ObjectSplitter splitter)
+        {
+            return GetObjectFromSplitter(splitter.Result1Vertices, splitter.Result1Faces);
+        }
+
+        internal Object3D GetObject2FromSplitter(ObjectSplitter splitter)
+        {
+            return GetObjectFromSplitter(splitter.Result2Vertices, splitter.Result2Faces);
+        }
+        /// <summary>
+        /// Converts the given soup into an object3D
+        /// </summary>
+        /// <param name="verts"></param>
+        /// <param name="faces"></param>
+        /// <returns></returns>
+        private Object3D GetObjectFromSplitter(Point3DCollection verts, Int32Collection faces)
+        {
+            Object3D res = new Object3D();
+            res.PrimType = "Mesh";
+            Bounds3D bnds = new Bounds3D();
+            foreach (Point3D p in verts)
+            {
+                res.AbsoluteObjectVertices.Add(new Point3D(p.X, p.Y, p.Z));
+                bnds.Adjust(p);
+            }
+            for (int i = 0; i < faces.Count; i++)
+            {
+                res.TriangleIndices.Add(faces[i]);
+            }
+            Point3D mid = bnds.MidPoint();
+            res.Position = new Point3D(mid.X, mid.Y, mid.Z);
+            res.AbsoluteToRelative();
+            return res;
+        }
         /// <summary>
         /// Split an object into two new ones, along its middle
         /// </summary>

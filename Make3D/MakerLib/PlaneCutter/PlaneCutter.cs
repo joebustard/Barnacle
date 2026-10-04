@@ -16,22 +16,28 @@
 // *************************************************************************
 
 using Barnacle.Object3DLib;
+using MathsLib;
 using OctTreeLib;
-using PolygonTriangulationLib;
+using Polygon3DTriangulationLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using static Polygon3DTriangulationLib.Polygon3DTriangulator;
 
 namespace MakerLib.PlaneCutter
 {
     public class PlaneCutter
     {
+        private Point3DCollection vertices;
+        private Int32Collection faces;
+        private PlaneEquation planeEquation;
         private Bounds3D bounds;
-        private PlaneOrientation orientation;
+
         private Int32Collection originalFaces;
         private Point3DCollection originalVertices;
         private double planeLevel;
@@ -39,55 +45,33 @@ namespace MakerLib.PlaneCutter
         private OctTree workingOctTree;
         private Point3DCollection workingVertices;
 
-        public PlaneCutter(Point3DCollection point3Ds, Int32Collection f, double level)
+        public PlaneCutter(Point3DCollection vertices, Int32Collection faces, PlaneEquation planeEquation)
         {
+            this.vertices = vertices;
+            this.faces = faces;
+            this.planeEquation = planeEquation;
             bounds = new Bounds3D();
-            foreach (Point3D point3D in point3Ds)
+            foreach (Point3D point3D in vertices)
             {
                 bounds.Adjust(point3D);
             }
             workingVertices = new Point3DCollection();
             workingFaces = new Int32Collection();
 
-            planeLevel = level;
-
             workingOctTree = CreateOctree(workingVertices, bounds.Lower, bounds.Upper);
-            foreach (int i in f)
+            foreach (int i in faces)
             {
-                int v = workingOctTree.AddPoint(point3Ds[i]);
+                int v = workingOctTree.AddPoint(vertices[i]);
                 workingFaces.Add(v);
             }
-            originalFaces = f;
-            originalVertices = point3Ds;
-            orientation = PlaneOrientation.Horizontal;
+            originalFaces = faces;
+            originalVertices = vertices;
         }
-
-        private enum PlaneOrientation
+        protected OctTree CreateOctree(Point3DCollection verts, Point3D minPoint, Point3D maxPoint)
         {
-            Horizontal,
-            Vertical,
-            Distal
+            return new OctTree(verts, minPoint, maxPoint, 200);
         }
-
         public void Cut()
-        {
-            switch (orientation)
-            {
-                case PlaneOrientation.Horizontal:
-                    {
-                        CutH();
-                    }
-                    break;
-
-                case PlaneOrientation.Vertical:
-                    {
-                        CutV();
-                    }
-                    break;
-            }
-        }
-
-        public void CutH()
         {
             EdgeProcessor edgeProc = new EdgeProcessor();
 
@@ -102,17 +86,17 @@ namespace MakerLib.PlaneCutter
                 bool aUp = false;
                 bool bUp = false;
                 bool cUp = false;
-                if (workingVertices[a].Y > planeLevel)
+                if (planeEquation.WhichSideIsPointOn(workingVertices[a]) > 0)
                 {
                     upCount++;
                     aUp = true;
                 }
-                if (workingVertices[b].Y > planeLevel)
+                if (planeEquation.WhichSideIsPointOn(workingVertices[b]) > 0)
                 {
                     upCount++;
                     bUp = true;
                 }
-                if (workingVertices[c].Y > planeLevel)
+                if (planeEquation.WhichSideIsPointOn(workingVertices[c]) > 0)
                 {
                     upCount++;
                     cUp = true;
@@ -132,7 +116,7 @@ namespace MakerLib.PlaneCutter
                             // clip it against the plane
                             if (aUp)
                             {
-                                MakeTri1H(a, ref b, ref c);
+                                ClipTriangle(a, ref b, ref c);
                                 newFaces.Add(a);
                                 newFaces.Add(b);
                                 newFaces.Add(c);
@@ -140,7 +124,7 @@ namespace MakerLib.PlaneCutter
                             }
                             else if (bUp)
                             {
-                                MakeTri1H(b, ref c, ref a);
+                                ClipTriangle(b, ref c, ref a);
                                 newFaces.Add(b);
                                 newFaces.Add(c);
                                 newFaces.Add(a);
@@ -148,7 +132,7 @@ namespace MakerLib.PlaneCutter
                             }
                             else if (cUp)
                             {
-                                MakeTri1H(c, ref a, ref b);
+                                ClipTriangle(c, ref a, ref b);
                                 newFaces.Add(c);
                                 newFaces.Add(a);
                                 newFaces.Add(b);
@@ -220,6 +204,7 @@ namespace MakerLib.PlaneCutter
                 List<EdgeRecord> loop = edgeProc.MakeLoop();
                 if (loop.Count > 3)
                 {
+                    /*
                     TriangulationPolygon ply = new TriangulationPolygon();
                     List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
                     foreach (EdgeRecord er in loop)
@@ -238,166 +223,39 @@ namespace MakerLib.PlaneCutter
                         newFaces.Add(c1);
                         newFaces.Add(c2);
                     }
-                }
-                if (loop.Count != 0 && edgeProc.EdgeRecords.Count > 0)
-                {
-                    moreLoops = true;
-                }
-            }
-
-            ExtrackNewFaces(newFaces);
-        }
-
-        public void CutV()
-        {
-            EdgeProcessor edgeProc = new EdgeProcessor();
-
-            Int32Collection newFaces = new Int32Collection();
-            for (int i = 0; i < workingFaces.Count; i += 3)
-            {
-                int a = workingFaces[i];
-                int b = workingFaces[i + 1];
-                int c = workingFaces[i + 2];
-
-                int rightCount = 0;
-                bool aRight = false;
-                bool bRight = false;
-                bool cRight = false;
-                if (workingVertices[a].X > planeLevel)
-                {
-                    rightCount++;
-                    aRight = true;
-                }
-                if (workingVertices[b].X > planeLevel)
-                {
-                    rightCount++;
-                    bRight = true;
-                }
-                if (workingVertices[c].X > planeLevel)
-                {
-                    rightCount++;
-                    cRight = true;
-                }
-
-                switch (rightCount)
-                {
-                    case 0:
-                        {
-                            //all three points of trinagle are on or below the cut plane
-                        }
-                        break;
-
-                    case 1:
-                        {
-                            //one point of triangle is above the cut plane
-                            // clip it against the plane
-                            if (aRight)
-                            {
-                                MakeTri1V(a, ref b, ref c);
-                                newFaces.Add(a);
-                                newFaces.Add(b);
-                                newFaces.Add(c);
-                                edgeProc.Add(b, c);
-                            }
-                            else if (bRight)
-                            {
-                                MakeTri1V(b, ref c, ref a);
-                                newFaces.Add(b);
-                                newFaces.Add(c);
-                                newFaces.Add(a);
-                                edgeProc.Add(c, a);
-                            }
-                            else if (cRight)
-                            {
-                                MakeTri1V(c, ref a, ref b);
-                                newFaces.Add(c);
-                                newFaces.Add(a);
-                                newFaces.Add(b);
-                                edgeProc.Add(a, b);
-                            }
-                        }
-                        break;
-
-                    case 2:
-                        {
-                            // two points are above the cut plane
-                            if (aRight && bRight)
-                            {
-                                int dp = CrossingPointV(b, c);
-                                int ep = CrossingPointV(a, c);
-                                newFaces.Add(a);
-                                newFaces.Add(b);
-                                newFaces.Add(dp);
-
-                                newFaces.Add(a);
-                                newFaces.Add(dp);
-                                newFaces.Add(ep);
-                                edgeProc.Add(dp, ep);
-                            }
-                            else if (bRight && cRight)
-                            {
-                                int dp = CrossingPointV(c, a);
-                                int ep = CrossingPointV(a, b);
-                                newFaces.Add(b);
-                                newFaces.Add(c);
-                                newFaces.Add(dp);
-
-                                newFaces.Add(b);
-                                newFaces.Add(dp);
-                                newFaces.Add(ep);
-                                edgeProc.Add(dp, ep);
-                            }
-                            else if (cRight && aRight)
-                            {
-                                int dp = CrossingPointV(a, b);
-                                int ep = CrossingPointV(b, c);
-                                newFaces.Add(a);
-                                newFaces.Add(dp);
-                                newFaces.Add(c);
-
-                                newFaces.Add(c);
-                                newFaces.Add(dp);
-                                newFaces.Add(ep);
-                                edgeProc.Add(dp, ep);
-                            }
-                        }
-                        break;
-
-                    case 3:
-                        {
-                            //all three points of triangle are above the cut plane
-                            // entire triangle should be taken as is
-                            newFaces.Add(a);
-                            newFaces.Add(b);
-                            newFaces.Add(c);
-                        }
-                        break;
-                }
-            }
-            bool moreLoops = true;
-            while (moreLoops)
-            {
-                moreLoops = false;
-                List<EdgeRecord> loop = edgeProc.MakeLoop();
-                if (loop.Count > 3)
-                {
-                    TriangulationPolygon ply = new TriangulationPolygon();
-                    List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
+                    */
+                    List<Vector3> verticesToTriangulate = new List<Vector3>();
                     foreach (EdgeRecord er in loop)
                     {
                         Point3D p = workingVertices[er.Start];
-                        pf.Add(new System.Drawing.PointF((float)p.Z, (float)p.Y));
+                        Vector3 pv = new Vector3((float)p.X, (float)p.Y, (float)p.Z);
+                        verticesToTriangulate.Add(pv);
                     }
-                    ply.Points = pf.ToArray();
-                    List<Triangle> tris = ply.Triangulate();
-                    foreach (Triangle t in tris)
+                    Polygon3DTriangulator polygonTriangulator = new Polygon3DTriangulator();
+                    List<Triangle> loopTriangles = polygonTriangulator.Triangulate3D(verticesToTriangulate);
+                    if (loopTriangles != null)
                     {
-                        int c0 = workingOctTree.AddPoint(planeLevel, t.Points[0].Y, t.Points[0].X);
-                        int c1 = workingOctTree.AddPoint(planeLevel, t.Points[1].Y, t.Points[1].X);
-                        int c2 = workingOctTree.AddPoint(planeLevel, t.Points[2].Y, t.Points[2].X);
-                        newFaces.Add(c0);
-                        newFaces.Add(c1);
-                        newFaces.Add(c2);
+                        System.Diagnostics.Debug.WriteLine($"loopTriangles {loopTriangles.Count}");
+                        int i = 0;
+                        foreach (Triangle triangle in loopTriangles)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"i {i} =  {triangle.V1}, {triangle.V2},{triangle.V3} ");
+                            int v1 = triangle.V1;
+                            Point3D p1 = new Point3D(verticesToTriangulate[v1].X, verticesToTriangulate[v1].Y, verticesToTriangulate[v1].Z);
+
+                            int v2 = triangle.V2;
+                            Point3D p2 = new Point3D(verticesToTriangulate[v2].X, verticesToTriangulate[v2].Y, verticesToTriangulate[v2].Z);
+
+                            int v3 = triangle.V3;
+                            Point3D p3 = new Point3D(verticesToTriangulate[v3].X, verticesToTriangulate[v3].Y, verticesToTriangulate[v3].Z);
+
+                            int c0 = workingOctTree.AddPoint(p1.X, p1.Y, p1.Z);
+                            int c1 = workingOctTree.AddPoint(p2.X, p2.Y, p2.Z);
+                            int c2 = workingOctTree.AddPoint(p3.X, p3.Y, p3.Z);
+                            newFaces.Add(c0);
+                            newFaces.Add(c2);
+                            newFaces.Add(c1);
+                        }
                     }
                 }
                 if (loop.Count != 0 && edgeProc.EdgeRecords.Count > 0)
@@ -408,61 +266,35 @@ namespace MakerLib.PlaneCutter
 
             ExtrackNewFaces(newFaces);
         }
-
-        public void SetDistal()
+        private void ClipTriangle(int a, ref int b, ref int c)
         {
-            orientation = PlaneOrientation.Distal;
-        }
+           
 
-        public void SetHorizontal()
-        {
-            orientation = PlaneOrientation.Horizontal;
-        }
+            Point3D intersectionPoint = new Point3D(0, 0, 0);
+            if (planeEquation.LineIntercepts(workingVertices[a], workingVertices[b], out intersectionPoint))
+            {
+                b = workingOctTree.AddPoint(intersectionPoint.X, intersectionPoint.Y, intersectionPoint.Z);
 
-        public void SetVertical()
-        {
-            orientation = PlaneOrientation.Vertical;
-        }
+                if (planeEquation.LineIntercepts(workingVertices[a], workingVertices[c], out intersectionPoint))
+                {
+                    c = workingOctTree.AddPoint(intersectionPoint.X, intersectionPoint.Y, intersectionPoint.Z);
+                }
+            }
 
-        protected OctTree CreateOctree(Point3DCollection verts, Point3D minPoint, Point3D maxPoint)
-        {
-            return new OctTree(verts, minPoint, maxPoint, 200);
         }
 
         private int CrossingPointH(int a, int b)
         {
-            double t;
-            double x0 = workingVertices[a].X;
-            double y0 = workingVertices[a].Y;
-            double z0 = workingVertices[a].Z;
-            double x1 = workingVertices[b].X;
-            double y1 = workingVertices[b].Y;
-            double z1 = workingVertices[b].Z;
-            t = (planeLevel - y0) / (y1 - y0);
+            int res = -1;
+            Point3D intersectionPoint = new Point3D(0, 0, 0);
+            if (planeEquation.LineIntercepts(workingVertices[a], workingVertices[b], out intersectionPoint))
+            {
 
-            double x = x0 + t * (x1 - x0);
-            double z = z0 + t * (z1 - z0);
-            int res = workingOctTree.AddPoint(x, planeLevel, z);
+                res = workingOctTree.AddPoint(intersectionPoint.X, intersectionPoint.Y, intersectionPoint.Z);
+
+            }
             return res;
         }
-
-        private int CrossingPointV(int a, int b)
-        {
-            double t;
-            double x0 = workingVertices[a].X;
-            double y0 = workingVertices[a].Y;
-            double z0 = workingVertices[a].Z;
-            double x1 = workingVertices[b].X;
-            double y1 = workingVertices[b].Y;
-            double z1 = workingVertices[b].Z;
-            t = (planeLevel - x0) / (x1 - x0);
-
-            double y = y0 + t * (y1 - y0);
-            double z = z0 + t * (z1 - z0);
-            int res = workingOctTree.AddPoint(planeLevel, y, z);
-            return res;
-        }
-
         private void ExtrackNewFaces(Int32Collection newFaces)
         {
             originalVertices.Clear();
@@ -473,60 +305,6 @@ namespace MakerLib.PlaneCutter
                 int v = targetOctree.AddPoint(workingVertices[j]);
                 originalFaces.Add(v);
             }
-        }
-
-        private void MakeTri1H(int a, ref int b, ref int c)
-        {
-            double t;
-            double x0 = workingVertices[a].X;
-            double y0 = workingVertices[a].Y;
-            double z0 = workingVertices[a].Z;
-            double x1 = workingVertices[b].X;
-            double y1 = workingVertices[b].Y;
-            double z1 = workingVertices[b].Z;
-            t = (planeLevel - y0) / (y1 - y0);
-
-            double x = x0 + t * (x1 - x0);
-            double z = z0 + t * (z1 - z0);
-
-            b = workingOctTree.AddPoint(x, planeLevel, z);
-
-            x1 = workingVertices[c].X;
-            y1 = workingVertices[c].Y;
-            z1 = workingVertices[c].Z;
-            t = (planeLevel - y0) / (y1 - y0);
-
-            x = x0 + t * (x1 - x0);
-            z = z0 + t * (z1 - z0);
-
-            c = workingOctTree.AddPoint(x, planeLevel, z);
-        }
-
-        private void MakeTri1V(int a, ref int b, ref int c)
-        {
-            double t;
-            double x0 = workingVertices[a].X;
-            double y0 = workingVertices[a].Y;
-            double z0 = workingVertices[a].Z;
-            double x1 = workingVertices[b].X;
-            double y1 = workingVertices[b].Y;
-            double z1 = workingVertices[b].Z;
-            t = (planeLevel - x0) / (x1 - x0);
-
-            double y = y0 + t * (y1 - y0);
-            double z = z0 + t * (z1 - z0);
-
-            b = workingOctTree.AddPoint(planeLevel, y, z);
-
-            x1 = workingVertices[c].X;
-            y1 = workingVertices[c].Y;
-            z1 = workingVertices[c].Z;
-            t = (planeLevel - x0) / (x1 - x0);
-
-            y = y0 + t * (y1 - y0);
-            z = z0 + t * (z1 - z0);
-
-            c = workingOctTree.AddPoint(planeLevel, y, z);
         }
     }
 }

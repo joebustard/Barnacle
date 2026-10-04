@@ -89,6 +89,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Adorners\DimensionAdorner.cs" />
+    <Compile Include="Models\Planes\DistalPlane.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\LengthAndHeightAdorner.cs" />
     <Compile Include="Dialogs\AboutBox\AboutBoxDlg.xaml.cs">
       <DependentUpon>AboutBoxDlg.xaml</DependentUpon>
@@ -195,8 +196,6 @@
     <Compile Include="Dialogs\PointHull\PointHullDlg.xaml.cs" />
     <Compile Include="Dialogs\UBracket\UBracketDlg.xaml.cs" />
     <Compile Include="Models\Bounds2D.cs" />
-    <Compile Include="Models\ObjectSplitterAndSeamer\EdgeProcessor.cs" />
-    <Compile Include="Models\ObjectSplitterAndSeamer\EdgeRecord.cs" />
     <Compile Include="Dialogs\DecimatorSettings.xaml.cs">
       <DependentUpon>DecimatorSettings.xaml</DependentUpon>
     </Compile>
@@ -359,9 +358,7 @@
     <Compile Include="Models\GridData.cs" />
     <Compile Include="Models\Planes\HorizontalPlane.cs" />
     <Compile Include="Models\MeshSubdivider.cs" />
-    <Compile Include="Models\ObjectSplitterAndSeamer\ObjectSeamer.cs" />
-    <Compile Include="Models\ObjectSplitterAndSeamer\ObjectSplitter.cs" />
-    <Compile Include="Models\Planes\Plane.cs" />
+    <Compile Include="Models\Planes\PlaneControl.cs" />
     <Compile Include="Models\Point3DExtensions.cs" />
     <Compile Include="Models\PrinterPlate.cs" />
     <Compile Include="Models\SDCard\SDCardUtils.cs" />
@@ -1146,6 +1143,10 @@
       <Project>{DABC6ACF-3F5E-469B-BCC0-6F676287B245}</Project>
       <Name>ManifoldLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MathsLib\MathsLib.csproj">
+      <Project>{1A74EA72-17F3-428F-9C58-1B04A9C33C8B}</Project>
+      <Name>MathsLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MeshDecimator\MeshDecimator.csproj">
       <Project>{f49d5d98-df95-4a31-a42f-da6d92c242dd}</Project>
       <Name>MeshDecimator</Name>
@@ -1555,6 +1556,7 @@
     <Resource Include="Images\Buttons\WheelBracket2.png" />
     <Resource Include="Images\Buttons\Spinner.png" />
     <Resource Include="Images\Buttons\MeshIslands.png" />
+    <Resource Include="Images\Buttons\editlengthandheight.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

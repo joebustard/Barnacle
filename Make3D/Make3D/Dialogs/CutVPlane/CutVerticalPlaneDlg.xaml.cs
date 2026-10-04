@@ -87,7 +87,7 @@ namespace Barnacle.Dialogs
                         if (plane != null)
 
                         {
-                            plane.MoveTo(PlaneLevel);
+                            plane.MoveTo(PlaneLevel,0,0);
                         }
                         NotifyPropertyChanged();
                         UpdateDisplay();
@@ -279,7 +279,7 @@ namespace Barnacle.Dialogs
         private void CutButton_Click(object sender, RoutedEventArgs e)
         {
             RestoreOriginal();
-            PlaneCutter cutter = new PlaneCutter(Vertices, Faces, planeLevel);
+            OrthogonalPlaneCutter cutter = new OrthogonalPlaneCutter(Vertices, Faces, planeLevel);
             cutter.SetVertical();
             cutter.Cut();
             UpdateDisplay();
@@ -362,8 +362,8 @@ namespace Barnacle.Dialogs
 
             RestoreOriginal();
             PlaneLevel = bounds.Lower.X;
-            plane = new VerticalPlane(planeLevel, bounds.Height, bounds.Depth + 20);
-            plane.MoveTo(PlaneLevel);
+            plane = new VerticalPlane( bounds.Height, bounds.Depth + 20);
+            plane.MoveTo(PlaneLevel,0,0);
             UpdateDisplay();
         }
     }

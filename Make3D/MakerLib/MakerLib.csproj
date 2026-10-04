@@ -42,6 +42,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -124,6 +125,7 @@
     <Compile Include="PiercedRing\MakePiercedRing.cs" />
     <Compile Include="PlaneCutter\EdgeProcessor.cs" />
     <Compile Include="PlaneCutter\EdgeRecord.cs" />
+    <Compile Include="PlaneCutter\OrthogonalPlaneCutter.cs" />
     <Compile Include="PlaneCutter\PlaneCutter.cs" />
     <Compile Include="PolyMaker.cs" />
     <Compile Include="SquaredStadiumMaker.cs" />
@@ -164,6 +166,10 @@
       <Project>{8248F033-5DE9-46E4-BF7C-0B108F120577}</Project>
       <Name>LineLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MathsLib\MathsLib.csproj">
+      <Project>{1a74ea72-17f3-428f-9c58-1b04a9c33c8b}</Project>
+      <Name>MathsLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Object3DLib\Object3DLib.csproj">
       <Project>{5f92b002-b820-4a56-a2b1-482c252ba8be}</Project>
       <Name>Object3DLib</Name>
@@ -171,6 +177,10 @@
     <ProjectReference Include="..\OctTreeLib\OctTreeLib.csproj">
       <Project>{0d9bb88e-b275-4e45-8ea9-aec204588a7c}</Project>
       <Name>OctTreeLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Polygon3DTriangulationLib\Polygon3DTriangulationLib.csproj">
+      <Project>{cbb201ab-8345-43a4-a0f0-4b2feac07d73}</Project>
+      <Name>Polygon3DTriangulationLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\PolygonLibrary\PolygonLibrary.csproj">
       <Project>{61ee0e20-98e3-430f-be43-cb1f19e829a5}</Project>

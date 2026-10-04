@@ -17,16 +17,15 @@
 
 using Barnacle.Models;
 using Barnacle.Object3DLib;
-using PolygonTriangulationLib;
-using System;
-using System.Collections.Generic;
+using MakerLib.PlaneCutter;
+using MathsLib;
+using OctTreeLib;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using OctTreeLib;
-using MakerLib.PlaneCutter;
 
 namespace Barnacle.Dialogs
 {
@@ -42,9 +41,14 @@ namespace Barnacle.Dialogs
         private bool loaded;
         private OctTree octTree;
         private Bounds3D originalBounds;
-        private HorizontalPlane plane;
-        private double planeLevel;
+        private PlaneControl plane;
+        private PlaneEquation planeEquation;
+        private Point3D planeOrigin;
+        private double planeOriginX;
+        private double planeOriginY;
+        private double planeOriginZ;
         private bool planeSelected;
+        private Vector3D planeVector;
         private string warningText;
 
         public CutHorizontalPlaneDlg()
@@ -52,10 +56,11 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "CutHorizontalPlane";
             DataContext = this;
-            ModelGroup = MyModelGroup;
+
             loaded = false;
-            planeLevel = 5;
             planeSelected = false;
+            planeVector = new Vector3D(0, 1, 0);
+            planeOrigin = new Point3D(0, 0, 0);
             dpi = VisualTreeHelper.GetDpi(this);
         }
 
@@ -70,72 +75,56 @@ namespace Barnacle.Dialogs
             set;
         }
 
-        public double PlaneLevel
+        public double PlaneOriginX
         {
             get
             {
-                return planeLevel;
+                return planeOriginX;
             }
-
             set
             {
-                if (planeLevel != value)
+                if (planeOriginX != value)
                 {
-                    if (value >= minplaneLevel && value <= maxplaneLevel)
-                    {
-                        planeLevel = value;
-                        if (plane != null)
-
-                        {
-                            plane.MoveTo(PlaneLevel);
-                        }
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
+                    planeOriginX = value;
+                    planeOrigin.X = planeOriginX;
+                    NotifyPropertyChanged();
+                    UpdatePlaneDisplay();
                 }
             }
         }
 
-        public String PlaneLevelToolTip
+        public double PlaneOriginY
         {
             get
             {
-                return $"Plane Level must be in the range {minplaneLevel} to {maxplaneLevel}";
+                return planeOriginY;
             }
-        }
-
-        public override bool ShowAxies
-        {
-            get
-            {
-                return showAxies;
-            }
-
             set
             {
-                if (showAxies != value)
+                if (planeOriginY != value)
                 {
-                    showAxies = value;
+                    planeOriginY = value;
+                    planeOrigin.Y = planeOriginY;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    UpdatePlaneDisplay();
                 }
             }
         }
 
-        public override bool ShowFloor
+        public double PlaneOriginZ
         {
             get
             {
-                return showFloor;
+                return planeOriginZ;
             }
-
             set
             {
-                if (showFloor != value)
+                if (planeOriginZ != value)
                 {
-                    showFloor = value;
+                    planeOriginZ = value;
+                    planeOrigin.Z = PlaneOriginZ;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    UpdatePlaneDisplay();
                 }
             }
         }
@@ -176,7 +165,7 @@ namespace Barnacle.Dialogs
 
         protected OctTree CreateOctree(Point3D minPoint, Point3D maxPoint)
         {
-           return new OctTree(Vertices, minPoint, maxPoint, 200);            
+            return new OctTree(Vertices, minPoint, maxPoint, 200);
         }
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
@@ -187,35 +176,13 @@ namespace Barnacle.Dialogs
 
         protected override void Redisplay()
         {
-            if (ModelGroup != null)
+            Viewer.MultiModels.Children.Clear();
+            Viewer.MultiModels.Children.Add(GetModel());
+            if (plane != null && plane.PlaneMesh != null)
             {
-                ModelGroup.Children.Clear();
-
-                if (floor != null && ShowFloor)
-                {
-                    ModelGroup.Children.Add(floor.FloorMesh);
-                    foreach (GeometryModel3D m in grid.Group.Children)
-                    {
-                        ModelGroup.Children.Add(m);
-                    }
-                }
-
-                if (axies != null && ShowAxies)
-                {
-                    foreach (GeometryModel3D m in axies.Group.Children)
-                    {
-                        ModelGroup.Children.Add(m);
-                    }
-                }
-
-                GeometryModel3D gm = GetModel();
-                ModelGroup.Children.Add(gm);
-
-                if (plane != null && plane.PlaneMesh != null)
-                {
-                    ModelGroup.Children.Add(plane.PlaneMesh);
-                }
+                Viewer.MultiModels.Children.Add(plane.PlaneMesh);
             }
+            Viewer.Redisplay();
         }
 
         protected override void Viewport_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
@@ -254,7 +221,7 @@ namespace Barnacle.Dialogs
                     double dy = pn.Y - oldMousePos.Y;
                     if (planeSelected)
                     {
-                        double ny = PlaneLevel - (dy / dpi.PixelsPerInchY * 25.4);
+                        double ny = planeOrigin.Y - (dy / dpi.PixelsPerInchY * 25.4);
                         if (ny < 0)
                         {
                             ny = 0;
@@ -263,7 +230,7 @@ namespace Barnacle.Dialogs
                         {
                             ny = Height;
                         }
-                        PlaneLevel = ny;
+                        planeOrigin.Y = ny;
                     }
                     else
                     {
@@ -276,21 +243,40 @@ namespace Barnacle.Dialogs
             }
         }
 
-     
+        private void HorizontalButton_Click(object sender, RoutedEventArgs e)
+        {
+            plane = new HorizontalPlane(bounds.Width + 20, bounds.Depth + 20);
+            planeVector = new Vector3D(0, 1, 0);
+            plane.MoveTo(planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
+            UpdateDisplay();
+        }
+
+        private void VerticalButton_Click(object sender, RoutedEventArgs e)
+        {
+            plane = new VerticalPlane(bounds.Width + 20, bounds.Depth + 20);
+            planeVector = new Vector3D(1, 0, 0);
+            plane.MoveTo(planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
+            UpdateDisplay();
+        }
+
+        private void DistalButton_Click(object sender, RoutedEventArgs e)
+        {
+            plane = new DistalPlane(bounds.Width + 20, bounds.Depth + 20);
+            planeVector = new Vector3D(0, 0, 1);
+            plane.MoveTo(planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
+            UpdateDisplay();
+        }
 
         private void CutButton_Click(object sender, RoutedEventArgs e)
         {
             RestoreOriginal();
-            PlaneCutter cutter = new PlaneCutter(Vertices, Faces, planeLevel);
+            planeEquation = new PlaneEquation(planeVector.X, planeVector.Y, planeVector.Z, planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
+            //   OrthogonalPlaneCutter cutter = new OrthogonalPlaneCutter(Vertices, Faces, planeLevel);
+            PlaneCutter cutter = new PlaneCutter(Vertices, Faces, planeEquation);
             cutter.Cut();
 
             UpdateDisplay();
         }
-
-        private void GenerateShape()
-        {
-        }
-
 
         private void ResetDefaults(object sender, RoutedEventArgs e)
         {
@@ -322,8 +308,9 @@ namespace Barnacle.Dialogs
         private void SetDefaults()
         {
             loaded = false;
-            PlaneLevel = 0;
-
+            PlaneOriginX = 0;
+            PlaneOriginY = 0;
+            PlaneOriginZ = 0;
             loaded = true;
         }
 
@@ -341,9 +328,80 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void UpdatePlaneDisplay()
+        {
+            if (plane != null)
+            {
+                plane.MoveTo(planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
+                UpdateDisplay();
+            }
+        }
+
+        private void Viewer_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Up:
+                    {
+                        if (Keyboard.Modifiers == ModifierKeys.Control)
+                        {
+                            PlaneOriginZ -= 1.0;
+                        }
+                        else
+                        {
+                            PlaneOriginY += 1.0;
+                        }
+
+                        e.Handled = true;
+                    }
+                    break;
+
+                case Key.Down:
+                    {
+                        if (Keyboard.Modifiers == ModifierKeys.Control)
+                        {
+                            PlaneOriginZ += 1.0;
+                        }
+                        else
+                        {
+                            PlaneOriginY -= 1.0;
+                        }
+
+                        e.Handled = true;
+                    }
+                    break;
+
+                case Key.Left:
+                    {
+                        PlaneOriginX -= 1.0;
+                        e.Handled = true;
+                    }
+                    break;
+
+                case Key.Right:
+                    {
+                        PlaneOriginX += 1.0;
+                        e.Handled = true;
+                    }
+                    break;
+            }
+            if (e.Handled)
+            {
+                Viewer.Focus();
+            }
+        }
+
         private void Viewport_MouseUp(object sender, System.Windows.Input.MouseEventArgs e)
         {
             planeSelected = true;
+        }
+
+        private void viewport3D1_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+        }
+
+        private void viewport3D1_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -351,7 +409,8 @@ namespace Barnacle.Dialogs
             WarningText = "";
 
             UpdateCameraPos();
-            MyModelGroup.Children.Clear();
+            Viewer.Clear();
+            Viewer.KeyUp += Viewer_KeyUp;
             loaded = true;
             originalBounds = new Bounds3D();
             originalBounds.Zero();
@@ -369,8 +428,8 @@ namespace Barnacle.Dialogs
 
             RestoreOriginal();
 
-            plane = new HorizontalPlane(planeLevel, bounds.Width + 20, bounds.Depth + 20);
-            plane.MoveTo(PlaneLevel);
+            plane = new HorizontalPlane(bounds.Width + 20, bounds.Depth + 20);
+            plane.MoveTo(planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
             UpdateDisplay();
         }
     }

@@ -8,7 +8,7 @@ using System.Windows.Media;
 
 namespace Barnacle.Models
 {
-    internal class Plane
+    internal class PlaneControl
     {
         protected Color c1;
         protected Color c2;
@@ -19,12 +19,14 @@ namespace Barnacle.Models
         protected Point3DCollection points;
         protected double width;
 
-        internal Plane(double planeLevel, double width, double depth, bool invertColours = false)
+        internal PlaneControl(double width, double depth, bool invertColours = false)
         {
             points = new Point3DCollection(20);
-            SetLocation(planeLevel);
-            int[] indices = new int[] { 0, 1, 2, 0, 2, 3, 4, 5, 7, 5, 6, 7, 8, 9, 11, 9, 10, 11, 12, 13, 15, 13,
-       14, 15, 16, 17, 19, 17, 18, 19 };
+            SetLocation(0, 0, 0);
+            //           int[] indices = new int[] { 0, 1, 2, 0, 2, 3, 4, 5, 7, 5, 6, 7, 8, 9, 11, 9, 10, 11, 12, 13, 15, 13,
+            //      14, 15, 16, 17, 19, 17, 18, 19 };
+
+            int[] indices = new int[] { 0, 1, 2, 0, 2, 3 };
 
             faces = new Int32Collection(indices);
             this.width = width;
@@ -84,13 +86,13 @@ namespace Barnacle.Models
             return gm;
         }
 
-        public void MoveTo(double y)
+        public void MoveTo(double x, double y, double z)
         {
-            SetLocation(y);
+            SetLocation(x, y, z);
             planeMesh = CreateMesh(c1, c2);
         }
 
-        public virtual void SetLocation(double v)
+        public virtual void SetLocation(double x, double y, double z)
         {
         }
 
