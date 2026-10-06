@@ -6,6 +6,7 @@
     xmlns:local="clr-namespace:Barnacle.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:v="clr-namespace:Barnacle.UserControls.ObjectViewer"
+    xmlns:w="clr-namespace:Barnacle.UserControls"
     Title=""
     Width="1000"
     Height="450"
@@ -39,10 +40,8 @@
                     <RowDefinition Height="25" />
                     <RowDefinition Height="25" />
                     <RowDefinition Height="25" />
-                    <RowDefinition Height="25" />
-                    <RowDefinition Height="25" />
-                    <RowDefinition Height="25" />
-                </Grid.RowDefinitions>
+                    <RowDefinition />
+                            </Grid.RowDefinitions>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
                     <Label Width="100" VerticalAlignment="Center">Plane Origin</Label>
 
@@ -100,18 +99,15 @@
                         Click="UncutButton_Click"
                         Content="UnCut" />
                 </StackPanel>
-                <StackPanel Grid.Row="4" Orientation="Horizontal" />
-                <StackPanel Grid.Row="5" Orientation="Horizontal" />
-                <StackPanel Grid.Row="6" Orientation="Horizontal" />
-                <StackPanel Grid.Row="7" Orientation="Horizontal" />
-                <StackPanel Grid.Row="8" Orientation="Horizontal" />
-                <StackPanel Grid.Row="9" Orientation="Horizontal">
+                <StackPanel Grid.Row="6" Orientation="Horizontal">
+
                     <Label
                         VerticalAlignment="Center"
                         Content="{Binding WarningText}"
                         FontSize="18"
                         Foreground="{StaticResource WarningColour}" />
                 </StackPanel>
+                <w:PlaneDirectionControl Grid.Row="7" Grid.RowSpan="4" Width="200" Height="200" x:Name="PlaneDirection"/>
             </Grid>
         </Border>
         <GridSplitter

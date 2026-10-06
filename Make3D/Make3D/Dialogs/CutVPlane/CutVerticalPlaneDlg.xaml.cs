@@ -87,7 +87,7 @@ namespace Barnacle.Dialogs
                         if (plane != null)
 
                         {
-                            plane.MoveTo(PlaneLevel,0,0);
+                            plane.MoveTo(PlaneLevel, 0, 0);
                         }
                         NotifyPropertyChanged();
                         UpdateDisplay();
@@ -361,10 +361,6 @@ namespace Barnacle.Dialogs
             octTree = CreateOctree(originalBounds.Lower, originalBounds.Upper);
 
             RestoreOriginal();
-            PlaneLevel = bounds.Lower.X;
-            plane = new VerticalPlane( bounds.Height, bounds.Depth + 20);
-            plane.MoveTo(PlaneLevel,0,0);
-            UpdateDisplay();
         }
     }
 }

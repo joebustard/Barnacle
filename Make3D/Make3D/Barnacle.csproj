@@ -60,6 +60,9 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.161\lib\net462\Microsoft.Xaml.Behaviors.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -389,6 +392,9 @@
     <Compile Include="UserControls\FlexiPathEditorControl\RectangularGrid.cs" />
     <Compile Include="UserControls\ObjectViewer\ObjectView.xaml.cs">
       <DependentUpon>ObjectView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\PlaneDirectionControl.xaml.cs">
+      <DependentUpon>PlaneDirectionControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\SideBevelSelector\SideBevelSelector.xaml.cs">
       <DependentUpon>SideBevelSelector.xaml</DependentUpon>
@@ -931,6 +937,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\ObjectViewer\ObjectView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\PlaneDirectionControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1557,6 +1567,10 @@
     <Resource Include="Images\Buttons\Spinner.png" />
     <Resource Include="Images\Buttons\MeshIslands.png" />
     <Resource Include="Images\Buttons\editlengthandheight.png" />
+    <Resource Include="Images\Buttons\RotateUp.png" />
+    <Resource Include="Images\Buttons\RotateDown.png" />
+    <Resource Include="Images\Buttons\RotateLeft.png" />
+    <Resource Include="Images\Buttons\RotateRightpng.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

@@ -15,6 +15,7 @@
 // *                                                                         *
 // *************************************************************************
 
+using MathsLib;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -22,29 +23,14 @@ namespace Barnacle.Models
 {
     internal class HorizontalPlane : PlaneControl
     {
-        internal HorizontalPlane(double width, double depth) : base(width, depth)
+        internal HorizontalPlane(PlaneEquation planeEquation, double radius) : base(planeEquation, radius)
         {
         }
 
-        public override void SetLocation(double ox, double oy, double oz)
+        public override void MoveTo(double x, double y, double z)
         {
-            double x = width / 2; // floor width / 2
-            double y = oy;
-            double z = depth / 2; // floor length / 2
-       
-            points = new Point3DCollection(20);
-            Point3D point;
-            //top of the floor
-            point = new Point3D(-x, y, z);// HorizontalPlane Index - 0
-            points.Add(point);
-            point = new Point3D(x, y, z);// HorizontalPlane Index - 1
-            points.Add(point);
-            point = new Point3D(x, y, -z);// HorizontalPlane Index - 2
-            points.Add(point);
-            point = new Point3D(-x, y, -z);// HorizontalPlane Index - 3
-            points.Add(point);
-            return;
-           
+            equation.Origin.Y = y;
+            base.MoveTo(equation.Origin.X, equation.Origin.Y, equation.Origin.Z);
         }
     }
 }

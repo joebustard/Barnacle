@@ -1,0 +1,84 @@
+﻿<UserControl
+    x:Class="Barnacle.UserControls.PlaneDirectionControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="300"
+    d:DesignWidth="300"
+    mc:Ignorable="d">
+
+    <Border Style="{StaticResource ControlBorder}">
+        <Grid Background="#FFF3F6D5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="2*" />
+            </Grid.RowDefinitions>
+            <Image
+                x:Name="DownButton"
+                Grid.Row="2"
+                Grid.Column="1"
+                MouseDown="DownButton_MouseDown"
+                MouseUp="DownButton_MouseUp"
+                Source="/Images/Buttons/RotateDown.png"
+                Stretch="Fill">
+                <Image.RenderTransform>
+                    <ScaleTransform x:Name="DownScaleTransform" ScaleX="1.0" ScaleY="1.0" />
+                </Image.RenderTransform>
+            </Image>
+
+
+            <Image
+                x:Name="LeftButton"
+                Grid.Row="1"
+                Grid.Column="2"
+                MouseDown="LeftButton_MouseDown"
+                MouseUp="LeftButton_MouseUp"
+                Source="/Images/Buttons/RotateLeft.png"
+                Stretch="Fill">
+                <Image.RenderTransform>
+                    <ScaleTransform x:Name="LeftScaleTransform" ScaleX="1.0" ScaleY="1.0" />
+                </Image.RenderTransform>
+
+            </Image>
+
+
+            <Image
+                x:Name="RightButton"
+                Grid.Row="1"
+                Grid.Column="0"
+                MouseDown="RightButton_MouseDown"
+                MouseUp="RightButton_MouseUp"
+                Source="/Barnacle;component/Images/Buttons/RotateRightpng.png"
+                Stretch="Fill">
+
+                <Image.RenderTransform>
+                    <ScaleTransform x:Name="RightScaleTransform" ScaleX="1.0" ScaleY="1.0" />
+                </Image.RenderTransform>
+            </Image>
+
+
+            <Image
+                x:Name="UpButton"
+                Grid.Row="0"
+                Grid.Column="1"
+                MouseDown="UpButton_MouseDown"
+                MouseUp="UpButton_MouseUp"
+                OpacityMask="Black"
+                Source="/Images/Buttons/RotateUp.png"
+                Stretch="Fill">
+                <Image.RenderTransform>
+                    <ScaleTransform x:Name="UpScaleTransform" ScaleX="1.0" ScaleY="1.0" />
+                </Image.RenderTransform>
+            </Image>
+        </Grid>
+    </Border>
+
+</UserControl>

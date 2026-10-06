@@ -17,9 +17,11 @@
 
 using Barnacle.Models;
 using Barnacle.Object3DLib;
+using Barnacle.UserControls;
 using MakerLib.PlaneCutter;
 using MathsLib;
 using OctTreeLib;
+using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -56,12 +58,81 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "CutHorizontalPlane";
             DataContext = this;
-
             loaded = false;
             planeSelected = false;
             planeVector = new Vector3D(0, 1, 0);
             planeOrigin = new Point3D(0, 0, 0);
             dpi = VisualTreeHelper.GetDpi(this);
+            PlaneDirection.OnUpdated += PlaneDirectionUpdated;
+        }
+
+        private void PlaneDirectionUpdated(PlaneDirectionControl.Direction direction)
+        {
+            PolarCoordinate pc = new PolarCoordinate(0, 0, 1);
+            TestPolarCoordinate(10, 10, 10);
+            TestPolarCoordinate(-4, -3, -2);
+            TestPolarCoordinate(17, 18, -1.10);
+            double dp = 0.02;
+            pc.SetPoint3D(new Point3D(planeVector.X, planeVector.Y, planeVector.Z));
+            switch (direction)
+            {
+                case PlaneDirectionControl.Direction.Up:
+                    {
+                        pc.Phi += dp;
+                    }
+                    break;
+
+                case PlaneDirectionControl.Direction.Down:
+                    {
+                        pc.Phi -= dp;
+                    }
+                    break;
+
+                case PlaneDirectionControl.Direction.Right:
+                    {
+                        pc.Theta += dp;
+                    }
+                    break;
+
+                case PlaneDirectionControl.Direction.Left:
+                    {
+                        pc.Theta -= dp;
+                    }
+                    break;
+            }
+            Point3D np = pc.GetPoint3D();
+            planeVector.X = np.X;
+            planeVector.Y = np.Y;
+            planeVector.Z = np.Z;
+            planeEquation = new PlaneEquation(planeVector.X, planeVector.Y, planeVector.Z, planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
+            plane = new PlaneControl(planeEquation, plane.Radius);
+            UpdatePlaneDisplay();
+        }
+
+        private double Degs(double v)
+        {
+            return v * 180.0 / Math.PI;
+        }
+
+        private void TestPolarCoordinate(int v1, int v2, double v3)
+        {
+            double lim = 1.0e-7;
+            PolarCoordinate pc = new PolarCoordinate(0, 0, 1);
+            pc.SetPoint3D(new Point3D(v1, v2, v3));
+            System.Diagnostics.Debug.WriteLine($"radius {pc.Rho},  phi {Degs(pc.Phi)} theta {Degs(pc.Theta)}");
+            Point3D p = pc.GetPoint3D();
+            if (Math.Abs(p.X - v1) > lim)
+            {
+                System.Diagnostics.Debug.WriteLine($"v1 error {Math.Abs(p.X - v1)}");
+            }
+            if (Math.Abs(p.Y - v2) > lim)
+            {
+                System.Diagnostics.Debug.WriteLine($"v2 error {Math.Abs(p.Y - v2)}");
+            }
+            if (Math.Abs(p.Z - v3) > lim)
+            {
+                System.Diagnostics.Debug.WriteLine($"v3 error {Math.Abs(p.Z - v3)}");
+            }
         }
 
         public Int32Collection OriginalFaces
@@ -245,33 +316,48 @@ namespace Barnacle.Dialogs
 
         private void HorizontalButton_Click(object sender, RoutedEventArgs e)
         {
-            plane = new HorizontalPlane(bounds.Width + 20, bounds.Depth + 20);
-            planeVector = new Vector3D(0, 1, 0);
+            CreateHorizontalPlaneControl();
+        }
+
+        private void CreateHorizontalPlaneControl()
+        {
+            planeEquation = new PlaneEquation(0, 1, 0, planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
+            double radius = Math.Max(bounds.Width, bounds.Depth) + 20;
+            radius /= 2;
+            plane = new HorizontalPlane(planeEquation, radius);
+            planeVector = new Vector3D(planeEquation.A, planeEquation.B, planeEquation.C);
             plane.MoveTo(planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
+            RestoreOriginal();
             UpdateDisplay();
         }
 
         private void VerticalButton_Click(object sender, RoutedEventArgs e)
         {
-            plane = new VerticalPlane(bounds.Width + 20, bounds.Depth + 20);
-            planeVector = new Vector3D(1, 0, 0);
+            planeEquation = new PlaneEquation(1, 0, 0, planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
+            double radius = Math.Max(bounds.Height, bounds.Depth) + 20;
+            radius /= 2;
+            plane = new HorizontalPlane(planeEquation, radius);
+            planeVector = new Vector3D(planeEquation.A, planeEquation.B, planeEquation.C);
             plane.MoveTo(planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
+            RestoreOriginal();
             UpdateDisplay();
         }
 
         private void DistalButton_Click(object sender, RoutedEventArgs e)
         {
-            plane = new DistalPlane(bounds.Width + 20, bounds.Depth + 20);
-            planeVector = new Vector3D(0, 0, 1);
+            planeEquation = new PlaneEquation(0, 0, 1, planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
+            double radius = Math.Max(bounds.Width, bounds.Height) + 20;
+            radius /= 2;
+            plane = new DistalPlane(planeEquation, radius);
+            planeVector = new Vector3D(planeEquation.A, planeEquation.B, planeEquation.C);
             plane.MoveTo(planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
+            RestoreOriginal();
             UpdateDisplay();
         }
 
         private void CutButton_Click(object sender, RoutedEventArgs e)
         {
             RestoreOriginal();
-            planeEquation = new PlaneEquation(planeVector.X, planeVector.Y, planeVector.Z, planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
-            //   OrthogonalPlaneCutter cutter = new OrthogonalPlaneCutter(Vertices, Faces, planeLevel);
             PlaneCutter cutter = new PlaneCutter(Vertices, Faces, planeEquation);
             cutter.Cut();
 
@@ -427,10 +513,7 @@ namespace Barnacle.Dialogs
             octTree = CreateOctree(originalBounds.Lower, originalBounds.Upper);
 
             RestoreOriginal();
-
-            plane = new HorizontalPlane(bounds.Width + 20, bounds.Depth + 20);
-            plane.MoveTo(planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
-            UpdateDisplay();
+            CreateHorizontalPlaneControl();
         }
     }
 }

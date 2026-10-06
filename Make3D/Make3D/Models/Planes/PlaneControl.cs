@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 using System.Windows.Media;
+using MathsLib;
 
 namespace Barnacle.Models
 {
@@ -18,28 +19,15 @@ namespace Barnacle.Models
         protected GeometryModel3D planeMesh;
         protected Point3DCollection points;
         protected double width;
+        public PlaneEquation equation;
+        public double Radius;
+        public bool InvertColours;
 
-        internal PlaneControl(double width, double depth, bool invertColours = false)
+        internal PlaneControl(PlaneEquation equation, double radius, bool invertColours = false)
         {
-            points = new Point3DCollection(20);
-            SetLocation(0, 0, 0);
-            //           int[] indices = new int[] { 0, 1, 2, 0, 2, 3, 4, 5, 7, 5, 6, 7, 8, 9, 11, 9, 10, 11, 12, 13, 15, 13,
-            //      14, 15, 16, 17, 19, 17, 18, 19 };
-
-            int[] indices = new int[] { 0, 1, 2, 0, 2, 3 };
-
-            faces = new Int32Collection(indices);
-            this.width = width;
-            this.depth = depth;
-            c1 = Colors.LightGreen;
-            c2 = Colors.Red;
-            if (invertColours)
-            {
-                c2 = Colors.LightGreen;
-                c1 = Colors.Red;
-            }
-
-            planeMesh = CreateMesh(c1, c2);
+            this.equation = equation;
+            this.Radius = radius;
+            this.InvertColours = invertColours;
         }
 
         public Int32Collection Indices
@@ -75,25 +63,55 @@ namespace Barnacle.Models
             gm.Geometry = fl;
 
             DiffuseMaterial mt = new DiffuseMaterial();
-            mt.Color = Colors.LightGreen;
+            mt.Color = c1;
             mt.Brush = new SolidColorBrush(c1);
             gm.Material = mt;
 
             DiffuseMaterial mtb = new DiffuseMaterial();
-            mtb.Color = Colors.Red;
+            mtb.Color = c2;
             mtb.Brush = new SolidColorBrush(c2);
             gm.BackMaterial = mtb;
             return gm;
         }
 
-        public void MoveTo(double x, double y, double z)
+        public virtual void MoveTo(double x, double y, double z)
         {
-            SetLocation(x, y, z);
+            equation.Origin.X = x;
+            equation.Origin.Y = y;
+            equation.Origin.Z = z;
+            CreateShape();
             planeMesh = CreateMesh(c1, c2);
         }
 
-        public virtual void SetLocation(double x, double y, double z)
+        public void CreateShape()
         {
+            int numberOfPoints = 20;
+            points = equation.GetPointsOnPlane(Radius, numberOfPoints);
+            points.Add(new Point3D(equation.Origin.X, equation.Origin.Y, equation.Origin.Z));
+            int cp = numberOfPoints;
+            faces = new Int32Collection();
+            for (int i = 0; i < numberOfPoints; i++)
+            {
+                int j = i + 1;
+                if (j == numberOfPoints)
+                {
+                    j = 0;
+                }
+                faces.Add(i);
+                faces.Add(j);
+                faces.Add(cp);
+            }
+            this.width = Radius;
+            this.depth = Radius;
+            c1 = Colors.LightGreen;
+            c2 = Colors.Red;
+            if (InvertColours)
+            {
+                c2 = Colors.LightGreen;
+                c1 = Colors.Red;
+            }
+
+            planeMesh = CreateMesh(c1, c2);
         }
 
         internal bool Matches(GeometryModel3D geo)

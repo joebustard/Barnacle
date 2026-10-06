@@ -15,6 +15,7 @@
 // *                                                                         *
 // *************************************************************************
 
+using MathsLib;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -22,64 +23,14 @@ namespace Barnacle.Models
 {
     internal class DistalPlane : PlaneControl
     {
-        internal DistalPlane(double width, double depth) : base(width, depth, true)
+        internal DistalPlane(PlaneEquation planeEquation, double radius) : base(planeEquation, radius)
         {
         }
 
-        public override void SetLocation(double ox, double oy, double oz)
+        public override void MoveTo(double x, double y, double z)
         {
-            double x = width / 2; // floor width / 2
-            double y = depth / 2;
-            double z = oz; // floor length / 2
-            double thick = -.1; // give the floor some depth so it's not a 2 dimensional plane
-
-            points = new Point3DCollection(20);
-            Point3D point;
-
-            point = new Point3D(-x, y, z);// DistalPnae Index - 0
-            points.Add(point);
-            point = new Point3D(x, y, z);// DistalPnae Index - 1
-            points.Add(point);
-            point = new Point3D(x, -y, z);// DistalPnae Index - 2
-            points.Add(point);
-            point = new Point3D(-x, -y, z);// DistalPnae Index - 3
-            points.Add(point);
-            return;
-            point = new Point3D(-x, y, z - thick);// DistalPnae Index - 4
-            points.Add(point);
-            point = new Point3D(x, y, z - thick);// DistalPnae Index - 5
-            points.Add(point);
-            point = new Point3D(x, -y, z - thick);// DistalPnae Index - 6
-            points.Add(point);
-            point = new Point3D(-x, -y, z - thick);// DistalPnae Index - 7
-            points.Add(point);
-            //right side
-            point = new Point3D(x, y, z);// DistalPnae Index - 8
-            points.Add(point);
-            point = new Point3D(x, y, z - thick);// DistalPnae Index - 9
-            points.Add(point);
-            point = new Point3D(x, -y, z - thick);// DistalPnae Index - 10
-            points.Add(point);
-            point = new Point3D(x, -y, z);// DistalPnae Index - 11
-            points.Add(point);
-            //back side
-            point = new Point3D(x, y, -z);// DistalPnae Index - 12
-            points.Add(point);
-            point = new Point3D(x, y - thick, -z);// DistalPnae Index - 13
-            points.Add(point);
-            point = new Point3D(-x, y - thick, -z);// DistalPnae Index - 14
-            points.Add(point);
-            point = new Point3D(-x, y, -z);// DistalPnae Index - 15
-            points.Add(point);
-            //left side
-            point = new Point3D(-x, y, -z);// DistalPnae Index - 16
-            points.Add(point);
-            point = new Point3D(-x, y - thick, -z);// DistalPnae Index - 17
-            points.Add(point);
-            point = new Point3D(-x, y - thick, z);// DistalPnae Index - 18
-            points.Add(point);
-            point = new Point3D(-x, y, z);// DistalPnae Index - 19
-            points.Add(point);
+            equation.Origin.Z = z;
+            base.MoveTo(equation.Origin.X, equation.Origin.Y, equation.Origin.Z);
         }
     }
 }
