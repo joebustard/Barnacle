@@ -1571,6 +1571,7 @@
     <Resource Include="Images\Buttons\RotateDown.png" />
     <Resource Include="Images\Buttons\RotateLeft.png" />
     <Resource Include="Images\Buttons\RotateRightpng.png" />
+    <Resource Include="Images\Buttons\rotateaxiscontrol.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

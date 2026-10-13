@@ -1011,10 +1011,10 @@ namespace Barnacle.Dialogs
                     PolarCoordinate pc2 = profile[index2].Clone();
                     PolarCoordinate pc3 = profile[index2].Clone();
                     PolarCoordinate pc4 = profile[index].Clone();
-                    pc1.Theta -= a;
-                    pc2.Theta -= a;
-                    pc3.Theta -= b;
-                    pc4.Theta -= b;
+                    pc1.Azimuth -= a;
+                    pc2.Azimuth -= a;
+                    pc3.Azimuth -= b;
+                    pc4.Azimuth -= b;
 
                     Point3D p1 = pc1.GetPoint3D();
                     Point3D p2 = pc2.GetPoint3D();
@@ -1066,9 +1066,9 @@ namespace Barnacle.Dialogs
                     PolarCoordinate pc2 = profile[index2].Clone();
                     PolarCoordinate pc3 = new PolarCoordinate(0, 0, 0);
                     pc3.SetPoint3D(centreOfProfile);
-                    pc1.Theta -= a;
-                    pc2.Theta -= a;
-                    pc3.Theta -= a;
+                    pc1.Azimuth -= a;
+                    pc2.Azimuth -= a;
+                    pc3.Azimuth -= a;
                     Point3D p1 = pc1.GetPoint3D();
                     Point3D p2 = pc2.GetPoint3D();
                     Point3D p3 = pc3.GetPoint3D();
@@ -1104,9 +1104,9 @@ namespace Barnacle.Dialogs
                     PolarCoordinate pc2 = profile[index2].Clone();
                     PolarCoordinate pc3 = new PolarCoordinate(0, 0, 0);
                     pc3.SetPoint3D(centreOfProfile);
-                    pc1.Theta -= b;
-                    pc2.Theta -= b;
-                    pc3.Theta -= b;
+                    pc1.Azimuth -= b;
+                    pc2.Azimuth -= b;
+                    pc3.Azimuth -= b;
 
                     Point3D p1 = pc1.GetPoint3D();
                     Point3D p2 = pc2.GetPoint3D();

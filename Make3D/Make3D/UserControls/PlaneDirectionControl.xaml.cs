@@ -40,7 +40,13 @@ namespace Barnacle.UserControls
     {
         public enum Direction
         {
-            None, Up, Down, Left, Right
+            None, Up, Down, Left, Right,
+            ZDown,
+            ZUp,
+            XUp,
+            XDown,
+            YUp,
+            YDown
         }
 
         public delegate void PlaneDirectionChanged(Direction direction);
@@ -132,6 +138,42 @@ namespace Barnacle.UserControls
             timer.Stop();
             UpScaleTransform.ScaleX = 1.0;
             UpScaleTransform.ScaleY = 1.0;
+        }
+
+        private void XUp_Click(object sender, RoutedEventArgs e)
+        {
+            selectedDirection = Direction.XUp;
+            ReportChange();
+        }
+
+        private void XDown_Click(object sender, RoutedEventArgs e)
+        {
+            selectedDirection = Direction.XDown;
+            ReportChange();
+        }
+
+        private void YUp_Click(object sender, RoutedEventArgs e)
+        {
+            selectedDirection = Direction.YUp;
+            ReportChange();
+        }
+
+        private void YDown_Click(object sender, RoutedEventArgs e)
+        {
+            selectedDirection = Direction.YDown;
+            ReportChange();
+        }
+
+        private void ZUp_Click(object sender, RoutedEventArgs e)
+        {
+            selectedDirection = Direction.ZUp;
+            ReportChange();
+        }
+
+        private void ZDown_Click(object sender, RoutedEventArgs e)
+        {
+            selectedDirection = Direction.ZDown;
+            ReportChange();
         }
     }
 }

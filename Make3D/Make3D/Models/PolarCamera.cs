@@ -88,7 +88,7 @@ namespace Barnacle.Models
             set
             {
                 distance = value;
-                polarPos.Rho = distance;
+                polarPos.Radius = distance;
                 ConvertPolarTo3D();
             }
         }
@@ -220,8 +220,8 @@ namespace Barnacle.Models
             }
             if (Math.Abs(dt) >= 0.001 || Math.Abs(dp) >= 0.001)
             {
-                polarPos.Theta += dt;
-                polarPos.Phi += dp;
+                polarPos.Azimuth += dt;
+                polarPos.Elevation += dp;
 
                 ConvertPolarTo3D();
             }
@@ -234,9 +234,9 @@ namespace Barnacle.Models
                 try
                 {
                     StreamReader sw = new StreamReader(fileName);
-                    polarPos.Phi = Convert.ToDouble(sw.ReadLine());
-                    polarPos.Theta = Convert.ToDouble(sw.ReadLine());
-                    polarPos.Rho = Convert.ToDouble(sw.ReadLine());
+                    polarPos.Elevation = Convert.ToDouble(sw.ReadLine());
+                    polarPos.Azimuth = Convert.ToDouble(sw.ReadLine());
+                    polarPos.Radius = Convert.ToDouble(sw.ReadLine());
                     ConvertPolarTo3D();
                     sw.Close();
                 }
@@ -253,8 +253,8 @@ namespace Barnacle.Models
 
         internal void RotateDegrees(double dt, double dp)
         {
-            polarPos.Theta += (dt * Math.PI) / 180.0;
-            polarPos.Phi += (dp * Math.PI) / 180.0;
+            polarPos.Azimuth += (dt * Math.PI) / 180.0;
+            polarPos.Elevation += (dp * Math.PI) / 180.0;
             ConvertPolarTo3D();
         }
 
@@ -263,9 +263,9 @@ namespace Barnacle.Models
             try
             {
                 StreamWriter sw = new StreamWriter(fileName);
-                sw.WriteLine($"{polarPos.Phi}");
-                sw.WriteLine($"{polarPos.Theta}");
-                sw.WriteLine($"{polarPos.Rho}");
+                sw.WriteLine($"{polarPos.Elevation}");
+                sw.WriteLine($"{polarPos.Azimuth}");
+                sw.WriteLine($"{polarPos.Radius}");
                 sw.Close();
             }
             catch (Exception e)
@@ -276,33 +276,33 @@ namespace Barnacle.Models
 
         internal void Zoom(double v)
         {
-            double d = polarPos.Rho * v / 100;
-            if (polarPos.Rho - d > 0)
+            double d = polarPos.Radius * v / 100;
+            if (polarPos.Radius - d > 0)
             {
-                polarPos.Rho -= d;
+                polarPos.Radius -= d;
             }
-            distance = polarPos.Rho;
+            distance = polarPos.Radius;
             ConvertPolarTo3D();
             NotificationManager.Notify("CameraMoved", null);
         }
 
         private void ConvertPolarTo3D()
         {
-            double x = polarPos.Rho * Math.Sin(polarPos.Phi) * Math.Cos(polarPos.Theta);
-            double z = polarPos.Rho * Math.Sin(polarPos.Phi) * Math.Sin(polarPos.Theta);
-            double y = polarPos.Rho * Math.Cos(polarPos.Phi);
+            double x = polarPos.Radius * Math.Sin(polarPos.Elevation) * Math.Cos(polarPos.Azimuth);
+            double z = polarPos.Radius * Math.Sin(polarPos.Elevation) * Math.Sin(polarPos.Azimuth);
+            double y = polarPos.Radius * Math.Cos(polarPos.Elevation);
             cameraPos = new Point3D(x + polarOrigin.X, y + polarOrigin.Y, z + polarOrigin.Z);
-            distance = polarPos.Rho;
+            distance = polarPos.Radius;
             NotificationManager.Notify("CameraMoved", null);
             SetOrientation();
         }
 
         private void Copy(PolarCoordinate p)
         {
-            polarPos.Phi = p.Phi;
-            polarPos.Theta = p.Theta;
-            polarPos.Rho = p.Rho;
-            distance = polarPos.Rho;
+            polarPos.Elevation = p.Elevation;
+            polarPos.Azimuth = p.Azimuth;
+            polarPos.Radius = p.Radius;
+            distance = polarPos.Radius;
         }
 
         private void Init()
@@ -327,35 +327,35 @@ namespace Barnacle.Models
         private void SetOrientation()
         {
             horizontalOrientation = Orientations.Unknown;
-            if ((polarPos.Theta >= 0.76) && (polarPos.Theta < 2.35))
+            if ((polarPos.Azimuth >= 0.76) && (polarPos.Azimuth < 2.35))
             {
                 // Front
                 horizontalOrientation = Orientations.Front;
             }
-            if ((polarPos.Theta >= 2.35) && (polarPos.Theta < 4))
+            if ((polarPos.Azimuth >= 2.35) && (polarPos.Azimuth < 4))
             {
                 // Left
                 horizontalOrientation = Orientations.Left;
             }
 
-            if ((polarPos.Theta >= 4) && (polarPos.Theta < 5.54))
+            if ((polarPos.Azimuth >= 4) && (polarPos.Azimuth < 5.54))
             {
                 // Back
                 horizontalOrientation = Orientations.Back;
             }
-            if ((polarPos.Theta >= 5.54) && (polarPos.Theta <= 6.2831856))
+            if ((polarPos.Azimuth >= 5.54) && (polarPos.Azimuth <= 6.2831856))
             {
                 // Right
                 horizontalOrientation = Orientations.Right;
             }
-            if ((polarPos.Theta >= 0) && (polarPos.Theta < 0.76))
+            if ((polarPos.Azimuth >= 0) && (polarPos.Azimuth < 0.76))
             {
                 // Right
                 horizontalOrientation = Orientations.Right;
             }
 
             verticalOrientation = Orientations.Unknown;
-            if ((polarPos.Phi >= 0) && (polarPos.Phi <= piBy2))
+            if ((polarPos.Elevation >= 0) && (polarPos.Elevation <= piBy2))
             {
                 verticalOrientation = Orientations.Top;
             }

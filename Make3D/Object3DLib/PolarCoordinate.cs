@@ -6,77 +6,77 @@ namespace Barnacle.Object3DLib
     public class PolarCoordinate
     {
         private const double TwoPI = Math.PI * 2.0;
-        private double phi;
-        private double theta;
+        private double elevation;
+        private double azimuth;
 
         public PolarCoordinate(double t, double p, double r)
         {
-            Theta = t;
-            Phi = p;
-            Rho = r;
+            Azimuth = t;
+            Elevation = p;
+            Radius = r;
         }
 
-        public double Phi
+        public double Elevation
         {
             get
             {
-                return phi;
+                return elevation;
             }
             set
             {
-                phi = value;
-                if (phi < 0)
+                elevation = value;
+                if (elevation < 0)
                 {
-                    phi = phi + TwoPI;
+                    elevation = elevation + TwoPI;
                 }
-                if (phi > TwoPI)
+                if (elevation > TwoPI)
                 {
-                    phi = phi - TwoPI;
+                    elevation = elevation - TwoPI;
                 }
             }
         }
 
-        public double Rho
+        public double Radius
         {
             get; set;
         }
 
-        public double Theta
+        public double Azimuth
         {
             get
             {
-                return theta;
+                return azimuth;
             }
             set
             {
-                theta = value;
-                if (theta < 0)
+                azimuth = value;
+                if (azimuth < 0)
                 {
-                    theta = theta + TwoPI;
+                    azimuth = azimuth + TwoPI;
                 }
-                if (theta > TwoPI)
+                if (azimuth > TwoPI)
                 {
-                    theta = theta - TwoPI;
+                    azimuth = azimuth - TwoPI;
                 }
             }
         }
 
         public PolarCoordinate Clone()
         {
-            PolarCoordinate res = new PolarCoordinate(Theta, Phi, Rho);
+            PolarCoordinate res = new PolarCoordinate(Azimuth, Elevation, Radius);
             return res;
         }
 
         public void Dump()
         {
-            System.Diagnostics.Debug.WriteLine($"Phi {Phi:F3} Theta {Theta:F3} Rho {Rho:F3}");
+            System.Diagnostics.Debug.WriteLine($"Elevation {Elevation:F7} Azimuth {Azimuth:F7} Radius {Radius:F7}");
         }
 
         public Point3D GetPoint3D()
         {
-            double x = Rho * Math.Sin(Phi) * Math.Cos(Theta);
-            double z = Rho * Math.Sin(Phi) * Math.Sin(Theta);
-            double y = Rho * Math.Cos(Phi);
+            double x = Radius * Math.Sin(Elevation) * Math.Cos(Azimuth);
+            double y = Radius * Math.Sin(Elevation) * Math.Sin(Azimuth);
+            double z = Radius * Math.Cos(Elevation);
             if (Double.IsNaN(x))
             {
                 return (new Point3D(0, 0, 0));
@@ -89,16 +89,17 @@ namespace Barnacle.Object3DLib
 
         public void SetPoint(double x, double y, double z)
         {
-            Rho = Math.Sqrt(x * x + y * y + z * z);
-            Phi = Math.Acos(z / Rho);
-            Theta = Math.Acos(x / Math.Sqrt(x * x + y * y)) * (y < 0 ? -1.0 : 1.0);
+            Radius = Math.Sqrt(x * x + y * y + z * z);
+            Elevation = Math.Acos(z / Radius);
+            Azimuth = Math.Acos(x / Math.Sqrt(x * x + y * y)) * (y < 0 ? -1.0 : 1.0);
         }
 
         public void SetPoint3D(Point3D p)
         {
-            Rho = Math.Sqrt(p.X * p.X + p.Y * p.Y + p.Z * p.Z);
-            Phi = Math.Acos(p.Z / Rho);
-            Theta = Math.Acos(p.X / Math.Sqrt(p.X * p.X + p.Y * p.Y)) * (p.Y < 0 ? -1.0 : 1.0);
+            Radius = Math.Sqrt(p.X * p.X + p.Y * p.Y + p.Z * p.Z);
+            Elevation = Math.Acos(p.Z / Radius);
+            Azimuth = Math.Acos(p.X / Math.Sqrt(p.X * p.X + p.Y * p.Y)) * (p.Y < 0 ? -1.0 : 1.0);
+            // Azimuth = Math.Atan2(p.Z, p.X);
         }
     }
 }

@@ -1407,11 +1407,11 @@
                             VerticalAlignment="Top"
                             Command="{Binding MeshCutCommand}"
                             CommandParameter="H"
-                            Header="Cut H Plane"
+                            Header="Cut or Split Plane"
                             ImageSource="/Barnacle;component/Images/Buttons/CutHPlane.png"
                             IsEnabled="{Binding MeshEditEnabled}"
                             ToolTip="Cut all faces below a horizontal plane." />
-
+<!--
                         <Custom:RibbonMenuItem
                             x:Name="MeshCutVButton"
                             HorizontalAlignment="Stretch"
@@ -1422,7 +1422,7 @@
                             ImageSource="/Barnacle;component/Images/Buttons/CutHPlane.png"
                             IsEnabled="{Binding MeshEditEnabled}"
                             ToolTip="Cut all faces to left of a vertical plane." />
-
+-->
                         <Custom:RibbonMenuItem
                             x:Name="MeshSubdivideButton"
                             HorizontalAlignment="Stretch"

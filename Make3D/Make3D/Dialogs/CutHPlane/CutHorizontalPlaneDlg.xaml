@@ -40,8 +40,12 @@
                     <RowDefinition Height="25" />
                     <RowDefinition Height="25" />
                     <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
                     <RowDefinition />
-                            </Grid.RowDefinitions>
+                </Grid.RowDefinitions>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
                     <Label Width="100" VerticalAlignment="Center">Plane Origin</Label>
 
@@ -60,14 +64,8 @@
                         Margin="8,0,0,0"
                         Text="{Binding PlaneOriginZ}"
                         ToolTip="{Binding PlaneLevelToolTip}" />
-
-                    <Button
-                        Margin="8,0,0,0"
-                        Click="ResetDefaults"
-                        Content="Reset"
-                        ToolTip="Restore parameters to their defaults" />
                 </StackPanel>
-                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
                     <Button
                         x:Name="HorizontalButton"
                         Width="80"
@@ -76,28 +74,56 @@
                     <Button
                         x:Name="VerticalButton"
                         Width="80"
-                        Margin="40,0,0,0"
+                        Margin="40,4,0,0"
                         Click="VerticalButton_Click"
                         Content="Vertical" />
                     <Button
                         x:Name="DistalButton"
                         Width="80"
-                        Margin="40,0,0,0"
+                        Margin="40,4,0,0"
                         Click="DistalButton_Click"
                         Content="Distal" />
+                </StackPanel>
+                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                    <Button
+                        x:Name="Horizontal45Button"
+                        Width="80"
+                        Margin="0,4,0,0"
+                        Click="Horizontal45Button_Click"
+                        Content="Horiz45" />
+                    <Button
+                        x:Name="Vertical45Button"
+                        Width="80"
+                        Margin="40,4,0,0"
+                        Click="Vertical45Button_Click"
+                        Content="Vert 45" />
+                    <Button
+                        x:Name="Distal45Button"
+                        Width="80"
+                        Margin="40,4,0,0"
+                        Click="Distal45Button_Click"
+                        Content="Distal 45" />
                 </StackPanel>
                 <StackPanel Grid.Row="5" Orientation="Horizontal">
                     <Button
                         x:Name="CutButton"
                         Width="80"
+                        Margin="0,4,0,0"
                         Click="CutButton_Click"
                         Content="Cut" />
+
+                    <Button
+                        x:Name="SplitButton"
+                        Width="80"
+                        Margin="40,4,0,0"
+                        Click="SpltButton_Click"
+                        Content="Split" />
                     <Button
                         x:Name="UncutButton"
                         Width="80"
-                        Margin="80,0,0,0"
+                        Margin="40,4,0,0"
                         Click="UncutButton_Click"
-                        Content="UnCut" />
+                        Content="Reset" />
                 </StackPanel>
                 <StackPanel Grid.Row="6" Orientation="Horizontal">
 
@@ -107,7 +133,12 @@
                         FontSize="18"
                         Foreground="{StaticResource WarningColour}" />
                 </StackPanel>
-                <w:PlaneDirectionControl Grid.Row="7" Grid.RowSpan="4" Width="200" Height="200" x:Name="PlaneDirection"/>
+                <w:PlaneDirectionControl
+                    x:Name="PlaneDirection"
+                    Grid.Row="7"
+                    Grid.RowSpan="6"
+                    Width="400"
+                    Height="200" />
             </Grid>
         </Border>
         <GridSplitter
@@ -131,8 +162,7 @@
                 MouseUp="Viewport_MouseUp"
                 Focusable="True"
                 KeyDown="viewport3D1_PreviewKeyDown" PreviewKeyUp="viewport3D1_PreviewKeyUp"
-                MouseWheel="Viewport_MouseWheel" >
-
+                MouseWheel="Viewport_MouseWheel">
 
                 <Viewport3D.Camera>
                     <PerspectiveCamera
@@ -159,7 +189,6 @@
                     </ModelVisual3D.Content>
                 </ModelVisual3D>
             </Viewport3D>
-
         </Border>
         -->
         <Grid Grid.Row="2">

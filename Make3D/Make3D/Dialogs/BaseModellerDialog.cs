@@ -756,10 +756,10 @@ namespace Barnacle.Dialogs
                     PolarCoordinate pc2 = polarProfile[index2].Clone();
                     PolarCoordinate pc3 = polarProfile[index2].Clone();
                     PolarCoordinate pc4 = polarProfile[index].Clone();
-                    pc1.Phi -= a;
-                    pc2.Phi -= a;
-                    pc3.Phi -= b;
-                    pc4.Phi -= b;
+                    pc1.Elevation -= a;
+                    pc2.Elevation -= a;
+                    pc3.Elevation -= b;
+                    pc4.Elevation -= b;
 
                     Point3D p1 = pc1.GetPoint3D();
                     Point3D p2 = pc2.GetPoint3D();
@@ -822,10 +822,10 @@ namespace Barnacle.Dialogs
                     PolarCoordinate pc2 = polarProfile[index2].Clone();
                     PolarCoordinate pc3 = polarProfile[index2].Clone();
                     PolarCoordinate pc4 = polarProfile[index].Clone();
-                    pc1.Theta -= a;
-                    pc2.Theta -= a;
-                    pc3.Theta -= b;
-                    pc4.Theta -= b;
+                    pc1.Azimuth -= a;
+                    pc2.Azimuth -= a;
+                    pc3.Azimuth -= b;
+                    pc4.Azimuth -= b;
 
                     Point3D p1 = pc1.GetPoint3D();
                     Point3D p2 = pc2.GetPoint3D();
@@ -912,9 +912,9 @@ namespace Barnacle.Dialogs
                     PolarCoordinate pc2 = polarProfile[index2].Clone();
                     PolarCoordinate pc3 = new PolarCoordinate(0, 0, 0);
                     pc3.SetPoint3D(centreOfProfile);
-                    pc1.Theta -= sweep;
-                    pc2.Theta -= sweep;
-                    pc3.Theta -= sweep;
+                    pc1.Azimuth -= sweep;
+                    pc2.Azimuth -= sweep;
+                    pc3.Azimuth -= sweep;
 
                     Point3D p1 = pc1.GetPoint3D();
                     Point3D p2 = pc2.GetPoint3D();

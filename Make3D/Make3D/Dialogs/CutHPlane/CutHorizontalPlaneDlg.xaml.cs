@@ -27,6 +27,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
@@ -50,7 +51,7 @@ namespace Barnacle.Dialogs
         private double planeOriginY;
         private double planeOriginZ;
         private bool planeSelected;
-        private Vector3D planeVector;
+        private Vector3D planeVector = new Vector3D();
         private string warningText;
 
         public CutHorizontalPlaneDlg()
@@ -62,51 +63,179 @@ namespace Barnacle.Dialogs
             planeSelected = false;
             planeVector = new Vector3D(0, 1, 0);
             planeOrigin = new Point3D(0, 0, 0);
+            polarControl = new PolarCoordinate(0, 0, 1);
             dpi = VisualTreeHelper.GetDpi(this);
             PlaneDirection.OnUpdated += PlaneDirectionUpdated;
         }
 
+        private Vector3D XAxis = new Vector3D(1, 0, 0);
+        private Vector3D YAxis = new Vector3D(0, 1, 0);
+        private Vector3D ZAxis = new Vector3D(0, 0, 1);
+
+        private PolarCoordinate polarControl;
+
         private void PlaneDirectionUpdated(PlaneDirectionControl.Direction direction)
         {
             PolarCoordinate pc = new PolarCoordinate(0, 0, 1);
-            TestPolarCoordinate(10, 10, 10);
-            TestPolarCoordinate(-4, -3, -2);
-            TestPolarCoordinate(17, 18, -1.10);
-            double dp = 0.02;
-            pc.SetPoint3D(new Point3D(planeVector.X, planeVector.Y, planeVector.Z));
+            // TestPolarCoordinate(10, 10, 10);
+            // TestPolarCoordinate(-4, -3, -2);
+            // TestPolarCoordinate(17, 18, -1.10);
+            Vector3D rotationAxis = XAxis;
+            double rotationDegrees = 0;
+            double dp = 5;
+            // pc.SetPoint3D(new Point3D(planeVector.X, planeVector.Y, planeVector.Z));
             switch (direction)
             {
                 case PlaneDirectionControl.Direction.Up:
                     {
-                        pc.Phi += dp;
+                        planeOrigin.Y += 1;
                     }
                     break;
 
                 case PlaneDirectionControl.Direction.Down:
                     {
-                        pc.Phi -= dp;
+                        planeOrigin.Y -= 1;
                     }
                     break;
 
                 case PlaneDirectionControl.Direction.Right:
                     {
-                        pc.Theta += dp;
+                        planeOrigin.X -= 1;
                     }
                     break;
 
                 case PlaneDirectionControl.Direction.Left:
                     {
-                        pc.Theta -= dp;
+                        planeOrigin.X += 1;
+                    }
+                    break;
+
+                case PlaneDirectionControl.Direction.XUp:
+                    {
+                        rotationDegrees = -dp;
+                        rotationAxis = XAxis;
+                    }
+                    break;
+
+                case PlaneDirectionControl.Direction.XDown:
+                    {
+                        rotationDegrees = dp;
+                        rotationAxis = XAxis;
+                    }
+                    break;
+
+                case PlaneDirectionControl.Direction.YUp:
+                    {
+                        rotationDegrees = -dp;
+                        rotationAxis = YAxis;
+                    }
+                    break;
+
+                case PlaneDirectionControl.Direction.YDown:
+                    {
+                        rotationDegrees = dp;
+                        rotationAxis = YAxis;
+                    }
+                    break;
+
+                case PlaneDirectionControl.Direction.ZUp:
+                    {
+                        rotationDegrees = -dp;
+                        rotationAxis = ZAxis;
+                    }
+                    break;
+
+                case PlaneDirectionControl.Direction.ZDown:
+                    {
+                        rotationDegrees = dp;
+                        rotationAxis = ZAxis;
                     }
                     break;
             }
-            Point3D np = pc.GetPoint3D();
+            // 4. Rotate the vector using Matrix3D transformation
+            Quaternion rotation = new Quaternion(rotationAxis, rotationDegrees);
+
+            // 4. Rotate the vector using Matrix3D transformation
+            planeVector = RotateVectorUsingWpf(planeVector, rotation);
+            planeEquation = new PlaneEquation(planeVector.X, planeVector.Y, planeVector.Z, planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
+            plane = new PlaneControl(planeEquation, plane.Radius);
+            //  UpdateVectorFromPolarControl();
+            UpdatePlaneDisplay();
+            PlaneOriginX = planeOrigin.X;
+            PlaneOriginY = planeOrigin.Y;
+            PlaneOriginZ = planeOrigin.Z;
+        }
+
+        public static Vector3D RotateVectorUsingWpf(Vector3D vector, Quaternion rotation)
+        {
+            // Construct a transformation matrix from the quaternion
+            Matrix3D matrix = Matrix3D.Identity;
+            matrix.Rotate(rotation);
+
+            // Transform (rotate) the vector
+            return matrix.Transform(vector);
+        }
+
+        private void UpdateVectorFromPolarControl()
+        {
+            Point3D np = polarControl.GetPoint3D();
             planeVector.X = np.X;
             planeVector.Y = np.Y;
             planeVector.Z = np.Z;
             planeEquation = new PlaneEquation(planeVector.X, planeVector.Y, planeVector.Z, planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
             plane = new PlaneControl(planeEquation, plane.Radius);
-            UpdatePlaneDisplay();
+        }
+
+        private double radius;
+        private double azimuth;
+        private double elevation;
+
+        public double Radius
+        {
+            get
+            {
+                return radius;
+            }
+            set
+            {
+                if (value != radius)
+                {
+                    radius = value;
+                }
+                NotifyPropertyChanged();
+            }
+        }
+
+        public double Azimuth
+        {
+            get
+            {
+                return azimuth;
+            }
+            set
+            {
+                if (value != azimuth)
+                {
+                    azimuth = value;
+                }
+                NotifyPropertyChanged();
+            }
+        }
+
+        public double Elevation
+        {
+            get
+            {
+                return elevation;
+            }
+            set
+            {
+                if (value != elevation)
+                {
+                    elevation = value;
+                }
+                NotifyPropertyChanged();
+            }
         }
 
         private double Degs(double v)
@@ -119,7 +248,7 @@ namespace Barnacle.Dialogs
             double lim = 1.0e-7;
             PolarCoordinate pc = new PolarCoordinate(0, 0, 1);
             pc.SetPoint3D(new Point3D(v1, v2, v3));
-            System.Diagnostics.Debug.WriteLine($"radius {pc.Rho},  phi {Degs(pc.Phi)} theta {Degs(pc.Theta)}");
+            System.Diagnostics.Debug.WriteLine($"radius {pc.Radius},  phi {Degs(pc.Elevation)} theta {Degs(pc.Azimuth)}");
             Point3D p = pc.GetPoint3D();
             if (Math.Abs(p.X - v1) > lim)
             {
@@ -314,6 +443,15 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void SplitButton_Click(object sender, RoutedEventArgs e)
+        {
+            RestoreOriginal();
+            PlaneCutter cutter = new PlaneCutter(Vertices, Faces, planeEquation);
+            cutter.Cut();
+
+            UpdateDisplay();
+        }
+
         private void HorizontalButton_Click(object sender, RoutedEventArgs e)
         {
             CreateHorizontalPlaneControl();
@@ -349,6 +487,42 @@ namespace Barnacle.Dialogs
             double radius = Math.Max(bounds.Width, bounds.Height) + 20;
             radius /= 2;
             plane = new DistalPlane(planeEquation, radius);
+            planeVector = new Vector3D(planeEquation.A, planeEquation.B, planeEquation.C);
+            plane.MoveTo(planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
+            RestoreOriginal();
+            UpdateDisplay();
+        }
+
+        private void Horizontal45Button_Click(object sender, RoutedEventArgs e)
+        {
+            planeEquation = new PlaneEquation(1, 1, 0, planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
+            double radius = Math.Max(bounds.Height, bounds.Depth) + 20;
+            radius /= 2;
+            plane = new HorizontalPlane(planeEquation, radius);
+            planeVector = new Vector3D(planeEquation.A, planeEquation.B, planeEquation.C);
+            plane.MoveTo(planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
+            RestoreOriginal();
+            UpdateDisplay();
+        }
+
+        private void Vertical45Button_Click(object sender, RoutedEventArgs e)
+        {
+            planeEquation = new PlaneEquation(1, 0, 1, planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
+            double radius = Math.Max(bounds.Height, bounds.Depth) + 20;
+            radius /= 2;
+            plane = new HorizontalPlane(planeEquation, radius);
+            planeVector = new Vector3D(planeEquation.A, planeEquation.B, planeEquation.C);
+            plane.MoveTo(planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
+            RestoreOriginal();
+            UpdateDisplay();
+        }
+
+        private void Distal45Button_Click(object sender, RoutedEventArgs e)
+        {
+            planeEquation = new PlaneEquation(0, 1, 1, planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
+            double radius = Math.Max(bounds.Height, bounds.Depth) + 20;
+            radius /= 2;
+            plane = new HorizontalPlane(planeEquation, radius);
             planeVector = new Vector3D(planeEquation.A, planeEquation.B, planeEquation.C);
             plane.MoveTo(planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
             RestoreOriginal();
@@ -471,6 +645,8 @@ namespace Barnacle.Dialogs
                     }
                     break;
             }
+            planeEquation = new PlaneEquation(planeVector.X, planeVector.Y, planeVector.Z, planeOrigin.X, planeOrigin.Y, planeOrigin.Z);
+            plane = new PlaneControl(planeEquation, plane.Radius);
             if (e.Handled)
             {
                 Viewer.Focus();
@@ -514,6 +690,8 @@ namespace Barnacle.Dialogs
 
             RestoreOriginal();
             CreateHorizontalPlaneControl();
+            UpdateVectorFromPolarControl();
+            UpdatePlaneDisplay();
         }
     }
 }

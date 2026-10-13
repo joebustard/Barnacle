@@ -188,10 +188,10 @@ namespace MakerLib
                     PolarCoordinate pc2 = polarProfile[index2].Clone();
                     PolarCoordinate pc3 = polarProfile[index2].Clone();
                     PolarCoordinate pc4 = polarProfile[index].Clone();
-                    pc1.Theta -= a;
-                    pc2.Theta -= a;
-                    pc3.Theta -= b;
-                    pc4.Theta -= b;
+                    pc1.Azimuth -= a;
+                    pc2.Azimuth -= a;
+                    pc3.Azimuth -= b;
+                    pc4.Azimuth -= b;
 
                     Point3D p1 = pc1.GetPoint3D();
                     Point3D p2 = pc2.GetPoint3D();
