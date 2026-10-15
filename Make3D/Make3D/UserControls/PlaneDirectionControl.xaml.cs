@@ -46,10 +46,12 @@ namespace Barnacle.UserControls
             XUp,
             XDown,
             YUp,
-            YDown
+            YDown,
+            Back,
+            Front
         }
 
-        public delegate void PlaneDirectionChanged(Direction direction);
+        public delegate void PlaneDirectionChanged(Direction direction, bool small);
 
         public PlaneDirectionChanged OnUpdated;
         private DispatcherTimer timer;
@@ -71,20 +73,30 @@ namespace Barnacle.UserControls
             ReportChange();
         }
 
+        private bool small;
+
         private void ReportChange()
         {
             if (OnUpdated != null)
             {
-                OnUpdated(selectedDirection);
+                OnUpdated(selectedDirection, small);
             }
             //         timer.Start();
         }
 
         private void DownButton_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            CheckSmall();
             DownScaleTransform.ScaleX = 0.9;
             DownScaleTransform.ScaleY = 0.9;
-            selectedDirection = Direction.Down;
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                selectedDirection = Direction.Front;
+            }
+            else
+            {
+                selectedDirection = Direction.Down;
+            }
             ReportChange();
         }
 
@@ -97,6 +109,7 @@ namespace Barnacle.UserControls
 
         private void LeftButton_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            CheckSmall();
             LeftScaleTransform.ScaleX = 0.9;
             LeftScaleTransform.ScaleY = 0.9;
             selectedDirection = Direction.Left;
@@ -112,6 +125,7 @@ namespace Barnacle.UserControls
 
         private void RightButton_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            CheckSmall();
             RightScaleTransform.ScaleX = 0.9;
             RightScaleTransform.ScaleY = 0.9;
             selectedDirection = Direction.Right;
@@ -127,9 +141,17 @@ namespace Barnacle.UserControls
 
         private void UpButton_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            CheckSmall();
             UpScaleTransform.ScaleX = 0.9;
             UpScaleTransform.ScaleY = 0.9;
-            selectedDirection = Direction.Up;
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                selectedDirection = Direction.Back;
+            }
+            else
+            {
+                selectedDirection = Direction.Up;
+            }
             ReportChange();
         }
 
@@ -142,36 +164,51 @@ namespace Barnacle.UserControls
 
         private void XUp_Click(object sender, RoutedEventArgs e)
         {
+            CheckSmall();
             selectedDirection = Direction.XUp;
             ReportChange();
         }
 
         private void XDown_Click(object sender, RoutedEventArgs e)
         {
+            CheckSmall();
             selectedDirection = Direction.XDown;
             ReportChange();
         }
 
+        private void CheckSmall()
+        {
+            small = false;
+            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+            {
+                small = true;
+            }
+        }
+
         private void YUp_Click(object sender, RoutedEventArgs e)
         {
+            CheckSmall();
             selectedDirection = Direction.YUp;
             ReportChange();
         }
 
         private void YDown_Click(object sender, RoutedEventArgs e)
         {
+            CheckSmall();
             selectedDirection = Direction.YDown;
             ReportChange();
         }
 
         private void ZUp_Click(object sender, RoutedEventArgs e)
         {
+            CheckSmall();
             selectedDirection = Direction.ZUp;
             ReportChange();
         }
 
         private void ZDown_Click(object sender, RoutedEventArgs e)
         {
+            CheckSmall();
             selectedDirection = Direction.ZDown;
             ReportChange();
         }

@@ -49,6 +49,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 
 //using System.Windows.Forms;
 
@@ -57,6 +58,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
+using Application = System.Windows.Application;
+using MessageBox = System.Windows.MessageBox;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
 namespace Barnacle.ViewModels
 {
@@ -472,9 +476,12 @@ namespace Barnacle.ViewModels
                 modelItems.Add(gm);
                 allBounds += ob.AbsoluteBounds;
             }
-            foreach (Model3D md in selectedObjectAdorner.Adornments)
+            if (selectedObjectAdorner != null)
             {
-                modelItems.Add(md);
+                foreach (Model3D md in selectedObjectAdorner.Adornments)
+                {
+                    modelItems.Add(md);
+                }
             }
             NotifyPropertyChanged("ModelItems");
         }
@@ -646,7 +653,7 @@ namespace Barnacle.ViewModels
             lastMouse = lastMousePos;
         }
 
-        internal void MouseMove(System.Windows.Point newPos, MouseEventArgs e)
+        internal void MouseMove(System.Windows.Point newPos, System.Windows.Input.MouseEventArgs e)
         {
             bool ctrlDown = false;
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
@@ -1489,7 +1496,7 @@ namespace Barnacle.ViewModels
 
         private void CutHorizontalPlane(Object3D ob)
         {
-            CutHorizontalPlaneDlg dlg = new CutHorizontalPlaneDlg();
+            CutPlaneDlg dlg = new CutPlaneDlg();
             Point3DCollection p3col = new Point3DCollection();
             PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, p3col);
             dlg.OriginalVertices = p3col;
@@ -1497,15 +1504,21 @@ namespace Barnacle.ViewModels
 
             if (dlg.ShowDialog() == true)
             {
-                PointUtils.PointCollectionToP3D(dlg.Vertices, ob.RelativeObjectVertices);
-                ob.TriangleIndices.Clear();
-                foreach (int i in dlg.Faces)
+                document.Content.Remove(ob);
+                Object3D partA = GetObjectFromSplitter(dlg.Vertices, dlg.Faces);
+
+                partA.Name = ob.Name + "_A";
+                partA.Color = ob.Color;
+                partA.Remesh();
+                document.Content.Add(partA);
+                if (dlg.Vertices2.Count > 0 && dlg.Faces2.Count > 0)
                 {
-                    ob.TriangleIndices.Add(i);
+                    Object3D partB = GetObjectFromSplitter(dlg.Vertices2, dlg.Faces2);
+                    partB.Name = ob.Name + "_B";
+                    partB.Color = ob.Color;
+                    partB.Remesh();
+                    document.Content.Add(partB);
                 }
-                // RemoveDuplicateVertices(ob);
-                
-                ob.Remesh();
             }
         }
 
@@ -3242,112 +3255,112 @@ namespace Barnacle.ViewModels
                 document.Dirty = true;
             }
             else
-            if (s == "Optimum")
-            {
-                OptimumArranger(0.25);
-                document.Dirty = true;
-            }
-            else
-            if (s == "OptimumMid")
-            {
-                OptimumArranger(0.5);
-                document.Dirty = true;
-            }
-            else
-            if (s == "OptimumLow")
-            {
-                OptimumArranger(1);
-                document.Dirty = true;
-            }
-            else
-            {
-                if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count < 3)
+                if (s == "Optimum")
                 {
-                    MessageBox.Show("At least 3 selected objects are needed for even distribution");
+                    OptimumArranger(0.25);
+                    document.Dirty = true;
                 }
                 else
-                {
-                    document.Dirty = true;
-                    double minx = double.MaxValue;
-                    double miny = double.MaxValue;
-                    double minz = double.MaxValue;
-                    double maxx = double.MinValue;
-                    double maxy = double.MinValue;
-                    double maxz = double.MinValue;
-                    double count = selectedObjectAdorner.SelectedObjects.Count;
-                    // Note this is positions, not bounds
-                    foreach (Object3D o in selectedObjectAdorner.SelectedObjects)
+                    if (s == "OptimumMid")
                     {
-                        if (o.Position.X < minx)
-                        {
-                            minx = o.Position.X;
-                        }
-                        if (o.Position.X > maxx)
-                        {
-                            maxx = o.Position.X;
-                        }
-
-                        if (o.Position.Y < miny)
-                        {
-                            miny = o.Position.Y;
-                        }
-                        if (o.Position.Y > maxy)
-                        {
-                            maxy = o.Position.Y;
-                        }
-
-                        if (o.Position.Z < minz)
-                        {
-                            minz = o.Position.Z;
-                        }
-                        if (o.Position.Z > maxz)
-                        {
-                            maxz = o.Position.Z;
-                        }
+                        OptimumArranger(0.5);
+                        document.Dirty = true;
                     }
-
-                    double dx = (maxx - minx) / (count - 1);
-                    double dy = (maxy - miny) / (count - 1);
-                    double dz = (maxz - minz) / (count - 1);
-                    switch (s)
-                    {
-                        case "Horizontal":
+                    else
+                        if (s == "OptimumLow")
+                        {
+                            OptimumArranger(1);
+                            document.Dirty = true;
+                        }
+                        else
+                        {
+                            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count < 3)
                             {
-                                for (int i = 0; i < count; i++)
-                                {
-                                    Object3D ob = selectedObjectAdorner.SelectedObjects[i];
-                                    Point3D p = new Point3D(minx + (i * dx), ob.Position.Y, ob.Position.Z);
-                                    ob.Position = p;
-                                }
+                                MessageBox.Show("At least 3 selected objects are needed for even distribution");
                             }
-                            break;
-
-                        case "Vertical":
+                            else
                             {
-                                for (int i = 0; i < count; i++)
+                                document.Dirty = true;
+                                double minx = double.MaxValue;
+                                double miny = double.MaxValue;
+                                double minz = double.MaxValue;
+                                double maxx = double.MinValue;
+                                double maxy = double.MinValue;
+                                double maxz = double.MinValue;
+                                double count = selectedObjectAdorner.SelectedObjects.Count;
+                                // Note this is positions, not bounds
+                                foreach (Object3D o in selectedObjectAdorner.SelectedObjects)
                                 {
-                                    Object3D ob = selectedObjectAdorner.SelectedObjects[i];
-                                    Point3D p = new Point3D(ob.Position.X, miny + (i * dy), ob.Position.Z);
-                                    ob.Position = p;
-                                }
-                            }
-                            break;
+                                    if (o.Position.X < minx)
+                                    {
+                                        minx = o.Position.X;
+                                    }
+                                    if (o.Position.X > maxx)
+                                    {
+                                        maxx = o.Position.X;
+                                    }
 
-                        case "Distal":
-                            {
-                                for (int i = 0; i < count; i++)
-                                {
-                                    Object3D ob = selectedObjectAdorner.SelectedObjects[i];
-                                    Point3D p = new Point3D(ob.Position.X, ob.Position.Y, minz + (i * dz));
-                                    ob.Position = p;
+                                    if (o.Position.Y < miny)
+                                    {
+                                        miny = o.Position.Y;
+                                    }
+                                    if (o.Position.Y > maxy)
+                                    {
+                                        maxy = o.Position.Y;
+                                    }
+
+                                    if (o.Position.Z < minz)
+                                    {
+                                        minz = o.Position.Z;
+                                    }
+                                    if (o.Position.Z > maxz)
+                                    {
+                                        maxz = o.Position.Z;
+                                    }
                                 }
+
+                                double dx = (maxx - minx) / (count - 1);
+                                double dy = (maxy - miny) / (count - 1);
+                                double dz = (maxz - minz) / (count - 1);
+                                switch (s)
+                                {
+                                    case "Horizontal":
+                                        {
+                                            for (int i = 0; i < count; i++)
+                                            {
+                                                Object3D ob = selectedObjectAdorner.SelectedObjects[i];
+                                                Point3D p = new Point3D(minx + (i * dx), ob.Position.Y, ob.Position.Z);
+                                                ob.Position = p;
+                                            }
+                                        }
+                                        break;
+
+                                    case "Vertical":
+                                        {
+                                            for (int i = 0; i < count; i++)
+                                            {
+                                                Object3D ob = selectedObjectAdorner.SelectedObjects[i];
+                                                Point3D p = new Point3D(ob.Position.X, miny + (i * dy), ob.Position.Z);
+                                                ob.Position = p;
+                                            }
+                                        }
+                                        break;
+
+                                    case "Distal":
+                                        {
+                                            for (int i = 0; i < count; i++)
+                                            {
+                                                Object3D ob = selectedObjectAdorner.SelectedObjects[i];
+                                                Point3D p = new Point3D(ob.Position.X, ob.Position.Y, minz + (i * dz));
+                                                ob.Position = p;
+                                            }
+                                        }
+                                        break;
+                                }
+                                RegenerateDisplayList();
+                                UpdateSelectionDisplay();
                             }
-                            break;
-                    }
-                    RegenerateDisplayList();
-                    UpdateSelectionDisplay();
-                }
-            }
+                        }
         }
 
         private void OnDrop(object param)
@@ -3373,49 +3386,49 @@ namespace Barnacle.ViewModels
                     ConfirmAndCleanExports();
                 }
                 else
-                 if (s == "QuietClean")
-                {
-                    // clean the export folders without asking the user
-                    CleanExportFolders();
-                }
-                else
-                if (s == "AllModels")
-                {
-                    ExportAllModels();
-                    NotificationManager.Notify("RefreshSolution", null);
-                }
-                else
-                {
-                    bool all = true;
-                    if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count > 0)
+                    if (s == "QuietClean")
                     {
-                        ExportSelectedDialog seldlg = new ExportSelectedDialog();
-                        seldlg.Owner = Application.Current.MainWindow;
-                        seldlg.ShowDialog();
-                        if (seldlg.Result == ExportSelectedDialog.ExportChoice.Selected)
-                        {
-                            all = false;
-                        }
-                    }
-                    string exportedPath = "";
-                    String exportFolderPath = BaseViewModel.Project.BaseFolder + "\\export";
-                    Document.ProjectSettings = BaseViewModel.Project.SharedProjectSettings;
-                    if (all)
-                    {
-                        exportedPath = Document.ExportAll(param.ToString(), allBounds, exportFolderPath);
+                        // clean the export folders without asking the user
+                        CleanExportFolders();
                     }
                     else
-                    {
-                        exportedPath = Document.ExportSelectedParts(param.ToString(), allBounds, selectedObjectAdorner.SelectedObjects, exportFolderPath);
-                    }
+                        if (s == "AllModels")
+                        {
+                            ExportAllModels();
+                            NotificationManager.Notify("RefreshSolution", null);
+                        }
+                        else
+                        {
+                            bool all = true;
+                            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count > 0)
+                            {
+                                ExportSelectedDialog seldlg = new ExportSelectedDialog();
+                                seldlg.Owner = Application.Current.MainWindow;
+                                seldlg.ShowDialog();
+                                if (seldlg.Result == ExportSelectedDialog.ExportChoice.Selected)
+                                {
+                                    all = false;
+                                }
+                            }
+                            string exportedPath = "";
+                            String exportFolderPath = BaseViewModel.Project.BaseFolder + "\\export";
+                            Document.ProjectSettings = BaseViewModel.Project.SharedProjectSettings;
+                            if (all)
+                            {
+                                exportedPath = Document.ExportAll(param.ToString(), allBounds, exportFolderPath);
+                            }
+                            else
+                            {
+                                exportedPath = Document.ExportSelectedParts(param.ToString(), allBounds, selectedObjectAdorner.SelectedObjects, exportFolderPath);
+                            }
 
-                    STLExportedConfirmation dlg = new STLExportedConfirmation();
-                    dlg.Owner = Application.Current.MainWindow;
-                    dlg.ExportPath = exportedPath;
-                    if (dlg.ShowDialog() == true)
-                    {
-                    }
-                }
+                            STLExportedConfirmation dlg = new STLExportedConfirmation();
+                            dlg.Owner = Application.Current.MainWindow;
+                            dlg.ExportPath = exportedPath;
+                            if (dlg.ShowDialog() == true)
+                            {
+                            }
+                        }
             }
         }
 
@@ -3471,42 +3484,42 @@ namespace Barnacle.ViewModels
                 }
             }
             else
-           if (s == "mesh")
-            {
-                CheckPoint();
-                if (GroupToMesh())
+                if (s == "mesh")
                 {
-                    selectedObjectAdorner.Clear();
-                    RegenerateDisplayList();
-                    NotificationManager.Notify("ObjectNamesChanged", null);
-                }
-            }
-            else
-            if (s == "ungroup")
-            {
-                TryUngroup();
-            }
-            else
-            {
-                if (s == "extract")
-                {
-                    if (selectedItems.Count != 2)
+                    CheckPoint();
+                    if (GroupToMesh())
                     {
-                        MessageBox.Show("Extract requires exactly 2 objects");
-                    }
-                    else
-                    {
-                        await TryExtract(s);
+                        selectedObjectAdorner.Clear();
+                        RegenerateDisplayList();
+                        NotificationManager.Notify("ObjectNamesChanged", null);
                     }
                 }
                 else
-                {
-                    await TryGroup(s);
-                }
-                RegenerateDisplayList();
-                SetSelectionColours();
-                NotificationManager.Notify("ObjectNamesChanged", null);
-            }
+                    if (s == "ungroup")
+                    {
+                        TryUngroup();
+                    }
+                    else
+                    {
+                        if (s == "extract")
+                        {
+                            if (selectedItems.Count != 2)
+                            {
+                                MessageBox.Show("Extract requires exactly 2 objects");
+                            }
+                            else
+                            {
+                                await TryExtract(s);
+                            }
+                        }
+                        else
+                        {
+                            await TryGroup(s);
+                        }
+                        RegenerateDisplayList();
+                        SetSelectionColours();
+                        NotificationManager.Notify("ObjectNamesChanged", null);
+                    }
         }
 
         private void OnImport(object param)
@@ -4470,35 +4483,35 @@ namespace Barnacle.ViewModels
                 DeselectAll();
             }
             else
-            if (s == "all")
-            {
-                SelectAll();
-            }
-            else
-            if (s == "first")
-            {
-                SelectFirst();
-            }
-            else
-            if (s == "next")
-            {
-                SelectNext();
-            }
-            else
-            if (s == "previous")
-            {
-                SelectPrevious();
-            }
-            else
-            if (s == "last")
-            {
-                SelectLast();
-            }
-            else
-            if (s == "rename")
-            {
-                RenameSelection();
-            }
+                if (s == "all")
+                {
+                    SelectAll();
+                }
+                else
+                    if (s == "first")
+                    {
+                        SelectFirst();
+                    }
+                    else
+                        if (s == "next")
+                        {
+                            SelectNext();
+                        }
+                        else
+                            if (s == "previous")
+                            {
+                                SelectPrevious();
+                            }
+                            else
+                                if (s == "last")
+                                {
+                                    SelectLast();
+                                }
+                                else
+                                    if (s == "rename")
+                                    {
+                                        RenameSelection();
+                                    }
         }
 
         private void SelectAll()
@@ -4923,6 +4936,7 @@ namespace Barnacle.ViewModels
         {
             return GetObjectFromSplitter(splitter.Result2Vertices, splitter.Result2Faces);
         }
+
         /// <summary>
         /// Converts the given soup into an object3D
         /// </summary>
@@ -4948,6 +4962,7 @@ namespace Barnacle.ViewModels
             res.AbsoluteToRelative();
             return res;
         }
+
         /// <summary>
         /// Split an object into two new ones, along its middle
         /// </summary>

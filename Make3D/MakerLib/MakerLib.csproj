@@ -126,7 +126,7 @@
     <Compile Include="PlaneCutter\EdgeProcessor.cs" />
     <Compile Include="PlaneCutter\EdgeRecord.cs" />
     <Compile Include="PlaneCutter\OrthogonalPlaneCutter.cs" />
-    <Compile Include="PlaneCutter\PlaneCutter.cs" />
+    <Compile Include="PlaneCutter\PlaneSplitter.cs" />
     <Compile Include="PolyMaker.cs" />
     <Compile Include="SquaredStadiumMaker.cs" />
     <Compile Include="StadiumMaker.cs" />

@@ -46,7 +46,7 @@ namespace MakerLib.PlaneCutter
             List<EdgeRecord> loop = new List<EdgeRecord>();
             int startId;
             int endId;
-            if (EdgeRecords != null && EdgeRecords.Count > 2)
+            if (EdgeRecords != null && EdgeRecords.Count >= 2)
             {
                 loop.Add(EdgeRecords[0]);
                 EdgeRecords.RemoveAt(0);
@@ -76,21 +76,21 @@ namespace MakerLib.PlaneCutter
                             break;
                         }
                         else
-                        if (EdgeRecords[i].End == startId)
-                        {
-                            startId = EdgeRecords[i].Start;
-                            loop.Insert(0, EdgeRecords[i]);
-                            EdgeRecords.RemoveAt(i);
-                            if (startId == endId)
+                            if (EdgeRecords[i].End == startId)
                             {
-                                closed = true;
+                                startId = EdgeRecords[i].Start;
+                                loop.Insert(0, EdgeRecords[i]);
+                                EdgeRecords.RemoveAt(i);
+                                if (startId == endId)
+                                {
+                                    closed = true;
+                                }
+                                else
+                                {
+                                    keepOn = true;
+                                }
+                                break;
                             }
-                            else
-                            {
-                                keepOn = true;
-                            }
-                            break;
-                        }
                     }
                 }
             }
