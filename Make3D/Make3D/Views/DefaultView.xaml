@@ -1402,6 +1402,16 @@
                             ToolTip="Smooth mesh using Loop smoothing" />
 
                         <Custom:RibbonMenuItem
+                            x:Name="MeshRoughenButton"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding MeshRoughenCommand}"
+                            Header="Rough"
+                            ImageSource="/Barnacle;component/Images/Buttons/smooth.png"
+                            IsEnabled="{Binding MeshEditEnabled}"
+                            ToolTip="Roughen mesh using surface noise" />
+
+                        <Custom:RibbonMenuItem
                             x:Name="MeshCutHButton"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
@@ -1411,7 +1421,7 @@
                             ImageSource="/Barnacle;component/Images/Buttons/CutHPlane.png"
                             IsEnabled="{Binding MeshEditEnabled}"
                             ToolTip="Cut all faces below a horizontal plane." />
-<!--
+                        <!--
                         <Custom:RibbonMenuItem
                             x:Name="MeshCutVButton"
                             HorizontalAlignment="Stretch"
@@ -1421,8 +1431,7 @@
                             Header="Cut V Plane"
                             ImageSource="/Barnacle;component/Images/Buttons/CutHPlane.png"
                             IsEnabled="{Binding MeshEditEnabled}"
-                            ToolTip="Cut all faces to left of a vertical plane." />
--->
+                            ToolTip="Cut all faces to left of a vertical plane." />                        -->
                         <Custom:RibbonMenuItem
                             x:Name="MeshSubdivideButton"
                             HorizontalAlignment="Stretch"
@@ -1478,6 +1487,14 @@
                             ImageSource="/Barnacle;component/Images/Buttons/copy.png"
                             ToolTip="Remove Duplicate Faces" />
 
+                        <Custom:RibbonMenuItem
+                            x:Name="OverlapFaceButton"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Command="{Binding OverlappingFaceCommand}"
+                            Header="Overlapping Faces"
+                            ImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                            ToolTip="Remove Overlapping Faces" />
                         <Custom:RibbonMenuItem
                             x:Name="FixHolesButton"
                             HorizontalAlignment="Stretch"

@@ -477,6 +477,26 @@
                         <Image Source="/Barnacle;component/Images/Buttons/Bead1.png" />
                     </Button>
 
+
+ <Button
+                Command="{Binding AddCommand}"
+                CommandParameter="RoundedCage"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource PrimitiveImageButton}"
+                ToolTip="Add a Rounded cage">
+                <Image Source = "/Barnacle;component/Images/Buttons/CrossBlock.png" />
+            </Button>
+
+
+ <Button
+                Command="{Binding AddCommand}"
+                CommandParameter="RoundX"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource PrimitiveImageButton}"
+                ToolTip="Add a Rounded X">
+                <Image Source = "/Barnacle;component/Images/Buttons/CrossBlock.png" />
+            </Button>
+
                     <!--  Next Button Here  -->
                 </UniformGrid>
             </TabItem>

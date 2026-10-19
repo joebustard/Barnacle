@@ -25,7 +25,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -155,6 +154,7 @@ namespace Barnacle.ViewModels
             MeshCutCommand = new RelayCommand(OnCutPlane);
             MeshEditCommand = new RelayCommand(OnMeshEdit);
             MeshHullCommand = new RelayCommand(OnHullEdit);
+            MeshRoughenCommand = new RelayCommand(OnRoughen);
             MeshSmoothCommand = new RelayCommand(OnLoopSmooth);
             MeshSubdivideCommand = new RelayCommand(OnMeshSubdivide);
             MeshIslandCommand = new RelayCommand(OnMeshIsland);
@@ -165,6 +165,7 @@ namespace Barnacle.ViewModels
             OpenCommand = new RelayCommand(OnOpen);
             OpenProjectCommand = new RelayCommand(OnOpenProject);
             OpenRecentFileCommand = new RelayCommand(OnOpenRecent);
+            OverlappingFaceCommand = new RelayCommand(OnOverlappingFace);
             PasteAtCommand = new RelayCommand(OnPasteAt);
             PasteCommand = new RelayCommand(OnPaste);
             ReferenceCommand = new RelayCommand(OnReference);
@@ -875,6 +876,12 @@ namespace Barnacle.ViewModels
             get; set;
         }
 
+        public ICommand MeshRoughenCommand
+        {
+            get;
+            set;
+        }
+
         public ICommand MeshSmoothCommand
         {
             get; set;
@@ -939,6 +946,12 @@ namespace Barnacle.ViewModels
         public ICommand OpenRecentFileCommand
         {
             get; set;
+        }
+
+        public RelayCommand OverlappingFaceCommand
+        {
+            get;
+            private set;
         }
 
         public ICommand PageCommand
@@ -2267,6 +2280,11 @@ namespace Barnacle.ViewModels
             Caption = BaseViewModel.Document.Caption;
         }
 
+        private void OnOverlappingFace(object obj)
+        {
+            NotificationManager.Notify("OverlappingFaces", null);
+        }
+
         private void OnPaste(object obj)
         {
             NotificationManager.Notify("Paste", null);
@@ -2295,6 +2313,11 @@ namespace Barnacle.ViewModels
         private void OnReorigin(object obj)
         {
             NotificationManager.Notify("Reorigin", null);
+        }
+
+        private void OnRoughen(object obj)
+        {
+            NotificationManager.Notify("Roughen", null);
         }
 
         private void OnSave(object obj)

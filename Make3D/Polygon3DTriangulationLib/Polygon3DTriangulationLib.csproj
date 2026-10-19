@@ -35,7 +35,8 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Polygon3DTriangulationLibKeystore_123456.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -54,9 +55,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Polygon3DTriangulator.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Polygon3DTriangulationLibKeystore_123456.pfx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

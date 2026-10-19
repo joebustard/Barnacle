@@ -92,6 +92,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Adorners\DimensionAdorner.cs" />
+    <Compile Include="Dialogs\RoughSurface\SurfaceNoiseDlg.xaml.cs" />
     <Compile Include="Models\Planes\DistalPlane.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\LengthAndHeightAdorner.cs" />
     <Compile Include="Dialogs\AboutBox\AboutBoxDlg.xaml.cs">
@@ -415,6 +416,8 @@
     <Compile Include="ViewModels\EditorViewModel\ExtraFunctions\CutAndPasteFunctions.cs" />
     <Compile Include="ViewModels\EditorViewModel\ExtraFunctions\DropFunctions.cs" />
     <Compile Include="ViewModels\EditorViewModel\ExtraFunctions\IslandFunctions.cs" />
+    <Compile Include="ViewModels\EditorViewModel\ExtraFunctions\LoopSmoothWithAI.cs" />
+    <Compile Include="ViewModels\EditorViewModel\ExtraFunctions\OverlappingTriangles.cs" />
     <Compile Include="ViewModels\Logging\Log.cs" />
     <Compile Include="ViewModels\Logging\LogEntry.cs" />
     <Compile Include="ViewModels\RichTextBoxExtensions.cs" />
@@ -425,12 +428,6 @@
     <Compile Include="ViewModels\BuildPlate\BuildPlate.cs" />
     <Compile Include="ViewModels\BuildPlate\BuildPlateManager.cs" />
     <Compile Include="Models\CameraUtils.cs" />
-    <Compile Include="Models\LoopSmoothing\LoopCoord.cs" />
-    <Compile Include="Models\LoopSmoothing\LoopEdge.cs" />
-    <Compile Include="Models\LoopSmoothing\LoopFace.cs" />
-    <Compile Include="Models\LoopSmoothing\LoopSmoother.cs" />
-    <Compile Include="Models\LoopSmoothing\LoopPoint.cs" />
-    <Compile Include="Models\LoopSmoothing\LoopUtils.cs" />
     <Compile Include="Models\Floor.cs" />
     <Compile Include="Models\FloorMarker.cs" />
     <Compile Include="Models\Grid.cs" />
@@ -623,6 +620,10 @@
     <Page Include="Dialogs\RenameSelection\RenameSelectionDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\RoughSurface\SurfaceNoiseDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\Tray\TrayDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -1093,6 +1094,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AILib\AILib.csproj">
+      <Project>{972D5187-75A9-4F27-BE50-01C48178DBAF}</Project>
+      <Name>AILib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\asdflibrary\asdflibrary.csproj">
       <Project>{2557b21c-fe6c-4b1d-8dab-ad7d8404fd56}</Project>
       <Name>asdflibrary</Name>

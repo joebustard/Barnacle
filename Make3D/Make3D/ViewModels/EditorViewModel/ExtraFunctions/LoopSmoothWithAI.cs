@@ -15,34 +15,37 @@
 // *                                                                         *
 // *************************************************************************
 
-namespace Barnacle.Models.LoopSmoothing
+using AiWpf3D;
+using Barnacle.Object3DLib;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Media.Media3D;
+
+namespace Barnacle.ViewModels
 {
-    internal class LoopCoord
+    internal class LoopSmoothWithAI
     {
-        public double X { get; set; }
-        public double Y { get; set; }
-        public double Z { get; set; }
-
-        public LoopCoord()
+        public static bool SmoothObject(Object3D ob)
         {
-            X = 0;
-            Y = 0;
-            Z = 0;
-        }
-
-        public LoopCoord(double v1, double v2, double v3)
-        {
-            X = v1;
-            Y = v2;
-            Z = v3;
-        }
-
-        public static LoopCoord operator +(LoopCoord a, LoopCoord b)
-        {
-            LoopCoord res = new LoopCoord();
-            res.X = a.X + b.X;
-            res.Y = a.Y + b.Y;
-            res.Z = a.Z + b.Z;
+            bool res = true;
+            ob.Remesh();
+            MeshGeometry3D inputMesh = ob.Mesh;
+            MeshGeometry3D outputMesh = WpfLoopSubdivision.ApplyLoopSubdivision(inputMesh);
+            ob.AbsoluteObjectVertices.Clear();
+            ob.TriangleIndices.Clear();
+            foreach (Point3D p in outputMesh.Positions)
+            {
+                ob.AbsoluteObjectVertices.Add(p);
+            }
+            foreach (int f in outputMesh.TriangleIndices)
+            {
+                ob.TriangleIndices.Add(f);
+            }
+            ob.AbsoluteToRelative();
+            ob.Remesh();
             return res;
         }
     }

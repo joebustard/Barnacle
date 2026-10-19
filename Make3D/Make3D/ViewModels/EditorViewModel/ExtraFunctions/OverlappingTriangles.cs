@@ -15,19 +15,37 @@
 // *                                                                         *
 // *************************************************************************
 
+using AiWpf3D;
+using Barnacle.Object3DLib;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Media.Media3D;
 
-namespace Barnacle.Models.LoopSmoothing
+namespace Barnacle.ViewModels
 {
-    internal class LoopUtils
+    internal class OverlappingTriangles
     {
-        private static double TwoPi = Math.PI * 2.0;
-        private static double fiveEigths = 5.0 / 8.0;
-
-        public static double Beta(double n)
+        public static bool RemoveOverlappingTriangles(Object3D ob)
         {
-            double q1 = (3.0 + 2.0 * Math.Cos(TwoPi / n));
-            double res = (1.0 / n) * (fiveEigths - (q1 * q1) / 64.0);
+            bool res = true;
+            ob.Remesh();
+            MeshGeometry3D inputMesh = ob.Mesh;
+            MeshGeometry3D outputMesh = WpfMeshSlicer.RemoveIntersectingFaces(inputMesh);
+            ob.AbsoluteObjectVertices.Clear();
+            ob.TriangleIndices.Clear();
+            foreach (Point3D p in outputMesh.Positions)
+            {
+                ob.AbsoluteObjectVertices.Add(p);
+            }
+            foreach (int f in outputMesh.TriangleIndices)
+            {
+                ob.TriangleIndices.Add(f);
+            }
+            ob.AbsoluteToRelative();
+            ob.Remesh();
             return res;
         }
     }

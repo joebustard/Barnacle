@@ -35,7 +35,8 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Barnacle3DKeystore.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -192,7 +193,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Barnacle3DKeystore.pfx" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

@@ -22,9 +22,10 @@ using Barnacle.EditorParameterLib;
 using Barnacle.Models;
 using Barnacle.Models._3MFImporter;
 using Barnacle.Models.Adorners;
-using Barnacle.Models.LoopSmoothing;
+
 using Barnacle.Object3DLib;
 using Barnacle.ViewModel.BuildPlates;
+
 using CSGLib;
 using FileUtils;
 using FixLib;
@@ -162,6 +163,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "Loading", LoadingNewFile);
             NotificationManager.Subscribe("Editor", "LoadedNewFile", LoadedNewFile);
             NotificationManager.Subscribe("Editor", "LoopSmooth", OnLoopSmooth);
+            NotificationManager.Subscribe("Editor", "Roughen", OnRoughen);
             NotificationManager.Subscribe("Editor", "ManifoldTest", OnManifoldTest);
             NotificationManager.Subscribe("Editor", "Marker", MoveToMarker);
             NotificationManager.Subscribe("Editor", "MeshEdit", OnMeshEdit);
@@ -178,6 +180,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "ObjectZRotationChange", ZRotationChanged);
             NotificationManager.Subscribe("Editor", "OpenFile", OnOpenFile);
             NotificationManager.Subscribe("Editor", "OpenRecentFile", OnOpenFile);
+            NotificationManager.Subscribe("Editor", "OverlappingFaces", OnOverlappingFaces);
             NotificationManager.Subscribe("Editor", "Paste", OnPaste);
             NotificationManager.Subscribe("Editor", "PasteAt", OnPasteAt);
             NotificationManager.Subscribe("Editor", "Refresh", OnRefresh);
@@ -602,6 +605,21 @@ namespace Barnacle.ViewModels
             RegenerateDisplayList();
             NotificationManager.Notify("ObjectSelected", null);
             NotificationManager.Notify("GroupSelected", false);
+        }
+
+        /// <summary>
+        /// returns the vertices and edges of the first object soup
+        /// as a new Object3D
+        /// </summary>
+        /// <returns></returns>
+        internal Object3D GetObject1FromSplitter(ObjectSplitter splitter)
+        {
+            return GetObjectFromSplitter(splitter.Result1Vertices, splitter.Result1Faces);
+        }
+
+        internal Object3D GetObject2FromSplitter(ObjectSplitter splitter)
+        {
+            return GetObjectFromSplitter(splitter.Result2Vertices, splitter.Result2Faces);
         }
 
         internal bool KeyDown(Key key, bool shift, bool ctrl, bool alt)
@@ -1416,6 +1434,8 @@ namespace Barnacle.ViewModels
             {
                 SetSelectionColours();
             }
+
+            NotificationManager.Notify("RefocusEditor", true);
             return handled;
         }
 
@@ -2025,6 +2045,32 @@ namespace Barnacle.ViewModels
                     ob.Remesh();
                 }
             }
+        }
+
+        /// <summary>
+        /// Converts the given soup into an object3D
+        /// </summary>
+        /// <param name="verts"></param>
+        /// <param name="faces"></param>
+        /// <returns></returns>
+        private Object3D GetObjectFromSplitter(Point3DCollection verts, Int32Collection faces)
+        {
+            Object3D res = new Object3D();
+            res.PrimType = "Mesh";
+            Bounds3D bnds = new Bounds3D();
+            foreach (Point3D p in verts)
+            {
+                res.AbsoluteObjectVertices.Add(new Point3D(p.X, p.Y, p.Z));
+                bnds.Adjust(p);
+            }
+            for (int i = 0; i < faces.Count; i++)
+            {
+                res.TriangleIndices.Add(faces[i]);
+            }
+            Point3D mid = bnds.MidPoint();
+            res.Position = new Point3D(mid.X, mid.Y, mid.Z);
+            res.AbsoluteToRelative();
+            return res;
         }
 
         private KeyboardRotation GetRotationDirection(Key k, bool ctrlDown = false)
@@ -3065,7 +3111,7 @@ namespace Barnacle.ViewModels
             {
                 CheckPoint();
                 string obType = param.ToString();
-                Logger.Log($"OnAddObject {obType}");
+
                 obType = obType.ToLower();
                 Color color = Colors.Beige;
                 Object3D obj = new Object3D();
@@ -3693,9 +3739,10 @@ namespace Barnacle.ViewModels
             }
             else
             {
+                CheckPoint();
                 foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
                 {
-                    LoopSmooth(ob);
+                    LoopSmoothWithAI.SmoothObject(ob);
                 }
             }
         }
@@ -3961,6 +4008,22 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private void OnOverlappingFaces(object param)
+        {
+            if (selectedObjectAdorner == null || selectedObjectAdorner.SelectedObjects.Count == 0)
+            {
+                System.Windows.MessageBox.Show("Nothing selected to process");
+            }
+            else
+            {
+                CheckPoint();
+                foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+                {
+                    OverlappingTriangles.RemoveOverlappingTriangles(ob);
+                }
+            }
+        }
+
         private void OnRefresh(object param)
         {
             RegenerateDisplayList();
@@ -4033,6 +4096,26 @@ namespace Barnacle.ViewModels
             {
                 Object3D ob = selectedObjectAdorner.SelectedObjects[0];
                 Reorigin(ob);
+            }
+        }
+
+        private void OnRoughen(object param)
+        {
+            if (selectedObjectAdorner == null || selectedObjectAdorner.SelectedObjects.Count != 1)
+            {
+                System.Windows.MessageBox.Show("Requires one selected to process");
+            }
+            else
+            {
+                SurfaceNoiseDlg surfaceNoiseDlg = new SurfaceNoiseDlg();
+                Object3D ob = selectedObjectAdorner.SelectedObjects[0];
+                surfaceNoiseDlg.SourceObject = ob;
+                if (surfaceNoiseDlg.ShowDialog() == true)
+                {
+                    PointUtils.PointCollectionToP3D(surfaceNoiseDlg.Vertices, ob.RelativeObjectVertices);
+                    ob.TriangleIndices = surfaceNoiseDlg.Faces;
+                    ob.Remesh();
+                }
             }
         }
 
@@ -4920,47 +5003,6 @@ namespace Barnacle.ViewModels
             RegenerateDisplayList();
             TimeSpan ts = DateTime.Now - start;
             Logger.Log($"Split took {ts.Hours}:{ts.Minutes}:{ts.Seconds}");
-        }
-
-        /// <summary>
-        /// returns the vertices and edges of the first object soup
-        /// as a new Object3D
-        /// </summary>
-        /// <returns></returns>
-        internal Object3D GetObject1FromSplitter(ObjectSplitter splitter)
-        {
-            return GetObjectFromSplitter(splitter.Result1Vertices, splitter.Result1Faces);
-        }
-
-        internal Object3D GetObject2FromSplitter(ObjectSplitter splitter)
-        {
-            return GetObjectFromSplitter(splitter.Result2Vertices, splitter.Result2Faces);
-        }
-
-        /// <summary>
-        /// Converts the given soup into an object3D
-        /// </summary>
-        /// <param name="verts"></param>
-        /// <param name="faces"></param>
-        /// <returns></returns>
-        private Object3D GetObjectFromSplitter(Point3DCollection verts, Int32Collection faces)
-        {
-            Object3D res = new Object3D();
-            res.PrimType = "Mesh";
-            Bounds3D bnds = new Bounds3D();
-            foreach (Point3D p in verts)
-            {
-                res.AbsoluteObjectVertices.Add(new Point3D(p.X, p.Y, p.Z));
-                bnds.Adjust(p);
-            }
-            for (int i = 0; i < faces.Count; i++)
-            {
-                res.TriangleIndices.Add(faces[i]);
-            }
-            Point3D mid = bnds.MidPoint();
-            res.Position = new Point3D(mid.X, mid.Y, mid.Z);
-            res.AbsoluteToRelative();
-            return res;
         }
 
         /// <summary>
