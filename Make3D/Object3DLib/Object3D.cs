@@ -121,6 +121,9 @@ namespace Barnacle.Object3DLib
              new PrimTableEntry( "spinner", PrimitiveGenerator.GenerateSpinner,Colors.GreenYellow),
              new PrimTableEntry( "roundedcage", PrimitiveGenerator.GenerateRoundedCage,Colors.Fuchsia),
              new PrimTableEntry( "roundx", PrimitiveGenerator.GenerateRoundX,Colors.Plum),
+             new PrimTableEntry( "smoothedpyramib", PrimitiveGenerator.GenerateSmoothedPyramib,Colors.Orchid),
+             new PrimTableEntry( "arrow", PrimitiveGenerator.GenerateArrow,Colors.Goldenrod),
+             new PrimTableEntry( "arrowwidebase", PrimitiveGenerator.GenerateArrowWideBase,Colors.Goldenrod),
             //Next_Primitive_Table_Entry
         };
 

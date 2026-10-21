@@ -53,6 +53,7 @@
     <Compile Include="WpfMeshAdvancedHoleFiller.cs" />
     <Compile Include="WpfMeshSlicer.cs" />
     <Compile Include="WpfMeshToSdf.cs" />
+    <Compile Include="WpfVeronoi2.cs" />
     <Compile Include="WpfVeronoi.cs" />
   </ItemGroup>
   <ItemGroup>

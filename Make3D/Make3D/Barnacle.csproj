@@ -93,6 +93,7 @@
     </ApplicationDefinition>
     <Compile Include="Adorners\DimensionAdorner.cs" />
     <Compile Include="Dialogs\RoughSurface\SurfaceNoiseDlg.xaml.cs" />
+    <Compile Include="Dialogs\Veronoi\VeronoiDlg.xaml.cs" />
     <Compile Include="Models\Planes\DistalPlane.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\LengthAndHeightAdorner.cs" />
     <Compile Include="Dialogs\AboutBox\AboutBoxDlg.xaml.cs">
@@ -418,6 +419,7 @@
     <Compile Include="ViewModels\EditorViewModel\ExtraFunctions\IslandFunctions.cs" />
     <Compile Include="ViewModels\EditorViewModel\ExtraFunctions\LoopSmoothWithAI.cs" />
     <Compile Include="ViewModels\EditorViewModel\ExtraFunctions\OverlappingTriangles.cs" />
+    <Compile Include="ViewModels\EditorViewModel\ExtraFunctions\VeronoiWithAI.cs" />
     <Compile Include="ViewModels\Logging\Log.cs" />
     <Compile Include="ViewModels\Logging\LogEntry.cs" />
     <Compile Include="ViewModels\RichTextBoxExtensions.cs" />
@@ -890,6 +892,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\PointHull\PointHullDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\Veronoi\VeronoiDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1577,6 +1583,11 @@
     <Resource Include="Images\Buttons\RotateLeft.png" />
     <Resource Include="Images\Buttons\RotateRightpng.png" />
     <Resource Include="Images\Buttons\rotateaxiscontrol.png" />
+    <Resource Include="Images\Buttons\Arrow.png" />
+    <Resource Include="Images\Buttons\ArrowWIdeBase.png" />
+    <Resource Include="Images\Buttons\RoundedCage.png" />
+    <Resource Include="Images\Buttons\RoundedX.png" />
+    <Resource Include="Images\Buttons\RoundedPyramid.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

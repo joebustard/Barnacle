@@ -1400,16 +1400,19 @@
                             ImageSource="/Barnacle;component/Images/Buttons/smooth.png"
                             IsEnabled="{Binding MeshEditEnabled}"
                             ToolTip="Smooth mesh using Loop smoothing" />
-
+                            
                         <Custom:RibbonMenuItem
-                            x:Name="MeshRoughenButton"
+                            x:Name="MeshVeronoiButton"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
-                            Command="{Binding MeshRoughenCommand}"
-                            Header="Rough"
+                            Command="{Binding MeshVeronoiCommand}"
+                            Header="Veronoi"
                             ImageSource="/Barnacle;component/Images/Buttons/smooth.png"
                             IsEnabled="{Binding MeshEditEnabled}"
-                            ToolTip="Roughen mesh using surface noise" />
+                            ToolTip="Explode the shape into sublumps using Veronoi distance or a wireframe" />
+
+
+
 
                         <Custom:RibbonMenuItem
                             x:Name="MeshCutHButton"

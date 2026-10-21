@@ -158,6 +158,7 @@ namespace Barnacle.ViewModels
             MeshSmoothCommand = new RelayCommand(OnLoopSmooth);
             MeshSubdivideCommand = new RelayCommand(OnMeshSubdivide);
             MeshIslandCommand = new RelayCommand(OnMeshIsland);
+            MeshVeronoiCommand = new RelayCommand(OnMeshVeronoiCommand);
             MirrorCommand = new RelayCommand(OnMirror);
             MultiPasteCommand = new RelayCommand(OnMultiPaste);
             NewCommand = new RelayCommand(OnNew);
@@ -890,6 +891,11 @@ namespace Barnacle.ViewModels
         public ICommand MeshSubdivideCommand
         {
             get; set;
+        }
+
+        public RelayCommand MeshVeronoiCommand
+        {
+            get;
         }
 
         public RelayCommand MirrorCommand
@@ -2223,6 +2229,11 @@ namespace Barnacle.ViewModels
         private void OnMeshSubdivide(object obj)
         {
             NotificationManager.Notify("MeshSubdivide", obj);
+        }
+
+        private void OnMeshVeronoiCommand(object obj)
+        {
+            NotificationManager.Notify("Veronoi", null);
         }
 
         private void OnMirror(object obj)

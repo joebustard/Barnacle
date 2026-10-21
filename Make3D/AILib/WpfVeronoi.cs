@@ -1,499 +1,253 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
-using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 
-public static class MarchingCubesTables
-{
-    public static readonly int[] EdgeTable = new int[256] {
-        0x0, 0x108, 0x201, 0x309, 0x402, 0x50a, 0x603, 0x70b, 0x804, 0x90c, 0xa05, 0xb0d, 0xc06, 0xd0e, 0xe07, 0xf0f,
-        0x808, 0x900, 0xa09, 0xb01, 0xc0a, 0xd02, 0xe0b, 0xf03, 0x00c, 0x104, 0x20d, 0x305, 0x40e, 0x506, 0x60f, 0x707,
-        0x202, 0x30a, 0x003, 0x10b, 0x600, 0x708, 0x401, 0x509, 0xa06, 0xb0e, 0x807, 0x90f, 0xe04, 0xf0c, 0xc05, 0xd0d,
-        0xa0a, 0xb02, 0x80b, 0x903, 0xe08, 0xf00, 0xc09, 0xd01, 0x20e, 0x306, 0x00f, 0x107, 0x60c, 0x704, 0x40d, 0x505,
-0x404, 0x50c, 0x605, 0x70d, 0x006, 0x10e, 0x207, 0x30f, 0xc00, 0xd08, 0xe01, 0xf09, 0x802, 0x90a, 0xa03, 0xb0b,
-0xc0c, 0xd04, 0xe0d, 0xf05, 0x80e, 0x906, 0xa0f, 0xb07, 0x408, 0x500, 0x609, 0x701, 0x00a, 0x102, 0x20b, 0x303,
-0x606, 0x70e, 0x407, 0x50f, 0x204, 0x30c, 0x005, 0x10d, 0xe02, 0xf0a, 0xc03, 0xd0b, 0xa00, 0xb08, 0x801, 0x909,
-0xe0e, 0xf06, 0xc0f, 0xd07, 0xa0c, 0xb04, 0x80d, 0x905, 0x60a, 0x702, 0x40b, 0x503, 0x208, 0x300, 0x009, 0x101,
-0x804, 0x90c, 0xa05, 0xb0d, 0xc06, 0xd0e, 0xe07, 0xf0f, 0x0, 0x108, 0x201, 0x309, 0x402, 0x50a, 0x603, 0x70b,
-0x00c, 0x104, 0x20d, 0x305, 0x40e, 0x506, 0x60f, 0x707, 0x808, 0x900, 0xa09, 0xb01, 0xc0a, 0xd02, 0xe0b, 0xf03,
-0xa06, 0xb0e, 0x807, 0x90f, 0xe04, 0xf0c, 0xc05, 0xd0d, 0x202, 0x30a, 0x003, 0x10b, 0x600, 0x708, 0x401, 0x509,
-0x20e, 0x306, 0x00f, 0x107, 0x60c, 0x704, 0x40d, 0x505, 0xa0a, 0xb02, 0x80b, 0x903, 0xe08, 0xf00, 0xc09, 0xd01,
-0xc00, 0xd08, 0xe01, 0xf09, 0x802, 0x90a, 0xa03, 0xb0b, 0x404, 0x50c, 0x605, 0x70d, 0x006, 0x10e, 0x207, 0x30f,
-0x408, 0x500, 0x609, 0x701, 0x00a, 0x102, 0x20b, 0x303, 0xc0c, 0xd04, 0xe0d, 0xf05, 0x80e, 0x906, 0xa0f, 0xb07,
-0xe02, 0xf0a, 0xc03, 0xd0b, 0xa00, 0xb08, 0x801, 0x909, 0x606, 0x70e, 0x407, 0x50f, 0x204, 0x30c, 0x005, 0x10d,
-0x60a, 0x702, 0x40b, 0x503, 0x208, 0x300, 0x009, 0x101, 0xe0e, 0xf06, 0xc0f, 0xd07, 0xa0c, 0xb04, 0x80d, 0x905
-};
-
-    public static int[,] TriangleTable = {
-        {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {0, 1, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {1, 8, 3, 9, 8, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {1, 2, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {0, 8, 3, 1, 2, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {9, 2, 10, 0, 2, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {2, 8, 3, 2, 10, 8, 10, 9, 8, -1, -1, -1, -1, -1, -1, -1},
-        {3, 11, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {0, 11, 2, 8, 11, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {1, 9, 0, 2, 3, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {1, 11, 2, 1, 9, 11, 9, 8, 11, -1, -1, -1, -1, -1, -1, -1},
-        {3, 10, 1, 11, 10, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {0, 10, 1, 0, 8, 10, 8, 11, 10, -1, -1, -1, -1, -1, -1, -1},
-        {3, 9, 0, 3, 11, 9, 11, 10, 9, -1, -1, -1, -1, -1, -1, -1},
-        {9, 8, 10, 10, 8, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {4, 7, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {4, 3, 0, 7, 3, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {0, 1, 9, 8, 4, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {4, 1, 9, 4, 7, 1, 7, 3, 1, -1, -1, -1, -1, -1, -1, -1},
-        {1, 2, 10, 8, 4, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {3, 4, 7, 3, 0, 4, 1, 2, 10, -1, -1, -1, -1, -1, -1, -1},
-        {9, 2, 10, 9, 0, 2, 8, 4, 7, -1, -1, -1, -1, -1, -1, -1},
-        {2, 10, 9, 2, 9, 7, 2, 7, 3, 7, 9, 4, -1, -1, -1, -1},
-        {8, 4, 7, 3, 11, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {11, 4, 7, 11, 2, 4, 2, 0, 4, -1, -1, -1, -1, -1, -1, -1},
-        {9, 0, 1, 8, 4, 7, 2, 3, 11, -1, -1, -1, -1, -1, -1, -1},
-        {4, 7, 11, 9, 4, 11, 9, 11, 2, 9, 2, 1, -1, -1, -1, -1},
-        {3, 10, 1, 3, 11, 10, 7, 8, 4, -1, -1, -1, -1, -1, -1, -1},
-        {1, 11, 10, 1, 4, 11, 1, 0, 4, 7, 11, 4, -1, -1, -1, -1},
-        {4, 7, 8, 9, 0, 11, 9, 11, 10, 11, 0, 3, -1, -1, -1, -1},
-        {4, 7, 11, 4, 11, 9, 9, 11, 10, -1, -1, -1, -1, -1, -1, -1},
-        {9, 5, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {9, 5, 4, 0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {0, 5, 4, 1, 5, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {8, 5, 4, 8, 3, 5, 3, 1, 5, -1, -1, -1, -1, -1, -1, -1},
-        {1, 2, 10, 9, 5, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {3, 0, 8, 1, 2, 10, 4, 9, 5, -1, -1, -1, -1, -1, -1, -1},
-        {5, 2, 10, 5, 4, 2, 4, 0, 2, -1, -1, -1, -1, -1, -1, -1},
-        {2, 10, 5, 3, 2, 5, 3, 5, 4, 3, 4, 8, -1, -1, -1, -1},
-        {9, 5, 4, 2, 3, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {0, 11, 2, 0, 8, 11, 4, 9, 5, -1, -1, -1, -1, -1, -1, -1},
-        {0, 5, 4, 0, 1, 5, 2, 3, 11, -1, -1, -1, -1, -1, -1, -1},
-        {2, 1, 5, 2, 5, 8, 2, 8, 11, 4, 8, 5, -1, -1, -1, -1},
-        {10, 3, 11, 10, 1, 3, 9, 5, 4, -1, -1, -1, -1, -1, -1, -1},
-        {4, 9, 5, 0, 8, 1, 8, 10, 1, 8, 11, 10, -1, -1, -1, -1},
-        {5, 4, 0, 5, 0, 11, 5, 11, 10, 11, 0, 3, -1, -1, -1, -1},
-        {5, 4, 8, 5, 8, 10, 10, 8, 11, -1, -1, -1, -1, -1, -1, -1},
-        {9, 7, 8, 5, 7, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {9, 3, 0, 9, 5, 3, 5, 7, 3, -1, -1, -1, -1, -1, -1, -1},
-        {0, 7, 8, 0, 1, 7, 1, 5, 7, -1, -1, -1, -1, -1, -1, -1},
-        {1, 5, 3, 3, 5, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {9, 7, 8, 9, 5, 7, 10, 1, 2, -1, -1, -1, -1, -1, -1, -1},
-        {10, 1, 2, 9, 5, 0, 5, 3, 0, 5, 7, 3, -1, -1, -1, -1},
-        {8, 0, 2, 8, 2, 5, 8, 5, 7, 10, 5, 2, -1, -1, -1, -1},
-        {2, 10, 5, 2, 5, 3, 3, 5, 7, -1, -1, -1, -1, -1, -1, -1},
-        {7, 9, 5, 7, 8, 9, 3, 11, 2, -1, -1, -1, -1, -1, -1, -1},
-        {9, 5, 7, 9, 7, 2, 9, 2, 0, 2, 7, 11, -1, -1, -1, -1},
-        {2, 3, 11, 0, 1, 8, 1, 7, 8, 1, 5, 7, -1, -1, -1, -1},
-        {11, 2, 1, 11, 1, 7, 7, 1, 5, -1, -1, -1, -1, -1, -1, -1},
-        {9, 5, 8, 8, 5, 7, 10, 1, 3, 10, 3, 11, -1, -1, -1, -1},
-        {5, 7, 0, 5, 0, 9, 7, 11, 0, 1, 0, 10, 11, 10, 0, -1},
-        {11, 10, 0, 11, 0, 3, 10, 5, 0, 8, 0, 7, 5, 7, 0, -1},
-        {11, 10, 5, 7, 11, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {10, 6, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {0, 8, 3, 5, 10, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {9, 0, 1, 5, 10, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {1, 8, 3, 1, 9, 8, 5, 10, 6, -1, -1, -1, -1, -1, -1, -1},
-        {1, 6, 5, 2, 6, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {1, 6, 5, 1, 2, 6, 3, 0, 8, -1, -1, -1, -1, -1, -1, -1},
-        {9, 6, 5, 9, 0, 6, 0, 2, 6, -1, -1, -1, -1, -1, -1, -1},
-        {5, 9, 8, 5, 8, 2, 5, 2, 6, 3, 2, 8, -1, -1, -1, -1},
-        {2, 3, 11, 10, 6, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {11, 0, 8, 11, 2, 0, 10, 6, 5, -1, -1, -1, -1, -1, -1, -1},
-        {0, 1, 9, 2, 3, 11, 5, 10, 6, -1, -1, -1, -1, -1, -1, -1},
-        {5, 10, 6, 1, 9, 2, 9, 11, 2, 9, 8, 11, -1, -1, -1, -1},
-        {6, 3, 11, 6, 5, 3, 5, 1, 3, -1, -1, -1, -1, -1, -1, -1},
-        {0, 8, 11, 0, 11, 5, 0, 5, 1, 5, 11, 6, -1, -1, -1, -1},
-        {3, 11, 6, 0, 3, 6, 0, 6, 5, 0, 5, 9, -1, -1, -1, -1},
-        {6, 5, 9, 6, 9, 11, 11, 9, 8, -1, -1, -1, -1, -1, -1, -1},
-        {5, 10, 6, 4, 7, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {4, 3, 0, 4, 7, 3, 6, 5, 10, -1, -1, -1, -1, -1, -1, -1},
-        {1, 9, 0, 5, 10, 6, 8, 4, 7, -1, -1, -1, -1, -1, -1, -1},
-        {10, 6, 5, 1, 9, 7, 1, 7, 3, 7, 9, 4, -1, -1, -1, -1},
-        {6, 1, 2, 6, 5, 1, 4, 7, 8, -1, -1, -1, -1, -1, -1, -1},
-        {1, 2, 5, 5, 2, 6, 3, 0, 4, 3, 4, 7, -1, -1, -1, -1},
-        {8, 4, 7, 9, 0, 5, 0, 6, 5, 0, 2, 6, -1, -1, -1, -1},
-        {7, 3, 9, 7, 9, 4, 3, 2, 9, 5, 9, 6, 2, 6, 9, -1},
-        {3, 11, 2, 7, 8, 4, 10, 6, 5, -1, -1, -1, -1, -1, -1, -1},
-        {5, 10, 6, 4, 7, 2, 4, 2, 0, 2, 7, 11, -1, -1, -1, -1},
-        {0, 1, 9, 4, 7, 8, 2, 3, 11, 5, 10, 6, -1, -1, -1, -1},
-        {9, 2, 1, 9, 11, 2, 9, 4, 11, 7, 11, 4, 5, 10, 6, -1},
-        {8, 4, 7, 3, 11, 5, 3, 5, 1, 5, 11, 6, -1, -1, -1, -1},
-        {5, 1, 11, 5, 11, 6, 1, 0, 11, 7, 11, 4, 0, 4, 11, -1},
-        {0, 5, 9, 0, 6, 5, 0, 3, 6, 11, 6, 3, 8, 4, 7, -1},
-        {6, 5, 9, 6, 9, 11, 4, 7, 9, 7, 11, 9, -1, -1, -1, -1},
-        {10, 4, 9, 6, 4, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {4, 10, 6, 4, 9, 10, 0, 8, 3, -1, -1, -1, -1, -1, -1, -1},
-        {10, 0, 1, 10, 6, 0, 6, 4, 0, -1, -1, -1, -1, -1, -1, -1},
-        {8, 3, 1, 8, 1, 6, 8, 6, 4, 6, 1, 10, -1, -1, -1, -1},
-        {1, 4, 9, 1, 2, 4, 2, 6, 4, -1, -1, -1, -1, -1, -1, -1},
-        {3, 0, 8, 1, 2, 9, 2, 4, 9, 2, 6, 4, -1, -1, -1, -1},
-        {0, 2, 4, 4, 2, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {8, 3, 2, 8, 2, 4, 4, 2, 6, -1, -1, -1, -1, -1, -1, -1},
-        {10, 4, 9, 10, 6, 4, 11, 2, 3, -1, -1, -1, -1, -1, -1, -1},
-        {0, 8, 2, 2, 8, 11, 4, 9, 10, 4, 10, 6, -1, -1, -1, -1},
-        {3, 11, 2, 0, 1, 6, 0, 6, 4, 6, 1, 10, -1, -1, -1, -1},
-        {6, 4, 1, 6, 1, 10, 4, 8, 1, 2, 1, 11, 8, 11, 1, -1},
-        {9, 6, 4, 9, 3, 6, 9, 1, 3, 11, 6, 3, -1, -1, -1, -1},
-        {8, 11, 1, 8, 1, 0, 11, 6, 1, 9, 1, 4, 6, 4, 1, -1},
-        {3, 11, 6, 3, 6, 0, 0, 6, 4, -1, -1, -1, -1, -1, -1, -1},
-        {6, 4, 8, 11, 6, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {7, 10, 6, 7, 8, 10, 8, 9, 10, -1, -1, -1, -1, -1, -1, -1},
-        {0, 7, 3, 0, 10, 7, 0, 9, 10, 6, 7, 10, -1, -1, -1, -1},
-        {10, 6, 7, 1, 10, 7, 1, 7, 8, 1, 8, 0, -1, -1, -1, -1},
-        {10, 6, 7, 10, 7, 1, 1, 7, 3, -1, -1, -1, -1, -1, -1, -1},
-        {1, 2, 6, 1, 6, 8, 1, 8, 9, 8, 6, 7, -1, -1, -1, -1},
-        {2, 6, 9, 2, 9, 1, 6, 7, 9, 0, 9, 3, 7, 3, 9, -1},
-        {7, 8, 0, 7, 0, 6, 6, 0, 2, -1, -1, -1, -1, -1, -1, -1},
-        {7, 3, 2, 6, 7, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {2, 3, 11, 10, 6, 8, 10, 8, 9, 8, 6, 7, -1, -1, -1, -1},
-        {2, 0, 7, 2, 7, 11, 0, 9, 7, 6, 7, 10, 9, 10, 7, -1},
-        {1, 8, 0, 1, 7, 8, 1, 10, 7, 6, 7, 10, 2, 3, 11, -1},
-        {11, 2, 1, 11, 1, 7, 10, 6, 1, 6, 7, 1, -1, -1, -1, -1},
-        {8, 9, 6, 8, 6, 7, 9, 1, 6, 11, 6, 3, 1, 3, 6, -1},
-        {0, 9, 1, 11, 6, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {7, 8, 0, 7, 0, 6, 3, 11, 0, 11, 6, 0, -1, -1, -1, -1},
-        {7, 11, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {7, 6, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {3, 0, 8, 11, 7, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {0, 1, 9, 11, 7, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {8, 1, 9, 8, 3, 1, 11, 7, 6, -1, -1, -1, -1, -1, -1, -1},
-        {10, 1, 2, 6, 11, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {1, 2, 10, 3, 0, 8, 6, 11, 7, -1, -1, -1, -1, -1, -1, -1},
-        {2, 9, 0, 2, 10, 9, 6, 11, 7, -1, -1, -1, -1, -1, -1, -1},
-        {6, 11, 7, 2, 10, 3, 10, 8, 3, 10, 9, 8, -1, -1, -1, -1},
-        {7, 2, 3, 6, 2, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {7, 0, 8, 7, 6, 0, 6, 2, 0, -1, -1, -1, -1, -1, -1, -1},
-        {2, 7, 6, 2, 3, 7, 0, 1, 9, -1, -1, -1, -1, -1, -1, -1},
-        {1, 6, 2, 1, 8, 6, 1, 9, 8, 8, 7, 6, -1, -1, -1, -1},
-        {10, 7, 6, 10, 1, 7, 1, 3, 7, -1, -1, -1, -1, -1, -1, -1},
-        {10, 7, 6, 1, 7, 10, 1, 8, 7, 1, 0, 8, -1, -1, -1, -1},
-        {0, 3, 7, 0, 7, 10, 0, 10, 9, 6, 10, 7, -1, -1, -1, -1},
-        {7, 6, 10, 7, 10, 8, 8, 10, 9, -1, -1, -1, -1, -1, -1, -1},
-        {6, 8, 4, 11, 8, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {3, 6, 11, 3, 0, 6, 0, 4, 6, -1, -1, -1, -1, -1, -1, -1},
-        {8, 6, 11, 8, 4, 6, 9, 0, 1, -1, -1, -1, -1, -1, -1, -1},
-        {9, 4, 6, 9, 6, 3, 9, 3, 1, 11, 3, 6, -1, -1, -1, -1},
-        {6, 8, 4, 6, 11, 8, 2, 10, 1, -1, -1, -1, -1, -1, -1, -1},
-        {1, 2, 10, 3, 0, 11, 0, 6, 11, 0, 4, 6, -1, -1, -1, -1},
-        {4, 11, 8, 4, 6, 11, 0, 2, 9, 2, 10, 9, -1, -1, -1, -1},
-        {10, 9, 3, 10, 3, 2, 9, 4, 3, 11, 3, 6, 4, 6, 3, -1},
-        {8, 2, 3, 8, 4, 2, 4, 6, 2, -1, -1, -1, -1, -1, -1, -1},
-        {0, 4, 2, 4, 6, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {1, 9, 0, 2, 3, 4, 2, 4, 6, 4, 3, 8, -1, -1, -1, -1},
-        {1, 9, 4, 1, 4, 2, 2, 4, 6, -1, -1, -1, -1, -1, -1, -1},
-        {8, 1, 3, 8, 6, 1, 8, 4, 6, 6, 10, 1, -1, -1, -1, -1},
-        {10, 1, 0, 10, 0, 6, 6, 0, 4, -1, -1, -1, -1, -1, -1, -1},
-        {4, 6, 3, 4, 3, 8, 6, 10, 3, 0, 3, 9, 10, 9, 3, -1},
-        {10, 9, 4, 6, 10, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {4, 9, 5, 7, 6, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {0, 8, 3, 4, 9, 5, 11, 7, 6, -1, -1, -1, -1, -1, -1, -1},
-        {5, 0, 1, 5, 4, 0, 7, 6, 11, -1, -1, -1, -1, -1, -1, -1},
-        {11, 7, 6, 8, 3, 4, 3, 5, 4, 3, 1, 5, -1, -1, -1, -1},
-        {9, 5, 4, 10, 1, 2, 7, 6, 11, -1, -1, -1, -1, -1, -1, -1},
-        {6, 11, 7, 1, 2, 10, 0, 8, 3, 4, 9, 5, -1, -1, -1, -1},
-        {7, 6, 11, 5, 4, 10, 4, 2, 10, 4, 0, 2, -1, -1, -1, -1},
-        {3, 4, 8, 3, 5, 4, 3, 2, 5, 10, 5, 2, 11, 7, 6, -1},
-        {7, 2, 3, 7, 6, 2, 5, 4, 9, -1, -1, -1, -1, -1, -1, -1},
-        {9, 5, 4, 0, 8, 6, 0, 6, 2, 6, 8, 7, -1, -1, -1, -1},
-        {3, 6, 2, 3, 7, 6, 1, 5, 0, 5, 4, 0, -1, -1, -1, -1},
-        {6, 2, 8, 6, 8, 7, 2, 1, 8, 4, 8, 5, 1, 5, 8, -1},
-        {9, 5, 4, 10, 1, 6, 1, 7, 6, 1, 3, 7, -1, -1, -1, -1},
-        {1, 6, 10, 1, 7, 6, 1, 0, 7, 8, 7, 0, 9, 5, 4, -1},
-        {4, 0, 10, 4, 10, 5, 0, 3, 10, 6, 10, 7, 3, 7, 10, -1},
-        {7, 6, 10, 7, 10, 8, 5, 4, 10, 4, 8, 10, -1, -1, -1, -1},
-        {6, 9, 5, 6, 11, 9, 11, 8, 9, -1, -1, -1, -1, -1, -1, -1},
-        {3, 6, 11, 0, 6, 3, 0, 5, 6, 0, 9, 5, -1, -1, -1, -1},
-        {0, 11, 8, 0, 5, 11, 0, 1, 5, 5, 6, 11, -1, -1, -1, -1},
-        {6, 11, 3, 6, 3, 5, 5, 3, 1, -1, -1, -1, -1, -1, -1, -1},
-        {1, 2, 10, 9, 5, 11, 9, 11, 8, 11, 5, 6, -1, -1, -1, -1},
-        {0, 11, 3, 0, 6, 11, 0, 9, 6, 5, 6, 9, 1, 2, 10, -1},
-        {11, 8, 5, 11, 5, 6, 8, 0, 5, 10, 5, 2, 0, 2, 5, -1},
-        {6, 11, 3, 6, 3, 5, 2, 10, 3, 10, 5, 3, -1, -1, -1, -1},
-        {5, 8, 9, 5, 2, 8, 5, 6, 2, 3, 8, 2, -1, -1, -1, -1},
-        {9, 5, 6, 9, 6, 0, 0, 6, 2, -1, -1, -1, -1, -1, -1, -1},
-        {1, 5, 8, 1, 8, 0, 5, 6, 8, 3, 8, 2, 6, 2, 8, -1},
-        {1, 5, 6, 2, 1, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {1, 3, 6, 1, 6, 10, 3, 8, 6, 5, 6, 9, 8, 9, 6, -1},
-        {10, 1, 0, 10, 0, 6, 9, 5, 0, 5, 6, 0, -1, -1, -1, -1},
-        {0, 3, 8, 5, 6, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {10, 5, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {11, 5, 10, 7, 5, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {11, 5, 10, 11, 7, 5, 8, 3, 0, -1, -1, -1, -1, -1, -1, -1},
-        {5, 11, 7, 5, 10, 11, 1, 9, 0, -1, -1, -1, -1, -1, -1, -1},
-        {10, 7, 5, 10, 11, 7, 9, 8, 1, 8, 3, 1, -1, -1, -1, -1},
-        {11, 1, 2, 11, 7, 1, 7, 5, 1, -1, -1, -1, -1, -1, -1, -1},
-        {0, 8, 3, 1, 2, 7, 1, 7, 5, 7, 2, 11, -1, -1, -1, -1},
-        {9, 7, 5, 9, 2, 7, 9, 0, 2, 2, 11, 7, -1, -1, -1, -1},
-        {7, 5, 2, 7, 2, 11, 5, 9, 2, 3, 2, 8, 9, 8, 2, -1},
-        {2, 5, 10, 2, 3, 5, 3, 7, 5, -1, -1, -1, -1, -1, -1, -1},
-        {8, 2, 0, 8, 5, 2, 8, 7, 5, 10, 2, 5, -1, -1, -1, -1},
-        {9, 0, 1, 5, 10, 3, 5, 3, 7, 3, 10, 2, -1, -1, -1, -1},
-        {9, 8, 2, 9, 2, 1, 8, 7, 2, 10, 2, 5, 7, 5, 2, -1},
-        {1, 3, 5, 3, 7, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {0, 8, 7, 0, 7, 1, 1, 7, 5, -1, -1, -1, -1, -1, -1, -1},
-        {9, 0, 3, 9, 3, 5, 5, 3, 7, -1, -1, -1, -1, -1, -1, -1},
-        {9, 8, 7, 5, 9, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {5, 8, 4, 5, 10, 8, 10, 11, 8, -1, -1, -1, -1, -1, -1, -1},
-        {5, 0, 4, 5, 11, 0, 5, 10, 11, 11, 3, 0, -1, -1, -1, -1},
-        {0, 1, 9, 8, 4, 10, 8, 10, 11, 10, 4, 5, -1, -1, -1, -1},
-        {10, 11, 4, 10, 4, 5, 11, 3, 4, 9, 4, 1, 3, 1, 4, -1},
-        {2, 5, 1, 2, 8, 5, 2, 11, 8, 4, 5, 8, -1, -1, -1, -1},
-        {0, 4, 11, 0, 11, 3, 4, 5, 11, 2, 11, 1, 5, 1, 11, -1},
-        {0, 2, 5, 0, 5, 9, 2, 11, 5, 4, 5, 8, 11, 8, 5, -1},
-        {9, 4, 5, 2, 11, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {2, 5, 10, 3, 5, 2, 3, 4, 5, 3, 8, 4, -1, -1, -1, -1},
-        {5, 10, 2, 5, 2, 4, 4, 2, 0, -1, -1, -1, -1, -1, -1, -1},
-        {3, 10, 2, 3, 5, 10, 3, 8, 5, 4, 5, 8, 0, 1, 9, -1},
-        {5, 10, 2, 5, 2, 4, 1, 9, 2, 9, 4, 2, -1, -1, -1, -1},
-        {8, 4, 5, 8, 5, 3, 3, 5, 1, -1, -1, -1, -1, -1, -1, -1},
-        {0, 4, 5, 1, 0, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {8, 4, 5, 8, 5, 3, 9, 0, 5, 0, 3, 5, -1, -1, -1, -1},
-        {9, 4, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {4, 11, 7, 4, 9, 11, 9, 10, 11, -1, -1, -1, -1, -1, -1, -1},
-        {0, 8, 3, 4, 9, 7, 9, 11, 7, 9, 10, 11, -1, -1, -1, -1},
-        {1, 10, 11, 1, 11, 4, 1, 4, 0, 7, 4, 11, -1, -1, -1, -1},
-        {3, 1, 4, 3, 4, 8, 1, 10, 4, 7, 4, 11, 10, 11, 4, -1},
-        {4, 11, 7, 9, 11, 4, 9, 2, 11, 9, 1, 2, -1, -1, -1, -1},
-        {9, 7, 4, 9, 11, 7, 9, 1, 11, 2, 11, 1, 0, 8, 3, -1},
-        {11, 7, 4, 11, 4, 2, 2, 4, 0, -1, -1, -1, -1, -1, -1, -1},
-        {11, 7, 4, 11, 4, 2, 8, 3, 4, 3, 2, 4, -1, -1, -1, -1},
-        {2, 9, 10, 2, 7, 9, 2, 3, 7, 7, 4, 9, -1, -1, -1, -1},
-        {9, 10, 7, 9, 7, 4, 10, 2, 7, 8, 7, 0, 2, 0, 7, -1},
-        {3, 7, 10, 3, 10, 2, 7, 4, 10, 1, 10, 0, 4, 0, 10, -1},
-        {1, 10, 2, 8, 7, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {4, 9, 1, 4, 1, 7, 7, 1, 3, -1, -1, -1, -1, -1, -1, -1},
-        {4, 9, 1, 4, 1, 7, 0, 8, 1, 8, 7, 1, -1, -1, -1, -1},
-        {4, 0, 3, 7, 4, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {4, 8, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {9, 10, 8, 10, 11, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {3, 0, 9, 3, 9, 11, 11, 9, 10, -1, -1, -1, -1, -1, -1, -1},
-        {0, 1, 10, 0, 10, 8, 8, 10, 11, -1, -1, -1, -1, -1, -1, -1},
-        {3, 1, 10, 11, 3, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {1, 2, 11, 1, 11, 9, 9, 11, 8, -1, -1, -1, -1, -1, -1, -1},
-        {3, 0, 9, 3, 9, 11, 1, 2, 9, 2, 11, 9, -1, -1, -1, -1},
-        {0, 2, 11, 8, 0, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {3, 2, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {2, 3, 8, 2, 8, 10, 10, 8, 9, -1, -1, -1, -1, -1, -1, -1},
-        {9, 10, 2, 0, 9, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {2, 3, 8, 2, 8, 10, 0, 1, 8, 1, 10, 8, -1, -1, -1, -1},
-        {1, 10, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {1, 3, 8, 9, 1, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {0, 9, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {0, 3, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}};
-};
-
-public class Voronoi3DPrinterConverter
+public class VoronoiMeshConverter
 {
     /// <summary>
-    /// Converts a wireframe mesh into a solid, watertight 3D Voronoi mesh ready for 3D printing.
+    /// Converts an existing WPF 3D mesh into a single combined Voronoi fractured mesh.
     /// </summary>
-    /// <param name="wireframe">The source mesh whose vertices act as seed sites.</param>
-    /// <param name="resolution">Grid resolution. Higher values (64-128) yield smoother, print-ready surfaces.</param>
-    /// <param name="wallThickness">The physical thickness of the Voronoi struts (in world units, e.g., mm).</param>
-    public static PrintableMesh CreatePrintableVoronoi(WireframeMesh wireframe, int resolution = 64, float wallThickness = 2.0f)
+    /// <param name="inputMesh">The original mesh to be transformed into Voronoi cells.</param>
+    /// <param name="explodeFactor">Optional factor to push cells outward from the center (e.g., 0.05 for a fractured look).</param>
+    /// <returns>A new MeshGeometry3D containing the combined Voronoi pieces.</returns>
+    public static MeshGeometry3D ConvertToVoronoiMesh(MeshGeometry3D inputMesh, double explodeFactor = 0.0)
     {
-        if (wireframe?.Vertices == null || wireframe.Vertices.Length < 4)
-            throw new ArgumentException("At least 4 vertices are required to calculate a 3D Voronoi volume.");
+        if (inputMesh == null || inputMesh.Positions.Count < 4)
+            throw new ArgumentException("Input mesh must have at least 4 unique vertices to form a 3D volume.");
 
-        // 1. Establish the domain bounding box
-        Vector3D min = wireframe.Vertices[0];
-        Vector3D max = wireframe.Vertices[0];
-        foreach (var v in wireframe.Vertices)
+        // 1. Gather distinct vertices from the original mesh to use as Voronoi seed sites
+        List<Point3D> sites = ExtractUniqueSites(inputMesh);
+
+        // 2. Find the bounding structure of the original mesh to use as the clipping container
+        List<PolyFace> boundingVolume = ExtractFacesFromMesh(inputMesh);
+        Point3D meshCenter = CalculateMeshCenter(inputMesh);
+
+        // Prepare standard structures for merging the generated cells
+        MeshGeometry3D combinedVoronoiMesh = new MeshGeometry3D();
+        int globalVertexIndex = 0;
+
+        // 3. Generate and clip a Voronoi cell for every unique vertex site
+        foreach (var currentSite in sites)
         {
-            min = Vector3DMin(min, v);
-            max = Vector3DMax(max, v);
+            List<PolyFace> cellVolume = CloneVolume(boundingVolume);
+
+            foreach (var otherSite in sites)
+            {
+                if (currentSite.Equals(otherSite)) continue;
+
+                // Define the perpendicular bisector cutting plane between the two vertex sites
+                Vector3D normal = otherSite - currentSite;
+                normal.Normalize();
+
+                Point3D planePoint = new Point3D(
+                    (currentSite.X + otherSite.X) * 0.5,
+                    (currentSite.Y + otherSite.Y) * 0.5,
+                    (currentSite.Z + otherSite.Z) * 0.5
+                );
+
+                // Clip the current cell's geometry
+                cellVolume = ClipPolyhedronWithPlane(cellVolume, planePoint, normal);
+                if (cellVolume.Count == 0) break;
+            }
+
+            // 4. If the cell survived clipping, stitch it into the final unified mesh
+            if (cellVolume.Count > 0)
+            {
+                // Optional: Calculate explode offset vector to create distinct gaps between cells
+                Vector3D explodeOffset = new Vector3D(0, 0, 0);
+                if (explodeFactor > 0.0)
+                {
+                    explodeOffset = currentSite - meshCenter;
+                    if (explodeOffset.LengthSquared > 0)
+                    {
+                        explodeOffset.Normalize();
+                    }
+
+                    explodeOffset *= explodeFactor;
+                }
+
+                // Triangulate the multi-sided polygons directly into the final combined mesh
+                foreach (var face in cellVolume)
+                {
+                    for (int i = 1; i < face.Vertices.Count - 1; i++)
+                    {
+                        combinedVoronoiMesh.Positions.Add(face.Vertices[0] + explodeOffset);
+                        combinedVoronoiMesh.Positions.Add(face.Vertices[i] + explodeOffset);
+                        combinedVoronoiMesh.Positions.Add(face.Vertices[i + 1] + explodeOffset);
+
+                        combinedVoronoiMesh.TriangleIndices.Add(globalVertexIndex);
+                        combinedVoronoiMesh.TriangleIndices.Add(globalVertexIndex + 1);
+                        combinedVoronoiMesh.TriangleIndices.Add(globalVertexIndex + 2);
+                        globalVertexIndex += 3;
+                    }
+                }
+            }
         }
 
-        // Add padding to prevent the geometry from clipping at boundaries
-        float padding = wallThickness * 2.0f;
-        min -= new Vector3D(padding, padding, padding);
-        max += new Vector3D(padding, padding, padding);
-        Vector3D size = max - min;
+        combinedVoronoiMesh.Freeze(); // Optimize for WPF rendering architecture
+        return combinedVoronoiMesh;
+    }
 
-        int resX = resolution;
-        int resY = Math.Max(4, (int)(resolution * (size.Y / size.X)));
-        int resZ = Math.Max(4, (int)(resolution * (size.Z / size.X)));
+    #region Geometry and Clipping Engine
 
-        // 2. Generate the Signed Distance Field (SDF) of the Voronoi Boundaries
-        float[,,] sdfGrid = new float[resX, resY, resZ];
-        float halfThickness = wallThickness * 0.5f;
+    private static Point3D CalculateMeshCenter(MeshGeometry3D mesh)
+    {
+        double x = 0, y = 0, z = 0;
+        foreach (var p in mesh.Positions)
+        {
+            x += p.X;
+            y += p.Y;
+            z += p.Z;
+        }
+        return new Point3D(x / mesh.Positions.Count, y / mesh.Positions.Count, z / mesh.Positions.Count);
+    }
 
-        Parallel.For(0, resX, x => {
-            for (int y = 0; y < resY; y++)
+    private static List<PolyFace> ClipPolyhedronWithPlane(List<PolyFace> faces, Point3D planePoint, Vector3D normal)
+    {
+        List<PolyFace> clippedFaces = new List<PolyFace>();
+        List<Point3D> cutPolygonVertices = new List<Point3D>();
+
+        foreach (var face in faces)
+        {
+            List<Point3D> newVertices = new List<Point3D>();
+
+            for (int i = 0; i < face.Vertices.Count; i++)
             {
-                for (int z = 0; z < resZ; z++)
+                Point3D current = face.Vertices[i];
+                Point3D next = face.Vertices[(i + 1) % face.Vertices.Count];
+
+                double currentDist = SignedDistanceToPlane(current, planePoint, normal);
+                double nextDist = SignedDistanceToPlane(next, planePoint, normal);
+
+                if (currentDist <= 0)
                 {
-                    Vector3D worldPos = min + new Vector3D(
-                        (float)x / (resX - 1) * size.X,
-                        (float)y / (resY - 1) * size.Y,
-                        (float)z / (resZ - 1) * size.Z
+                    newVertices.Add(current);
+                }
+
+                if ((currentDist < 0 && nextDist > 0) || (currentDist > 0 && nextDist < 0))
+                {
+                    double t = currentDist / (currentDist - nextDist);
+                    Point3D intersect = new Point3D(
+                        current.X + t * (next.X - current.X),
+                        current.Y + t * (next.Y - current.Y),
+                        current.Z + t * (next.Z - current.Z)
                     );
+                    newVertices.Add(intersect);
 
-                    float firstClosestDist = float.MaxValue;
-                    float secondClosestDist = float.MaxValue;
-
-                    for (int i = 0; i < wireframe.Vertices.Length; i++)
-                    {
-                        float d = Vector3DDistance(worldPos, wireframe.Vertices[i]);
-                        if (d < firstClosestDist)
-                        {
-                            secondClosestDist = firstClosestDist;
-                            firstClosestDist = d;
-                        }
-                        else if (d < secondClosestDist)
-                        {
-                            secondClosestDist = d;
-                        }
-                    }
-
-                    // Voronoi cell boundaries sit exactly where firstClosest == secondClosest
-                    float distanceToWall = (secondClosestDist - firstClosestDist) * 0.5f;
-                    sdfGrid[x, y, z] = halfThickness - distanceToWall;
+                    if (!cutPolygonVertices.Contains(intersect)) cutPolygonVertices.Add(intersect);
                 }
             }
-        });
 
-        // 3. Polygonise the continuous surface via Marching Cubes
-        return ExtractSurface(sdfGrid, min, size);
-    }
-
-    private static void AddTriangleWeld(PrintableMesh mesh, Vector3D v0, Vector3D v1, Vector3D v2, Dictionary<string, int> cache)
-    {
-        Vector3D[] triVerts = new Vector3D[] { v0, v1, v2 };
-        for (int i = 0; i < 3; i++)
-        {
-            string key = $"{triVerts[i].X:F4}_{triVerts[i].Y:F4}_{triVerts[i].Z:F4}";
-            if (!cache.TryGetValue(key, out int index))
+            if (newVertices.Count >= 3)
             {
-                index = mesh.Vertices.Count;
-                mesh.Vertices.Add(triVerts[i]);
-                cache[key] = index;
+                clippedFaces.Add(new PolyFace { Vertices = newVertices });
             }
-            mesh.Triangles.Add(index);
         }
+
+        if (cutPolygonVertices.Count >= 3)
+        {
+            SortVerticesPolygonOrder(cutPolygonVertices, normal);
+            clippedFaces.Add(new PolyFace { Vertices = cutPolygonVertices });
+        }
+
+        return clippedFaces;
     }
 
-    private static PrintableMesh ExtractSurface(float[,,] grid, Vector3D min, Vector3D size)
+    private static List<PolyFace> CloneVolume(List<PolyFace> original)
     {
-        PrintableMesh output = new PrintableMesh();
-        int resX = grid.GetLength(0);
-        int resY = grid.GetLength(1);
-        int resZ = grid.GetLength(2);
-
-        Vector3D voxelSize = new Vector3D(size.X / (resX - 1), size.Y / (resY - 1), size.Z / (resZ - 1));
-        Dictionary<string, int> vertexWeldCache = new Dictionary<string, int>();
-
-        for (int x = 0; x < resX - 1; x++)
+        var clone = new List<PolyFace>();
+        foreach (var face in original)
         {
-            for (int y = 0; y < resY - 1; y++)
+            clone.Add(new PolyFace { Vertices = new List<Point3D>(face.Vertices) });
+        }
+
+        return clone;
+    }
+
+    private static List<PolyFace> ExtractFacesFromMesh(MeshGeometry3D mesh)
+    {
+        List<PolyFace> faces = new List<PolyFace>();
+        for (int i = 0; i < mesh.TriangleIndices.Count; i += 3)
+        {
+            var face = new PolyFace();
+            face.Vertices.Add(mesh.Positions[mesh.TriangleIndices[i]]);
+            face.Vertices.Add(mesh.Positions[mesh.TriangleIndices[i + 1]]);
+            face.Vertices.Add(mesh.Positions[mesh.TriangleIndices[i + 2]]);
+            faces.Add(face);
+        }
+        return faces;
+    }
+
+    private static List<Point3D> ExtractUniqueSites(MeshGeometry3D mesh)
+    {
+        var uniquePoints = new List<Point3D>();
+        // Use a small epsilon to avoid duplicate site registration from overlapping vertices
+        double epsilon = 0.00001;
+
+        foreach (var p in mesh.Positions)
+        {
+            bool found = false;
+            for (int i = 0; i < uniquePoints.Count; i++)
             {
-                for (int z = 0; z < resZ - 1; z++)
+                if (Math.Abs(uniquePoints[i].X - p.X) < epsilon &&
+                    Math.Abs(uniquePoints[i].Y - p.Y) < epsilon &&
+                    Math.Abs(uniquePoints[i].Z - p.Z) < epsilon)
                 {
-                    // Sample field scalar values across the 8 corners of the marching cube cell
-                    float[] cubeValues = new float[]
-                    {
-                        grid[x, y, z],         grid[x + 1, y, z],     grid[x + 1, y, z + 1],     grid[x, y, z + 1],
-                        grid[x, y + 1, z],     grid[x + 1, y + 1, z], grid[x + 1, y + 1, z + 1], grid[x, y + 1, z + 1]
-                    };
-
-                    int cubeIndex = 0;
-                    if (cubeValues[0] >= 0) cubeIndex |= 1;
-                    if (cubeValues[1] >= 0) cubeIndex |= 2;
-                    if (cubeValues[2] >= 0) cubeIndex |= 4;
-                    if (cubeValues[3] >= 0) cubeIndex |= 8;
-                    if (cubeValues[4] >= 0) cubeIndex |= 16;
-                    if (cubeValues[5] >= 0) cubeIndex |= 32;
-                    if (cubeValues[6] >= 0) cubeIndex |= 64;
-                    if (cubeValues[7] >= 0) cubeIndex |= 128;
-
-                    int edgeFlags = MarchingCubesTables.EdgeTable[cubeIndex];
-                    if (edgeFlags == 0) continue;
-
-                    Vector3D[] corners = new Vector3D[8];
-                    Vector3D origin = min + new Vector3D(voxelSize.X * x, voxelSize.Y * y, voxelSize.Z * z);
-                    corners[0] = origin;
-                    corners[1] = origin + new Vector3D(voxelSize.X, 0, 0);
-                    corners[2] = origin + new Vector3D(voxelSize.X, 0, voxelSize.Z);
-                    corners[3] = origin + new Vector3D(0, 0, voxelSize.Z);
-                    corners[4] = origin + new Vector3D(0, voxelSize.Y, 0);
-                    corners[5] = origin + new Vector3D(voxelSize.X, voxelSize.Y, 0);
-                    corners[6] = origin + new Vector3D(voxelSize.X, voxelSize.Y, voxelSize.Z);
-                    corners[7] = origin + new Vector3D(0, voxelSize.Y, voxelSize.Z);
-
-                    Vector3D[] edgeVertices = new Vector3D[12];
-                    if ((edgeFlags & 1) != 0) edgeVertices[0] = VertexInterpolate(corners[0], corners[1], cubeValues[0], cubeValues[1]);
-                    if ((edgeFlags & 2) != 0) edgeVertices[1] = VertexInterpolate(corners[1], corners[2], cubeValues[1], cubeValues[2]);
-                    if ((edgeFlags & 4) != 0) edgeVertices[2] = VertexInterpolate(corners[2], corners[3], cubeValues[2], cubeValues[3]);
-                    if ((edgeFlags & 8) != 0) edgeVertices[3] = VertexInterpolate(corners[3], corners[0], cubeValues[3], cubeValues[0]);
-                    if ((edgeFlags & 16) != 0) edgeVertices[4] = VertexInterpolate(corners[4], corners[5], cubeValues[4], cubeValues[5]);
-                    if ((edgeFlags & 32) != 0) edgeVertices[5] = VertexInterpolate(corners[5], corners[6], cubeValues[5], cubeValues[6]);
-                    if ((edgeFlags & 64) != 0) edgeVertices[6] = VertexInterpolate(corners[6], corners[7], cubeValues[6], cubeValues[7]);
-                    if ((edgeFlags & 128) != 0) edgeVertices[7] = VertexInterpolate(corners[7], corners[4], cubeValues[7], cubeValues[4]);
-                    if ((edgeFlags & 256) != 0) edgeVertices[8] = VertexInterpolate(corners[0], corners[4], cubeValues[0], cubeValues[4]);
-                    if ((edgeFlags & 512) != 0) edgeVertices[9] = VertexInterpolate(corners[1], corners[5], cubeValues[1], cubeValues[5]);
-                    if ((edgeFlags & 1024) != 0) edgeVertices[10] = VertexInterpolate(corners[2], corners[6], cubeValues[2], cubeValues[6]);
-                    if ((edgeFlags & 2048) != 0) edgeVertices[11] = VertexInterpolate(corners[3], corners[7], cubeValues[3], cubeValues[7]);
-
-                    for (int i = 0; MarchingCubesTables.TriangleTable[cubeIndex, i] != -1; i += 3)
-                    {
-                        int e0 = MarchingCubesTables.TriangleTable[cubeIndex, i];
-                        int e1 = MarchingCubesTables.TriangleTable[cubeIndex, i + 1];
-                        int e2 = MarchingCubesTables.TriangleTable[cubeIndex, i + 2];
-
-                        AddTriangleWeld(output, edgeVertices[e0], edgeVertices[e1], edgeVertices[e2], vertexWeldCache);
-                    }
+                    found = true;
+                    break;
                 }
             }
+            if (!found)
+            {
+                uniquePoints.Add(p);
+            }
         }
-        return output;
+        return uniquePoints;
     }
 
-    private static float Vector3DDistance(Vector3D v1, Vector3D v2)
+    private static double SignedDistanceToPlane(Point3D point, Point3D planePoint, Vector3D normal)
     {
-        float d = (float)Math.Sqrt((v2.X - v1.X) * (v2.X - v1.X) +
-                             (v2.Y - v1.Y) * (v2.Y - v1.Y) +
-                             (v2.Z - v1.Z) * (v2.Z - v1.Z));
-        return d;
+        return (point.X - planePoint.X) * normal.X +
+               (point.Y - planePoint.Y) * normal.Y +
+               (point.Z - planePoint.Z) * normal.Z;
     }
 
-    private static Vector3D Vector3DMax(Vector3D v1, Vector3D v2)
+    private static void SortVerticesPolygonOrder(List<Point3D> vertices, Vector3D normal)
     {
-        Vector3D res = new Vector3D(Math.Max(v1.X, v2.X),
-                                    Math.Max(v1.Y, v2.Y),
-                                    Math.Max(v1.Z, v2.Z));
-        return res;
-    }
-
-    private static Vector3D Vector3DMin(Vector3D v1, Vector3D v2)
-    {
-        Vector3D res = new Vector3D(Math.Min(v1.X, v2.X),
-                                    Math.Min(v1.Y, v2.Y),
-                                    Math.Min(v1.Z, v2.Z));
-        return res;
-    }
-
-    private static Vector3D VertexInterpolate(Vector3D p1, Vector3D p2, float val1, float val2)
-    {
-        if (Math.Abs(val1) < 0.00001f) return p1;
-        if (Math.Abs(val2) < 0.00001f) return p2;
-        if (Math.Abs(val1 - val2) < 0.00001f) return p1;
-        float mu = (0.0f - val1) / (val2 - val1);
-        return p1 + mu * (p2 - p1);
-    }
-
-    public class PrintableMesh
-    {
-        public List<int> Triangles { get; set; } = new List<int>();
-        public List<Vector3D> Vertices { get; set; } = new List<Vector3D>();
-    }
-
-    public class WireframeMesh
-    {
-        public Vector3D[] Vertices
+        Point3D centroid = new Point3D(0, 0, 0);
+        foreach (var v in vertices)
         {
-            get; set;
+            centroid.X += v.X;
+
+            centroid.Y += v.Y;
+            centroid.Z += v.Z;
         }
+        centroid.X /= vertices.Count;
+        centroid.Y /= vertices.Count;
+        centroid.Z /= vertices.Count;
+
+        Vector3D u = Vector3D.CrossProduct(normal, new Vector3D(1, 0, 0));
+        if (u.LengthSquared < 0.001)
+        {
+            u = Vector3D.CrossProduct(normal, new Vector3D(0, 1, 0));
+        }
+
+        u.Normalize();
+        Vector3D vBasis = Vector3D.CrossProduct(normal, u);
+
+        vertices.Sort((p1, p2) => {
+            Vector3D v1 = p1 - centroid;
+            Vector3D v2 = p2 - centroid;
+            double angle1 = Math.Atan2(Vector3D.DotProduct(v1, vBasis), Vector3D.DotProduct(v1, u));
+            double angle2 = Math.Atan2(Vector3D.DotProduct(v2, vBasis), Vector3D.DotProduct(v2, u));
+            return angle1.CompareTo(angle2);
+        });
     }
+
+    private class PolyFace
+    {
+        public List<Point3D> Vertices { get; set; } = new List<Point3D>();
+    }
+
+    #endregion Geometry and Clipping Engine
 }

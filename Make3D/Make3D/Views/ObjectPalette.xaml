@@ -484,7 +484,7 @@
                 IsEnabled="{Binding EditingActive}"
                 Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a Rounded cage">
-                <Image Source = "/Barnacle;component/Images/Buttons/CrossBlock.png" />
+                <Image Source="/Barnacle;component/Images/Buttons/RoundedCage.png" />
             </Button>
 
 
@@ -494,7 +494,39 @@
                 IsEnabled="{Binding EditingActive}"
                 Style="{StaticResource PrimitiveImageButton}"
                 ToolTip="Add a Rounded X">
-                <Image Source = "/Barnacle;component/Images/Buttons/CrossBlock.png" />
+                <Image Source = "/Barnacle;component/Images/Buttons/RoundedX.png" />
+
+            </Button>
+
+
+ <Button
+                Command="{Binding AddCommand}"
+                CommandParameter="SmoothedPyramib"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource PrimitiveImageButton}"
+                ToolTip="Add a pyramid with rounded edges">
+                <Image Source = "/Barnacle;component/Images/Buttons/RoundedPyramid.png" />
+
+            </Button>
+
+
+ <Button
+                Command="{Binding AddCommand}"
+                CommandParameter="Arrow"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource PrimitiveImageButton}"
+                ToolTip="Add a arrow">
+                <Image Source = "/Barnacle;component/Images/Buttons/Arrow.png" />
+            </Button>
+
+
+ <Button
+                Command="{Binding AddCommand}"
+                CommandParameter="ArrowWideBase"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource PrimitiveImageButton}"
+                ToolTip="Add a arrow with a wide base">
+                <Image Source = "/Barnacle;component/Images/Buttons/ArrowWideBase.png" />
             </Button>
 
                     <!--  Next Button Here  -->

@@ -83,6 +83,7 @@
     <Compile Include="Parser\ExtraParsingFunctions\ParsePiercedDiskNode.cs" />
     <Compile Include="Parser\ExtraParsingFunctions\ParsePiercedRingNode.cs" />
     <Compile Include="Parser\ExtraParsingFunctions\ParseUBracketNode.cs" />
+    <Compile Include="Parser\ExtraParsingFunctions\ParseVeronoiNode.cs" />
     <Compile Include="SolidFunctions\ContainsPart.cs" />
     <Compile Include="SolidFunctions\ContentCount.cs" />
     <Compile Include="SolidFunctions\GetSolidBoundNode.cs" />
@@ -145,6 +146,7 @@
     <Compile Include="SolidFunctions\MakePlatelet.cs" />
     <Compile Include="SolidFunctions\GetSolidSizeNode.cs" />
     <Compile Include="SolidFunctions\MakeUBracketNode.cs" />
+    <Compile Include="SolidFunctions\MakeVeronoiNode.cs" />
     <Compile Include="SolidFunctions\MakeWagonWheelNode.cs" />
     <Compile Include="Parser\SolidFunctionNode.cs" />
     <Compile Include="SolidFunctions\SplitFrontBack.cs" />

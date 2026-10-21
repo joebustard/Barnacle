@@ -203,6 +203,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "Undo", OnUndo);
             NotificationManager.Subscribe("Editor", "UnrefVertices", OnRemoveUnrefVertices);
             NotificationManager.Subscribe("Editor", "UpdateModels", OnUpdateModels);
+            NotificationManager.Subscribe("Editor", "Veronoi", OnVeronoi);
             NotificationManager.Subscribe("Editor", "ZoomIn", ZoomIn);
             NotificationManager.Subscribe("Editor", "ZoomOut", ZoomOut);
             NotificationManager.Subscribe("Editor", "ZoomReset", ZoomReset);
@@ -763,7 +764,8 @@ namespace Barnacle.ViewModels
                     // if the user selected something automatically switch to the properties view
                     if (handled && !append)
                     {
-                        SwitchToObjectProperties();
+                        // causing focus issues
+                        // SwitchToObjectProperties();
                     }
                 }
                 if (!handled)
@@ -4249,6 +4251,26 @@ namespace Barnacle.ViewModels
         private void OnUpdateModels(object param)
         {
             NotifyPropertyChanged("ModelItems");
+        }
+
+        private void OnVeronoi(object param)
+        {
+            if (selectedObjectAdorner == null || selectedObjectAdorner.SelectedObjects.Count != 1)
+            {
+                System.Windows.MessageBox.Show("Nothing selected to process");
+            }
+            else
+            {
+                VeronoiDlg dlg = new VeronoiDlg();
+                Object3D ob = selectedObjectAdorner.SelectedObjects[0];
+                dlg.SourceObject = ob;
+                if (dlg.ShowDialog() == true)
+                {
+                    PointUtils.PointCollectionToP3D(dlg.Vertices, ob.RelativeObjectVertices);
+                    ob.TriangleIndices = dlg.Faces;
+                    ob.Remesh();
+                }
+            }
         }
 
         private void OptimumArranger(double mapRayResolution)

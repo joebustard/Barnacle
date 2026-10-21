@@ -185,7 +185,8 @@ namespace ScriptLanguage
                 "unionall",
                 "width",
                 "val",
-                "validsolid"
+                "validsolid",
+                "Veronoi"
             };
         }
 
@@ -533,22 +534,22 @@ namespace ScriptLanguage
                         }
                         else
                             if (tokenType == Tokeniser.TokenType.Subtraction)
-                        {
-                            ExpressionNode LeftNode = exp;
-                            ExpressionNode RightNode = ParseMultiplicativeExpression(parentName);
-                            if (RightNode != null)
                             {
-                                CSubtractionNode Subexp = new CSubtractionNode();
-                                Subexp.LeftNode = LeftNode;
-                                Subexp.RightNode = RightNode;
-                                exp = Subexp;
+                                ExpressionNode LeftNode = exp;
+                                ExpressionNode RightNode = ParseMultiplicativeExpression(parentName);
+                                if (RightNode != null)
+                                {
+                                    CSubtractionNode Subexp = new CSubtractionNode();
+                                    Subexp.LeftNode = LeftNode;
+                                    Subexp.RightNode = RightNode;
+                                    exp = Subexp;
+                                }
                             }
-                        }
-                        else
-                        {
-                            tokeniser.PutTokenBack();
-                            bDone = true;
-                        }
+                            else
+                            {
+                                tokeniser.PutTokenBack();
+                                bDone = true;
+                            }
                     }
                 }
             }
@@ -1012,15 +1013,15 @@ namespace ScriptLanguage
                         result = ParseWholeStructAssignment(externalVarName, parentNode, parentName);
                     }
                     else
-                    if (tokenType == Tokeniser.TokenType.Dot)
-                    {
-                        // field
-                        result = ParseStructFieldAssignment(externalVarName, parentNode, parentName);
-                    }
-                    else
-                    {
-                        ReportSyntaxError("Syntax Error");
-                    }
+                        if (tokenType == Tokeniser.TokenType.Dot)
+                        {
+                            // field
+                            result = ParseStructFieldAssignment(externalVarName, parentNode, parentName);
+                        }
+                        else
+                        {
+                            ReportSyntaxError("Syntax Error");
+                        }
                 }
             }
 
@@ -1154,28 +1155,28 @@ namespace ScriptLanguage
                                             }
                                         }
                                         else
-                                        if (tokenType != Tokeniser.TokenType.Assignment)
-                                        {
-                                            ReportSyntaxError("Expected =, found " + token);
-                                        }
-                                        else
-                                        {
-                                            ExpressionNode exp = ParseExpressionNode(parentName);
-                                            if (exp != null)
+                                            if (tokenType != Tokeniser.TokenType.Assignment)
                                             {
-                                                result = CheckForSemiColon();
-                                                if (result)
+                                                ReportSyntaxError("Expected =, found " + token);
+                                            }
+                                            else
+                                            {
+                                                ExpressionNode exp = ParseExpressionNode(parentName);
+                                                if (exp != null)
                                                 {
-                                                    AssignStructToArrayElement asn = new AssignStructToArrayElement();
-                                                    asn.VariableName = internalName;
-                                                    asn.ExternalName = externalName;
-                                                    asn.ValueExpression = exp;
-                                                    asn.IndexExpression = indexexp;
-                                                    asn.ActualSymbol = actualSym;
-                                                    parentNode.AddStatement(asn);
+                                                    result = CheckForSemiColon();
+                                                    if (result)
+                                                    {
+                                                        AssignStructToArrayElement asn = new AssignStructToArrayElement();
+                                                        asn.VariableName = internalName;
+                                                        asn.ExternalName = externalName;
+                                                        asn.ValueExpression = exp;
+                                                        asn.IndexExpression = indexexp;
+                                                        asn.ActualSymbol = actualSym;
+                                                        parentNode.AddStatement(asn);
+                                                    }
                                                 }
                                             }
-                                        }
                                     }
                                 }
                             }
@@ -1344,88 +1345,88 @@ namespace ScriptLanguage
                         }
                         else
                             if (tokenType == Tokeniser.TokenType.Equality)
-                        {
-                            ExpressionNode LeftNode = exp;
-                            ExpressionNode RightNode = ParseArithmeticExpression(parentName);
-                            if (RightNode != null)
                             {
-                                EqualityNode Andexp = new EqualityNode();
-                                Andexp.LeftNode = LeftNode;
-                                Andexp.RightNode = RightNode;
-                                Andexp.IsInLibrary = tokeniser.InIncludeFile();
-                                exp = Andexp;
+                                ExpressionNode LeftNode = exp;
+                                ExpressionNode RightNode = ParseArithmeticExpression(parentName);
+                                if (RightNode != null)
+                                {
+                                    EqualityNode Andexp = new EqualityNode();
+                                    Andexp.LeftNode = LeftNode;
+                                    Andexp.RightNode = RightNode;
+                                    Andexp.IsInLibrary = tokeniser.InIncludeFile();
+                                    exp = Andexp;
+                                }
                             }
-                        }
-                        else
+                            else
                                 if (tokenType == Tokeniser.TokenType.InEquality)
-                        {
-                            ExpressionNode LeftNode = exp;
-                            ExpressionNode RightNode = ParseArithmeticExpression(parentName);
-                            if (RightNode != null)
-                            {
-                                CInEqualityNode Orexp = new CInEqualityNode();
-                                Orexp.LeftNode = LeftNode;
-                                Orexp.RightNode = RightNode;
-                                exp = Orexp;
-                            }
-                        }
-                        else
+                                {
+                                    ExpressionNode LeftNode = exp;
+                                    ExpressionNode RightNode = ParseArithmeticExpression(parentName);
+                                    if (RightNode != null)
+                                    {
+                                        CInEqualityNode Orexp = new CInEqualityNode();
+                                        Orexp.LeftNode = LeftNode;
+                                        Orexp.RightNode = RightNode;
+                                        exp = Orexp;
+                                    }
+                                }
+                                else
                                     if (tokenType == Tokeniser.TokenType.LessThan)
-                        {
-                            ExpressionNode LeftNode = exp;
-                            ExpressionNode RightNode = ParseArithmeticExpression(parentName);
-                            if (RightNode != null)
-                            {
-                                LessThanNode Orexp = new LessThanNode();
-                                Orexp.LeftNode = LeftNode;
-                                Orexp.RightNode = RightNode;
-                                exp = Orexp;
-                            }
-                        }
-                        else
+                                    {
+                                        ExpressionNode LeftNode = exp;
+                                        ExpressionNode RightNode = ParseArithmeticExpression(parentName);
+                                        if (RightNode != null)
+                                        {
+                                            LessThanNode Orexp = new LessThanNode();
+                                            Orexp.LeftNode = LeftNode;
+                                            Orexp.RightNode = RightNode;
+                                            exp = Orexp;
+                                        }
+                                    }
+                                    else
                                         if (tokenType == Tokeniser.TokenType.LessThanOrEqual)
-                        {
-                            ExpressionNode LeftNode = exp;
-                            ExpressionNode RightNode = ParseArithmeticExpression(parentName);
-                            if (RightNode != null)
-                            {
-                                LessThanOrEqualToNode Orexp = new LessThanOrEqualToNode();
-                                Orexp.LeftNode = LeftNode;
-                                Orexp.RightNode = RightNode;
-                                exp = Orexp;
-                            }
-                        }
-                        else
+                                        {
+                                            ExpressionNode LeftNode = exp;
+                                            ExpressionNode RightNode = ParseArithmeticExpression(parentName);
+                                            if (RightNode != null)
+                                            {
+                                                LessThanOrEqualToNode Orexp = new LessThanOrEqualToNode();
+                                                Orexp.LeftNode = LeftNode;
+                                                Orexp.RightNode = RightNode;
+                                                exp = Orexp;
+                                            }
+                                        }
+                                        else
                                             if (tokenType == Tokeniser.TokenType.GreaterThan)
-                        {
-                            ExpressionNode LeftNode = exp;
-                            ExpressionNode RightNode = ParseArithmeticExpression(parentName);
-                            if (RightNode != null)
-                            {
-                                CGreaterThanNode Orexp = new CGreaterThanNode();
-                                Orexp.LeftNode = LeftNode;
-                                Orexp.RightNode = RightNode;
-                                exp = Orexp;
-                            }
-                        }
-                        else
+                                            {
+                                                ExpressionNode LeftNode = exp;
+                                                ExpressionNode RightNode = ParseArithmeticExpression(parentName);
+                                                if (RightNode != null)
+                                                {
+                                                    CGreaterThanNode Orexp = new CGreaterThanNode();
+                                                    Orexp.LeftNode = LeftNode;
+                                                    Orexp.RightNode = RightNode;
+                                                    exp = Orexp;
+                                                }
+                                            }
+                                            else
                                                 if (tokenType == Tokeniser.TokenType.GreaterThanOrEqual)
-                        {
-                            ExpressionNode LeftNode = exp;
-                            ExpressionNode RightNode = ParseArithmeticExpression(parentName);
-                            if (RightNode != null)
-                            {
-                                CGreaterThanOrEqualToNode Orexp = new CGreaterThanOrEqualToNode();
-                                Orexp.LeftNode = LeftNode;
-                                Orexp.RightNode = RightNode;
-                                exp = Orexp;
-                            }
-                        }
-                        else
-                        {
-                            tokeniser.PutTokenBack();
-                            bDone = true;
-                        }
+                                                {
+                                                    ExpressionNode LeftNode = exp;
+                                                    ExpressionNode RightNode = ParseArithmeticExpression(parentName);
+                                                    if (RightNode != null)
+                                                    {
+                                                        CGreaterThanOrEqualToNode Orexp = new CGreaterThanOrEqualToNode();
+                                                        Orexp.LeftNode = LeftNode;
+                                                        Orexp.RightNode = RightNode;
+                                                        exp = Orexp;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    tokeniser.PutTokenBack();
+                                                    bDone = true;
+                                                }
                     }
                 }
             }
@@ -1739,33 +1740,33 @@ namespace ScriptLanguage
                         exp = ParseIntrinsicFunction(token, parentName);
                     }
                     else
-                    if (IsUserFunction(token) == true)
-                    {
-                        exp = ParseUserFunctionCall(token, parentName);
-                    }
-                    else
-                    {
-                        string vname = token;
-                        if (FetchToken(out token, out tokenType) == true)
+                        if (IsUserFunction(token) == true)
                         {
-                            // if its a variable name followed by a dot its probably a field
-                            if (tokenType == Tokeniser.TokenType.Dot)
+                            exp = ParseUserFunctionCall(token, parentName);
+                        }
+                        else
+                        {
+                            string vname = token;
+                            if (FetchToken(out token, out tokenType) == true)
                             {
-                                exp = ParseFieldNode(vname, parentName);
-                            }
-                            else
-                            if (tokenType == Tokeniser.TokenType.OpenSquare)
-                            {
-                                exp = ParseArrayVariableNode(vname, parentName);
-                            }
-                            else
-                            {
-                                // not a field
-                                tokeniser.PutTokenBack();
-                                exp = ParseVariableNode(vname, parentName);
+                                // if its a variable name followed by a dot its probably a field
+                                if (tokenType == Tokeniser.TokenType.Dot)
+                                {
+                                    exp = ParseFieldNode(vname, parentName);
+                                }
+                                else
+                                    if (tokenType == Tokeniser.TokenType.OpenSquare)
+                                    {
+                                        exp = ParseArrayVariableNode(vname, parentName);
+                                    }
+                                    else
+                                    {
+                                        // not a field
+                                        tokeniser.PutTokenBack();
+                                        exp = ParseVariableNode(vname, parentName);
+                                    }
                             }
                         }
-                    }
                 }
                 else if (tokenType == Tokeniser.TokenType.Number)
                 {
@@ -3406,6 +3407,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "veronoi":
+                            {
+                                exp = ParseMakeVeronoiFunction(parentName);
+                            }
+                            break;
+
                         case "length":
                         case "width":
                         case "height":
@@ -3525,22 +3532,22 @@ namespace ScriptLanguage
                         }
                         else
                             if (tokenType == Tokeniser.TokenType.LogicalOr)
-                        {
-                            ExpressionNode LeftNode = exp;
-                            ExpressionNode RightNode = ParseComparativeExpression(parentName);
-                            if (RightNode != null)
                             {
-                                OrNode Orexp = new OrNode();
-                                Orexp.LeftNode = LeftNode;
-                                Orexp.RightNode = RightNode;
-                                exp = Orexp;
+                                ExpressionNode LeftNode = exp;
+                                ExpressionNode RightNode = ParseComparativeExpression(parentName);
+                                if (RightNode != null)
+                                {
+                                    OrNode Orexp = new OrNode();
+                                    Orexp.LeftNode = LeftNode;
+                                    Orexp.RightNode = RightNode;
+                                    exp = Orexp;
+                                }
                             }
-                        }
-                        else
-                        {
-                            tokeniser.PutTokenBack();
-                            bDone = true;
-                        }
+                            else
+                            {
+                                tokeniser.PutTokenBack();
+                                bDone = true;
+                            }
                     }
                 }
             }
@@ -5457,35 +5464,35 @@ namespace ScriptLanguage
                         }
                         else
                             if (tokenType == Tokeniser.TokenType.Division)
-                        {
-                            ExpressionNode LeftNode = exp;
-                            ExpressionNode RightNode = ParseMultiplicativeExpression(parentName);
-                            if (RightNode != null)
                             {
-                                DivisionNode Subexp = new DivisionNode();
-                                Subexp.LeftNode = LeftNode;
-                                Subexp.RightNode = RightNode;
-                                exp = Subexp;
+                                ExpressionNode LeftNode = exp;
+                                ExpressionNode RightNode = ParseMultiplicativeExpression(parentName);
+                                if (RightNode != null)
+                                {
+                                    DivisionNode Subexp = new DivisionNode();
+                                    Subexp.LeftNode = LeftNode;
+                                    Subexp.RightNode = RightNode;
+                                    exp = Subexp;
+                                }
                             }
-                        }
-                        else
+                            else
                                 if (tokenType == Tokeniser.TokenType.Mod)
-                        {
-                            ExpressionNode LeftNode = exp;
-                            ExpressionNode RightNode = ParseMultiplicativeExpression(parentName);
-                            if (RightNode != null)
-                            {
-                                ModNode Subexp = new ModNode();
-                                Subexp.LeftNode = LeftNode;
-                                Subexp.RightNode = RightNode;
-                                exp = Subexp;
-                            }
-                        }
-                        else
-                        {
-                            tokeniser.PutTokenBack();
-                            bDone = true;
-                        }
+                                {
+                                    ExpressionNode LeftNode = exp;
+                                    ExpressionNode RightNode = ParseMultiplicativeExpression(parentName);
+                                    if (RightNode != null)
+                                    {
+                                        ModNode Subexp = new ModNode();
+                                        Subexp.LeftNode = LeftNode;
+                                        Subexp.RightNode = RightNode;
+                                        exp = Subexp;
+                                    }
+                                }
+                                else
+                                {
+                                    tokeniser.PutTokenBack();
+                                    bDone = true;
+                                }
                     }
                 }
             }
@@ -7056,24 +7063,24 @@ namespace ScriptLanguage
                         result = ParseAssignmentToStruct(Identifier, parentNode, "");
                     }
                     else
-                    if (SymbolTable.Instance().FindSymbol(parentName + Identifier) == SymbolTable.SymbolType.structname)
-                    {
-                        result = ParseAssignmentToStruct(Identifier, parentNode, parentName);
-                    }
-                    else
-                    if (SymbolTable.Instance().FindStructArraySymbol(parentName, Identifier) != null)
-                    {
-                        result = ParseAssignmentToStructArrayElement(Identifier, parentNode, parentName);
-                    }
-                    else
-                    if (SymbolTable.Instance().FindArraySymbol(parentName, Identifier) != null)
-                    {
-                        result = ParseAssignmentToArrayElement(Identifier, parentNode, parentName);
-                    }
-                    else
-                    {
-                        result = ParseAssignment(Identifier, parentNode, parentName);
-                    }
+                        if (SymbolTable.Instance().FindSymbol(parentName + Identifier) == SymbolTable.SymbolType.structname)
+                        {
+                            result = ParseAssignmentToStruct(Identifier, parentNode, parentName);
+                        }
+                        else
+                            if (SymbolTable.Instance().FindStructArraySymbol(parentName, Identifier) != null)
+                            {
+                                result = ParseAssignmentToStructArrayElement(Identifier, parentNode, parentName);
+                            }
+                            else
+                                if (SymbolTable.Instance().FindArraySymbol(parentName, Identifier) != null)
+                                {
+                                    result = ParseAssignmentToArrayElement(Identifier, parentNode, parentName);
+                                }
+                                else
+                                {
+                                    result = ParseAssignment(Identifier, parentNode, parentName);
+                                }
                 }
             }
             return result;
@@ -7319,12 +7326,12 @@ namespace ScriptLanguage
                         rightidentifier = parentName + token;
                     }
                     else
-                    if (parentNode.FindSymbol(token) == SymbolTable.SymbolType.structname)
-                    {
-                        // its a global
-                        foundSym = true;
-                        rightidentifier = token;
-                    }
+                        if (parentNode.FindSymbol(token) == SymbolTable.SymbolType.structname)
+                        {
+                            // its a global
+                            foundSym = true;
+                            rightidentifier = token;
+                        }
 
                     if (foundSym)
                     {
