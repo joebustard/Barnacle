@@ -27,6 +27,7 @@ namespace ScriptLanguage
                     double max = 1;
                     if (PullDouble(out max))
                     {
+                        rnd = new Random((Int32)DateTime.Now.Ticks);
                         double value = rnd.NextDouble() * max;
                         ExecutionStack.Instance().Push(value);
                         result = true;

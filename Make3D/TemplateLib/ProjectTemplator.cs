@@ -233,7 +233,7 @@ namespace TemplateLib
                         }
                         else
                         {
-                            dummyBuilder += $"  if (IsValid({npn}))\r\n";
+                            dummyBuilder += $"  if (ValidSolid({npn}))\r\n";
                             dummyBuilder += "  {";
                             dummyBuilder += $"  whole = ForceUnion(whole,{npn});\r\n";
                             dummyBuilder += "  }";
