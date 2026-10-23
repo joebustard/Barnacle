@@ -94,6 +94,7 @@
   <Compile Include="ExtraPrimitives\SmoothPyramid.cs" />
   <Compile Include="ExtraPrimitives\Arrow.cs" />
   <Compile Include="ExtraPrimitives\ArrowWideBase.cs" />
+  <Compile Include="ExtraPrimitives\PointyArch.cs" />
     <Compile Include="FaceOrientationNormaliser.cs" />
     <!-- ExtraHere -->
     <Compile Include="Group3D.cs" />

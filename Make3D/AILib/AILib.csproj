@@ -48,7 +48,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WpfAsyncRoughMeshModifier.cs" />
     <Compile Include="WpfBallPivotingMst.cs" />
-    <Compile Include="WpfCsgEngine.cs" />
     <Compile Include="WpfLoopSubdivision.cs" />
     <Compile Include="WpfMeshAdvancedHoleFiller.cs" />
     <Compile Include="WpfMeshSlicer.cs" />

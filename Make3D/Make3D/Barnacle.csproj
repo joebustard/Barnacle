@@ -1588,6 +1588,7 @@
     <Resource Include="Images\Buttons\RoundedCage.png" />
     <Resource Include="Images\Buttons\RoundedX.png" />
     <Resource Include="Images\Buttons\RoundedPyramid.png" />
+    <Resource Include="Images\Buttons\PointyArch.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

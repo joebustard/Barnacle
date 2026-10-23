@@ -124,6 +124,7 @@ namespace Barnacle.Object3DLib
              new PrimTableEntry( "smoothedpyramib", PrimitiveGenerator.GenerateSmoothedPyramib,Colors.Orchid),
              new PrimTableEntry( "arrow", PrimitiveGenerator.GenerateArrow,Colors.Goldenrod),
              new PrimTableEntry( "arrowwidebase", PrimitiveGenerator.GenerateArrowWideBase,Colors.Goldenrod),
+             new PrimTableEntry( "pointyarch", PrimitiveGenerator.GeneratePointyArch,Colors.SandyBrown),
             //Next_Primitive_Table_Entry
         };
 

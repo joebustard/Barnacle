@@ -5101,20 +5101,6 @@ namespace Barnacle.ViewModels
             // objects with a small number of vertices dont bend well
             while (ob.RelativeObjectVertices.Count < smallObjectsLimit)
             {
-                /*
-                    LoopSmoother cms = new LoopSmoother();
-
-                    Point3DCollection p3col = new Point3DCollection();
-                    PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, p3col);
-                    Int32Collection icol = ob.TriangleIndices;
-                    while (p3col.Count < smallObjectsLimit)
-                    {
-                        cms.Subdivide(ref p3col, ref icol);
-                    }
-                    PointUtils.PointCollectionToP3D(p3col, ob.RelativeObjectVertices);
-                    ob.TriangleIndices = icol;
-                    ob.Remesh();
-                    */
                 SubdivideObjectTriangles(ob);
             }
         }
