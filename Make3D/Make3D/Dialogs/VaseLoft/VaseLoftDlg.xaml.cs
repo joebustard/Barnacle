@@ -34,6 +34,80 @@ namespace Barnacle.Dialogs
         private int numDivisions;
         private Visibility showSurfaceParameters;
         private double surfaceThickness;
+        private double boreRadius;
+
+        public bool OpenShape
+        {
+            get
+            {
+                return isHollow;
+            }
+            set
+            {
+                if (isHollow != value)
+                {
+                    isHollow = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        private bool isBored;
+
+        public bool BoredShape
+        {
+            get
+            {
+                return isBored;
+            }
+            set
+            {
+                if (isBored != value)
+                {
+                    isBored = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        private bool closedShaped;
+
+        public bool ClosedShaped
+        {
+            get
+            {
+                return closedShaped;
+            }
+            set
+            {
+                if (closedShaped != value)
+                {
+                    closedShaped = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public double BoreRadius
+        {
+            get
+            {
+                return boreRadius;
+            }
+            set
+            {
+                if (value != boreRadius)
+                {
+                    boreRadius = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
         private string warningText;
 
         public VaseLoftDlg()
@@ -45,11 +119,15 @@ namespace Barnacle.Dialogs
             loaded = false;
             numDivisions = 80;
             surfaceThickness = 1;
+            boreRadius = 5;
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
             PathEditor.DefaultImagePath = DefaultImagePath;
             PathEditor.ToolName = ToolName;
             PathEditor.HasPresets = true;
             PathEditor.IncludeCommonPresets = false;
+            ClosedShaped = true;
+            BoredShape = false;
+            OpenShape = false;
         }
 
         public bool IsHollow
@@ -90,13 +168,13 @@ namespace Barnacle.Dialogs
                     WarningText = "Number of divisions must be >= 3 and <= 360";
                 }
                 else
-                if (value != numDivisions)
-                {
-                    WarningText = "";
-                    numDivisions = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
+                    if (value != numDivisions)
+                    {
+                        WarningText = "";
+                        numDivisions = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
             }
         }
 
@@ -259,87 +337,102 @@ namespace Barnacle.Dialogs
         private void GenerateSolid()
         {
             List<System.Windows.Point> line = new List<System.Windows.Point>();
-            double top = 0;
+            double extraRadius = 0;
+            if (BoredShape)
+            {
+                extraRadius = boreRadius;
+            }
+            // find the highest y
+            double highestY = 0;
             for (int i = 0; i < displayPoints.Count; i++)
             {
-                if (displayPoints[i].Y > top)
+                if (displayPoints[i].Y > highestY)
                 {
-                    top = displayPoints[i].Y;
+                    highestY = displayPoints[i].Y;
                 }
             }
+            // flip the line upside down
             foreach (Point p in displayPoints)
             {
-                line.Add(new Point(p.X, top - p.Y));
+                line.Add(new Point(p.X, highestY - p.Y));
             }
-            int numSpokes = numDivisions;
-            double deltaTheta = 360.0 / numSpokes; // in degrees
-            Point3D[,] spokeVertices = new Point3D[numSpokes, line.Count];
+
+            double deltaTheta = (2.0 * Math.PI) / (numDivisions - 1);
+
+            // create the first set of frame vertices
+            Point3D[,] frameVertices = new Point3D[numDivisions, line.Count];
             for (int i = 0; i < line.Count; i++)
             {
-                spokeVertices[0, i] = new Point3D(line[i].X, line[i].Y, 0);
+                double x = (line[i].X + extraRadius) * Math.Cos(0);
+                double z = (line[i].X + extraRadius) * Math.Sin(0);
+                frameVertices[0, i] = new Point3D(x, line[i].Y, z);
             }
 
-            for (int i = 1; i < numSpokes; i++)
+            // rotate the first frame vertices to create the other ones
+            for (int i = 1; i < numDivisions; i++)
             {
                 double theta = i * deltaTheta;
-                double rad = Math.PI * theta / 180.0;
-                for (int j = 0; j < line.Count; j++)
-                {
-                    double x = spokeVertices[0, j].X * Math.Cos(rad);
-                    double z = spokeVertices[0, j].X * Math.Sin(rad);
-                    spokeVertices[i, j] = new Point3D(x, spokeVertices[0, j].Y, z);
-                }
-            }
-            Vertices.Clear();
-            Vertices.Add(new Point3D(0, 0, 0));
-            for (int i = 0; i < numSpokes; i++)
-            {
-                for (int j = 0; j < line.Count; j++)
-                {
-                    Vertices.Add(spokeVertices[i, j]);
-                }
-            }
-            int topPoint = Vertices.Count;
-            Vertices.Add(new Point3D(0, 20, 0));
-            Faces.Clear();
-            int spOff;
-            int spOff2;
-            for (int i = 0; i < numSpokes; i++)
-            {
-                spOff = i * line.Count + 1;
-                spOff2 = (i + 1) * line.Count + 1;
-                if (i == numSpokes - 1)
-                {
-                    spOff2 = 1;
-                }
-                // base
-                Faces.Add(0);
-                Faces.Add(spOff2);
-                Faces.Add(spOff);
 
+                for (int j = 0; j < line.Count; j++)
+                {
+                    double x = (frameVertices[0, j].X) * Math.Cos(theta);
+                    double z = (frameVertices[0, j].X) * Math.Sin(theta);
+                    frameVertices[i, j] = new Point3D(x, frameVertices[0, j].Y, z);
+                }
+            }
+
+            //
+
+            Vertices.Clear();
+
+            for (int frameIndex = 0; frameIndex < numDivisions; frameIndex++)
+            {
+                int nextFi = frameIndex + 1;
+                if (nextFi >= numDivisions)
+                {
+                    nextFi = 0;
+                }
                 for (int j = 0; j < line.Count - 1; j++)
                 {
-                    Faces.Add(spOff + j);
-                    Faces.Add(spOff2 + j);
-                    Faces.Add(spOff2 + j + 1);
+                    int v0 = AddVertice(frameVertices[frameIndex, j]);
+                    int v1 = AddVertice(frameVertices[frameIndex, j + 1]);
+                    int v2 = AddVertice(frameVertices[nextFi, j]);
+                    int v3 = AddVertice(frameVertices[nextFi, j + 1]);
 
-                    Faces.Add(spOff + j);
-                    Faces.Add(spOff2 + j + 1);
-                    Faces.Add(spOff + j + 1);
+                    Faces.Add(v0);
+                    Faces.Add(v2);
+                    Faces.Add(v1);
+
+                    Faces.Add(v2);
+                    Faces.Add(v3);
+                    Faces.Add(v1);
                 }
-
-                // Top
-                Faces.Add(spOff + line.Count - 1);
-                Faces.Add(spOff2 + line.Count - 1);
-                Faces.Add(topPoint);
             }
 
-            spOff = (numSpokes - 1) * line.Count + 1;
-            spOff2 = 1;
-            // base
-            Faces.Add(0);
-            Faces.Add(spOff2);
-            Faces.Add(spOff);
+            if (BoredShape)
+            {
+                for (int frameIndex = 0; frameIndex < numDivisions; frameIndex++)
+                {
+                    int nextFi = frameIndex + 1;
+                    if (nextFi >= numDivisions)
+                    {
+                        nextFi = 0;
+                    }
+                    int last = line.Count - 1;
+                    int v0 = AddVertice(frameVertices[frameIndex, 0]);
+                    int v1 = AddVertice(frameVertices[frameIndex, last]);
+                    int v2 = AddVertice(frameVertices[nextFi, 0]);
+                    int v3 = AddVertice(frameVertices[nextFi, last]);
+
+                    Faces.Add(v0);
+                    Faces.Add(v1);
+                    Faces.Add(v2);
+
+                    Faces.Add(v2);
+                    Faces.Add(v1);
+                    Faces.Add(v3);
+                }
+            }
         }
 
         private void LoadEditorParameters()
@@ -351,7 +444,10 @@ namespace Barnacle.Dialogs
                 PathEditor.FromString(s);
             }
             NumDivisions = EditorParameters.GetInt("NumDivisions", 80);
-            IsHollow = EditorParameters.GetBoolean("IsHollow", false);
+            ClosedShaped = EditorParameters.GetBoolean("ClosedShape", true);
+            OpenShape = EditorParameters.GetBoolean("OpenShape", false);
+            BoredShape = EditorParameters.GetBoolean("BoredShape", false);
+            BoreRadius = EditorParameters.GetDouble("BoreRadius", 5);
             SurfaceThickness = EditorParameters.GetDouble("SurfaceThickness", 1);
             string imageName = EditorParameters.Get("ImagePath");
             if (imageName != "")
@@ -384,7 +480,10 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("Path", PathEditor.AbsolutePathString);
             EditorParameters.Set("NumDivisions", NumDivisions.ToString());
             EditorParameters.Set("ImagePath", PathEditor.ImagePath);
-            EditorParameters.Set("IsHollow", IsHollow.ToString());
+            EditorParameters.Set("ClosedShape", ClosedShaped.ToString());
+            EditorParameters.Set("OpenShape", OpenShape.ToString());
+            EditorParameters.Set("BoredShape", BoredShape.ToString());
+            EditorParameters.Set("BoreRadius", BoreRadius.ToString());
             EditorParameters.Set("SurfaceThickness", surfaceThickness.ToString());
         }
 
